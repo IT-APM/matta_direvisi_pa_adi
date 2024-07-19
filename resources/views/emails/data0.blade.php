@@ -1,0 +1,54 @@
+<head>
+    <title>Perubahan Data Karyawan</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<table class="table">
+    <tr>
+        <td>
+            <h4>Semangat Pagi</h4>
+            <h4>Terdapat Perubahan Data Karyawan</h4>
+            <table class="table" style="width:100%" border="1" cellspacing="0" cellpadding="2">
+                <thead>
+                    <tr>
+                        <th style="width:20%">Karyawan</th>
+                        <th style="width:60%">Perubahan Data</th>
+                        <th style="width:20%">Waktu Perubahan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $_history = json_decode($data['perubahan'], true); @endphp
+                    <tr>
+                        <td>{{ $data['nama'] }} / {{ $data['nik'] }}</td>
+                        <td>
+                            <table class="table table-striped" style="width:100%" border="1" cellspacing="0" cellpadding="2">
+                                <thead>
+                                    <tr>
+                                        <th style="width:20%">Kolom</th>
+                                        <th style="width:40%">Sebelum</th>
+                                        <th style="width:40%">Sesudah</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php $_history = json_decode($data['perubahan'], true); @endphp
+                                    @foreach ($_history as $_data => $val)
+                                    <tr>
+                                        <td>{{ $data['lbl_history'][$_data] }}</td>
+                                        <td>{{ $val['before'] }}</td>
+                                        <td>{{ $val['after'] }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>{{ $data['created_at'] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>Terima kasih,<br>HCO
+        </td>
+    </tr>
+</table>

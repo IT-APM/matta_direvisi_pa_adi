@@ -1,0 +1,197 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Karyawan;
+use App\Models\KaryawanAnak;
+use App\Models\KaryawanPelatihan;
+use App\Models\KaryawanPendidikan;
+use App\Models\KaryawanSertifikasi;
+use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+use File;
+
+class KaryawanCopyController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+        $where = ['is_aktif' => 1];
+        $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+        return view( 'master.karyawan.copy.insert', compact( 'karyawan' ) );
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+        // ambil data karyawan lama
+        $nik_karyawan_baru = $request->nik_karyawan_baru;
+        $nik_karyawan_lama = $request->nik_karyawan_lama;
+        $_karyawan = Karyawan::where('nik', $nik_karyawan_lama)->first();
+        // 
+        // return response()->json( [ 'data' => File::exists(public_path('assets/images/matta/karyawan/'.$nik_karyawan_lama.'/'.$nik_karyawan_lama.'.jpg')) ], 200 );
+        $karyawan = New Karyawan;
+        $karyawan->nik = $nik_karyawan_baru;
+        $karyawan->password = $_karyawan->password;
+        $karyawan->nama = $_karyawan->nama;
+        $karyawan->tempat_lahir = $_karyawan->tempat_lahir;
+        $karyawan->tanggal_lahir = $_karyawan->tanggal_lahir;
+        $karyawan->no_ktp = $_karyawan->no_ktp;
+        $karyawan->no_npwp = $_karyawan->no_npwp;
+        $karyawan->telepon_darurat = $_karyawan->telepon_darurat;
+        $karyawan->alamat_domisili = $_karyawan->alamat_domisili;
+        $karyawan->alamat_ktp = $_karyawan->alamat_ktp;
+        $karyawan->alamat_npwp = $_karyawan->alamat_npwp;
+        $karyawan->telepon1 = $_karyawan->telepon1;
+        $karyawan->telepon2 = $_karyawan->telepon2;
+        $karyawan->telepon3 = $_karyawan->telepon3;
+        $karyawan->nama_pasangan = $_karyawan->nama_pasangan;
+        $karyawan->nama_anak = $_karyawan->nama_anak;
+        $karyawan->email = $_karyawan->email;
+        $karyawan->kode_perusahaan = $_karyawan->kode_perusahaan;
+        $karyawan->alamat_kantor = $_karyawan->alamat_kantor;
+        $karyawan->kode_divisi = $_karyawan->kode_divisi;
+        $karyawan->kode_departemen = $_karyawan->kode_departemen;
+        $karyawan->kode_sub_departemen = $_karyawan->kode_sub_departemen;
+        $karyawan->layer1 = $_karyawan->layer1;
+        $karyawan->layer2 = $_karyawan->layer2;
+        $karyawan->layer3 = $_karyawan->layer3;
+        $karyawan->kode_status = $_karyawan->kode_status;
+        $karyawan->wg_id = $_karyawan->wg_id;
+        $karyawan->is_aktif = $_karyawan->is_aktif;
+        $karyawan->gaji_pokok = $_karyawan->gaji_pokok;
+        $karyawan->kode_level = $_karyawan->kode_level;
+        $karyawan->kode_jabatan = $_karyawan->kode_jabatan;
+        $karyawan->tanggal_mulai = $request->tanggal_mulai;
+        $karyawan->tanggal_bergabung = $_karyawan->tanggal_bergabung;
+        $karyawan->tanggal_berakhir = $_karyawan->tanggal_berakhir;
+        $karyawan->tanggal_karyawan_tetap = $_karyawan->tanggal_karyawan_tetap;
+        $karyawan->kode_agama = $_karyawan->kode_agama;
+        $karyawan->kode_kelamin = $_karyawan->kode_kelamin;
+        $karyawan->kode_warga = $_karyawan->kode_warga;
+        $karyawan->kode_kawin = $_karyawan->kode_kawin;
+        $karyawan->created_by = auth()->user()->nik;
+        $karyawan->updated_by = auth()->user()->nik;
+        $karyawan->save();
+        // 
+        $user = New User;
+        $user->name = $_karyawan->nama;
+        $user->nik = $nik_karyawan_baru;
+        $user->email = $_karyawan->email;
+        $user->userrole = 'nhc';
+        $user->password = $_karyawan->password;
+        $user->save();
+        // 
+        $_karyawan = KaryawanAnak::where('nik', $nik_karyawan_lama)->get();
+        foreach ($_karyawan as $_data) {
+            $trx = New KaryawanAnak;
+            $trx->nik = $nik_karyawan_baru;
+            $trx->id_anakke = $_data->id_anakke;
+            $trx->nama = $_data->nama;
+            $trx->save();
+        }
+        // 
+        $_karyawan = KaryawanPelatihan::where('nik', $nik_karyawan_lama)->get();
+        foreach ($_karyawan as $_data) {
+            $trx = New KaryawanPelatihan;
+            $trx->nik = $nik_karyawan_baru;
+            $trx->nama = $_data->nama;
+            $trx->keterangan = $_data->keterangan;
+            $trx->save();
+        }
+        // 
+        $_karyawan = KaryawanPendidikan::where('nik', $nik_karyawan_lama)->get();
+        foreach ($_karyawan as $_data) {
+            $trx = New KaryawanPendidikan;
+            $trx->nik = $nik_karyawan_baru;
+            $trx->id_jenjang = $_data->id_jenjang;
+            $trx->nama = $_data->nama;
+            $trx->jurusan_prodi = $_data->jurusan_prodi;
+            $trx->save();
+        }
+        // 
+        $_karyawan = KaryawanSertifikasi::where('nik', $nik_karyawan_lama)->get();
+        foreach ($_karyawan as $_data) {
+            $trx = New KaryawanSertifikasi;
+            $trx->nik = $nik_karyawan_baru;
+            $trx->nama = $_data->nama;
+            $trx->keterangan = $_data->keterangan;
+            $trx->save();
+        }
+        // 
+        if(File::exists(public_path('assets/images/matta/karyawan/'.$nik_karyawan_lama.'/'.$nik_karyawan_lama.'.jpg'))) {
+            File::makeDirectory(public_path('assets/images/matta/karyawan/'.$nik_karyawan_baru, 0777, true, true));
+            File::copy(public_path('assets/images/matta/karyawan/'.$nik_karyawan_lama.'/'.$nik_karyawan_lama.'.jpg'), public_path('assets/images/matta/karyawan/'.$nik_karyawan_baru.'/'.$nik_karyawan_baru.'.jpg'));
+        }
+        // File::copy(public_path('exist/test.png'), public_path('copy/test_copy.png'));
+        // 
+        return redirect( 'karyawan' )->with( 'msg', 'Data is copied successfully.' );
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}

@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Attachment;
+
+// source = https://mailtrap.io/blog/send-email-in-laravel/
+
+class MattaRebornMail extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    /**
+     * Create a new message instance.
+     *
+     * @return void
+     */
+    public function __construct(private $mailData)
+    {
+        //
+    }
+
+    /**
+     * Get the message envelope.
+     *
+     * @return \Illuminate\Mail\Mailables\Envelope
+     */
+    public function envelope()
+    {
+        return new Envelope(
+            // from: new Address('example@example.com', 'Test Sender'),
+            subject: $this->mailData['title'],
+        );
+    }
+
+    /**
+     * Get the message content definition.
+     *
+     * @return \Illuminate\Mail\Mailables\Content
+     */
+    public function content()
+    {
+        return new Content(
+            // markdown: $this->mailData['filename'],
+            view: $this->mailData['filename'],
+            with: ['data' => $this->mailData['data']],
+        );
+    }
+
+    /**
+     * Get the attachments for the message.
+     *
+     * @return array
+     */
+    public function attachments()
+    {
+        return [];
+        // return [
+        //     Attachment::fromPath('E:/tls/mcu/send_email/pdf/'.$this->mailData['file_pdf'])
+        //             ->as($this->mailData['file_pdf'])
+        //             ->withMime('application/pdf'),
+        // ];
+    }
+}

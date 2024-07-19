@@ -1,0 +1,452 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Attendance;
+use App\Models\Karyawan;
+use App\Models\TrxPenilaian;
+use App\Models\TrxPenilaianAuto;
+use App\Models\TrxNonaktifAuto;
+use App\Models\TrxCuti;
+use App\Models\TrxCutiLog;
+use App\Models\MtrUtility;
+use App\Models\Holiday;
+use App\Models\ToDoList;
+// 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use DB;
+use URL;
+
+class DataCleansingController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+        $filename = ['emails.penilaian0', 'emails.penilaian0_outsourcing'];
+        $this->getToDoList($filename);
+        $this->getDataCuti();
+        $this->KaryawanNonAktif();
+        $this->CleansingDataAbsensi();
+        $this->PenilaianAuto();
+        $this->PenilaianAutoOutsourcing();
+        // 4 = Disetujui oleh Layer 1
+        // tidak digunakan karena hco kembali dilibatkan
+        // $trx = $this->GetTrxCuti();
+        // foreach($trx as $value){
+        //     $_trx = TrxCuti::find($value->id);
+        //     // 6 = Selesai
+        //     $_trx->status_cuti = 6;
+        //     $_trx->update();
+        //     $this->InsertTrxCutiLog($value->id);
+        // }
+        $date_from = date("Y-m-d");
+        $date_to = date("Y-m-d");
+        $trx = $this->InsertToAttendance($date_from, $date_to);
+        return response()->json( [ 'success' => true ], 200 );
+    }
+
+    public function getToDoList($filename)
+    {
+        $trx = TrxPenilaianAuto::whereNotNull('id_trx')->delete();
+        $trx = ToDoList::whereIn('filename', $filename)->orderBy('id', 'desc')->get();
+        foreach ($trx as $value){
+            $where = ['id' => $value->id_trx];
+            $_trx = TrxPenilaian::whereNotIn('id_status', [4,8,9,10,11,12,13])->where($where)->first();
+            if(!empty($_trx)){
+                $where = ['nik' => $_trx->nik_karyawan];
+                $tanggal_berakhir = Karyawan::select('tanggal_berakhir')->where($where)->first();
+                $this->StorePenilaianReminder($_trx, date('Y-m-d'), $tanggal_berakhir->tanggal_berakhir, $value->id);
+            }
+        }
+    }
+
+    public function getDataCuti()
+    {
+        $filename = Carbon::now()->format('Ymd_His');
+        $arr['OK'] = array();
+        $arr['NOK'] = array();
+        $tahun = Carbon::parse(now())->format('Y');
+        $bulan = Carbon::parse(now())->format('m');
+        $tahun_kemarin = DB::select(DB::raw("SELECT 12-SUM(jumlah_hari) AS sisa,nik_karyawan FROM trx_tbl_cuti WHERE tipe_cuti=0 AND status_cuti NOT IN (5,7) AND periode_cuti=".($tahun-1)." GROUP BY nik_karyawan HAVING SUM(jumlah_hari)<12 ORDER BY nik_karyawan"));
+        if($bulan == 1){
+            foreach($tahun_kemarin as $kemarin){
+                $tahun_sekarang = DB::select(DB::raw("SELECT id,nik_karyawan,jumlah_hari FROM trx_tbl_cuti WHERE tipe_cuti=0 AND status_cuti NOT IN (5,7) AND periode_cuti=".$tahun." AND MONTH(tanggal_mulai)=$bulan AND nik_karyawan='".$kemarin->nik_karyawan."'"));
+                foreach($tahun_sekarang as $sekarang){
+                    if($kemarin->sisa >= $sekarang->jumlah_hari){
+                        DB::update(DB::raw("UPDATE trx_tbl_cuti SET periode_cuti=".($tahun-1)." WHERE id=".$sekarang->id));
+                        $kemarin->sisa -= $sekarang->jumlah_hari;
+                        array_push($arr['OK'], $kemarin);
+                        array_push($arr['OK'], $tahun_sekarang);
+                    }else{
+                        array_push($arr['NOK'], $kemarin);
+                        array_push($arr['NOK'], $tahun_sekarang);
+                    }
+                }
+            }
+            Storage::put('data_cleansing/'.$filename.'.cuti.txt', json_encode($arr));
+        }
+    }
+
+    // start
+    public function InsertTrxCutiLog($id_trx)
+    {
+        $where = ['id_trx' => $id_trx, 'id_status' => 4];
+        $trx = TrxCutiLog::where($where)->orderBy('id', 'desc')->first();
+        // 
+        $data = new TrxCutiLog;
+        $data->created_at = date ("Y-m-d 00:00:00", strtotime("+1 days", strtotime($trx->created_at)));
+        $data->updated_at = date ("Y-m-d 00:00:00", strtotime("+1 days", strtotime($trx->updated_at)));
+        $data->id_trx = $id_trx;
+        // 6 = Selesai
+        $data->id_status = 6;
+        // 23 = PIC HCO Formulir Cuti (Novia Rahmayanti Ikmal)
+        $data->nik_pic = MtrUtility::find(23)->informasi;
+        $data->save();
+        // return ['created_at'=>$trx->created_at, 'created_at+1'=>date ("Y-m-d 00:00:00", strtotime("+1 days", strtotime($trx->created_at)))];
+    }
+
+    public function GetTrxCuti(){
+        // 4 = Disetujui oleh Layer 1
+        $trx = TrxCuti::whereIn('status_cuti', [4])->orderBy('id', 'asc')->get();
+        return $trx;
+    }
+
+    public function InsertToAttendance($date_from, $date_to){
+        $arr = array();
+        while (strtotime($date_from) <= strtotime($date_to)) {
+            // 6 = Selesai
+            $trx = TrxCuti::whereIn('status_cuti', [6])->where('tanggal_cuti', 'like', '%'.$date_from.'%')->orderBy('id', 'asc')->get();
+            if($this->isWeekend($date_from)['status'] || $this->isHoliday($date_from)['status']){
+                // do nothing
+            }else{
+                foreach($trx as $value){
+                    $data = New Attendance;
+                    $data->att_date = $date_from;
+                    $data->att_timestamp = $date_from.' 00:00:00';
+                    $data->att_nik = $value->nik_karyawan;
+                    $data->att_type = 'Leave';
+                    $data->att_status = 'Leave';
+                    // $data->att_data_src = $value->_tipe->tipe_cuti;
+                    $data->att_data_src = 'Leave';
+                    $data->att_property = $this->getNikProperty($value->nik_karyawan);
+                    $data->wg_id = Karyawan::where(['nik' => $value->nik_karyawan, 'is_aktif' => 1])->first()->wg_id;
+                    $data->save();
+                    array_push($arr, ['date_from'=>$date_from, 'trx'=>$value]);
+                }
+            }
+            $date_from = date ("Y-m-d", strtotime("+1 days", strtotime($date_from)));
+        }
+        return $arr;
+    }
+
+    // cek apakah hari ini sabtu minggu
+    public function isWeekend($date)
+    {
+        $weekDay = date('w', strtotime($date));
+        $cek = $weekDay == 0 || $weekDay == 6;
+        return ['status' => $cek];
+    }
+
+    // cek apakah hari ini adalah hari libur nasional
+    public function isHoliday($date)
+    {
+        $cek = false;
+        $where = ['tanggal' => $date];
+        $data = Holiday::where($where)->first();
+        if ($data) {
+            $cek = true;
+        }
+        return ['status' => $cek];
+    }
+    // finish
+
+    public function PenilaianAuto(){
+        // 
+        // DB::table('trx_tbl_penilaian_auto')->truncate();
+        // 
+        $result = array();
+        $data = DB::select(DB::raw("SELECT nik,layer1,layer2,layer3,DATE_SUB(tanggal_berakhir,INTERVAL 60 DAY) AS tanggal_awal,tanggal_berakhir FROM mtr_tbl_karyawan WHERE kode_perusahaan=1 AND is_aktif=1 AND kode_status IN (1,2) AND DATEDIFF(tanggal_berakhir, DATE(NOW())) BETWEEN 0 AND 60 ORDER BY tanggal_berakhir"));
+        foreach ($data as $value){
+            $_data = DB::select(DB::raw("SELECT * FROM trx_tbl_penilaian WHERE nik_karyawan='".$value->nik."' AND DATE(created_at) BETWEEN '".$value->tanggal_awal."' AND '".$value->tanggal_berakhir."'"));
+            if(count($_data)==0){
+                $where = ['nik_karyawan' => $value->nik];
+                $check = TrxPenilaianAuto::where($where)->exists();
+                if(!$check){
+                    array_push($result, $value);
+                    $this->StorePenilaianAuto($value);
+                }
+            }
+        }
+        // return count($result);
+        return $result;
+    }
+
+    public function PenilaianAutoOutsourcing(){
+        // 
+        $result = array();
+        $kode_perusahaan = MtrUtility::find(27)->informasi;
+        $data = DB::select(DB::raw("SELECT nik,layer1,layer2,layer3,DATE_SUB(tanggal_berakhir,INTERVAL 60 DAY) AS tanggal_awal,tanggal_berakhir FROM mtr_tbl_karyawan WHERE kode_perusahaan IN (".$kode_perusahaan.") AND is_aktif=1 AND DATEDIFF(tanggal_berakhir, DATE(NOW())) BETWEEN 0 AND 60 ORDER BY tanggal_berakhir"));
+        foreach ($data as $value){
+            $_data = DB::select(DB::raw("SELECT * FROM trx_tbl_penilaian WHERE nik_karyawan='".$value->nik."' AND DATE(created_at) BETWEEN '".$value->tanggal_awal."' AND '".$value->tanggal_berakhir."'"));
+            if(count($_data)==0){
+                $where = ['nik_karyawan' => $value->nik];
+                $check = TrxPenilaianAuto::where($where)->exists();
+                if(!$check){
+                    array_push($result, $value);
+                    $this->StorePenilaianAutoOutsourcing($value);
+                }
+            }
+        }
+        // return count($result);
+        return $result;
+    }
+
+    public function KaryawanNonAktif(){
+        // 
+        $trx = TrxNonaktifAuto::truncate();
+        $result = array();
+        $data = DB::select(DB::raw("SELECT nik,layer1,DATE_SUB(tanggal_berakhir,INTERVAL 30 DAY) AS tanggal_awal,tanggal_berakhir FROM mtr_tbl_karyawan WHERE kode_perusahaan IN (1,2,6) AND is_aktif=1 AND kode_status IN (2) AND DATEDIFF(tanggal_berakhir, DATE(NOW())) BETWEEN 0 AND 30 ORDER BY tanggal_berakhir"));
+        foreach ($data as $value){
+            $_data = DB::select(DB::raw("SELECT * FROM trx_tbl_nonaktif_master WHERE pengaju='".$value->nik."' AND DATE(created_at) BETWEEN '".$value->tanggal_awal."' AND '".$value->tanggal_berakhir."'"));
+            if(count($_data)==0){
+                $where = ['nik_karyawan' => $value->nik];
+                $check = TrxNonaktifAuto::where($where)->exists();
+                if(!$check){
+                    array_push($result, $value);
+                    $trx = New TrxNonaktifAuto;
+                    $trx->nik_karyawan = $value->nik;
+                    $trx->nik_atasan = $value->layer1;
+                    $trx->id_status = 1;
+                    // $trx->id_trx = 0;
+                    // $trx->is_email = 0;
+                    $trx->start_date = $value->tanggal_awal;
+                    $trx->end_date = $value->tanggal_berakhir;
+                    $trx->save();
+                }
+            }
+        }
+        // return count($result);
+        return $result;
+    }
+
+    public function StorePenilaianAuto($value){
+        $trx = New TrxPenilaianAuto;
+        $trx->nik_karyawan = $value->nik;
+        $trx->nik_penilai_1 = $value->layer1;
+        $trx->nik_penilai_2 = $value->layer2;
+        $trx->nik_penilai_3 = $value->layer3;
+        // 2 = Penilaian 360-Reguler
+        $trx->id_tipe = 2;
+        // 1 = Send to Employee
+        $trx->id_status = 1;
+        // $trx->id_trx = 0;
+        // $trx->is_email = 0;
+        $trx->start_date = $value->tanggal_awal;
+        $trx->end_date = $value->tanggal_berakhir;
+        $trx->save();
+    }
+
+    public function StorePenilaianAutoOutsourcing($value){
+        $trx = New TrxPenilaianAuto;
+        $trx->nik_karyawan = $value->nik;
+        $trx->nik_penilai_1 = $value->layer1;
+        $trx->nik_penilai_2 = $value->layer2;
+        // 6 = Penilaian Outsourcing
+        $trx->id_tipe = 6;
+        // 16 = Send to Reviewer 1
+        $trx->id_status = 16;
+        $trx->start_date = $value->tanggal_awal;
+        $trx->end_date = $value->tanggal_berakhir;
+        $trx->save();
+    }
+
+    public function StorePenilaianReminder($value, $start_date, $end_date, $id_trx){
+        $trx = New TrxPenilaianAuto;
+        $trx->nik_karyawan = $value->nik_karyawan;
+        $trx->nik_penilai_1 = $value->nik_penilai_1;
+        $trx->nik_penilai_2 = $value->nik_penilai_2;
+        $trx->nik_penilai_3 = $value->nik_penilai_3;
+        $trx->id_tipe = $value->id_tipe;
+        $trx->id_status = $value->id_status;
+        $trx->id_trx = $id_trx;
+        $trx->start_date = $start_date;
+        $trx->end_date = $end_date;
+        $trx->save();
+    }
+
+    public function CleansingDataAbsensi(){
+        // 
+        // $tahun = Carbon::parse(now())->format('Y');
+        // $bulan = Carbon::parse(now())->format('m');
+        // $att = Attendance::whereMonth('att_timestamp', $bulan)->whereYear('att_timestamp', $tahun)->orderBy( 'att_timestamp', 'desc' )->get();
+        $filename = Carbon::now()->format('Ymd_His');
+        // Regular
+        $result = array();
+        $karyawan = Karyawan::select('nik')->whereIn('wg_id', [1])->get();
+        $att = Attendance::where(['att_data_src' => 'Regular'])->whereIn('att_nik', $karyawan)->whereIn('att_type', ['Clock-in','Clock-out'])->groupBy('att_date','att_nik','att_type','att_wd_ot_id')->having(DB::raw('count(*)'), '>', 1)->orderBy('att_date','asc')->orderBy('att_nik','asc')->get();
+        foreach ($att as $_att) {
+            $where = [ 'att_data_src' => 'Regular', 'att_date' => $_att->att_date, 'att_nik' => $_att->att_nik, 'att_type' => $_att->att_type, 'att_wd_ot_id' => $_att->att_wd_ot_id ];
+            $_att_ = Attendance::where($where)->orderBy('id','asc')->get();
+            for ($x = 0; $x < count($_att_); $x++) {
+                if($x > 0){
+                    array_push($result, Attendance::find($_att_[$x]->id));
+                    Attendance::find($_att_[$x]->id)->delete();
+                    // return response()->json( [ 'success' => true, 'jumlah' => count($att), 'where' => $where, '_att_' => $_att_[$x]->id ], 200 );
+                }
+            }
+        }
+        Storage::put('data_cleansing/'.$filename.'.reg.txt', json_encode($result));
+        // Overtime
+        // $resultOt = array();
+        // $att = Attendance::where(['att_data_src' => 'Overtime'])->whereIn('att_type', ['Clock-in','Clock-out'])->groupBy('att_date','att_nik','att_type','att_wd_ot_id')->having(DB::raw('count(*)'), '>', 1)->orderBy('att_date','asc')->orderBy('att_nik','asc')->get();
+        // foreach ($att as $_att) {
+        //     $where = [ 'att_data_src' => 'Overtime', 'att_date' => $_att->att_date, 'att_nik' => $_att->att_nik, 'att_type' => $_att->att_type, 'att_wd_ot_id' => $_att->att_wd_ot_id ];
+        //     $_att_ = Attendance::where($where)->orderBy('id','asc')->get();
+        //     for ($x = 0; $x < count($_att_); $x++) {
+        //         if($x > 0){
+        //             array_push($resultOt, Attendance::find($_att_[$x]->id));
+        //             Attendance::find($_att_[$x]->id)->delete();
+        //             // return response()->json( [ 'success' => true, 'jumlah' => count($att), 'where' => $where, '_att_' => $_att_[$x]->id ], 200 );
+        //         }
+        //     }
+        // }
+        // Storage::put('data_cleansing/'.$filename.'.ot.txt', json_encode($resultOt));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create(Request $request)
+    {
+        //
+        $filename = $request->filename;
+        $trx = json_decode(file_get_contents(Storage::disk('local')->path('data_cleansing/'.$filename)), true);
+        // return response()->json( [ 'success' => true, 'data' => count($trx) ], 200 );
+        foreach ($trx as $_trx){
+            $data = New Attendance;
+            $data->id = $_trx['id'];
+            $data->att_date = $_trx['att_date'];
+            $data->att_timestamp = $_trx['att_timestamp'];
+            $data->att_nik = $_trx['att_nik'];
+            $data->att_type = $_trx['att_type'];
+            $data->att_long = $_trx['att_long'];
+            $data->att_lat = $_trx['att_lat'];
+            $data->att_address = $_trx['att_address'];
+            $data->att_ref_long = $_trx['att_ref_long'];
+            $data->att_ref_lat = $_trx['att_ref_lat'];
+            $data->att_ref_address = $_trx['att_ref_address'];
+            $data->att_distance_gap = $_trx['att_distance_gap'];
+            $data->att_clock_gap = $_trx['att_clock_gap'];
+            $data->att_status = $_trx['att_status'];
+            $data->att_data_src = $_trx['att_data_src'];
+            $data->att_wd_ot_id = $_trx['att_wd_ot_id'];
+            $data->created_at = $_trx['created_at'];
+            $data->updated_at = $_trx['updated_at'];
+            $data->save();
+        }
+        return response()->json( [ 'success' => true, 'data' => $trx ], 200 );
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        if($id=='aDRkMQ'){
+            $att = Attendance::whereNull('att_property')->whereBetween('att_date', ['2024-05-23', '2024-05-29'])->get();
+            foreach($att as $value){
+                $_att = Attendance::find($value->id);
+                $_att->att_property = $this->getNikProperty($_att->att_nik);
+                $_att->update();
+            }
+            dd('OK DONE');
+        }elseif($id=='d2dfaWQ'){
+            $att = Attendance::whereNotNull('att_property')->get();
+            foreach($att as $value){
+                $_att = Attendance::find($value->id);
+                $data = json_decode($_att->att_property, true);
+                $_att->wg_id = $data['wg_id'];
+                $_att->update();
+            }
+            dd('OK DONE');
+        }
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+
+    public function getNikProperty($nik)
+    {
+        // $where = ['nik' => $nik, 'is_aktif' => 1];
+        $where = ['nik' => $nik];
+        $data = Karyawan::select('mtr_tbl_karyawan.nik', 'mtr_tbl_karyawan.nama', 'mtr_tbl_karyawan.email', 'mtr_tbl_karyawan.telepon1', 
+        'mtr_tbl_perusahaan.nama as perusahaan', 'mtr_tbl_divisi.nama as divisi', 'mtr_tbl_departemen.nama as dep', 'mtr_tbl_sub_departemen.nama as sub_dep', 
+        'mtr_tbl_level.level as level', 'mtr_tbl_jabatan.jabatan as jabatan', 'mtr_tbl_level.id as id_level', 'mtr_tbl_working_group.wg_name as wg_name', 
+        'mtr_tbl_working_group.id as wg_id', 'mtr_tbl_working_group.is_reguler as is_reguler',
+        'mtr_tbl_status_karyawan.status_karyawan as status_karyawan')
+            ->leftJoin('mtr_tbl_perusahaan', 'mtr_tbl_perusahaan.id', '=', 'mtr_tbl_karyawan.kode_perusahaan')
+            ->leftJoin('mtr_tbl_divisi', 'mtr_tbl_divisi.id', '=', 'mtr_tbl_karyawan.kode_divisi')
+            ->leftJoin('mtr_tbl_departemen', 'mtr_tbl_departemen.id', '=', 'mtr_tbl_karyawan.kode_departemen')
+            ->leftJoin('mtr_tbl_sub_departemen', 'mtr_tbl_sub_departemen.id', '=', 'mtr_tbl_karyawan.kode_sub_departemen')
+            ->leftJoin('mtr_tbl_level', 'mtr_tbl_level.id', '=', 'mtr_tbl_karyawan.kode_level')
+            ->leftJoin('mtr_tbl_jabatan', 'mtr_tbl_jabatan.id', '=', 'mtr_tbl_karyawan.kode_jabatan')
+            ->leftJoin('mtr_tbl_working_group', 'mtr_tbl_working_group.id', '=', 'mtr_tbl_karyawan.wg_id')
+            ->leftJoin('mtr_tbl_status_karyawan', 'mtr_tbl_status_karyawan.id', '=', 'mtr_tbl_karyawan.kode_status')
+            ->where($where)->first();
+        return json_encode($data);
+    }
+}

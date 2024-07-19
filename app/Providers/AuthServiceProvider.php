@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
+use App\Models\IphoneUser;
+use App\Models\BpdNikPeran;
+
+class AuthServiceProvider extends ServiceProvider
+{
+    /**
+     * The policy mappings for the application.
+     *
+     * @var array
+     */
+    protected $policies = [
+        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+    ];
+
+    /**
+     * Register any authentication / authorization services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->registerPolicies();
+        Gate::define('hc', function(User $user) {
+            // return $user->hasAnyRoles(['hc', 'instructor']);
+            return $user->userrole == 'hc';
+        });
+        
+        Gate::define('staf_only', function(User $user) {
+            return $user->_nik->kode_level < 3;
+        });
+        
+        Gate::define('staf', function(User $user) {
+            return $user->_nik->kode_level < 3 || $user->userrole == 'hc';
+        });
+        
+        Gate::define('spv', function(User $user) {
+            return $user->_nik->kode_level >= 3 || $user->userrole == 'hc';
+        });
+        
+        Gate::define('asm', function(User $user) {
+            return $user->_nik->kode_level >= 4 || $user->userrole == 'hc';
+        });
+        
+        Gate::define('iphone', function(User $user) {
+            $where = ['nik' => $user->nik];
+            $check = IphoneUser::where($where)->exists();
+            return $check;
+        });
+        
+        Gate::define('bpd', function(User $user) {
+            $where = ['nik' => $user->nik, 'is_active' => 1];
+            $check = BpdNikPeran::where($where)->exists();
+            return $check;
+        });
+        
+        Gate::define('auth', function(User $user) {
+            return true;
+        });
+        //
+    }
+}

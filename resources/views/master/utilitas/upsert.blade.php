@@ -1,0 +1,177 @@
+@extends('layouts.simple.master')
+@section('title', 'Utilitas')
+
+@section('css')
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/sweetalert2.css')}}">
+@endsection
+
+@section('style')
+@endsection
+
+@section('breadcrumb-title')
+<h3>Edit</h3>
+@endsection
+
+@section('breadcrumb-items')
+<li class="breadcrumb-item">Data Master</li>
+<li class="breadcrumb-item">Utilitas</li>
+<li class="breadcrumb-item active">Edit</li>
+@endsection
+
+@section('content')
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    @if(Session::has('msg'))
+                    <div class="alert alert-success dark alert-dismissible fade show" role="alert">
+                        <h6>{{ session('msg') }}</h6>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+                    <form action="{{ route('utilitas.update', 0) }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to save this data?');">
+                    @method('PATCH')
+                    @csrf
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                @php $no=0; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=4; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=5; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=6; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                @php $no=11; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=12; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=13; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=14; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                @php $no=15; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=16; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=19; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=22; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                @php $no=17; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=18; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=20; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=21; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                @php $no=22; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=23; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=24; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=25; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                @php $no=26; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                            <div class="col-md-3">
+                                @php $no=27; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                        </div>
+                        <br />
+                        <button class="btn btn-success" type="submit">Save</button> | <a href="{{ route('utilitas.index') }}" class="btn btn-warning" type="button">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('script')
+<script src="{{ asset('assets/js/form-validation-custom.js') }}"></script>
+<script src="{{asset('assets/js/sweet-alert/sweetalert.min.js')}}"></script>
+<script src="{{asset('assets/js/sweet-alert/app.js')}}"></script>
+@endsection

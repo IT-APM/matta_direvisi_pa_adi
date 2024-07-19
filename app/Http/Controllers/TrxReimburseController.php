@@ -1,0 +1,869 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+// 
+use App\Models\Karyawan;
+// 
+use App\Models\ReimburseHubungan;
+use App\Models\ReimburseLampiran;
+use App\Models\ReimburseLayanan;
+use App\Models\ReimbursePlafon;
+use App\Models\ReimburseStatus;
+use App\Models\TrxReimburseMaster;
+use App\Models\TrxReimburseDetail;
+use App\Models\TrxReimburseLampiran;
+use App\Models\TrxReimburseLog;
+// 
+use App\Models\ToDoList;
+use App\Models\ToDoListLog;
+use App\Models\MtrUtility;
+use App\Mail\MattaRebornMail;
+use Illuminate\Support\Facades\Mail;
+// 
+use Carbon\Carbon;
+use DB;
+use Elibyy\TCPDF\Facades\TCPDF;
+// 
+
+class TrxReimburseController extends Controller
+{
+    
+    public function __construct()
+    {
+        $this->middleware('auth', ['except' => ['show','update']]);
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        // ambil semua data reimburse
+        $no = 0;
+        // $trx = TrxReimburseMaster::orderBy('id', 'desc')->limit(100)->get();
+        $trx = TrxReimburseMaster::orderBy('id', 'desc')->get();
+        $isPlafon = true;
+        if(auth()->user()->userrole == 'nhc'){
+            $where = ['nik_karyawan' => auth()->user()->nik];
+            // $trx = TrxReimburseMaster::where($where)->orderBy('id', 'desc')->limit(100)->get();
+            $trx = TrxReimburseMaster::where($where)->orderBy('id', 'desc')->get();
+            // 
+            // ambil plafon karyawan tersebut
+            $periode = Carbon::now()->format('Y');
+            $where = ['periode' => $periode, 'nik_karyawan' => auth()->user()->nik];
+            if(ReimbursePlafon::where($where)->orderBy('id', 'desc')->count() == 0){
+                $isPlafon = false;
+            }
+        }
+        // filter parameter
+        $arr_status_pengajuan = array();
+        $arr_tahun = array();
+        $arr_nik_karyawan = array();
+        foreach ($trx as $data){
+            array_push($arr_status_pengajuan, $data->status_pengajuan);
+            if(!in_array($data->periode, $arr_tahun)){
+                array_push($arr_tahun, $data->periode);
+            }
+            array_push($arr_nik_karyawan, $data->nik_karyawan);
+        }
+        sort($arr_tahun);
+        $status_pengajuan = ReimburseStatus::whereIn('id', $arr_status_pengajuan)->orderBy('id', 'asc')->get();
+        $tahun = $arr_tahun;
+        $nik_karyawan = Karyawan::whereIn('nik', $arr_nik_karyawan)->orderBy('nama', 'asc')->get();
+        // start filter
+        if($request->filter == true){
+            $_status_pengajuan = $request->input('status_pengajuan', []);
+            $_tahun = $request->input('tahun', []);
+            $_nik_karyawan = $request->input('nik_karyawan', []);
+            if(count($_status_pengajuan) > 0){
+                $arr_status_pengajuan = $_status_pengajuan;
+            }
+            else{
+                $arr_status_pengajuan = array();
+            }
+            if(count($_tahun) > 0){
+                $arr_tahun = $_tahun;
+            }
+            else{
+                $arr_tahun = array();
+            }
+            if(count($_nik_karyawan) > 0){
+                $arr_nik_karyawan = $_nik_karyawan;
+            }
+            // else{
+            //     $arr_nik_karyawan = array();
+            // }
+            $trx = TrxReimburseMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->orderBy('id', 'desc')->get();
+            if(auth()->user()->userrole == 'nhc'){
+                $where = ['nik_karyawan' => auth()->user()->nik];
+                $trx = TrxReimburseMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->where($where)->orderBy('id', 'desc')->get();
+                // ambil plafon karyawan tersebut
+                $periode = Carbon::now()->format('Y');
+                $where = ['periode' => $periode, 'nik_karyawan' => auth()->user()->nik];
+                if(ReimbursePlafon::where($where)->orderBy('id', 'desc')->count() == 0){
+                    $isPlafon = false;
+                }
+            }
+        }else{
+            $arr_status_pengajuan = array();
+            $arr_tahun = array();
+            $arr_nik_karyawan = array();
+        }
+        // end filter
+        return view( 'formulir.reimburse.index', compact( 'trx', 'no', 'isPlafon', 'status_pengajuan', 'tahun', 'nik_karyawan', 'arr_status_pengajuan', 'arr_tahun', 'arr_nik_karyawan'));
+        // return view('formulir.reimburse.index', compact('trx', 'no', 'isPlafon'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        // karyawan masih di hardcode
+        // Abi Suhendra Adi Guna
+        // $nik_karyawan = '01031801682';
+        $nik_karyawan = auth()->user()->nik;
+        $periode = Carbon::now()->format('Y');
+        // 
+        $where = ['nik' => $nik_karyawan];
+        $karyawan = Karyawan::where($where)->first();
+        // ambil plafon karyawan tersebut
+        $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
+        $plafon = ReimbursePlafon::where($where)->orderBy('id', 'desc')->first();
+        // jumlahkan semua plafon kesehatan yang status tidak Ditolak di periode dan nik tersebut
+        $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
+        $plafon_diambil = TrxReimburseMaster::where($where)->whereNotIn('status_pengajuan', [3])->sum('klaim_kesehatan');
+        // 
+        $plafon->kesehatan -= $plafon_diambil;
+        // cek semua klaim non kesehatan
+        // 2= Kacamata-Frame
+        $cekData = $this->isKlaimNonKesehatan(0, $nik_karyawan, 2);
+        if($cekData['cek']){
+            $plafon->frame = 0;
+        }
+        // 3= Kacamata-Lensa
+        $cekData = $this->isKlaimNonKesehatan(0, $nik_karyawan, 3);
+        if($cekData['cek']){
+            $plafon->lensa = 0;
+        }
+        // 4= Kehamilan
+        $cekData = $this->isKlaimNonKesehatan($periode, $nik_karyawan, 4);
+        if($cekData['cek']){
+            $plafon->kehamilan = 0;
+        }
+        // 5= Persalinan-Normal
+        $cekData = $this->isKlaimNonKesehatan($periode, $nik_karyawan, 5);
+        if($cekData['cek']){
+            $plafon->persalinan_normal = 0;
+        }
+        // 6= Persalinan-Caesar
+        $cekData = $this->isKlaimNonKesehatan($periode, $nik_karyawan, 6);
+        if($cekData['cek']){
+            $plafon->persalinan_caesar = 0;
+        }
+        // 
+        $hubungan = ReimburseHubungan::orderBy('id', 'asc')->get();
+        $layanan = ReimburseLayanan::orderBy('id', 'asc')->get();
+        $lampiran = ReimburseLampiran::orderBy('id', 'asc')->get();
+        return view('formulir.reimburse.insert', compact('karyawan', 'plafon', 'hubungan', 'layanan', 'lampiran'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        // return redirect()->back()->with('error','hello');
+        // karyawan masih di hardcode
+        // $nik_karyawan = '01031801682';
+        $nik_karyawan = auth()->user()->nik;
+        $periode = Carbon::now()->format('Y');
+        // agregate semua input array
+        $hubungan = $request->input('hubungan', []);
+        $nama_pasien = $request->input('nama_pasien', []);
+        $layanan = $request->input('layanan', []);
+        $tanggal = $request->input('tanggal', []);
+        $jumlah_klaim = $request->input('jumlah_klaim', []);
+        $jumlah_klaim = str_replace( ',', '', $jumlah_klaim );
+        // return response()->json( [ 'jumlah_klaim' => str_replace( ',', '', $jumlah_klaim ) ], 200 );
+        // 
+        $lampiran = $request->input('lampiran', []);
+        $file_lampiran = $request->file('file_lampiran', []);
+        // 
+        $klaim_kesehatan = 0;
+        $klaim_non_kesehatan = 0;
+        $jumlah_klaim_frame = 0;
+        $jumlah_klaim_lensa = 0;
+        $jumlah_klaim_hamil = 0;
+        $jumlah_klaim_salin_normal = 0;
+        $jumlah_klaim_salin_caesar = 0;
+        // jumlahkan semua layanan kesehatan ke klaim_kesehatan dan non kesehatan ke klaim_non_kesehatan
+        for ($x = 0; $x < count($layanan); $x++) {
+            // klaim_kesehatan
+            if ($layanan[$x] == 1) {
+                $klaim_kesehatan += $jumlah_klaim[$x];
+            } 
+            // klaim_non_kesehatan
+            else {
+                // jumlah_klaim_frame
+                if($layanan[$x] == 2){
+                    $jumlah_klaim_frame += $jumlah_klaim[$x];
+                }
+                // jumlah_klaim_lensa
+                else if($layanan[$x] == 3){
+                    $jumlah_klaim_lensa += $jumlah_klaim[$x];
+                }
+                // jumlah_klaim_hamil
+                else if($layanan[$x] == 4){
+                    $jumlah_klaim_hamil += $jumlah_klaim[$x];
+                }
+                // jumlah_klaim_salin_normal
+                else if($layanan[$x] == 5){
+                    $jumlah_klaim_salin_normal += $jumlah_klaim[$x];
+                }
+                // jumlah_klaim_salin_caesar
+                else if($layanan[$x] == 6){
+                    $jumlah_klaim_salin_caesar += $jumlah_klaim[$x];
+                }
+                // klaim_non_kesehatan
+                $klaim_non_kesehatan += $jumlah_klaim[$x];
+            }
+        }
+        // ambil plafon
+        $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
+        $plafon = ReimbursePlafon::where($where)->orderBy('id', 'desc')->first();
+        // ambil semua klaim_kesehatan yang status tidak Ditolak di periode dan nik tersebut
+        $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
+        $plafon_diambil = TrxReimburseMaster::where($where)->whereNotIn('status_pengajuan', [3])->sum('klaim_kesehatan');
+        // trx_tbl_reimburse_master
+        $trxM = new TrxReimburseMaster;
+        $trxM->nik_karyawan = $nik_karyawan;
+        $trxM->karyawan_property = $this->getNikProperty($nik_karyawan);
+        $trxM->periode = $periode;
+        $trxM->plafon = $plafon->kesehatan;
+        $trxM->plafon_diambil = $plafon_diambil;
+        $trxM->sisa_plafon_1 = $trxM->plafon - $trxM->plafon_diambil;
+        $trxM->klaim_kesehatan = $klaim_kesehatan;
+        $trxM->klaim_non_kesehatan = $klaim_non_kesehatan;
+        $trxM->sisa_plafon_2 = $trxM->sisa_plafon_1 - $trxM->klaim_kesehatan;
+        $trxM->status_pengajuan = 1;
+        $trxM->catatan = $request->catatan;
+        // cek apakah klaim_kesehatan lebih dari plafon kesehatan
+        $error = '<h4>ERROR:</h4>';
+        if($klaim_kesehatan > $trxM->sisa_plafon_1){
+            $error .= '<h5>Nominal klaim kesehatan melebihi plafon.
+            <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+            <br/>Terima kasih.</h5>';
+            return redirect()->back()->with('error', $error);
+        }
+        // cek apakah klaim_non_kesehatan lebih dari plafonnya
+        for ($x = 0; $x < count($layanan); $x++) {
+            // 2 = Kacamata-Frame
+            if($layanan[$x] == 2){
+                $cekData = $this->isKlaimNonKesehatan(0, $nik_karyawan, $layanan[$x]);
+                // bisa mengajukan kembali setelah 2 tahun dari tanggal pengajuan terakhir
+                if($cekData['cek']){
+                    $error .= '<h5>Klaim Kacamata-Frame sudah pernah diajukan di tanggal '.$cekData['tanggal'].'.
+                    <br/>Anda dapat mengajukan kembali dari tanggal '.date("Y-m-d", strtotime("+2 years", strtotime($cekData['tanggal']))).'.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Terima kasih.</h5>';
+                    return redirect()->back()->with('error', $error);
+                }else{
+                    if($jumlah_klaim_frame > $plafon->frame){
+                        $error .= '<h5>Nominal klaim Kacamata-Frame melebihi plafon.</h5>';
+                        return redirect()->back()->with('error', $error);
+                    }
+                }
+            }
+            // 3 = Kacamata-Lensa
+            else if($layanan[$x] == 3){
+                $cekData = $this->isKlaimNonKesehatan(0, $nik_karyawan, $layanan[$x]);
+                // bisa mengajukan kembali setelah 1 tahun dari tanggal pengajuan terakhir
+                if($cekData['cek']){
+                    $error .= '<h5>Klaim Kacamata-Lensa sudah pernah diajukan di tanggal '.$cekData['tanggal'].'.
+                    <br/>Anda dapat mengajukan kembali dari tanggal '.date("Y-m-d", strtotime("+1 years", strtotime($cekData['tanggal']))).'.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Terima kasih.</h5>';
+                    return redirect()->back()->with('error', $error);
+                }else{
+                    if($jumlah_klaim_lensa > $plafon->lensa){
+                        $error .= '<h5>Nominal klaim Kacamata-Lensa melebihi plafon.</h5>';
+                        return redirect()->back()->with('error', $error);
+                    }
+                }
+            }
+            // 4 = Kehamilan
+            else if($layanan[$x] == 4){
+                $cekData = $this->isKlaimNonKesehatan($periode, $nik_karyawan, $layanan[$x]);
+                if($cekData['cek']){
+                    $error .= '<h5>Klaim Kehamilan sudah pernah diajukan.
+                    <br/>Anda dapat mengajukan kembali tahun berikutnya.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Terima kasih.</h5>';
+                    return redirect()->back()->with('error', $error);
+                }else{
+                    if($jumlah_klaim_hamil > $plafon->kehamilan){
+                        $error .= '<h5>Nominal klaim Kehamilan melebihi plafon.</h5>';
+                        return redirect()->back()->with('error', $error);
+                    }
+                }
+            }
+            // 5 = Persalinan-Normal
+            else if($layanan[$x] == 5){
+                $cekData = $this->isKlaimNonKesehatan($periode, $nik_karyawan, $layanan[$x]);
+                if($cekData['cek']){
+                    $error .= '<h5>Klaim Persalinan-Normal sudah pernah diajukan.
+                    <br/>Anda dapat mengajukan kembali tahun berikutnya.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Terima kasih.</h5>';
+                    return redirect()->back()->with('error', $error);
+                }else{
+                    if($jumlah_klaim_salin_normal > $plafon->persalinan_normal){
+                        $error .= '<h5>Nominal klaim Persalinan-Normal melebihi plafon.</h5>';
+                        return redirect()->back()->with('error', $error);
+                    }
+                }
+            }
+            // 6 = Persalinan-Caesar
+            else if($layanan[$x] == 6){
+                $cekData = $this->isKlaimNonKesehatan($periode, $nik_karyawan, $layanan[$x]);
+                if($cekData['cek']){
+                    $error .= '<h5>Klaim Persalinan-Caesar sudah pernah diajukan.
+                    <br/>Anda dapat mengajukan kembali tahun berikutnya.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Terima kasih.</h5>';
+                    return redirect()->back()->with('error', $error);
+                }else{
+                    if($jumlah_klaim_salin_caesar > $plafon->persalinan_caesar){
+                        $error .= '<h5>Nominal klaim Persalinan-Caesar melebihi plafon.</h5>';
+                        return redirect()->back()->with('error', $error);
+                    }
+                }
+            }
+        }
+        // trx_tbl_reimburse_master
+        $trxM->save();
+        // trx_tbl_reimburse_log
+        $this->insertLog($trxM->id, 1, $nik_karyawan);
+        // trx_tbl_reimburse_detail
+        for ($x = 0; $x < count($hubungan); $x++) {
+            $trxD = new TrxReimburseDetail;
+            $trxD->id_reimburse = $trxM->id;
+            $trxD->nama_pasien = $nama_pasien[$x];
+            $trxD->id_hubungan = $hubungan[$x];
+            $trxD->id_layanan = $layanan[$x];
+            $trxD->tanggal = $tanggal[$x];
+            $trxD->jumlah_klaim = $jumlah_klaim[$x];
+            $trxD->save();
+        }
+        // trx_tbl_reimburse_lampiran
+        for ($x = 0; $x < count($lampiran); $x++) {
+            $trxL = new TrxReimburseLampiran;
+            $trxL->id_reimburse = $trxM->id;
+            $trxL->id_lampiran = $lampiran[$x];
+            // 
+            $_filename = $file_lampiran[$x];
+            $namafile = $nik_karyawan . '_' . $x . '_' . time() . '.' . $_filename->getClientOriginalExtension();
+            $_filename->move('public/assets/reimburse/', $namafile);
+            $trxL->filename = $namafile;
+            // 
+            $trxL->save();
+        }
+        // start
+        // parameter yang dipassing ke sendemail
+        $karyawan = json_decode($trxM->karyawan_property, true);
+        $mailData['title'] = 'Formulir Reimbursement';
+        $mailData['filename'] = 'emails.reimburse0';
+        $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [$trxM->id, 'view' => 'approval'])];
+        // ambil email pic hco untuk reimburse
+        $nik_pic = MtrUtility::find(12)->informasi;
+        $where = ['nik' => $nik_pic];
+        $toPicHco = Karyawan::where($where)->first();
+        // 
+        $mailData['to'] = $toPicHco->email;
+        // return response()->json( [ 'mailData' => $mailData ], 200 );
+        $todolist = ['id_trx' => $trxM->id, 'nik' => $nik_pic, 'id_status' => $trxM->status_pengajuan, 'pic' => 'pic'];
+        $this->insertToDoList($todolist, $mailData);
+        $this->sendEmail($mailData);
+        // finish
+        return redirect('reimburse')->with('msg', 'Data is saved successfully.');
+    }
+
+    public function isKlaimNonKesehatan($periode, $nik_karyawan, $id_layanan){
+        // ambil semua id yang status tidak Ditolak di periode dan nik tersebut
+        $where = ['nik_karyawan' => $nik_karyawan];
+        if($periode > 0){
+            $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
+        }
+        $plafonId = TrxReimburseMaster::select('id')->where($where)->whereNotIn('status_pengajuan', [3])->get();
+        // ambil semua klaim non kesehatan
+        $data = TrxReimburseDetail::whereIn('id_reimburse', $plafonId)->whereNotIn('id_layanan', [1])->orderBy('id', 'desc')->get();
+        // 
+        $cek = false;
+        $tanggal = '';
+        foreach ($data as $value) {
+            if($value->id_layanan == $id_layanan){
+                $tanggal = $value->tanggal;
+                // 2 = Kacamata-Frame bisa mengajukan kembali setelah 2 tahun dari tanggal pengajuan terakhir
+                if($id_layanan == 2){
+                    if(date("Y-m-d") < date("Y-m-d", strtotime("+2 years", strtotime($tanggal)))){
+                        $cek = true;
+                        break;
+                    }
+                }
+                // 3 = Kacamata-Lensa bisa mengajukan kembali setelah 1 tahun dari tanggal pengajuan terakhir
+                else if($id_layanan == 3){
+                    if(date("Y-m-d") < date("Y-m-d", strtotime("+1 years", strtotime($tanggal)))){
+                        $cek = true;
+                        break;
+                    }
+                }
+                // selain Kacamata
+                else{
+                    $cek = true;
+                    break;
+                }
+            }
+        }
+        return ['cek'=> $cek, 'tanggal'=>$tanggal];
+    }
+
+    public static function getIsKlaimNonKesehatan($periode, $nik_karyawan, $id_layanan){
+        // ambil semua id yang status tidak Ditolak di periode dan nik tersebut
+        $where = ['nik_karyawan' => $nik_karyawan];
+        if($periode > 0){
+            $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
+        }
+        $plafonId = TrxReimburseMaster::select('id')->where($where)->whereNotIn('status_pengajuan', [3])->get();
+        // ambil semua klaim non kesehatan
+        $data = TrxReimburseDetail::whereIn('id_reimburse', $plafonId)->whereNotIn('id_layanan', [1])->orderBy('id', 'desc')->get();
+        // 
+        $cek = false;
+        $tanggal = '';
+        foreach ($data as $value) {
+            if($value->id_layanan == $id_layanan){
+                $tanggal = $value->tanggal;
+                // 2 = Kacamata-Frame bisa mengajukan kembali setelah 2 tahun dari tanggal pengajuan terakhir
+                if($id_layanan == 2){
+                    if(date("Y-m-d") < date("Y-m-d", strtotime("+2 years", strtotime($tanggal)))){
+                        $cek = true;
+                        break;
+                    }
+                }
+                // 3 = Kacamata-Lensa bisa mengajukan kembali setelah 1 tahun dari tanggal pengajuan terakhir
+                else if($id_layanan == 3){
+                    if(date("Y-m-d") < date("Y-m-d", strtotime("+1 years", strtotime($tanggal)))){
+                        $cek = true;
+                        break;
+                    }
+                }
+                // selain Kacamata
+                else{
+                    $cek = true;
+                    break;
+                }
+            }
+        }
+        return ['cek'=> $cek, 'tanggal'=>$tanggal];
+    }
+
+    public function getNikProperty($nik)
+    {
+        $where = ['nik' => $nik, 'is_aktif' => 1];
+        $data = Karyawan::select('mtr_tbl_karyawan.nik', 'mtr_tbl_karyawan.nama', 'mtr_tbl_karyawan.email', 'mtr_tbl_karyawan.telepon1', 'mtr_tbl_perusahaan.nama as perusahaan', 'mtr_tbl_divisi.nama as divisi', 'mtr_tbl_departemen.nama as dep', 'mtr_tbl_sub_departemen.nama as sub_dep', 'mtr_tbl_level.level as level', 'mtr_tbl_jabatan.jabatan as jabatan', 'mtr_tbl_level.id as id_level')
+            ->leftJoin('mtr_tbl_perusahaan', 'mtr_tbl_perusahaan.id', '=', 'mtr_tbl_karyawan.kode_perusahaan')
+            ->leftJoin('mtr_tbl_divisi', 'mtr_tbl_divisi.id', '=', 'mtr_tbl_karyawan.kode_divisi')
+            ->leftJoin('mtr_tbl_departemen', 'mtr_tbl_departemen.id', '=', 'mtr_tbl_karyawan.kode_departemen')
+            ->leftJoin('mtr_tbl_sub_departemen', 'mtr_tbl_sub_departemen.id', '=', 'mtr_tbl_karyawan.kode_sub_departemen')
+            ->leftJoin('mtr_tbl_level', 'mtr_tbl_level.id', '=', 'mtr_tbl_karyawan.kode_level')
+            ->leftJoin('mtr_tbl_jabatan', 'mtr_tbl_jabatan.id', '=', 'mtr_tbl_karyawan.kode_jabatan')
+            ->where($where)->first();
+        return json_encode($data);
+    }
+
+    public function insertToDoList($todolist, $mailData)
+    {
+        $data = New ToDoList;
+        $data->id_trx = $todolist['id_trx'];
+        $data->id_status = $todolist['id_status'];
+        $data->nik = $todolist['nik'];
+        $data->pic = $todolist['pic'];
+        $data->title = $mailData['title'];
+        $data->nama = $mailData['data']['nama'];
+        $data->jabatan = $mailData['data']['jabatan'];
+        $data->unit_kerja = $mailData['data']['unit_kerja'];
+        $data->link = $mailData['data']['link'];
+        $data->filename = $mailData['filename'];
+        $data->email = $mailData['to'];
+        $data->save();
+        $this->insertToDoListLog($todolist, $mailData);
+    }
+
+    public function insertToDoListLog($todolist, $mailData)
+    {
+        $data = New ToDoListLog;
+        $data->id_trx = $todolist['id_trx'];
+        $data->id_status = $todolist['id_status'];
+        $data->nik = $todolist['nik'];
+        $data->pic = $todolist['pic'];
+        $data->title = $mailData['title'];
+        $data->nama = $mailData['data']['nama'];
+        $data->jabatan = $mailData['data']['jabatan'];
+        $data->unit_kerja = $mailData['data']['unit_kerja'];
+        $data->link = $mailData['data']['link'];
+        $data->filename = $mailData['filename'];
+        $data->email = $mailData['to'];
+        $data->save();
+    }
+
+    public function deleteToDoList($where)
+    {
+        $trx = ToDoList::where($where)->first();
+        if (!empty($trx)) {
+            $trx->delete();
+        }
+    }
+
+    public function insertLog($id_trx, $id_status, $nik_pic)
+    {
+        $data = new TrxReimburseLog;
+        $data->id_trx = $id_trx;
+        $data->id_status = $id_status;
+        $data->nik_pic = $nik_pic;
+        $data->save();
+    }
+
+    public function sendEmail($mailData)
+    {
+        // hco.all@alita.id
+        // $ccEmails = explode(',', MtrUtility::find(11)->informasi);
+        // Email cc reimburse only
+        $ccEmails = explode(',', MtrUtility::find(18)->informasi);
+        Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, $id)
+    {
+        //
+        // $periode = Carbon::now()->format('Y');
+        $linkAction = route('reimburse.update', $id);
+        // 
+        $where = ['id_trx' => $id];
+        $nReview = TrxReimburseLog::where($where)->whereIn('id_status', [2, 3])->count();
+        // 
+        $trxM = TrxReimburseMaster::find($id);
+        $karyawan = json_decode($trxM->karyawan_property, true);
+        // 
+        // $where = ['nik_karyawan' => $trxM->nik_karyawan, 'periode' => $periode];
+        $where = ['nik_karyawan' => $trxM->nik_karyawan];
+        $data = TrxReimburseMaster::select('id')->where($where)->orderBy('id', 'asc')->get();
+        $array = array();
+        foreach ($data as $value) {
+            array_push($array, $value->id);
+        }
+        $ke = array_search($id, $array) + 1;
+        // 
+        $where = ['id_reimburse' => $id];
+        $lampiran = TrxReimburseLampiran::where($where)->get();
+        // 
+        $where = ['id_reimburse' => $id];
+        $trxD = TrxReimburseDetail::where($where)->get();
+        // 
+        $data = ['ke' => $ke, 'nik' => $karyawan['nik'], 'nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep']];
+        // 
+        $view = $request->view;
+        $isHC = $request->isHC;
+        switch ($view) {
+            case 'approval':
+                if ($nReview == 0) {
+                    return view('emails.reimburse', compact('trxM', 'trxD', 'data', 'lampiran', 'linkAction'));
+                } else {
+                    return view('emails.reimburse_ok');
+                }
+                break;
+            case 'detail':
+                $this->authorize('auth');
+                // 
+                $where = ['id_trx' => $id];
+                $history = TrxReimburseLog::where($where)->orderBy('created_at', 'desc')->get();
+                // 
+                return view('formulir.reimburse.view', compact('history', 'trxM', 'trxD', 'data', 'lampiran'));
+                break;
+            case 'pdf':
+                // $this->authorize('auth');
+                // ambil plafon
+                $where = ['periode' => $trxM->periode, 'nik_karyawan' => $trxM->nik_karyawan];
+                $plafon = ReimbursePlafon::where($where)->orderBy('id', 'desc')->first();
+                // return response()->json( [ 'success' => true, 'message' => $plafon ], 200 );
+                // print to pdf
+                $waktu = date('YmdHis');
+                // start
+                $htmlReimburseLog = '<table width="100%" border="0" align="center" cellpadding="2" cellspacing="0"><tr>';
+                // karyawan
+                $where = ['id_trx' => $id, 'nik_pic' => $trxM->nik_karyawan, 'id_status' => 1];
+                $reimburseLog = TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
+                if (!empty($reimburseLog)) {
+                    $htmlReimburseLog .= '<td>Mengajukan<br/><img src="' . public_path('assets/images/matta/requested_new.png') . '" height="30" /><br/>' . $karyawan['nama'] . '<br/>' . $karyawan['jabatan'] . '<br/>' . $reimburseLog->created_at . '</td>';
+                }
+                // hco
+                // approve
+                $where = ['id_trx' => $id, 'id_status' => 2];
+                $reimburseLog = TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
+                if (!empty($reimburseLog)) {
+                    $htmlReimburseLog .= '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $reimburseLog->_nik->nama . '<br/>' . $reimburseLog->_nik->_jabatan->jabatan . '<br/>' . $reimburseLog->created_at . '</td>';
+                }
+                // reject
+                $where = ['id_trx' => $id, 'id_status' => 3];
+                $reimburseLog = TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
+                if (!empty($reimburseLog)) {
+                    $htmlReimburseLog .= '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $reimburseLog->_nik->nama . '<br/>' . $reimburseLog->_nik->_jabatan->jabatan . '<br/>' . $reimburseLog->created_at . '</td>';
+                }
+                // finish
+                $htmlReimburseLog .= '</tr></table>';
+                // die;
+                $where = ['id_reimburse' => $id];
+                $check_kes = TrxReimburseDetail::where($where)->whereIn('id_layanan', [1])->exists();
+                $where = ['id_reimburse' => $id];
+                $check_non_kes = TrxReimburseDetail::where($where)->whereNotIn('id_layanan', [1])->exists();
+                // 
+                $filename = $waktu . '_formulir_reimburse.pdf';
+                $view_kes = \View::make('formulir.reimburse.pdf_kes', compact('trxM', 'trxD', 'plafon', 'karyawan', 'lampiran', 'htmlReimburseLog', 'ke', 'isHC'));
+                $html_kes = $view_kes->render();
+                $view_non_kes = \View::make('formulir.reimburse.pdf_non_kes', compact('trxM', 'trxD', 'plafon', 'karyawan', 'lampiran', 'htmlReimburseLog', 'ke', 'isHC'));
+                $html_non_kes = $view_non_kes->render();
+                $pdf = new TCPDF;
+                $pdf::SetTitle('Formulir Reimbursement');
+                $pdf::SetFont('times', '', 10, '', true);
+                if($check_kes){
+                    $pdf::AddPage();
+                    $pdf::writeHTML($html_kes, true, false, true, false, '');
+                }
+                if($check_non_kes){
+                    $pdf::AddPage();
+                    $pdf::writeHTML($html_non_kes, true, false, true, false, '');
+                }
+                $pdf::Output(public_path($filename), 'I');
+                return response()->download(public_path($filename));
+                break;
+            default:
+                return view('emails.reimburse_ok');
+        }
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+        $no = 0;
+        $trxM = TrxReimburseMaster::find($id);
+        $karyawan = json_decode($trxM->karyawan_property, true);
+        // 
+        // $where = ['nik_karyawan' => $trxM->nik_karyawan, 'periode' => $periode];
+        $where = ['nik_karyawan' => $trxM->nik_karyawan];
+        $data = TrxReimburseMaster::select('id')->where($where)->orderBy('id', 'asc')->get();
+        $array = array();
+        foreach ($data as $value) {
+            array_push($array, $value->id);
+        }
+        $ke = array_search($id, $array) + 1;
+        // 
+        $where = ['id_reimburse' => $id];
+        $lampiran = TrxReimburseLampiran::where($where)->get();
+        // 
+        $where = ['id_reimburse' => $id];
+        $trxD = TrxReimburseDetail::where($where)->get();
+        // 
+        $data = ['ke' => $ke, 'nik' => $karyawan['nik'], 'nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep']];
+        // 
+        $where = ['id_trx' => $id];
+        $history = TrxReimburseLog::where($where)->orderBy('created_at', 'desc')->get();
+        return view('formulir.reimburse.detail.edit', compact('no', 'history', 'trxM', 'trxD', 'data', 'lampiran'));
+    }
+
+    public function editDetail($id)
+    {
+        //
+        $status = 'edit';
+        $trxD = TrxReimburseDetail::find( $id );
+        $hubungan = ReimburseHubungan::orderBy('id', 'asc')->get();
+        $layanan = ReimburseLayanan::orderBy('id', 'asc')->get();
+        return view('formulir.reimburse.detail.upsert', compact('trxD', 'status', 'hubungan', 'layanan'));
+    }
+    
+    public function updateDetail(Request $request, $id)
+    {
+        //
+        // return response()->json( [ 'request' => $request->all(), 'id' => $id ], 200 );// ambil plafon
+        $trxM = TrxReimburseMaster::find($request->trxMId);
+        $trxD = TrxReimburseDetail::find($id);
+        // 
+        $nik_karyawan = $trxM->nik_karyawan;
+        $periode = $trxM->periode;
+        $id_hubungan = $request->id_hubungan;
+        $nama_pasien = $request->nama_pasien;
+        $tanggal = $request->tanggal;
+        $jumlah_klaim_akhir = $request->jumlah_klaim;
+        $jumlah_klaim_awal = $trxD->jumlah_klaim;
+        // 
+        $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
+        $plafon = ReimbursePlafon::where($where)->orderBy('id', 'desc')->first();
+        // 1 = Kesehatan
+        if($request->_id_layanan == 1){
+            $klaim_kesehatan_awal = $trxM->klaim_kesehatan;
+            $klaim_kesehatan_akhir = $klaim_kesehatan_awal - $jumlah_klaim_awal + $jumlah_klaim_akhir;
+            // cek apakah klaim_kesehatan lebih dari plafon kesehatan
+            $error = '<h4>ERROR:</h4>';
+            if($klaim_kesehatan_akhir > $trxM->sisa_plafon_1){
+                $error .= '<h5>Nominal klaim kesehatan melebihi plafon.
+                <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                <br/>Terima kasih.</h5>';
+                return redirect()->back()->with('error', $error);
+            }
+            // 
+            $trxM->klaim_kesehatan = $klaim_kesehatan_akhir;
+            $trxM->sisa_plafon_2 = $trxM->sisa_plafon_1 - $trxM->klaim_kesehatan;
+            $trxM->update();
+        }
+        // 2 = Kacamata-Frame
+        else if($request->_id_layanan == 2){
+            $klaim_kesehatan_awal = $trxM->klaim_non_kesehatan;
+            $klaim_kesehatan_akhir = $klaim_kesehatan_awal - $jumlah_klaim_awal + $jumlah_klaim_akhir;
+            // cek apakah klaim_kesehatan lebih dari plafon klaim_non_kesehatan
+            $error = '<h4>ERROR:</h4>';
+            if($jumlah_klaim_akhir > $plafon->frame){
+                $error .= '<h5>Nominal klaim Kacamata-Frame melebihi plafon.</h5>';
+                return redirect()->back()->with('error', $error);
+            }
+            // 
+            $trxM->klaim_non_kesehatan = $klaim_kesehatan_akhir;
+            $trxM->update();
+        }
+        // 3 = Kacamata-Lensa
+        else if($request->_id_layanan == 3){
+            $klaim_kesehatan_awal = $trxM->klaim_non_kesehatan;
+            $klaim_kesehatan_akhir = $klaim_kesehatan_awal - $jumlah_klaim_awal + $jumlah_klaim_akhir;
+            // cek apakah klaim_kesehatan lebih dari plafon klaim_non_kesehatan
+            $error = '<h4>ERROR:</h4>';
+            if($jumlah_klaim_akhir > $plafon->lensa){
+                $error .= '<h5>Nominal klaim Kacamata-Lensa melebihi plafon.</h5>';
+                return redirect()->back()->with('error', $error);
+            }
+            // 
+            $trxM->klaim_non_kesehatan = $klaim_kesehatan_akhir;
+            $trxM->update();
+        }
+        // 4 = Kehamilan
+        else if($request->_id_layanan == 4){
+            $klaim_kesehatan_awal = $trxM->klaim_non_kesehatan;
+            $klaim_kesehatan_akhir = $klaim_kesehatan_awal - $jumlah_klaim_awal + $jumlah_klaim_akhir;
+            // cek apakah klaim_kesehatan lebih dari plafon klaim_non_kesehatan
+            $error = '<h4>ERROR:</h4>';
+            if($jumlah_klaim_akhir > $plafon->kehamilan){
+                $error .= '<h5>Nominal klaim Kehamilan melebihi plafon.</h5>';
+                return redirect()->back()->with('error', $error);
+            }
+            // 
+            $trxM->klaim_non_kesehatan = $klaim_kesehatan_akhir;
+            $trxM->update();
+        }
+        // 5 = Persalinan-Normal
+        else if($request->_id_layanan == 5){
+            $klaim_kesehatan_awal = $trxM->klaim_non_kesehatan;
+            $klaim_kesehatan_akhir = $klaim_kesehatan_awal - $jumlah_klaim_awal + $jumlah_klaim_akhir;
+            // cek apakah klaim_kesehatan lebih dari plafon klaim_non_kesehatan
+            $error = '<h4>ERROR:</h4>';
+            if($jumlah_klaim_akhir > $plafon->persalinan_normal){
+                $error .= '<h5>Nominal klaim Persalinan-Normal melebihi plafon.</h5>';
+                return redirect()->back()->with('error', $error);
+            }
+            // 
+            $trxM->klaim_non_kesehatan = $klaim_kesehatan_akhir;
+            $trxM->update();
+        }
+        // 6 = Persalinan-Caesar
+        else if($request->_id_layanan == 6){
+            $klaim_kesehatan_awal = $trxM->klaim_non_kesehatan;
+            $klaim_kesehatan_akhir = $klaim_kesehatan_awal - $jumlah_klaim_awal + $jumlah_klaim_akhir;
+            // cek apakah klaim_kesehatan lebih dari plafon klaim_non_kesehatan
+            $error = '<h4>ERROR:</h4>';
+            if($jumlah_klaim_akhir > $plafon->persalinan_caesar){
+                $error .= '<h5>Nominal klaim Persalinan-Caesar melebihi plafon.</h5>';
+                return redirect()->back()->with('error', $error);
+            }
+            // 
+            $trxM->klaim_non_kesehatan = $klaim_kesehatan_akhir;
+            $trxM->update();
+        }
+        // 
+        $trxD->id_hubungan = $id_hubungan;
+        $trxD->nama_pasien = $nama_pasien;
+        $trxD->tanggal = $tanggal;
+        $trxD->jumlah_klaim = $jumlah_klaim_akhir;
+        $trxD->update();
+        // 
+        $this->insertLog($request->trxMId, 5, auth()->user()->nik);
+        // return response()->json( [ 'request' => $request->all(), 'id' => $id ], 200 );
+        return redirect()->route('reimburse.edit', $request->trxMId)->with( 'msg', 'Data is saved successfully.' );
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+        $trx = TrxReimburseMaster::find($id);
+        $status_pengajuan = $request->status_pengajuan;
+        $trx->status_pengajuan = $status_pengajuan;
+        $trx->update();
+        $this->deleteToDoList(['id_trx'=>$id, 'pic'=>'pic', 'filename'=>'emails.reimburse0']);
+        $this->insertLog($id, $status_pengajuan, MtrUtility::find(12)->informasi);
+        if($request->status_pengajuan == 2){
+            // dd($request->all(), $id);
+            // start
+            // parameter yang dipassing ke sendemail
+            $karyawan = json_decode($trx->karyawan_property, true);
+            $mailData['title'] = 'Formulir Reimbursement';
+            $mailData['filename'] = 'emails.reimburse_done';
+            $mailData['to'] = $karyawan['email'];
+            $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [$trx->id, 'view' => 'pdf'])];
+            $this->sendEmail($mailData);
+            // finish
+        }
+        return view('emails.reimburse_ok');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}

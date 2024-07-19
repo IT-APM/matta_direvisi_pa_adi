@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+.center {
+  line-height: 55px;
+  text-align: center;
+}
+</style>
+<head>
+    <title>Matta Reborn</title>
+</head>
+
+<!-- start -->
+
+<body>
+    <table width="100%" border="1" cellspacing="0" cellpadding="0">
+        <tr>
+            <td><table width="100%" border="1" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td width="25%">&nbsp;<img src="{{ public_path('assets/images/matta/alita_new.png') }}" alt="Logo Alita"></td>
+                        <td width="50%"><div class="center"><strong>FORM PENGAJUAN PELATIHAN</strong></div></td>
+                        <td width="25%"><div class="center">No: {{ $trx->id }}</div></td>
+                    </tr>
+                </table>
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td align="center"><strong>DIAJUKAN OLEH</strong></td>
+                    </tr>
+                </table>
+                <hr />
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen</td>
+                        <td width="70%">: {{ $pengaju['nama'] }}<br />: {{ $pengaju['nik'] }}<br />:
+                            {{ $pengaju['jabatan'] }}<br />: {{ $pengaju['divisi'] }} / {{ $pengaju['dep'] }} /
+                            {{ $pengaju['sub_dep'] }}</td>
+                    </tr>
+                </table>
+                <hr />
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td align="center"><strong>PESERTA</strong></td>
+                    </tr>
+                </table>
+                <table width="100%" border="1" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <th width="30%">Nama / NIP</th>
+                        <th width="45%">Direktorat / Divisi / Departemen</th>
+                        <th width="25%">Jabatan</th>
+                    </tr>
+                    @foreach ($arrPeserta as $value)
+                    <tr>
+                        <td>{{ $value['nama'] }} / {{ $value['nik'] }}</td>
+                        <td>{{ $value['divisi'] }} / {{ $value['dep'] }} / {{ $value['sub_dep'] }}</td>
+                        <td>{{ $value['jabatan'] }}</td>
+                    </tr>
+                    @endforeach
+                </table>
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td align="center"><strong>PELATIHAN</strong></td>
+                    </tr>
+                </table>
+                <hr />
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td width="30%">Pelatihan ke</td>
+                        <td width="70%">: {{ $trx->ke }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tahun</td>
+                        <td>: {{ $trx->tahun }}</td>
+                    </tr>
+                    <tr>
+                        <td>Jenis</td>
+                        <td> :
+                            @foreach ($arrJenis as $value)
+                            {{ $value->jenis }} @if(!$loop->last) / @endif
+                            @endforeach
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Judul</td>
+                        <td>: {{ $trx->judul }}</td>
+                    </tr>
+                    <tr>
+                        <td>Penyelenggara</td>
+                        <td>: {{ $trx->penyelenggara }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tanggal Pelaksanaan</td>
+                        <td>: {{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y') }}
+                            sampai
+                            {{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y') }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tempat</td>
+                        <td>: {{ $trx->tempat }}</td>
+                    </tr>
+                    <tr>
+                        <td>Biaya</td>
+                        <td>: Rp. {{ number_format($trx->biaya, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Benefit</td>
+                        <td>: 
+                            @foreach ($arrBenefit as $value)
+                            {{ $value->benefit }} @if(!$loop->last) / @endif
+                            @endforeach
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Anggaran</td>
+                        <td>: {{ $trx->_anggaran->anggaran }}</td>
+                    </tr>
+                    <tr>
+                        <td>Keterangan</td>
+                        <td>: {!! $trx->keterangan !!}</td>
+                    </tr>
+                </table>
+                <hr />
+                {!! $htmlLog !!}
+            </td>
+        </tr>
+    </table>
+</body>
+<!-- finish -->
+
+</html>
