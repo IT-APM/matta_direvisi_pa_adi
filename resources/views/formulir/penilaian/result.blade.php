@@ -211,6 +211,7 @@
                   <td width="15%"><strong><div align="center">Penilai 1</div></strong></td>
                 </tr>
                 {!! $angka_skor !!}
+                {!! $angka_total !!}
                 {!! $angka_rata !!}
               </table>
               @endif

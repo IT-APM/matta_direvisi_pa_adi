@@ -102,6 +102,10 @@
 
                 </table>
                 <table width="100%" border="1" cellspacing="0" cellpadding="2">
+                    <?php echo $angka_total; ?>
+
+                </table>
+                <table width="100%" border="1" cellspacing="0" cellpadding="2">
                     <?php echo $angka_rata; ?>
 
                 </table>

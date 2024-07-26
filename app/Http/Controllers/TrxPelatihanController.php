@@ -214,7 +214,7 @@ class TrxPelatihanController extends Controller
         $_atasan_pengaju_ = json_decode($_atasan_pengaju, true);
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Formulir Pengajuan Pelatihan';
-        $mailData['data'] = ['nama'=>$_pengaju_['nama'].'/'.$_pengaju_['nik'], 'jabatan'=>$_pengaju_['jabatan'], 'unit_kerja'=>$_pengaju_['divisi'].'/'.$_pengaju_['dep'].'/'.$_pengaju_['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $_atasan_pengaju_['nik'], 'id_status' => $status_pengajuan, 'pic' => 'atasan_pengaju']) ];
+        $mailData['data'] = ['nama'=>$_pengaju_['nama'].'/'.$_pengaju_['nik'], 'jabatan'=>$_pengaju_['jabatan'], 'unit_kerja'=>$_pengaju_['divisi'].'/'.$_pengaju_['dep'].'/'.$_pengaju_['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $_atasan_pengaju_['nik'], 'id_status' => $status_pengajuan, 'pic' => 'atasan_pengaju']), 'trx'=>$trx ];
         $mailData['filename'] = 'emails.pelatihan0';
         $mailData['to'] = $_atasan_pengaju_['email'];
         $todolist = ['id_trx' => $trx->id, 'nik' => $_atasan_pengaju_['nik'], 'id_status' => $status_pengajuan, 'pic' => 'atasan_pengaju'];
@@ -315,14 +315,18 @@ class TrxPelatihanController extends Controller
         // atasan_pengaju
         // 2 = Approve by L1 Requestor
         $where = ['id_trx' => $id, 'nik_pic' => $approver['atasan_pengaju'], 'id_status' => 2];
-        if(empty(TrxPelatihanLog::where($where)->orderBy('id', 'desc')->first())){
+        if(TrxPelatihanLog::where($where)->exists()){
+            $check = $check && true;
+        }else{
             $check = $check && false;
         }
         // atasan_peserta
         // 5 = Approve by L1 Participants
         foreach(explode(';', $approver['atasan_peserta']) as $value){
             $where = ['id_trx' => $id, 'nik_pic' => $value, 'id_status' => 5];
-            if(empty(TrxPelatihanLog::where($where)->orderBy('id', 'desc')->first())){
+            if(TrxPelatihanLog::where($where)->exists()){
+                $check = $check && true;
+            }else{
                 $check = $check && false;
             }
         }
@@ -330,7 +334,9 @@ class TrxPelatihanController extends Controller
         // 10 = Approve by Reviewer 2
         if(!empty($trx->reviewer1)){
             $where = ['id_trx' => $id, 'nik_pic' => $approver['reviewer1'], 'id_status' => 10];
-            if(empty(TrxPelatihanLog::where($where)->orderBy('id', 'desc')->first())){
+            if(TrxPelatihanLog::where($where)->exists()){
+                $check = $check && true;
+            }else{
                 $check = $check && false;
             }
         }
@@ -338,16 +344,22 @@ class TrxPelatihanController extends Controller
         // 14 = Approve by Reviewer 3
         if(!empty($trx->reviewer2)){
             $where = ['id_trx' => $id, 'nik_pic' => $approver['reviewer2'], 'id_status' => 14];
-            if(empty(TrxPelatihanLog::where($where)->orderBy('id', 'desc')->first())){
+            if(TrxPelatihanLog::where($where)->exists()){
+                $check = $check && true;
+            }else{
                 $check = $check && false;
             }
         }
         if($check){
             // parameter yang dipassing ke sendemail
+            $pengaju = json_decode($trx->pengaju_property, true);
             $mailData['title'] = 'Formulir Pengajuan Pelatihan';
-            $mailData['filename'] = 'emails.pelatihan2';
-            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'pelatihan'=>['judul'=>$trx->judul, 'penyelenggara'=>$trx->penyelenggara, 'tanggal_mulai'=>$trx->tanggal_mulai, 'tanggal_akhir'=>$trx->tanggal_akhir, 'tempat'=>$trx->tempat]];
-            $mailData['to'] = $pengaju['email'];
+            $mailData['filename'] = 'emails.pelatihan0';
+            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.edit', [$id]), 'trx'=>$trx];
+            $hco = explode('/', MtrUtility::find(29)->informasi);
+            $mailData['to'] = $hco[1];
+            $todolist = ['id_trx' => $trx->id, 'nik' => $hco[0], 'id_status' => $trx->status_pengajuan, 'pic' => 'hco'];
+            $this->insertToDoList($todolist, $mailData);
             $this->sendEmail($mailData);
         }
         // finish
@@ -653,7 +665,7 @@ class TrxPelatihanController extends Controller
         // masih di hardcode pic hco -> Khatrin Rismasany
         // $hco = '01031908799';
         // $hco = auth()->user()->nik;
-		$hco = MtrUtility::find(17)->informasi;
+		$hco = explode('/', MtrUtility::find(29)->informasi);
         $trx = TrxPelatihan::find( $id );
         $pengaju = json_decode($trx->pengaju_property, true);
         // 
@@ -679,7 +691,7 @@ class TrxPelatihanController extends Controller
             $mailData['filename'] = 'emails.pelatihan0';
             foreach ($atasan_peserta as $value) {
                 $_atasan_peserta = json_decode($value, true);
-                $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $_atasan_peserta['nik'], 'id_status' => $status_pengajuan, 'pic' => 'atasan_peserta']) ];
+                $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $_atasan_peserta['nik'], 'id_status' => $status_pengajuan, 'pic' => 'atasan_peserta']), 'trx'=>$trx ];
                 $mailData['to'] = $_atasan_peserta['email'];
                 $todolist = ['id_trx' => $trx->id, 'nik' => $_atasan_peserta['nik'], 'id_status' => $status_pengajuan, 'pic' => 'atasan_peserta'];
                 $this->insertToDoList($todolist, $mailData);
@@ -701,7 +713,7 @@ class TrxPelatihanController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Pengajuan Pelatihan';
             $mailData['filename'] = 'emails.pelatihan1';
-            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep']];
+            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // check para approver, jika sudah semua kirimkan email ke pengaju
@@ -720,7 +732,7 @@ class TrxPelatihanController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Pengajuan Pelatihan';
             $mailData['filename'] = 'emails.pelatihan1';
-            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep']];
+            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // check para approver, jika sudah semua kirimkan email ke pengaju
@@ -741,7 +753,7 @@ class TrxPelatihanController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Pengajuan Pelatihan';
             $mailData['filename'] = 'emails.pelatihan1';
-            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep']];
+            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // check para approver, jika sudah semua kirimkan email ke pengaju
@@ -762,7 +774,7 @@ class TrxPelatihanController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Pengajuan Pelatihan';
             $mailData['filename'] = 'emails.pelatihan1';
-            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep']];
+            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // check para approver, jika sudah semua kirimkan email ke pengaju
@@ -787,7 +799,7 @@ class TrxPelatihanController extends Controller
                         // parameter yang dipassing ke sendemail
                         $mailData['title'] = 'Formulir Pengajuan Pelatihan';
                         $mailData['filename'] = 'emails.pelatihan0';
-                        $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $reviewer1['nik'], 'id_status' => $status_pengajuan, 'pic' => 'reviewer1']) ];
+                        $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $reviewer1['nik'], 'id_status' => $status_pengajuan, 'pic' => 'reviewer1']), 'trx'=>$trx ];
                         $mailData['to'] = $reviewer1['email'];
                         $todolist = ['id_trx' => $trx->id, 'nik' => $reviewer1['nik'], 'id_status' => $status_pengajuan, 'pic' => 'reviewer1'];
                         $this->insertToDoList($todolist, $mailData);
@@ -802,7 +814,7 @@ class TrxPelatihanController extends Controller
                         // parameter yang dipassing ke sendemail
                         $mailData['title'] = 'Formulir Pengajuan Pelatihan';
                         $mailData['filename'] = 'emails.pelatihan0';
-                        $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $reviewer2['nik'], 'id_status' => $status_pengajuan, 'pic' => 'reviewer2']) ];
+                        $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $reviewer2['nik'], 'id_status' => $status_pengajuan, 'pic' => 'reviewer2']), 'trx'=>$trx ];
                         $mailData['to'] = $reviewer2['email'];
                         $todolist = ['id_trx' => $trx->id, 'nik' => $reviewer2['nik'], 'id_status' => $status_pengajuan, 'pic' => 'reviewer2'];
                         $this->insertToDoList($todolist, $mailData);
@@ -816,13 +828,17 @@ class TrxPelatihanController extends Controller
                     // parameter yang dipassing ke sendemail
                     $mailData['title'] = 'Formulir Pengajuan Pelatihan';
                     $mailData['filename'] = 'emails.pelatihan1';
-                    $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep']];
+                    $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
                     $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
                     $this->sendEmail($mailData);
                     // check para approver, jika sudah semua kirimkan email ke pengaju
                     $this->checkApprovalLine($id);
                     // finish
                 }
+            }else{
+                // check para approver, jika sudah semua kirimkan email ke pengaju
+                $this->checkApprovalLine($id);
+                // finish
             }
         }
         // 11 = Done by HC
@@ -830,7 +846,8 @@ class TrxPelatihanController extends Controller
             $trx->status_pengajuan = $status_pengajuan;
             // 
             $trx->update();
-            $this->insertLog($id, $status_pengajuan, $hco, 'Done by HC');
+            $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$hco[0], 'pic'=>'hco', 'filename'=>'emails.pelatihan0']);
+            $this->insertLog($id, $status_pengajuan, $hco[0], 'Done by HC');
             // 
             return redirect('pelatihan')->with('msg', 'Data is saved successfully.');
         }

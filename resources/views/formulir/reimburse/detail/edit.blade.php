@@ -141,6 +141,18 @@
                                     @endforeach
                                 </td>
                             </tr>
+                            <tr>
+                                <td>Keterangan</td>
+                                <td>{{ $trxM->catatan }}</td>
+                            </tr>
+                            @php
+                                $where = ['id_trx' => $trxM->id, 'nik_pic' => App\Models\MtrUtility::find(12)->informasi];
+                                $info = App\Models\TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
+                            @endphp
+                            <tr>
+                                <td>Catatan Oleh HCO</td>
+                                <td>{{ $info->keterangan }}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

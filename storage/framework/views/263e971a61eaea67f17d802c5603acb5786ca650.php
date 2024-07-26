@@ -103,6 +103,8 @@
                                     </tr>
                                     <?php echo $angka_skor; ?>
 
+                                    <?php echo $angka_total; ?>
+
                                     <?php echo $angka_rata; ?>
 
                                 </tbody>

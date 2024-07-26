@@ -352,7 +352,7 @@ class TrxReimburseController extends Controller
         // trx_tbl_reimburse_master
         $trxM->save();
         // trx_tbl_reimburse_log
-        $this->insertLog($trxM->id, 1, $nik_karyawan);
+        $this->insertLog($trxM->id, 1, $nik_karyawan, 'store');
         // trx_tbl_reimburse_detail
         for ($x = 0; $x < count($hubungan); $x++) {
             $trxD = new TrxReimburseDetail;
@@ -532,12 +532,13 @@ class TrxReimburseController extends Controller
         }
     }
 
-    public function insertLog($id_trx, $id_status, $nik_pic)
+    public function insertLog($id_trx, $id_status, $nik_pic, $keterangan)
     {
         $data = new TrxReimburseLog;
         $data->id_trx = $id_trx;
         $data->id_status = $id_status;
         $data->nik_pic = $nik_pic;
+        $data->keterangan = $keterangan;
         $data->save();
     }
 
@@ -820,7 +821,7 @@ class TrxReimburseController extends Controller
         $trxD->jumlah_klaim = $jumlah_klaim_akhir;
         $trxD->update();
         // 
-        $this->insertLog($request->trxMId, 5, auth()->user()->nik);
+        $this->insertLog($request->trxMId, 5, auth()->user()->nik, 'updateDetail');
         // return response()->json( [ 'request' => $request->all(), 'id' => $id ], 200 );
         return redirect()->route('reimburse.edit', $request->trxMId)->with( 'msg', 'Data is saved successfully.' );
     }
@@ -834,13 +835,14 @@ class TrxReimburseController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // dd($request->all(), $id);
         $trx = TrxReimburseMaster::find($id);
         $status_pengajuan = $request->status_pengajuan;
+        $catatan = $request->catatan;
         $trx->status_pengajuan = $status_pengajuan;
         $trx->update();
         $this->deleteToDoList(['id_trx'=>$id, 'pic'=>'pic', 'filename'=>'emails.reimburse0']);
-        $this->insertLog($id, $status_pengajuan, MtrUtility::find(12)->informasi);
+        $this->insertLog($id, $status_pengajuan, MtrUtility::find(12)->informasi, $catatan);
         if($request->status_pengajuan == 2){
             // dd($request->all(), $id);
             // start

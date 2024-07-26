@@ -112,6 +112,10 @@
                                     @endforeach
                                 </td>
                             </tr>
+                            <tr>
+                                <td>Keterangan</td>
+                                <td>{{ $trxM->catatan }}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -168,6 +172,9 @@
                 <form id="myform" name="myform" method="post" enctype="multipart/form-data" action="{{ $linkAction }}" target="_self" onsubmit="return confirm('Are you sure want to submit this data?');">
                     @method('PATCH')
                     @csrf
+                    <h5>Catatan</h5>
+                    <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
+                    <br/>
                     <button type="submit" name="status_pengajuan" value="2" class="btn btn-success">Approve</button>
                     <button type="submit" name="status_pengajuan" value="3" class="btn btn-danger">Reject</button>
                 </form>

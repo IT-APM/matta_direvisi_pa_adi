@@ -139,6 +139,7 @@
                                         </td>
                                     </tr>
                                     {!! $angka_skor !!}
+                                    {!! $angka_total !!}
                                     {!! $angka_rata !!}
                                 </tbody>
                             </table>

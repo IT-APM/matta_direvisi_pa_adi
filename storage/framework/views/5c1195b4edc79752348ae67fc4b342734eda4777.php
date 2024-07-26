@@ -155,6 +155,34 @@
                     </tr>
                 </table>
                 <hr />
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td align="center"><strong>KETERANGAN</strong></td>
+                    </tr>
+                </table>
+                <hr />
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td align="left"><?php echo e($trxM->catatan); ?></td>
+                    </tr>
+                </table>
+                <hr />
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td align="center"><strong>CATATAN OLEH HCO</strong></td>
+                    </tr>
+                </table>
+                <hr />
+                <?php
+                    $where = ['id_trx' => $trxM->id, 'nik_pic' => App\Models\MtrUtility::find(12)->informasi];
+                    $info = App\Models\TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
+                ?>
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td align="left"><?php echo e($info->keterangan); ?></td>
+                    </tr>
+                </table>
+                <hr />
                 <?php echo $htmlReimburseLog; ?>
 
             </td>

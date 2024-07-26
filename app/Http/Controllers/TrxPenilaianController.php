@@ -476,10 +476,15 @@ class TrxPenilaianController extends Controller
                 $trxSkor2 = DB::table('trx_tbl_penilaian_skor')
                 ->selectRaw('CAST(AVG(skor_karyawan) AS DECIMAL(6,2)) AS avg_kar, CAST(AVG(skor_penilai_1) AS DECIMAL(6,2)) AS avg_nilai1')
                 ->where($where)->first();
+                $trxSkorTotal = DB::table('trx_tbl_penilaian_skor')->selectRaw('SUM(skor_karyawan) AS skor_karyawan, SUM(skor_penilai_1) AS skor_penilai_1')->where($where)->first();
                 // 
                 $angka_rata = '<tr class="bodycopy"><td><strong><div align="right">RATA-RATA</div></strong></td>
                 <td><strong><div align="center">'.$trxSkor2->avg_kar.'</div></strong></td>
                 <td><strong><div align="center">'.$trxSkor2->avg_nilai1.'</div></strong></td>
+                </tr>';
+                $angka_total = '<tr class="bodycopy"><td><strong><div align="right">NILAI TOTAL</div></strong></td>
+                <td><strong><div align="center">'.$trxSkorTotal->skor_karyawan.'</div></strong></td>
+                <td><strong><div align="center">'.$trxSkorTotal->skor_penilai_1.'</div></strong></td>
                 </tr>';
                 // ambil isian kesimpulan dan rekomendasi
                 $txt_perpanjang = '';
@@ -527,7 +532,7 @@ class TrxPenilaianController extends Controller
                     $angka_rata = TrxPenilaianSkor::where($where)->sum('skor_penilai_1');
                 }
                 // 
-                return view( 'formulir.penilaian.result', compact( 'penilaian', 'karyawan', 'penilai1', 'angka_skor', 'angka_rata', 'isian_kes_rek' ) );
+                return view( 'formulir.penilaian.result', compact( 'penilaian', 'karyawan', 'penilai1', 'angka_skor', 'angka_rata', 'isian_kes_rek', 'angka_total' ) );
                 break;
             case 'pdf':
                 // ambil angka rata-rata berdasarkan penilaian_2
@@ -561,10 +566,14 @@ class TrxPenilaianController extends Controller
                 $trxSkor2 = DB::table('trx_tbl_penilaian_skor')
                 ->selectRaw('CAST(AVG(skor_karyawan) AS DECIMAL(6,2)) AS avg_kar, CAST(AVG(skor_penilai_1) AS DECIMAL(6,2)) AS avg_nilai1')
                 ->where($where)->first();
+                $trxSkorTotal = DB::table('trx_tbl_penilaian_skor')->selectRaw('SUM(skor_karyawan) AS skor_karyawan, SUM(skor_penilai_1) AS skor_penilai_1')->where($where)->first();
                 // 
                 $angka_rata = '<tr><td width="70%" align="right"><strong>RATA-RATA</strong></td>
                 <td width="15%" align="center"><strong>'.$trxSkor2->avg_kar.'</strong></td>
                 <td width="15%" align="center"><strong>'.$trxSkor2->avg_nilai1.'</strong></td></tr>';
+                $angka_total = '<tr><td width="70%" align="right"><strong>NILAI TOTAL</strong></td>
+                <td width="15%" align="center"><strong>'.$trxSkorTotal->skor_karyawan.'</strong></td>
+                <td width="15%" align="center"><strong>'.$trxSkorTotal->skor_penilai_1.'</strong></td></tr>';
                 // ambil property para penilai
                 $para_penilai = '<tr><td width="30%">Nama Penilai 1<br/>NIP<br/>Jabatan<br/>Direktorat / Divisi / Departemen</td>
                 <td width="70%">: '.$penilai1['nama'].'<br/>: '.$penilai1['nik'].'<br/>: '.$penilai1['jabatan'].'<br/>: '.$penilai1['divisi'].' / '.$penilai1['dep'].' / '.$penilai1['sub_dep'].'</td></tr>';
@@ -697,7 +706,7 @@ class TrxPenilaianController extends Controller
                     $_perpanjang = $penilaian->_perpanjang->informasi;
                 }
                 $data = ['id_data'=>$penilaian->id, 'id_tipe'=>$penilaian->id_tipe, 'tipe'=>$penilaian->_tipe->tipe_penilaian, 'perpanjang'=>$_perpanjang ];
-                $view = \View::make( 'formulir.penilaian.pdf', compact( 'data', 'karyawan', 'penilai1', 'para_penilai', 'angka_skor', 'angka_rata', 'isian_kes_rek', 'timestamp' ) );
+                $view = \View::make( 'formulir.penilaian.pdf', compact( 'data', 'karyawan', 'penilai1', 'para_penilai', 'angka_skor', 'angka_rata', 'isian_kes_rek', 'timestamp', 'angka_total' ) );
                 $html = $view->render();
                 $pdf = new TCPDF;
                 $pdf::SetTitle('Formulir Penilaian Karyawan');
@@ -773,10 +782,15 @@ class TrxPenilaianController extends Controller
         $trxSkor2 = DB::table('trx_tbl_penilaian_skor')
         ->selectRaw('CAST(AVG(skor_karyawan) AS DECIMAL(6,2)) AS avg_kar, CAST(AVG(skor_penilai_1) AS DECIMAL(6,2)) AS avg_nilai1')
         ->where($where)->first();
+        $trxSkorTotal = DB::table('trx_tbl_penilaian_skor')->selectRaw('SUM(skor_karyawan) AS skor_karyawan, SUM(skor_penilai_1) AS skor_penilai_1')->where($where)->first();
         // 
         $angka_rata = '<tr><td><div align="right"><strong>RATA-RATA</strong></div></td>
         <td><div align="center"><strong>'.$trxSkor2->avg_kar.'</strong></div></td>
         <td><div align="center"><strong>'.$trxSkor2->avg_nilai1.'</strong></div></td>
+        </tr>';
+        $angka_total = '<tr><td><div align="right"><strong>NILAI TOTAL</strong></div></td>
+        <td><div align="center"><strong>'.$trxSkorTotal->skor_karyawan.'</strong></div></td>
+        <td><div align="center"><strong>'.$trxSkorTotal->skor_penilai_1.'</strong></div></td>
         </tr>';
         // ambil isian kesimpulan dan rekomendasi
         $txt_perpanjang = '';
@@ -824,7 +838,7 @@ class TrxPenilaianController extends Controller
             $angka_rata = TrxPenilaianSkor::where($where)->sum('skor_penilai_1');
         }
         // 
-        return view( 'formulir.penilaian.update', compact( 'penilaian', 'karyawan', '_karyawan', 'penilai1', 'penilai2', 'penilai3', 'status', 'tipe', 'perpanjang', 'angka_skor', 'angka_rata', 'isian_kes_rek' ) );
+        return view( 'formulir.penilaian.update', compact( 'penilaian', 'karyawan', '_karyawan', 'penilai1', 'penilai2', 'penilai3', 'status', 'tipe', 'perpanjang', 'angka_skor', 'angka_rata', 'isian_kes_rek', 'angka_total' ) );
     }
 
     /**
@@ -976,10 +990,15 @@ class TrxPenilaianController extends Controller
         $trxSkor2 = DB::table('trx_tbl_penilaian_skor')
         ->selectRaw('CAST(AVG(skor_karyawan) AS DECIMAL(6,2)) AS avg_kar, CAST(AVG(skor_penilai_1) AS DECIMAL(6,2)) AS avg_nilai1')
         ->where($where)->first();
+        $trxSkorTotal = DB::table('trx_tbl_penilaian_skor')->selectRaw('SUM(skor_karyawan) AS skor_karyawan, SUM(skor_penilai_1) AS skor_penilai_1')->where($where)->first();
         // 
         $angka_rata = '<tr><td><div align="right"><strong>RATA-RATA</strong></div></td>
         <td><div align="center"><strong>'.$trxSkor2->avg_kar.'</strong></div></td>
         <td><div align="center"><strong>'.$trxSkor2->avg_nilai1.'</strong></div></td>
+        </tr>';
+        $angka_total = '<tr><td><div align="right"><strong>NILAI TOTAL</strong></div></td>
+        <td><div align="center"><strong>'.$trxSkorTotal->skor_karyawan.'</strong></div></td>
+        <td><div align="center"><strong>'.$trxSkorTotal->skor_penilai_1.'</strong></div></td>
         </tr>';
         // ambil isian kesimpulan dan rekomendasi
         $txt_perpanjang = '';
@@ -1027,7 +1046,7 @@ class TrxPenilaianController extends Controller
             $angka_rata = TrxPenilaianSkor::where($where)->sum('skor_penilai_1');
         }
         // 
-        return view( 'formulir.penilaian.revisi', compact( 'penilaian', 'karyawan', '_karyawan', 'penilai1', 'penilai2', 'penilai3', 'status', 'tipe', 'perpanjang', 'angka_skor', 'angka_rata', 'isian_kes_rek', 'pic' ) );
+        return view( 'formulir.penilaian.revisi', compact( 'penilaian', 'karyawan', '_karyawan', 'penilai1', 'penilai2', 'penilai3', 'status', 'tipe', 'perpanjang', 'angka_skor', 'angka_rata', 'isian_kes_rek', 'pic', 'angka_total' ) );
     }
 
     public function revisi_save(Request $request)

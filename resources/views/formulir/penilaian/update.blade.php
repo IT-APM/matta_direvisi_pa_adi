@@ -103,6 +103,7 @@
                                         <td width="15%"><div align="center"><strong>Penilai 1</strong></div></td>
                                     </tr>
                                     {!! $angka_skor !!}
+                                    {!! $angka_total !!}
                                     {!! $angka_rata !!}
                                 </tbody>
                             </table>
