@@ -179,7 +179,7 @@
                 @endphp
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="left">{{ $info->keterangan }}</td>
+                        <td align="left">@if(!empty($info)) {{ $info->keterangan }} @endif</td>
                     </tr>
                 </table>
                 <hr />

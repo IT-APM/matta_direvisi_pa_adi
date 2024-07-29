@@ -179,7 +179,7 @@
                 ?>
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="left"><?php echo e($info->keterangan); ?></td>
+                        <td align="left"><?php if(!empty($info)): ?> <?php echo e($info->keterangan); ?> <?php endif; ?></td>
                     </tr>
                 </table>
                 <hr />

@@ -143,6 +143,10 @@
                                 <td>Keterangan</td>
                                 <td><?php echo e($trxM->catatan); ?></td>
                             </tr>
+                            <?php
+                                $where = ['id_trx' => $trxM->id, 'nik_pic' => App\Models\MtrUtility::find(12)->informasi];
+                                $info = App\Models\TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
+                            ?>
                         </tbody>
                     </table>
                 </div>

@@ -151,7 +151,7 @@
                             ?>
                             <tr>
                                 <td>Catatan Oleh HCO</td>
-                                <td><?php echo e($info->keterangan); ?></td>
+                                <td><?php if(!empty($info)): ?> <?php echo e($info->keterangan); ?> <?php endif; ?></td>
                             </tr>
                         </tbody>
                     </table>

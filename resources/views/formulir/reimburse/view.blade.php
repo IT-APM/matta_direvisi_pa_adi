@@ -152,7 +152,7 @@
                             @endphp
                             <tr>
                                 <td>Catatan Oleh HCO</td>
-                                <td>{{ $info->keterangan }}</td>
+                                <td>@if(!empty($info)) {{ $info->keterangan }} @endif</td>
                             </tr>
                         </tbody>
                     </table>
