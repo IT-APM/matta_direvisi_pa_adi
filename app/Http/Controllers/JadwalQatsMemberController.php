@@ -73,13 +73,15 @@ class JadwalQatsMemberController extends Controller
             }
             $data = $request->all();
             $arr_data = array();
+            $_arr_data = array();
             foreach($arr_tanggal as $_tanggal){
                 foreach($data as $_id => $value){
-                    if(str_starts_with($_id, intval(explode('-', $_tanggal)[2]))){
+                    if($_id == intval(explode('-', $_tanggal)[2])){
                         array_push($arr_data, $value);
                     }
                 }
             }
+            dd($arr_data);
             for ($x = 0; $x < sizeof($arr_tanggal); $x++) {
                 $_arr_data = explode(',', $arr_data[$x]);
                 for ($y = 0; $y < sizeof($_arr_data); $y++) {
