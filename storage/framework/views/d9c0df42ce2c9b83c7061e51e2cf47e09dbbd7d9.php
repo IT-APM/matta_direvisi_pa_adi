@@ -14,7 +14,7 @@
 
 <?php $__env->startSection('breadcrumb-items'); ?>
 <li class="breadcrumb-item">Jadwal</li>
-<li class="breadcrumb-item">Grup Tanpa Pola</li>
+<li class="breadcrumb-item">Grup Random</li>
 <li class="breadcrumb-item active"><?php if($status == 'edit'): ?> Edit <?php else: ?> Add <?php endif; ?></li>
 <?php $__env->stopSection(); ?>
 

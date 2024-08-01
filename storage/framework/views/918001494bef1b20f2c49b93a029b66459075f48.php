@@ -17,12 +17,12 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('breadcrumb-title'); ?>
-<h3>Jadwal Grup Tanpa Pola</h3>
+<h3>Jadwal Grup Random</h3>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('breadcrumb-items'); ?>
 <li class="breadcrumb-item">Jadwal</li>
-<li class="breadcrumb-item active">Grup Tanpa Pola</li>
+<li class="breadcrumb-item active">Grup Random</li>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>

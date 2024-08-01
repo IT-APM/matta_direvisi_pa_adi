@@ -54,19 +54,18 @@ class JadwalQatsMemberController extends Controller
         // end filter
         if($request->kecuali == 'true'){
             // dd($request->all());
-            $jumlah = 0;
-            $wg_id = 12;
             $wn_id = 1;
             $startP = '09:00:00';
             $endP = '18:00:00';
             $startS = '13:00:00';
             $endS = '22:00:00';
-            $startM = '20:00:00';
-            $endM = '05:00:00';
+            $startM = '19:00:00';
+            $endM = '04:00:00';
             $arr_tanggal = array();
             $tanggal_awal = $request->tanggal_awal;
             $tanggal_akhir = $request->tanggal_akhir;
             array_push($arr_tanggal, $tanggal_awal);
+            $arr_wg_id = explode(',', $request->wg_id);
             $arr_nik = explode(',', $request->nik);
             while (strtotime($tanggal_awal) < strtotime($tanggal_akhir)) {
                 $tanggal_awal = date ("Y-m-d", strtotime("+1 days", strtotime($tanggal_awal)));
@@ -87,21 +86,21 @@ class JadwalQatsMemberController extends Controller
                     $this->deleteData($arr_nik[$y], $arr_tanggal[$x], $arr_tanggal[$x]);
                     $wd_start_datetime = '';
                     $wd_finish_datetime = '';
-                    if($_arr_data[$y]=='Shift-1'){
+                    if($_arr_data[$y]=='SHIFT-1'){
                         $wd_start_datetime = $arr_tanggal[$x].' '.$startP;
                         $wd_finish_datetime = $arr_tanggal[$x].' '.$endP;
-                    }elseif($_arr_data[$y]=='Shift-2'){
+                    }elseif($_arr_data[$y]=='SHIFT-2'){
                         $wd_start_datetime = $arr_tanggal[$x].' '.$startS;
                         $wd_finish_datetime = $arr_tanggal[$x].' '.$endS;
-                    }elseif($_arr_data[$y]=='Shift-3'){
+                    }elseif($_arr_data[$y]=='SHIFT-3'){
                         $wd_start_datetime = $arr_tanggal[$x].' '.$startM;
                         $wd_finish_datetime = date ("Y-m-d", strtotime("+1 days", strtotime($arr_tanggal[$x]))).' '.$endM;
                     }
                     $wd_bookout_closing = date ("Y-m-d H:i:s", strtotime("+3 hours", strtotime($wd_finish_datetime)));
                     $wd_bookin_prepare = date ("Y-m-d H:i:s", strtotime("-1 hours", strtotime($wd_start_datetime)));
                     // dd($wg_id, $wn_id, $arr_tanggal[$x], $arr_nik[$y], $wd_start_datetime, $wd_finish_datetime, $wd_bookout_closing, $wd_bookin_prepare);
-                    if($_arr_data[$y]!='Off'){
-                        $this->insertData($wg_id, $wn_id, $arr_tanggal[$x], $arr_nik[$y], $wd_start_datetime, $wd_finish_datetime, $wd_bookout_closing, $wd_bookin_prepare);
+                    if($_arr_data[$y]!='OFF'){
+                        $this->insertData($arr_wg_id[$y], $wn_id, $arr_tanggal[$x], $arr_nik[$y], $wd_start_datetime, $wd_finish_datetime, $wd_bookout_closing, $wd_bookin_prepare);
                     }
                 }
             }
