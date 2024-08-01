@@ -81,7 +81,7 @@ class JadwalQatsMemberController extends Controller
                     }
                 }
             }
-            dd($arr_data);
+            // dd($arr_data);
             for ($x = 0; $x < sizeof($arr_tanggal); $x++) {
                 $_arr_data = explode(',', $arr_data[$x]);
                 for ($y = 0; $y < sizeof($_arr_data); $y++) {
