@@ -86,6 +86,7 @@
                                     <th>Peserta</th>
                                     <th>Atasan Peserta</th>
                                     <th>Pelatihan</th>
+                                    <th>Biaya</th>
                                     <th>Status Pengajuan</th>
                                     <th>Created at</th>
                                 </tr>
@@ -117,6 +118,7 @@
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </td>
                                     <td><?php echo e($data->judul); ?></td>
+                                    <td>Rp.<?php echo e(number_format($data->biaya, 2)); ?></td>
                                     <td><?php echo e($data->_status->status_pengajuan); ?></td>
                                     <td><?php echo e($data->created_at); ?></td>
                                 </tr>

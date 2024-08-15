@@ -71,6 +71,8 @@
                                         <a href="<?php echo e(route('penilaian.show', [$data->id_trx, 'view' => 'pdf'])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         <?php elseif($data->filename == 'emails.izin0'): ?>
                                         <a href="<?php echo e(route('izin.show', [$data->id_trx, 'view' => 'pdf'])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <?php elseif($data->filename == 'emails.pelatihan0'): ?>
+                                        <a href="<?php echo e(route('pelatihan.show', [$data->id_trx, 'view' => 'pdf'])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

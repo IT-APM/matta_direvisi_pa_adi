@@ -865,15 +865,16 @@ class TrxCutiController extends Controller
         }
         else if ($status_cuti == 6 && $pic == 'nik_hco') {
             ToDoList::where(['id_trx'=>$id, 'filename'=>'emails.cuti0'])->delete();
+            // tidak perlu diemail ke karyawan jika sudah diketahui oleh hco
             // karyawan
             // start
-            $karyawan = json_decode($trx->karyawan_property, true);
-            $atasan = json_decode($trx->atasan_property, true);
-            $mailData['title'] = 'Formulir Permohonan Cuti';
-            $mailData['filename'] = 'emails.cuti_done';
-            $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'link' => route('cuti.show', [$id, 'view' => 'pdf'])];
-            $mailData['to'] = $karyawan['email'];
-            $this->sendEmail($mailData);
+            // $karyawan = json_decode($trx->karyawan_property, true);
+            // $atasan = json_decode($trx->atasan_property, true);
+            // $mailData['title'] = 'Formulir Permohonan Cuti';
+            // $mailData['filename'] = 'emails.cuti_done';
+            // $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'link' => route('cuti.show', [$id, 'view' => 'pdf'])];
+            // $mailData['to'] = $karyawan['email'];
+            // $this->sendEmail($mailData);
             // finish
         }
         // 

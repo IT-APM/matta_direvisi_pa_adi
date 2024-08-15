@@ -169,11 +169,11 @@
                                 <input name="pengajuan_id_5" id="pengajuan_id_5" class="form-control" type="text" required="" readonly>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="sebelum_id_5">Sebelum</label>
+                                <label class="form-label" for="sebelum_id_5">Nilai Insentif (Rupiah)</label>
                                 <input type="number" name="sebelum_id_5" id="sebelum_id_5" class="form-control numbers" oninput="validity.valid||(value='');" required="">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="setelah_id_5">Setelah</label>
+                                <label class="form-label" for="setelah_id_5">Durasi (bulan)</label>
                                 <input type="number" name="setelah_id_5" id="setelah_id_5" class="form-control numbers" oninput="validity.valid||(value='');" required="">
                             </div>
                             <div class="col-md-12">
@@ -182,14 +182,14 @@
                             <hr />
                         </div>
                         <!-- end div_id_5 -->
-                        <!-- start div_id_14 Nilai / Prosentase Kenaikan Gaji -->
+                        <!-- start div_id_14 Nilai Prosentase Kenaikan Gaji -->
                         <div class="row g-3" id="div_id_14">
                             <div class="col-md-4">
                                 <label class="form-label" for="pengajuan_id_14">Jenis Pengajuan</label>
                                 <input name="pengajuan_id_14" id="pengajuan_id_14" class="form-control" type="text" required="" readonly>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="setelah_id_14">Nilai / Prosentase Kenaikan Gaji</label>
+                                <label class="form-label" for="setelah_id_14">Nilai Prosentase Kenaikan Gaji</label>
                                 <input type="number" name="setelah_id_14" id="setelah_id_14" oninput="validity.valid||(value='');" class="form-control numbers" required="">
                             </div>
                             <div class="col-md-12">
@@ -340,7 +340,7 @@ $(document).ready(function() {
         $('#jenis_pengajuan').prop('selectedIndex', 0);
         pengajuan_id_5(0);
     });
-    // 14 = Nilai / Prosentase Kenaikan Gaji
+    // 14 = Nilai Prosentase Kenaikan Gaji
     $("#jenis_pengajuan").change(function() {
         var selectedValue = $(this).val();
         var selectedText = $(this).find("option:selected").text();
@@ -435,7 +435,7 @@ $(document).ready(function() {
             $("#setelah_id_5").prop('disabled', true);
         }
     }
-    // 14 = Nilai / Prosentase Kenaikan Gaji
+    // 14 = Nilai Prosentase Kenaikan Gaji
     function pengajuan_id_14(cek) {
         // jika 1 maka aktif
         if (cek == 1) {

@@ -229,7 +229,8 @@ class TrxRekomendasiController extends Controller
             $trxD->id_pengajuan = 5;
             $trxD->jenis_pengajuan = $request->pengajuan_id_5;
             $trxD->sebelum = 'Rp. '.number_format($request->sebelum_id_5, 2);
-            $trxD->setelah = 'Rp. '.number_format($request->setelah_id_5, 2);
+            // $trxD->setelah = 'Rp. '.number_format($request->setelah_id_5, 2);
+            $trxD->setelah = $request->setelah_id_5;
             $trxD->save();
         }
         // 14 Nilai Kenaikan gaji	
@@ -238,8 +239,10 @@ class TrxRekomendasiController extends Controller
             $trxD->id_trx = $trxM->id;
             $trxD->id_pengajuan = 14;
             $trxD->jenis_pengajuan = $request->pengajuan_id_14;
-            $trxD->sebelum = 'Rp. '.number_format(0, 2);
-            $trxD->setelah = 'Rp. '.number_format($request->setelah_id_14, 2);
+            // $trxD->sebelum = 'Rp. '.number_format(0, 2);
+            // $trxD->setelah = 'Rp. '.number_format($request->setelah_id_14, 2);
+            $trxD->sebelum = 0;
+            $trxD->setelah = $request->setelah_id_14;
             $trxD->save();
         }
         // 1000 Lainnya

@@ -106,7 +106,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-12 pb-2">
-                                    <label class="form-label" for="biaya">Biaya*</label>
+                                    <label class="form-label" for="biaya">Biaya (Termasuk PPN, jika ada)*</label>
                                     <input min=0 type="number" name="biaya" id="biaya" class="form-control numbers" required="">
                                 </div>
                                 <div class="col-md-12 pb-2">

@@ -119,7 +119,18 @@
                         <h5>Mengajukan</h5>
                     </div>
                     <div class="card-body typography">
-                        <table class="table table-striped">
+                        @php $no=0; @endphp
+                        @foreach ($trxD as $value)
+                            {{ ++$no }}. {{ $value->jenis_pengajuan }} 
+                            @if($value->jenis_pengajuan == 'Insentif')
+                                {{ $value->sebelum }} selama {{ $value->setelah }} bulan <br/> 
+                            @elseif($value->jenis_pengajuan == 'Nilai Prosentase Kenaikan Gaji')
+                                {{ $value->setelah }} %<br/> 
+                            @else
+                                dari {{ $value->sebelum }} menjadi {{ $value->setelah }} <br/> 
+                            @endif
+                        @endforeach
+                        {{-- <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>
@@ -143,7 +154,7 @@
                                 </tr>
                                 @endforeach
                             </tbody>
-                        </table>
+                        </table> --}}
                     </div>
                 </div>
             </div>

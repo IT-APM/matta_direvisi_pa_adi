@@ -57,10 +57,21 @@
                     <tr>
                         <td>Mengajukan</td>
                         <td>: @foreach ($trxD as $value)
+                                {{ ++$no }}. {{ $value->jenis_pengajuan }} 
+                                @if($value->jenis_pengajuan == 'Insentif')
+                                    {{ $value->sebelum }} selama {{ $value->setelah }} bulan <br/>&nbsp;
+                                @elseif($value->jenis_pengajuan == 'Nilai Prosentase Kenaikan Gaji')
+                                    {{ $value->setelah }} %<br/>&nbsp;
+                                @else
+                                    dari {{ $value->sebelum }} menjadi {{ $value->setelah }} <br/>&nbsp;
+                                @endif
+                            @endforeach
+                        </td>
+                        {{-- <td>: @foreach ($trxD as $value)
                                 {{ ++$no }}. {{ $value->jenis_pengajuan }} dari {{ $value->sebelum }} menjadi {{ $value->setelah }}
                                 <br/>&nbsp;
                             @endforeach
-                        </td>
+                        </td> --}}
                     </tr>
                     <tr>
                         <td colspan="2">Untuk karyawan tersebut di atas terhitung mulai tanggal {{ $trxM->terhitung_tanggal }}</td>

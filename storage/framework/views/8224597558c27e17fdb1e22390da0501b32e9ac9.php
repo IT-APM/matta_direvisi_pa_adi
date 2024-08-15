@@ -57,11 +57,17 @@
                     <tr>
                         <td>Mengajukan</td>
                         <td>: <?php $__currentLoopData = $trxD; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php echo e(++$no); ?>. <?php echo e($value->jenis_pengajuan); ?> dari <?php echo e($value->sebelum); ?> menjadi <?php echo e($value->setelah); ?>
-
-                                <br/>&nbsp;
+                                <?php echo e(++$no); ?>. <?php echo e($value->jenis_pengajuan); ?> 
+                                <?php if($value->jenis_pengajuan == 'Insentif'): ?>
+                                    <?php echo e($value->sebelum); ?> selama <?php echo e($value->setelah); ?> bulan <br/>&nbsp;
+                                <?php elseif($value->jenis_pengajuan == 'Nilai Prosentase Kenaikan Gaji'): ?>
+                                    <?php echo e($value->setelah); ?> %<br/>&nbsp;
+                                <?php else: ?>
+                                    dari <?php echo e($value->sebelum); ?> menjadi <?php echo e($value->setelah); ?> <br/>&nbsp;
+                                <?php endif; ?>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </td>
+                        
                     </tr>
                     <tr>
                         <td colspan="2">Untuk karyawan tersebut di atas terhitung mulai tanggal <?php echo e($trxM->terhitung_tanggal); ?></td>

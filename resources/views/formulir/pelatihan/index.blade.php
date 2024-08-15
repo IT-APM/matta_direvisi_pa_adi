@@ -88,6 +88,7 @@
                                     <th>Peserta</th>
                                     <th>Atasan Peserta</th>
                                     <th>Pelatihan</th>
+                                    <th>Biaya</th>
                                     <th>Status Pengajuan</th>
                                     <th>Created at</th>
                                 </tr>
@@ -119,6 +120,7 @@
                                         @endforeach
                                     </td>
                                     <td>{{ $data->judul }}</td>
+                                    <td>Rp.{{ number_format($data->biaya, 2) }}</td>
                                     <td>{{ $data->_status->status_pengajuan }}</td>
                                     <td>{{ $data->created_at }}</td>
                                 </tr>
