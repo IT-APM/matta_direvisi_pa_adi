@@ -76,6 +76,14 @@
                                             <td>Keterangan</td>
                                             <td><?php echo $trxCuti->keterangan; ?></td>
                                         </tr>
+                                        <?php
+                                        $where = ['id_trx' => $trxCuti->id];
+                                        $catatan = App\Models\TrxCutiLog::where($where)->whereIn('id_status', [4,5])->orderBy('id', 'desc')->first();
+                                        ?>
+                                        <tr>
+                                            <td>Catatan Atasan</td>
+                                            <td><?php if(!empty($catatan)): ?><?php echo e($catatan->keterangan); ?><?php endif; ?></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

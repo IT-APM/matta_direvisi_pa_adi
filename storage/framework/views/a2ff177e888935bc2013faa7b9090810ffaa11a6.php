@@ -207,14 +207,17 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body typography">
-                <form id="myform" name="myform" method="post" enctype="multipart/form-data" action="<?php echo e($linkAction); ?>" target="_self" onsubmit="return confirm('Are you sure want to submit this data?');">
-                    <?php echo method_field('PATCH'); ?>
-                    <?php echo csrf_field(); ?>
-                    <input type="hidden" id="nik" name="nik" value="<?php echo e($nik); ?>">
-                    <input type="hidden" id="pic" name="pic" value="<?php echo e($pic); ?>">
-                    <button type="submit" name="status_cuti" value="4" class="btn btn-success">Approve</button>
-                    <button type="submit" name="status_cuti" value="5" class="btn btn-danger">Reject</button>
-                </form>
+                    <h5>Catatan</h5>
+                    <form id="myform" name="myform" method="post" enctype="multipart/form-data" action="<?php echo e($linkAction); ?>" target="_self" onsubmit="return confirm('Are you sure want to submit this data?');">
+                        <?php echo method_field('PATCH'); ?>
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" id="nik" name="nik" value="<?php echo e($nik); ?>">
+                        <input type="hidden" id="pic" name="pic" value="<?php echo e($pic); ?>">
+                        <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
+                        <br/>
+                        <button type="submit" name="status_cuti" value="4" class="btn btn-success">Approve</button>
+                        <button type="submit" name="status_cuti" value="5" class="btn btn-danger">Reject</button>
+                    </form>
                 </div>
             </div>
         </div>

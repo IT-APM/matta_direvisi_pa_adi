@@ -488,7 +488,7 @@ class TrxCutiController extends Controller
         // 
         if ($cek) {
             $trx->save();
-            $this->insertLog($trx->id, $trx->status_cuti, $nik_karyawan);
+            $this->insertLog($trx->id, $trx->status_cuti, $nik_karyawan, 'INSERT');
             // start
             // parameter yang dipassing ke sendemail
             $karyawan = json_decode($trx->karyawan_property, true);
@@ -569,12 +569,13 @@ class TrxCutiController extends Controller
         }
     }
 
-    public function insertLog($id_trx, $id_status, $nik_pic)
+    public function insertLog($id_trx, $id_status, $nik_pic, $keterangan)
     {
         $data = new TrxCutiLog;
         $data->id_trx = $id_trx;
         $data->id_status = $id_status;
         $data->nik_pic = $nik_pic;
+        $data->keterangan = $keterangan;
         $data->save();
     }
 
@@ -788,6 +789,7 @@ class TrxCutiController extends Controller
         $pic = $request->pic;
         $nik = $request->nik;
         $status_cuti = $request->status_cuti;
+        $catatan = $request->catatan;
         // $status_cuti = 0;
         // if($pic == 'pic_pengganti'){
         //     $status_cuti = 2;
@@ -796,7 +798,7 @@ class TrxCutiController extends Controller
         $trx->status_cuti = $status_cuti;
         $trx->update();
         $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$nik, 'pic'=>$pic, 'filename'=>'emails.cuti0']);
-        $this->insertLog($id, $status_cuti, $nik);
+        $this->insertLog($id, $status_cuti, $nik, $catatan);
         // jika direject maka todolist didelete
         // 5=Ditolak oleh Layer 1
         // 7=Ditolak oleh PIC Pengganti
