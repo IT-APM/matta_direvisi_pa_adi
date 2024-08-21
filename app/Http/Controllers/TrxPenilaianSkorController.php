@@ -288,25 +288,25 @@ class TrxPenilaianSkorController extends Controller
         $trx = TrxPenilaian::find( $id );
         $id_tipe = $trx->id_tipe;
         // 
-        $nik_pic = $trx['nik_karyawan'];
+        $nik_pic = $trx->nik_karyawan;
         $where = [ 'id_trx' => $id, 'nik_pic' => $nik_pic ];
         $nKaryawan = TrxPenilaianLog::where($where)->count();
         // 
-        $nik_pic = $trx['nik_penilai_1'];
+        $nik_pic = $trx->nik_penilai_1;
         $where = [ 'id_trx' => $id, 'nik_pic' => $nik_pic ];
         $nPenilai1 = TrxPenilaianLog::where($where)->count();
         // 
-        $nik_pic = $trx['nik_penilai_2'];
+        $nik_pic = $trx->nik_penilai_2;
         $where = [ 'id_trx' => $id, 'nik_pic' => $nik_pic ];
         $nPenilai2 = TrxPenilaianLog::where($where)->count();
         // 
-        $nik_pic = $trx['nik_penilai_3'];
+        $nik_pic = $trx->nik_penilai_3;
         $where = [ 'id_trx' => $id, 'nik_pic' => $nik_pic ];
         $nPenilai3 = TrxPenilaianLog::where($where)->count();
-        // return response()->json(['id_status' => $trx['id_status'], 'nKaryawan' => $nKaryawan]);die;
+        // return response()->json(['id_status' => $trx->id_status, 'nKaryawan' => $nKaryawan]);die;
         // formulir diinput oleh karyawan
         // maker hco tidak bisa melakukan isian dirinya sendiri
-        if($trx['id_status']==1 && $nKaryawan==0){
+        if($trx->id_status==1 && $nKaryawan==0 && $request->pic=='nik_karyawan'){
             $data = $request->all();
             foreach ($data as $key => $value) {
                 if(str_starts_with($key, 'p')){
@@ -316,9 +316,9 @@ class TrxPenilaianSkorController extends Controller
             }
             $trx->id_status = 2;
             $trx->update();
-            $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx['nik_karyawan'], 'pic'=>'nik_karyawan', 'filename'=>'emails.penilaian0']);
+            $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_karyawan, 'pic'=>'nik_karyawan', 'filename'=>'emails.penilaian0']);
             // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
-            $this->insertLog($id, 2, $trx['nik_karyawan'], $request->kes_rek, $request->is_perpanjang, $request->bulan);
+            $this->insertLog($id, 2, $trx->nik_karyawan, $request->kes_rek, $request->is_perpanjang, $request->bulan);
             // 
             $karyawan = json_decode($trx->karyawan_property, true);
             $atasan = json_decode($trx->penilai1_property, true);
@@ -341,7 +341,7 @@ class TrxPenilaianSkorController extends Controller
         // formulir diinput oleh penilai 1
         // 2 = Done by Employee
         // 16 = Send to Reviewer 1
-        elseif(($trx['id_status']==2 || $trx['id_status']==16) && $nPenilai1==0){
+        elseif(($trx->id_status==2 || $trx->id_status==16) && $nPenilai1==0 && $request->pic=='nik_penilai_1'){
             $data = $request->all();
             foreach ($data as $key => $value) {
                 if(str_starts_with($key, 'p')){
@@ -354,9 +354,9 @@ class TrxPenilaianSkorController extends Controller
                 $trx->id_status = 3;
                 $trx->kes_rek_1 = $request->kes_rek;
                 $trx->update();
-                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx['nik_penilai_1'], 'pic'=>'nik_penilai_1', 'filename'=>'emails.penilaian0']);
+                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_1, 'pic'=>'nik_penilai_1', 'filename'=>'emails.penilaian0']);
                 // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
-                $this->insertLog($id, 3, $trx['nik_penilai_1'], $request->kes_rek, $request->is_perpanjang, $request->bulan);
+                $this->insertLog($id, 3, $trx->nik_penilai_1, $request->kes_rek, $request->is_perpanjang, $request->bulan);
                 // 
                 $karyawan = json_decode($trx->karyawan_property, true);
                 $atasan = json_decode($trx->penilai1_property, true);
@@ -379,9 +379,9 @@ class TrxPenilaianSkorController extends Controller
                 $trx->id_status = 5;
                 $trx->kes_rek_1 = $request->kes_rek;
                 $trx->update();
-                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx['nik_penilai_1'], 'pic'=>'nik_penilai_1', 'filename'=>'emails.penilaian0']);
+                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_1, 'pic'=>'nik_penilai_1', 'filename'=>'emails.penilaian0']);
                 // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
-                $this->insertLog($id, 5, $trx['nik_penilai_1'], $request->kes_rek, $request->is_perpanjang, $request->bulan);
+                $this->insertLog($id, 5, $trx->nik_penilai_1, $request->kes_rek, $request->is_perpanjang, $request->bulan);
                 // 
                 $karyawan = json_decode($trx->karyawan_property, true);
                 $atasan = json_decode($trx->penilai1_property, true);
@@ -421,9 +421,9 @@ class TrxPenilaianSkorController extends Controller
                 $trx->id_status = $id_status;
                 $trx->kes_rek_1 = $request->kes_rek;
                 $trx->update();
-                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx['nik_penilai_1'], 'pic'=>'nik_penilai_1', 'filename'=>'emails.penilaian0_outsourcing']);
+                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_1, 'pic'=>'nik_penilai_1', 'filename'=>'emails.penilaian0_outsourcing']);
                 // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
-                $this->insertLog($id, $id_status, $trx['nik_penilai_1'], $request->kes_rek, $request->is_perpanjang, $request->bulan);
+                $this->insertLog($id, $id_status, $trx->nik_penilai_1, $request->kes_rek, $request->is_perpanjang, $request->bulan);
                 // 
                 $karyawan = json_decode($trx->karyawan_property, true);
                 $atasan = json_decode($trx->penilai1_property, true);
@@ -443,7 +443,7 @@ class TrxPenilaianSkorController extends Controller
                 }
             }
         // formulir diinput oleh penilai 2 atau 3
-        }elseif($trx['id_status']==5 || $trx['id_status']==6 || $trx['id_status']==7){
+        }elseif($trx->id_status==5 || $trx->id_status==6 || $trx->id_status==7){
             // 
             $karyawan = json_decode($trx->karyawan_property, true);
             $atasan = json_decode($trx->penilai1_property, true);
@@ -463,22 +463,22 @@ class TrxPenilaianSkorController extends Controller
                 $trx->id_status = 6;
                 $trx->kes_rek_2 = $request->kes_rek;
                 $trx->update();
-                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx['nik_penilai_2'], 'pic'=>'nik_penilai_2', 'filename'=>'emails.penilaian0']);
+                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_2, 'pic'=>'nik_penilai_2', 'filename'=>'emails.penilaian0']);
                 // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
-                $this->insertLog($id, 6, $trx['nik_penilai_2'], $request->kes_rek, $request->is_perpanjang, $request->bulan);
+                $this->insertLog($id, 6, $trx->nik_penilai_2, $request->kes_rek, $request->is_perpanjang, $request->bulan);
             }
             // jika diinput penilai 3
             elseif($request->pic == 'nik_penilai_3' && $nPenilai3 == 0){
                 $trx->id_status = 7;
                 $trx->kes_rek_3 = $request->kes_rek;
                 $trx->update();
-                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx['nik_penilai_3'], 'pic'=>'nik_penilai_3', 'filename'=>'emails.penilaian0']);
+                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_3, 'pic'=>'nik_penilai_3', 'filename'=>'emails.penilaian0']);
                 // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
-                $this->insertLog($id, 7, $trx['nik_penilai_3'], $request->kes_rek, $request->is_perpanjang, $request->bulan);
+                $this->insertLog($id, 7, $trx->nik_penilai_3, $request->kes_rek, $request->is_perpanjang, $request->bulan);
             }
         }
         // formulir diinput oleh penilai 2
-        elseif($trx['id_status']==3 || $trx['id_status']==15){
+        elseif($trx->id_status==3 || $trx->id_status==15){
             // 6 = Penilaian Outsourcing
             if($trx->id_tipe == 6){
                 // dd($request->all(), $id);
@@ -491,7 +491,7 @@ class TrxPenilaianSkorController extends Controller
                 // template email tidak ada link done to hco
                 $mailData['filename'] = 'emails.penilaian0_outsourcing';
                 $mailData['to'] = explode('/', MtrUtility::find(28)->informasi)[1];
-                $todolist = ['id_trx' => $trx->id, 'nik' => explode('/', MtrUtility::find(28)->informasi)[0], 'id_status' => $trx['id_status'], 'pic' => 'hco'];
+                $todolist = ['id_trx' => $trx->id, 'nik' => explode('/', MtrUtility::find(28)->informasi)[0], 'id_status' => $trx->id_status, 'pic' => 'hco'];
                 $this->insertToDoList($todolist, $mailData);
                 $this->sendEmail($mailData);
                 // jika diinput penilai 2
@@ -499,18 +499,18 @@ class TrxPenilaianSkorController extends Controller
                     $trx->id_status = 6;
                     $trx->kes_rek_2 = $request->kes_rek;
                     $trx->update();
-                    $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx['nik_penilai_2'], 'pic'=>'nik_penilai_2', 'filename'=>'emails.penilaian0_outsourcing']);
+                    $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_2, 'pic'=>'nik_penilai_2', 'filename'=>'emails.penilaian0_outsourcing']);
                     // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
-                    $this->insertLog($id, 6, $trx['nik_penilai_2'], $request->kes_rek, $request->is_perpanjang, $request->bulan);
+                    $this->insertLog($id, 6, $trx->nik_penilai_2, $request->kes_rek, $request->is_perpanjang, $request->bulan);
                 }
                 // jika diinput penilai 3
                 elseif($request->pic == 'nik_penilai_3' && $nPenilai3 == 0){
                     $trx->id_status = 7;
                     $trx->kes_rek_3 = $request->kes_rek;
                     $trx->update();
-                    $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx['nik_penilai_3'], 'pic'=>'nik_penilai_3', 'filename'=>'emails.penilaian0_outsourcing']);
+                    $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_3, 'pic'=>'nik_penilai_3', 'filename'=>'emails.penilaian0_outsourcing']);
                     // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
-                    $this->insertLog($id, 7, $trx['nik_penilai_3'], $request->kes_rek, $request->is_perpanjang, $request->bulan);
+                    $this->insertLog($id, 7, $trx->nik_penilai_3, $request->kes_rek, $request->is_perpanjang, $request->bulan);
                 }
             }
         }
