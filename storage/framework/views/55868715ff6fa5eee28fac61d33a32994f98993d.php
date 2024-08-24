@@ -49,17 +49,22 @@
                     </tr>
                     <?php $__currentLoopData = $trxD_di; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <?php
-                    $kepada = json_decode($value->kepada_property, true)
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                    // 6 = Reject by PIC DIVISI
+                    // 8 = Approve by PIC DIVISI
+                    $whereIn = [6, 8];
+                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
                     ?>
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan</td>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan<br />Catatan PIC</td>
                         <td width="70%">: <?php echo e($kepada['nama']); ?><br />
                         : <?php echo e($kepada['nik']); ?><br />
                         : <?php echo e($kepada['jabatan']); ?><br />
                         : <?php echo e($kepada['divisi']); ?> / <?php echo e($kepada['dep']); ?> / <?php echo e($kepada['sub_dep']); ?><br />
                         : <?php echo e($value->_obyek->obyek); ?><br />
-                        : <?php echo $value->keterangan; ?>
-
+                        : <?php echo $value->keterangan; ?><br />
+                        : <?php if(!empty($log)): ?><?php echo e($log->keterangan); ?><?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -78,17 +83,22 @@
                     </tr>
                     <?php $__currentLoopData = $trxD_ga; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <?php
-                    $kepada = json_decode($value->kepada_property, true)
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                    // 10 = Reject by PIC GA
+                    // 12 = Approve by PIC GA
+                    $whereIn = [10, 12];
+                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
                     ?>
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan</td>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan<br />Catatan PIC</td>
                         <td width="70%">: <?php echo e($kepada['nama']); ?><br />
                         : <?php echo e($kepada['nik']); ?><br />
                         : <?php echo e($kepada['jabatan']); ?><br />
                         : <?php echo e($kepada['divisi']); ?> / <?php echo e($kepada['dep']); ?> / <?php echo e($kepada['sub_dep']); ?><br />
                         : <?php echo e($value->_obyek->obyek); ?><br />
-                        : <?php echo $value->keterangan; ?>
-
+                        : <?php echo $value->keterangan; ?><br />
+                        : <?php if(!empty($log)): ?><?php echo e($log->keterangan); ?><?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -107,17 +117,22 @@
                     </tr>
                     <?php $__currentLoopData = $trxD_it; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <?php
-                    $kepada = json_decode($value->kepada_property, true)
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                    // 14 = Reject by PIC IT
+                    // 16 = Approve by PIC IT
+                    $whereIn = [14, 16];
+                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
                     ?>
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan</td>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan<br />Catatan PIC</td>
                         <td width="70%">: <?php echo e($kepada['nama']); ?><br />
                         : <?php echo e($kepada['nik']); ?><br />
                         : <?php echo e($kepada['jabatan']); ?><br />
                         : <?php echo e($kepada['divisi']); ?> / <?php echo e($kepada['dep']); ?> / <?php echo e($kepada['sub_dep']); ?><br />
                         : <?php echo e($value->_obyek->obyek); ?><br />
-                        : <?php echo $value->keterangan; ?>
-
+                        : <?php echo $value->keterangan; ?><br />
+                        : <?php if(!empty($log)): ?><?php echo e($log->keterangan); ?><?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -136,17 +151,22 @@
                     </tr>
                     <?php $__currentLoopData = $trxD_hc; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <?php
-                    $kepada = json_decode($value->kepada_property, true)
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                    // 22 = Reject by PIC HC
+                    // 24 = Approve by PIC HC
+                    $whereIn = [22, 24];
+                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
                     ?>
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan</td>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan<br />Catatan PIC</td>
                         <td width="70%">: <?php echo e($kepada['nama']); ?><br />
                         : <?php echo e($kepada['nik']); ?><br />
                         : <?php echo e($kepada['jabatan']); ?><br />
                         : <?php echo e($kepada['divisi']); ?> / <?php echo e($kepada['dep']); ?> / <?php echo e($kepada['sub_dep']); ?><br />
                         : <?php echo e($value->_obyek->obyek); ?><br />
-                        : <?php echo $value->keterangan; ?>
-
+                        : <?php echo $value->keterangan; ?><br />
+                        : <?php if(!empty($log)): ?><?php echo e($log->keterangan); ?><?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -165,17 +185,22 @@
                     </tr>
                     <?php $__currentLoopData = $trxD_ko; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <?php
-                    $kepada = json_decode($value->kepada_property, true)
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                    // 18 = Reject by PIC KOPERASI
+                    // 20 = Approve by PIC KOPERASI
+                    $whereIn = [18, 20];
+                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
                     ?>
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan</td>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan<br />Catatan PIC</td>
                         <td width="70%">: <?php echo e($kepada['nama']); ?><br />
                         : <?php echo e($kepada['nik']); ?><br />
                         : <?php echo e($kepada['jabatan']); ?><br />
                         : <?php echo e($kepada['divisi']); ?> / <?php echo e($kepada['dep']); ?> / <?php echo e($kepada['sub_dep']); ?><br />
                         : <?php echo e($value->_obyek->obyek); ?><br />
-                        : <?php echo $value->keterangan; ?>
-
+                        : <?php echo $value->keterangan; ?><br />
+                        : <?php if(!empty($log)): ?><?php echo e($log->keterangan); ?><?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

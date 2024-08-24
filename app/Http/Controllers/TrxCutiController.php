@@ -217,7 +217,7 @@ class TrxCutiController extends Controller
     public static function getSisaCuti($nik, $periode, $id)
     {
         $where = ['nik_karyawan' => $nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
-        $trx = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7])->where('id', '<=', $id)->sum('jumlah_hari');
+        $trx = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->where('id', '<=', $id)->sum('jumlah_hari');
         $where = ['is_cuti' => 1];
         $cuti_bersama = Holiday::whereYear('tanggal', $periode)->where($where)->count();
         return 12 - $trx - $cuti_bersama;
@@ -229,7 +229,7 @@ class TrxCutiController extends Controller
         $periode = Carbon::now()->format('Y');
         $nik = auth()->user()->nik;
         $where = ['nik_karyawan' => $nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
-        $trx = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7])->sum('jumlah_hari');
+        $trx = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
         $where = ['is_cuti' => 1];
         $cuti_bersama = Holiday::whereYear('tanggal', $periode)->where($where)->count();
         return 12 - $trx - $cuti_bersama;
@@ -269,7 +269,7 @@ class TrxCutiController extends Controller
     {
         $cek = true;
         $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan, 'tipe_cuti' => $tipe_cuti];
-        $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7])->count();
+        $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->count();
         if ($jumlah > 0) {
             $cek = false;
         }
@@ -295,7 +295,7 @@ class TrxCutiController extends Controller
     {
         $cek = false;
         $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan, 'tipe_cuti' => 0];
-        $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7])->sum('jumlah_hari');
+        $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
         $where = ['is_cuti' => 1];
         $cuti_bersama = Holiday::whereYear('tanggal', $periode_cuti)->where($where)->count();
         $jumlah += $cuti_bersama;
@@ -334,8 +334,8 @@ class TrxCutiController extends Controller
     {
         $cek = true;
         $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan];
-        $data = TrxCuti::where($where)->where('tanggal_mulai', '<=', $from)->where('tanggal_akhir', '>=', $from)->whereNotIn('status_cuti', [5,7])->count();
-        $data += TrxCuti::where($where)->where('tanggal_mulai', '<=', $to)->where('tanggal_akhir', '>=', $to)->whereNotIn('status_cuti', [5,7])->count();
+        $data = TrxCuti::where($where)->where('tanggal_mulai', '<=', $from)->where('tanggal_akhir', '>=', $from)->whereNotIn('status_cuti', [5,7,8])->count();
+        $data += TrxCuti::where($where)->where('tanggal_mulai', '<=', $to)->where('tanggal_akhir', '>=', $to)->whereNotIn('status_cuti', [5,7,8])->count();
         if ($data > 0) {
             $cek = false;
         }
@@ -630,7 +630,7 @@ class TrxCutiController extends Controller
         // 5 Ditolak oleh Layer 1
         // 7 Ditolak oleh PIC Pengganti
         $where = ['id_trx' => $id];
-        $isTolak = TrxCutiLog::where($where)->whereIn('id_status', [4,5,7])->exists();
+        $isTolak = TrxCutiLog::where($where)->whereIn('id_status', [4,5,7,8])->exists();
         // 
         switch ($view) {
             // PIC pengganti dapat mereject 
@@ -720,6 +720,12 @@ class TrxCutiController extends Controller
                 $cutiLog = TrxCutiLog::where($where)->orderBy('id', 'desc')->first();
                 if (!empty($cutiLog)) {
                     $htmlCutiLog .= '<td>Mengetahui<br/><img src="' . public_path('assets/images/matta/informed_new.png') . '" height="30" /><br/>' . $cutiLog->_pic->nama . '<br/>' . $cutiLog->_pic->_jabatan->jabatan . '<br/>' . $cutiLog->created_at . '</td>';
+                }
+                // 8 Ditolak oleh hco
+                $where = ['id_trx' => $id, 'id_status' => 8];
+                $cutiLog = TrxCutiLog::where($where)->orderBy('id', 'desc')->first();
+                if (!empty($cutiLog)) {
+                    $htmlCutiLog .= '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $cutiLog->_pic->nama . '<br/>' . $cutiLog->_pic->_jabatan->jabatan . '<br/>' . $cutiLog->created_at . '</td>';
                 }
                 // finish
                 $htmlCutiLog .= '</tr></table>';
@@ -860,7 +866,7 @@ class TrxCutiController extends Controller
             $atasan = json_decode($trx->atasan_property, true);
             $mailData['title'] = 'Formulir Permohonan Cuti';
             $mailData['filename'] = 'emails.cuti_done';
-            $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'link' => route('cuti.show', [$id, 'view' => 'pdf'])];
+            $mailData['data'] = ['pesan' => '<strong>Formulir Permohonan Cuti anda telah disetujui para pihak</strong>', 'nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'link' => route('cuti.show', [$id, 'view' => 'pdf'])];
             $mailData['to'] = $karyawan['email'];
             $this->sendEmail($mailData);
             // finish
@@ -878,6 +884,26 @@ class TrxCutiController extends Controller
             // $mailData['to'] = $karyawan['email'];
             // $this->sendEmail($mailData);
             // finish
+        }
+        else if ($status_cuti == 8 && $pic == 'reject_hco') {
+            // dd($request->all(), $id);
+            // start
+            $karyawan = json_decode($trx->karyawan_property, true);
+            $atasan = json_decode($trx->atasan_property, true);
+            $mailData['title'] = 'Formulir Permohonan Cuti';
+            $mailData['filename'] = 'emails.cuti_done';
+            $mailData['data'] = ['pesan' => '<strong>Formulir Permohonan Cuti anda telah ditolak HCO</strong>', 'nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'link' => route('cuti.show', [$id, 'view' => 'pdf'])];
+            $mailData['to'] = $karyawan['email'];
+            $ccEmails = explode(',', MtrUtility::find(11)->informasi);
+            array_push($ccEmails, $atasan['email']);
+            foreach (explode(';', $trx->pic_property) as $value) {
+                $pic_property = json_decode($value, true);
+                array_push($ccEmails, $pic_property['email']);
+            }
+            // dd($ccEmails);
+            Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
+            // finish
+            return redirect('cuti')->with('msg', 'Data is saved successfully.');
         }
         // 
         return view('emails.cuti_ok');

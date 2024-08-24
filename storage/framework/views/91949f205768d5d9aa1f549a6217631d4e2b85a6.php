@@ -1,5 +1,5 @@
 <p>Semangat Pagi,</p>
-<p><strong>Formulir Permohonan Cuti anda telah disetujui para pihak</strong></p>
+<p><?php echo $data['pesan']; ?></p>
 <p></p>
 <p>Berikut datanya:<br />
 <table width="100%" border="0" cellspacing="1" cellpadding="1">

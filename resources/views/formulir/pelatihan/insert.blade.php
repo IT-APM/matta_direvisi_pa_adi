@@ -107,7 +107,7 @@
                                 </div>
                                 <div class="col-md-12 pb-2">
                                     <label class="form-label" for="biaya">Biaya (Termasuk PPN, jika ada)*</label>
-                                    <input min=0 type="number" name="biaya" id="biaya" class="form-control numbers" required="">
+                                    <input min=0 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="biaya" id="biaya" class="form-control numbers" required="">
                                 </div>
                                 <div class="col-md-12 pb-2">
                                     <label class="form-label" for="benefit[]">Benefit*</label>
@@ -150,6 +150,28 @@
 <script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
 <script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 <script type="text/javascript">
+function use_number(node) {
+  var empty_val = false;
+  const value = node.value;
+//   if(value==0){
+//     alert('Jumlah tidak boleh 0!');
+//   }
+  if (node.value == '')
+    empty_val = true;
+  node.type = 'number';
+  if (!empty_val)
+    node.value = Number(value.replace(/,/g, '')); // or equivalent per locale
+}
+// 
+function use_text(node) {
+  var empty_val = false;
+  const value = Number(node.value);
+  if (node.value == '')
+    empty_val = true;
+  node.type = 'text';
+  if (!empty_val)
+    node.value = value.toLocaleString('en');  // or other formatting
+}
 $(document).ready(function() {
     // var _url = window.location.origin;
     // default semua hide dan disable=true

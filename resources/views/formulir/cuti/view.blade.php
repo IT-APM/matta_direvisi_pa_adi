@@ -85,6 +85,16 @@
                                             <td>Catatan Atasan</td>
                                             <td>@if(!empty($catatan)){{ $catatan->keterangan }}@endif</td>
                                         </tr>
+                                        @php
+                                        $where = ['id_trx' => $trxCuti->id];
+                                        $catatan = App\Models\TrxCutiLog::where($where)->whereIn('id_status', [8])->orderBy('id', 'desc')->first();
+                                        @endphp
+                                        @if(!empty($catatan))
+                                        <tr>
+                                            <td>Catatan HCO</td>
+                                            <td>{{ $catatan->keterangan }}</td>
+                                        </tr>
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
@@ -124,6 +134,30 @@
                             </ul>
                         </div>
                     </div>
+                    {{-- pengajuan cuti dapat ditolak oleh hco jika semua approval selesai dan belum masuk waktunya cuti --}}
+                    @php
+                    $where = ['id_trx' => $trxCuti->id];
+                    $catatan = App\Models\TrxCutiLog::where($where)->whereIn('id_status', [4,5])->orderBy('id', 'desc')->first();
+                    $isPast = Carbon\Carbon::parse($trxCuti->tanggal_mulai)->isPast();
+                    @endphp
+                    @can('hc')
+                    @if(!empty($catatan) && !$isPast)
+                    <div class="card">
+                        <div class="card-body typography">
+                            <h5>Catatan</h5>
+                            <form id="myform" name="myform" method="post" enctype="multipart/form-data" action="{{ route('cuti.update', $trxCuti->id) }}" target="_self" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                @method('PATCH')
+                                @csrf
+                                <input type="hidden" id="nik" name="nik" value="{{ auth()->user()->nik }}">
+                                <input type="hidden" id="pic" name="pic" value="reject_hco">
+                                <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
+                                <br/>
+                                <button type="submit" name="status_cuti" value="8" class="btn btn-danger">Reject</button>
+                            </form>
+                        </div>
+                    </div>
+                    @endif
+                    @endcan
                 </div>
                 <!--  -->
                 <div class="col-xxl-6 col-md-6 appointment-sec box-col-6">

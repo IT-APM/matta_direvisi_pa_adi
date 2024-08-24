@@ -202,7 +202,7 @@ class TrxPelatihanController extends Controller
         $trx->tanggal_mulai = $request->tanggal_mulai;
         $trx->tanggal_akhir = $request->tanggal_akhir;
         $trx->tempat = $request->tempat;
-        $trx->biaya = $request->biaya;
+        $trx->biaya = str_replace(',', '', $request->biaya);
         $trx->benefit = implode(';', $request->benefit);
         $trx->anggaran = $request->anggaran;
         $trx->keterangan = $request->keterangan;
@@ -864,5 +864,16 @@ class TrxPelatihanController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function save_update(Request $request, $id)
+    {
+        // dd($request->all(), $id);
+        $this->authorize('hc');
+        $back_url = $request->back_url;
+        $trx = TrxPelatihan::find( $id );
+        $trx->biaya = str_replace(',', '', $request->biaya);
+        $trx->update();
+        return redirect()->to($back_url)->with( 'msg', 'Data is saved successfully.' );
     }
 }

@@ -229,8 +229,10 @@ Route::post('reimburse/updateDetail/{id}', [TrxReimburseController::class, 'upda
 Route::resource('rekomendasi', TrxRekomendasiController::class);
 // 
 Route::resource('pelatihan', TrxPelatihanController::class);
+Route::post('pelatihan/save_update/{id}', [TrxPelatihanController::class, 'save_update'])->name('pelatihan.save_update')->middleware('can:hc');
 // 
 Route::resource('nonaktif', TrxNonaktifController::class);
+Route::post('nonaktif/save_edit/{id}', [TrxNonaktifController::class, 'save_edit'])->name('nonaktif.save_edit')->middleware('auth');
 Route::resource('nonaktif_auto', TrxNonaktifAutoController::class)->middleware('can:hc');
 // 
 Route::resource('izin', TrxIjinController::class);

@@ -103,6 +103,7 @@
                                         <th>Longitude</th>
                                         <th>Latitude</th>
                                         <th>Address</th>
+                                        <th>Map</th>
                                         <th>Status</th>
                                         <th>Type</th>
                                     </tr>
@@ -132,6 +133,7 @@
                                         <td>{{ $data->att_long }}</td>
                                         <td>{{ $data->att_lat }}</td>
                                         <td>{{ $data->att_address }}</td>
+                                        <td>@if(!empty($data->att_long) && !empty($data->att_lat))<a href="https://www.google.com/maps/place/{{ $data->att_lat }},{{ $data->att_long }}" target="_blank"><i class="fa fa-map-marker" style="font-size:25px;color:red;"></i></a>@endif</td>
                                         <td>
                                             @if($data->att_status == 'Book-in' || $data->att_status == 'Book-out')
                                                 <span class="badge badge-success">{{ $data->att_status }}</span>

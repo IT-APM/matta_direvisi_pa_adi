@@ -36,8 +36,7 @@
                         @if (Session::has('msg'))
                             <div class="alert alert-success dark alert-dismissible fade show" role="alert">
                                 <h6>{{ session('msg') }}</h6>
-                                <button class="btn-close" type="button" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
+                                <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif
                         <a href="{{ route('nonaktif.create') }}" class="btn btn-primary" type="button"><i
@@ -143,11 +142,19 @@
                                             <td>{{ ++$no }}</td>
                                             <td>{{ $data->id }}</td>
                                             <td>
-                                                <a href="{{ route('nonaktif.show', [$data->id, 'view' => 'detail']) }}"
-                                                    data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                                <a href="{{ route('nonaktif.show', [$data->id, 'view' => 'pdf']) }}"
-                                                    data-toggle="tooltip" title="PDF" target="_blank"><i
-                                                        class="fa fa-file-pdf-o"></i></a>
+                                                <a href="{{ route('nonaktif.show', [$data->id, 'view' => 'detail']) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
+                                                <a href="{{ route('nonaktif.show', [$data->id, 'view' => 'pdf']) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                                @can('hc')
+                                                @if(auth()->user()->nik == App\Models\MtrUtility::find(15)->informasi)
+                                                <form action="{{ route('nonaktif.destroy', $data->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <ul class="action">
+                                                        <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
+                                                    </ul>
+                                                </form>
+                                                @endif
+                                                @endcan
                                             </td>
                                             <td>
                                                 @php
@@ -190,17 +197,17 @@
                                             <td>
                                                 @php
                                                     $where = ['id_trx' => $data->id];
-                                                    $done_by = App\Models\TrxNonaktifLog::where($where)
-                                                        ->orderBy('id', 'desc')
-                                                        ->get();
+                                                    // 8 = Approve by PIC DIVISI
+                                                    // 12 = Approve by PIC GA
+                                                    // 16 = Approve by PIC IT
+                                                    // 20 = Approve by PIC KOPERASI
+                                                    // 24 = Approve by PIC HC
+                                                    $done_by = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', [8, 12, 16, 20, 24])->orderBy('id', 'desc')->get();
                                                     $arr = [];
                                                     foreach ($done_by as $_done_by) {
                                                         array_push($arr, $_done_by->nik_pic);
                                                     }
-                                                    $not_yet = App\Models\TrxNonaktifDetail::where($where)
-                                                        ->whereNotIn('kepada', $arr)
-                                                        ->orderBy('id', 'desc')
-                                                        ->get();
+                                                    $not_yet = App\Models\TrxNonaktifDetail::where($where)->whereNotIn('kepada', $arr)->orderBy('id', 'desc')->get();
                                                 @endphp
                                                 @foreach ($not_yet as $_not_yet)
                                                     {{ $_not_yet->_kepada->nama }}<br />
@@ -243,6 +250,7 @@
     <script src="{{ asset('assets/js/datatable/datatable-extension/vfs_fonts.js') }}"></script>
     <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
     <script type="text/javascript">
         function toggle_status(source) {
             checkboxes = document.getElementsByName('status[]');
@@ -284,6 +292,23 @@
                 [50, 100, 200, 500, -1],
                 [50, 100, 200, 500, "All"]
             ]
+        });
+        // 
+        $(document).on('click', '#btn-delete', function(event) {
+            var form = $(this).closest("form");
+            event.preventDefault();
+            swal({
+                    title: "Are you sure to delete this?",
+                    text: "If you delete this, it will be gone forever.",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        form.submit();
+                    }
+                });
         });
     </script>
 @endsection

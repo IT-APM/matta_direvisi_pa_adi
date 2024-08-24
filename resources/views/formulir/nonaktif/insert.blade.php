@@ -30,6 +30,12 @@
                         <h5>Karyawan</h5>
                     </div>
                     <div class="card-body typography">
+                        @if(Session::has('error'))
+                        <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                            <h6>{{ session('error') }}</h6>
+                            <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
                         <div class="row">
                             <div class="col-md-4">
                                 <label class="form-label" for="alasan">Alasan Non Aktif</label>

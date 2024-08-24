@@ -49,16 +49,22 @@
                     </tr>
                     @foreach ($trxD_di as $value)
                     @php
-                    $kepada = json_decode($value->kepada_property, true)
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                    // 6 = Reject by PIC DIVISI
+                    // 8 = Approve by PIC DIVISI
+                    $whereIn = [6, 8];
+                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
                     @endphp
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan</td>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan<br />Catatan PIC</td>
                         <td width="70%">: {{ $kepada['nama'] }}<br />
                         : {{ $kepada['nik'] }}<br />
                         : {{ $kepada['jabatan'] }}<br />
                         : {{ $kepada['divisi'] }} / {{ $kepada['dep'] }} / {{ $kepada['sub_dep'] }}<br />
                         : {{ $value->_obyek->obyek }}<br />
-                        : {!! $value->keterangan !!}
+                        : {!! $value->keterangan !!}<br />
+                        : @if(!empty($log)){{ $log->keterangan }}@endif
                         </td>
                     </tr>
                     @endforeach
@@ -77,16 +83,22 @@
                     </tr>
                     @foreach ($trxD_ga as $value)
                     @php
-                    $kepada = json_decode($value->kepada_property, true)
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                    // 10 = Reject by PIC GA
+                    // 12 = Approve by PIC GA
+                    $whereIn = [10, 12];
+                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
                     @endphp
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan</td>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan<br />Catatan PIC</td>
                         <td width="70%">: {{ $kepada['nama'] }}<br />
                         : {{ $kepada['nik'] }}<br />
                         : {{ $kepada['jabatan'] }}<br />
                         : {{ $kepada['divisi'] }} / {{ $kepada['dep'] }} / {{ $kepada['sub_dep'] }}<br />
                         : {{ $value->_obyek->obyek }}<br />
-                        : {!! $value->keterangan !!}
+                        : {!! $value->keterangan !!}<br />
+                        : @if(!empty($log)){{ $log->keterangan }}@endif
                         </td>
                     </tr>
                     @endforeach
@@ -105,16 +117,22 @@
                     </tr>
                     @foreach ($trxD_it as $value)
                     @php
-                    $kepada = json_decode($value->kepada_property, true)
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                    // 14 = Reject by PIC IT
+                    // 16 = Approve by PIC IT
+                    $whereIn = [14, 16];
+                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
                     @endphp
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan</td>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan<br />Catatan PIC</td>
                         <td width="70%">: {{ $kepada['nama'] }}<br />
                         : {{ $kepada['nik'] }}<br />
                         : {{ $kepada['jabatan'] }}<br />
                         : {{ $kepada['divisi'] }} / {{ $kepada['dep'] }} / {{ $kepada['sub_dep'] }}<br />
                         : {{ $value->_obyek->obyek }}<br />
-                        : {!! $value->keterangan !!}
+                        : {!! $value->keterangan !!}<br />
+                        : @if(!empty($log)){{ $log->keterangan }}@endif
                         </td>
                     </tr>
                     @endforeach
@@ -133,16 +151,22 @@
                     </tr>
                     @foreach ($trxD_hc as $value)
                     @php
-                    $kepada = json_decode($value->kepada_property, true)
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                    // 22 = Reject by PIC HC
+                    // 24 = Approve by PIC HC
+                    $whereIn = [22, 24];
+                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
                     @endphp
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan</td>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan<br />Catatan PIC</td>
                         <td width="70%">: {{ $kepada['nama'] }}<br />
                         : {{ $kepada['nik'] }}<br />
                         : {{ $kepada['jabatan'] }}<br />
                         : {{ $kepada['divisi'] }} / {{ $kepada['dep'] }} / {{ $kepada['sub_dep'] }}<br />
                         : {{ $value->_obyek->obyek }}<br />
-                        : {!! $value->keterangan !!}
+                        : {!! $value->keterangan !!}<br />
+                        : @if(!empty($log)){{ $log->keterangan }}@endif
                         </td>
                     </tr>
                     @endforeach
@@ -161,16 +185,22 @@
                     </tr>
                     @foreach ($trxD_ko as $value)
                     @php
-                    $kepada = json_decode($value->kepada_property, true)
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                    // 18 = Reject by PIC KOPERASI
+                    // 20 = Approve by PIC KOPERASI
+                    $whereIn = [18, 20];
+                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
                     @endphp
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan</td>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan<br />Catatan PIC</td>
                         <td width="70%">: {{ $kepada['nama'] }}<br />
                         : {{ $kepada['nik'] }}<br />
                         : {{ $kepada['jabatan'] }}<br />
                         : {{ $kepada['divisi'] }} / {{ $kepada['dep'] }} / {{ $kepada['sub_dep'] }}<br />
                         : {{ $value->_obyek->obyek }}<br />
-                        : {!! $value->keterangan !!}
+                        : {!! $value->keterangan !!}<br />
+                        : @if(!empty($log)){{ $log->keterangan }}@endif
                         </td>
                     </tr>
                     @endforeach

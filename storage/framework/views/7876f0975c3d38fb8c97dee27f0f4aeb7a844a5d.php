@@ -135,6 +135,7 @@
 					</tr>
 				</table>
 				<hr />
+				
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td align="center"><strong>CATATAN ATASAN</strong></td>
@@ -151,6 +152,25 @@
 					</tr>
 				</table>
 				<hr />
+				
+				<?php
+				$where = ['id_trx' => $trxCuti->id];
+				$catatan = App\Models\TrxCutiLog::where($where)->whereIn('id_status', [8])->orderBy('id', 'desc')->first();
+				?>
+				<?php if(!empty($catatan)): ?>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td align="center"><strong>CATATAN HCO</strong></td>
+					</tr>
+				</table>
+				<hr />
+				<table width="100%" border="0" cellspacing="0" cellpadding="2">
+					<tr>
+						<td><?php echo e($catatan->keterangan); ?></td>
+					</tr>
+				</table>
+				<hr />
+				<?php endif; ?>
 				<?php echo $htmlCutiLog; ?>
 
 			</td>

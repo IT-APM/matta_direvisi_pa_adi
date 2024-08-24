@@ -21,6 +21,12 @@
 <div class="container-fluid">
     <div class="row project-cards">
         <div class="col-sm-12">
+            @if(Session::has('msg'))
+            <div class="alert alert-success dark alert-dismissible fade show" role="alert">
+                <h6>{{ session('msg') }}</h6>
+                <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
             <div class="row">
                 <!--  -->
                 <div class="col-xxl-6 col-md-6 appointment-sec box-col-6">
@@ -102,19 +108,73 @@
                             </div>
                             @foreach ($trxD as $value)
                             <div class="card-body typography">
-                                @if($value->_into_ == 'di')
-                                <h6>Direktorat / Divisi / Departemen</h6>
-                                @elseif($value->_into_ == 'ga')
-                                <h6>General Affairs</h6>
-                                @elseif($value->_into_ == 'it')
-                                <h6>IT</h6>
-                                @elseif($value->_into_ == 'hc')
-                                <h6>Human Capital</h6>
-                                @elseif($value->_into_ == 'ko')
-                                <h6>Koperasi Karyawan</h6>
-                                @endif
+                                @php
+                                $isReject = false;
+                                if($value->_into_ == 'di'){
+                                    $lable = 'Direktorat / Divisi / Departemen';
+                                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                                    // 6 = Reject by PIC DIVISI
+                                    // 7 = Resubmit to PIC DIVISI
+                                    // 8 = Approve by PIC DIVISI
+                                    $whereIn = [6, 7, 8];
+                                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
+                                    if(!empty($log) && $log->id_status == 6){
+                                        $isReject = true;
+                                    }
+                                }elseif($value->_into_ == 'ga'){
+                                    $lable = 'General Affairs';
+                                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                                    // 10 = Reject by PIC GA
+                                    // 11 = Resubmit to PIC GA
+                                    // 12 = Approve by PIC GA
+                                    $whereIn = [10, 11, 12];
+                                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
+                                    if(!empty($log) && $log->id_status == 10){
+                                        $isReject = true;
+                                    }
+                                }elseif($value->_into_ == 'it'){
+                                    $lable = 'IT';
+                                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                                    // 14 = Reject by PIC IT
+                                    // 15 = Resubmit to PIC IT
+                                    // 16 = Approve by PIC IT
+                                    $whereIn = [14, 15, 16];
+                                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
+                                    if(!empty($log) && $log->id_status == 14){
+                                        $isReject = true;
+                                    }
+                                }elseif($value->_into_ == 'ko'){
+                                    $lable = 'Koperasi Karyawan';
+                                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                                    // 18 = Reject by PIC KOPERASI
+                                    // 19 = Resubmit to PIC KOPERASI
+                                    // 20 = Approve by PIC KOPERASI
+                                    $whereIn = [18, 19, 20];
+                                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
+                                    if(!empty($log) && $log->id_status == 18){
+                                        $isReject = true;
+                                    }
+                                }elseif($value->_into_ == 'hc'){
+                                    $lable = 'Human Capital';
+                                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                                    // 22 = Reject by PIC HC
+                                    // 23 = Resubmit to PIC HC
+                                    // 24 = Approve by PIC HC
+                                    $whereIn = [22, 23, 24];
+                                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
+                                    if(!empty($log) && $log->id_status == 22){
+                                        $isReject = true;
+                                    }
+                                }
+                                @endphp
+                                <h6>{{ $lable }} @if($isReject && auth()->user()->nik == $trxM->pengaju)<a href="{{ route('nonaktif.edit', [$value->id, 'back_url' => URL::full()]) }}" title="Edit"><i class="icon-pencil-alt"></i></a>@endif</h6>
                                 <table class="table table-striped">
                                     <tbody>
+                                        @php $kepada = json_decode($value->kepada_property, true) @endphp
+                                        <tr>
+                                            <td>Kepada</td>
+                                            <td>{{ $kepada['nama'] }}/{{ $kepada['nik'] }}</td>
+                                        </tr>
                                         <tr>
                                             <td width="30%">Obyek</td>
                                             <td width="70%">{{ $value->_obyek->obyek }}</td>
@@ -122,6 +182,10 @@
                                         <tr>
                                             <td>Keterangan</td>
                                             <td>{!! $value->keterangan !!}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Catatan PIC</td>
+                                            <td>@if(!empty($log)){{ $log->keterangan }}@endif</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -173,5 +237,4 @@
 @endsection
 
 @section('script')
-
 @endsection

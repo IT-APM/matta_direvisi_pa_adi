@@ -20,6 +20,12 @@
 <div class="container-fluid">
     <div class="row project-cards">
         <div class="col-sm-12">
+            <?php if(Session::has('msg')): ?>
+            <div class="alert alert-success dark alert-dismissible fade show" role="alert">
+                <h6><?php echo e(session('msg')); ?></h6>
+                <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php endif; ?>
             <div class="row">
                 <!--  -->
                 <div class="col-sm-4">
@@ -212,7 +218,7 @@
                                     </tr>
                                     <tr>
                                         <td>Biaya</td>
-                                        <td>Rp. <?php echo e(number_format($trx->biaya, 2)); ?></td>
+                                        <td>Rp. <?php echo e(number_format($trx->biaya, 2)); ?> <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?><a data-bs-toggle="modal" data-bs-target="#modal_biaya" href="#modal_biaya" title="Edit"><i class="icon-pencil-alt"></i></a><?php endif; ?></td>
                                     </tr>
                                     <tr>
                                         <td>Benefit</td>
@@ -247,10 +253,61 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modal_biaya" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+       <div class="modal-content">
+        <form action="<?php echo e(route('pelatihan.save_update', [$trx->id, 'data_type' => 'biaya', 'back_url' => URL::full()])); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+        <?php echo csrf_field(); ?>
+          <div class="modal-header">
+             <h5 class="modal-title" id="exampleModalLabel2">Edit</h5>
+             <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+                <div class="mb-0">
+                   <label class="col-form-label" for="recipient-name">Sebelum</label>
+                   <input type="text" name="biaya_sebelum" id="biaya_sebelum" class="form-control numbers" readonly value="Rp. <?php echo e(number_format($trx->biaya, 2)); ?>">
+                </div>
+                <div class="mb-0">
+                   <label class="col-form-label" for="message-text">Sesudah</label>
+                   <input min=0 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="biaya" id="biaya" class="form-control numbers" required="">
+                </div>
+          </div>
+          <div class="modal-footer">
+             <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+             <button class="btn btn-primary" type="submit">Submit</button>
+          </div>
+        </form>
+       </div>
+    </div>
+ </div>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('script'); ?>
 <script src="<?php echo e(asset('assets/js/datatable/datatables/jquery.dataTables.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatables/datatable.custom.js')); ?>"></script>
+<script type="text/javascript">
+function use_number(node) {
+  var empty_val = false;
+  const value = node.value;
+//   if(value==0){
+//     alert('Jumlah tidak boleh 0!');
+//   }
+  if (node.value == '')
+    empty_val = true;
+  node.type = 'number';
+  if (!empty_val)
+    node.value = Number(value.replace(/,/g, '')); // or equivalent per locale
+}
+// 
+function use_text(node) {
+  var empty_val = false;
+  const value = Number(node.value);
+  if (node.value == '')
+    empty_val = true;
+  node.type = 'text';
+  if (!empty_val)
+    node.value = value.toLocaleString('en');  // or other formatting
+}
+</script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.simple.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\matta\resources\views/formulir/pelatihan/view.blade.php ENDPATH**/ ?>

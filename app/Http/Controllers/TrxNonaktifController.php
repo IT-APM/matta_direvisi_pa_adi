@@ -197,10 +197,28 @@ class TrxNonaktifController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        // pengaju masih di hardcode
-        // Achmad Fahrizal
-        // $pengaju = '01031609488';
+        // cek jika hanya yang belum pernah mengajukan
+        $exists = false;
+        $where = ['nik' => auth()->user()->nik];
+        $karyawan = Karyawan::where($where)->get();
+        foreach($karyawan as $_karyawan){
+            $where = ['pengaju' => auth()->user()->nik];
+            if(TrxNonaktifMaster::where($where)->exists()){
+                $exists = true;
+                break;
+            }
+            // foreach($trxM as $_trxM){
+            //     $_pengaju = json_decode($_trxM->pengaju_property, true);
+            //     if($_karyawan->tanggal_bergabung == $_pengaju['tanggal_bergabung']){
+            //         $exists = true;
+            //         break;
+            //     }
+            // }
+        }
+        if($exists){
+            return redirect()->back()->with('error', 'Formulir Karyawan Non Aktif -> NOK');
+        }
+        // 
         $pengaju = auth()->user()->nik;
         $pengaju_property = $this->getNikProperty($pengaju);
         $_pengaju = json_decode($pengaju_property, true);
@@ -317,7 +335,7 @@ class TrxNonaktifController extends Controller
             $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
             $mailData['filename'] = 'emails.nonaktif0';
             $_kepada = json_decode($value->kepada_property, true);
-            $mailData['data'] = ['nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -336,7 +354,7 @@ class TrxNonaktifController extends Controller
             $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
             $mailData['filename'] = 'emails.nonaktif0';
             $_kepada = json_decode($value->kepada_property, true);
-            $mailData['data'] = ['nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -355,7 +373,7 @@ class TrxNonaktifController extends Controller
             $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
             $mailData['filename'] = 'emails.nonaktif0';
             $_kepada = json_decode($value->kepada_property, true);
-            $mailData['data'] = ['nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -374,7 +392,7 @@ class TrxNonaktifController extends Controller
             $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
             $mailData['filename'] = 'emails.nonaktif0';
             $_kepada = json_decode($value->kepada_property, true);
-            $mailData['data'] = ['nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -393,7 +411,7 @@ class TrxNonaktifController extends Controller
             $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
             $mailData['filename'] = 'emails.nonaktif0';
             $_kepada = json_decode($value->kepada_property, true);
-            $mailData['data'] = ['nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -505,28 +523,68 @@ class TrxNonaktifController extends Controller
         // di
         // 5 = Submit to PIC DIVISI
         // 6 = Reject by PIC DIVISI
+        // 7 = Resubmit to PIC DIVISI
         // 8 = Approve by PIC DIVISI
-        $nDI = TrxNonaktifLog::where($where)->whereIn('id_status', [6,8])->count();
+        // $nDI = TrxNonaktifLog::where($where)->whereIn('id_status', [6,8])->count();
+        $nDI = false;
+        $log = TrxNonaktifLog::where($where)->whereIn('id_status', [5, 6, 7, 8])->orderBy('id', 'desc')->first();
+        if(!empty($log) && in_array($log->id_status, [5, 7])){
+            $nDI = true;
+        }else if(empty($log)){
+            $nDI = true;
+        }
         // ga
         // 9 = Submit to PIC GA
         // 10 = Reject by PIC GA
+        // 11 = Resubmit to PIC GA
         // 12 = Approve by PIC GA
-        $nGA = TrxNonaktifLog::where($where)->whereIn('id_status', [10,12])->count();
+        // $nGA = TrxNonaktifLog::where($where)->whereIn('id_status', [10,12])->count();
+        $nGA = false;
+        $log = TrxNonaktifLog::where($where)->whereIn('id_status', [9, 10, 11, 12])->orderBy('id', 'desc')->first();
+        if(!empty($log) && in_array($log->id_status, [9, 11])){
+            $nGA = true;
+        }else if(empty($log)){
+            $nGA = true;
+        }
         // it
         // 13 = Submit to PIC IT
         // 14 = Reject by PIC IT
+        // 15 = Resubmit to PIC IT
         // 16 = Approve by PIC IT
-        $nIT = TrxNonaktifLog::where($where)->whereIn('id_status', [14,16])->count();
+        // $nIT = TrxNonaktifLog::where($where)->whereIn('id_status', [14,16])->count();
+        $nIT = false;
+        $log = TrxNonaktifLog::where($where)->whereIn('id_status', [13, 14, 15, 16])->orderBy('id', 'desc')->first();
+        if(!empty($log) && in_array($log->id_status, [13, 15])){
+            $nIT = true;
+        }else if(empty($log)){
+            $nIT = true;
+        }
         // hc
         // 21 = Submit to PIC HC
         // 22 = Reject by PIC HC
+        // 23 = Resubmit to PIC HC
         // 24 = Approve by PIC HC
-        $nHC = TrxNonaktifLog::where($where)->whereIn('id_status', [22,24])->count();
+        // $nHC = TrxNonaktifLog::where($where)->whereIn('id_status', [22,24])->count();
+        $nHC = false;
+        $log = TrxNonaktifLog::where($where)->whereIn('id_status', [21, 22, 23, 24])->orderBy('id', 'desc')->first();
+        if(!empty($log) && in_array($log->id_status, [21, 23])){
+            $nHC = true;
+        }else if(empty($log)){
+            $nHC = true;
+        }
         // ko
         // 17 = Submit to PIC KOPERASI
         // 18 = Reject by PIC KOPERASI
+        // 19 = Resubmit to PIC KOPERASI
         // 20 = Approve by PIC KOPERASI
-        $nKO = TrxNonaktifLog::where($where)->whereIn('id_status', [18,20])->count();
+        // $nKO = TrxNonaktifLog::where($where)->whereIn('id_status', [18,20])->count();
+        $nKO = false;
+        $log = TrxNonaktifLog::where($where)->whereIn('id_status', [17, 18, 19, 20])->orderBy('id', 'desc')->first();
+        if(!empty($log) && in_array($log->id_status, [17, 19])){
+            $nKO = true;
+        }else if(empty($log)){
+            $nKO = true;
+        }
         // atasan
         // 25 = Submit to L1
         // 2 = Reject by L1
@@ -536,8 +594,7 @@ class TrxNonaktifController extends Controller
         switch ($view) {
             case 'approval':
                 // di
-                // 5 = Submit to PIC DIVISI
-                if ($pic == 'di' && $nDI == 0 && $id_status == 5) {
+                if ($pic == 'di' && $nDI) {
                     // 6 = Reject by PIC DIVISI
                     // 8 = Approve by PIC DIVISI
                     $approve = 8;
@@ -547,8 +604,7 @@ class TrxNonaktifController extends Controller
                     return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction'));
                 }
                 // ga
-                // 9 = Submit to PIC GA
-                else if ($pic == 'ga' && $nGA == 0 && $id_status == 9) {
+                else if ($pic == 'ga' && $nGA) {
                     // 10 = Reject by PIC GA
                     // 12 = Approve by PIC GA
                     $approve = 12;
@@ -558,8 +614,7 @@ class TrxNonaktifController extends Controller
                     return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction'));
                 }
                 // it
-                // 13 = Submit to PIC IT
-                else if ($pic == 'it' && $nIT == 0 && $id_status == 13) {
+                else if ($pic == 'it' && $nIT) {
                     // 14 = Reject by PIC IT
                     // 16 = Approve by PIC IT
                     $approve = 16;
@@ -569,8 +624,7 @@ class TrxNonaktifController extends Controller
                     return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction'));
                 }
                 // hc
-                // 21 = Submit to PIC HC
-                else if ($pic == 'hc' && $nHC == 0 && $id_status == 21) {
+                else if ($pic == 'hc' && $nHC) {
                     // 22 = Reject by PIC HC
                     // 24 = Approve by PIC HC
                     $approve = 24;
@@ -580,8 +634,7 @@ class TrxNonaktifController extends Controller
                     return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction'));
                 }
                 // ko
-                // 17 = Submit to PIC KOPERASI
-                else if ($pic == 'ko' && $nKO == 0 && $id_status == 17) {
+                else if ($pic == 'ko' && $nKO) {
                     // 18 = Reject by PIC KOPERASI
                     // 20 = Approve by PIC KOPERASI
                     $approve = 20;
@@ -781,9 +834,88 @@ class TrxNonaktifController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        //
+        $this->authorize('auth');
+        // dd($request->all(), $id);
+        $trxD = TrxNonaktifDetail::find( $id );
+        $back_url = $request->back_url;
+        // di = divisi
+        $where = ['_into_' => 'di'];
+        $obyek_di = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
+        $where = ['is_aktif' => 1];
+        $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+        // ga
+        $where = ['_into_' => 'ga'];
+        $obyek_ga = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
+        $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(13)->informasi];
+        $pic_ga = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+        // it
+        $where = ['_into_' => 'it'];
+        $obyek_it = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
+        $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(14)->informasi];
+        $pic_it = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+        // hc
+        $where = ['_into_' => 'hc'];
+        $obyek_hc = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
+        $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(15)->informasi];
+        $pic_hc = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+        // ko = koperasi
+        $where = ['_into_' => 'ko'];
+        $obyek_ko = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
+        $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(16)->informasi];
+        $pic_ko = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+        // 
+        return view('formulir.nonaktif.edit', compact('back_url', 'trxD', 'karyawan', 'obyek_di', 'pic_ga', 'obyek_ga', 'pic_it', 'obyek_it', 'pic_hc', 'obyek_hc', 'pic_ko', 'obyek_ko'));
+    }
+    
+    public function save_edit(Request $request, $id)
+    {
+        // dd($request->all(), $id);
+        $this->authorize('auth');
+        $trxD = TrxNonaktifDetail::find( $id );
+        $trxD->kepada = $request->kepada;
+        $trxD->obyek = $request->obyek;
+        $trxD->keterangan = $request->keterangan;
+        $trxD->kepada_property = $this->getNikProperty($request->kepada);
+        $trxD->update();
+        $trxM = TrxNonaktifMaster::find( $trxD->id_trx );
+        $status = 0;
+        $keterangan = '';
+        $pic = $trxD->_into_;
+        if($pic == 'di'){
+            $status = 7;
+            $keterangan = 'Resubmit to PIC DIVISI';
+        }else if($pic == 'ga'){
+            $status = 11;
+            $keterangan = 'Resubmit to PIC GA';
+        }else if($pic == 'it'){
+            $status = 15;
+            $keterangan = 'Resubmit to PIC IT';
+        }else if($pic == 'ko'){
+            $status = 19;
+            $keterangan = 'Resubmit to PIC KOPERASI';
+        }else if($pic == 'hc'){
+            $status = 23;
+            $keterangan = 'Resubmit to PIC HC';
+        }
+        $trxM->status = $status;
+        $trxM->update();
+        $this->insertLog($trxD->id_trx, $status, $request->kepada, $keterangan);
+        $this->deleteToDoList(['id_trx'=>$trxD->id_trx, 'nik'=>$trxM->pengaju, 'pic'=>$trxD->_into_, 'filename'=>'emails.nonaktif0']);
+        // start
+        // parameter yang dipassing ke sendemail
+        $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
+        $mailData['filename'] = 'emails.nonaktif0';
+        $_pengaju = json_decode($trxM->pengaju_property, true);
+        $_kepada = json_decode($trxD->kepada_property, true);
+        $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
+        $mailData['to'] = $_kepada['email'];
+        $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
+        $this->insertToDoList($todolist, $mailData);
+        $this->sendEmail($mailData);
+        // finish
+        return redirect()->to($request->back_url)->with( 'msg', 'Data is saved successfully.' );
     }
 
     /**
@@ -795,7 +927,7 @@ class TrxNonaktifController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // dd($request->all(), $id);
         $trxM = TrxNonaktifMaster::find( $id );
         $pic = $request->pic;
         $nik = $request->nik;
@@ -822,6 +954,19 @@ class TrxNonaktifController extends Controller
             $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$nik, 'pic'=>$pic, 'filename'=>'emails.nonaktif0']);
             $this->insertLog($id, $status, $nik, $keterangan);
             $this->checkApproval($id, $trxM);
+            if($status == 6){
+                // start
+                // parameter yang dipassing ke sendemail
+                $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
+                $mailData['filename'] = 'emails.nonaktif0';
+                $_pengaju = json_decode($trxM->pengaju_property, true);
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'detail']) ];
+                $mailData['to'] = $_pengaju['email'];
+                $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
+                $this->insertToDoList($todolist, $mailData);
+                $this->sendEmail($mailData);
+                // finish
+            }
             return view('emails.nonaktif_ok');
         }
         // ga
@@ -834,6 +979,19 @@ class TrxNonaktifController extends Controller
             $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$nik, 'pic'=>$pic, 'filename'=>'emails.nonaktif0']);
             $this->insertLog($id, $status, $nik, $keterangan);
             $this->checkApproval($id, $trxM);
+            if($status == 10){
+                // start
+                // parameter yang dipassing ke sendemail
+                $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
+                $mailData['filename'] = 'emails.nonaktif0';
+                $_pengaju = json_decode($trxM->pengaju_property, true);
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'detail']) ];
+                $mailData['to'] = $_pengaju['email'];
+                $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
+                $this->insertToDoList($todolist, $mailData);
+                $this->sendEmail($mailData);
+                // finish
+            }
             return view('emails.nonaktif_ok');
         }
         // it
@@ -846,6 +1004,19 @@ class TrxNonaktifController extends Controller
             $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$nik, 'pic'=>$pic, 'filename'=>'emails.nonaktif0']);
             $this->insertLog($id, $status, $nik, $keterangan);
             $this->checkApproval($id, $trxM);
+            if($status == 14){
+                // start
+                // parameter yang dipassing ke sendemail
+                $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
+                $mailData['filename'] = 'emails.nonaktif0';
+                $_pengaju = json_decode($trxM->pengaju_property, true);
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'detail']) ];
+                $mailData['to'] = $_pengaju['email'];
+                $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
+                $this->insertToDoList($todolist, $mailData);
+                $this->sendEmail($mailData);
+                // finish
+            }
             return view('emails.nonaktif_ok');
         }
         // hc
@@ -858,6 +1029,19 @@ class TrxNonaktifController extends Controller
             $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$nik, 'pic'=>$pic, 'filename'=>'emails.nonaktif0']);
             $this->insertLog($id, $status, $nik, $keterangan);
             $this->checkApproval($id, $trxM);
+            if($status == 22){
+                // start
+                // parameter yang dipassing ke sendemail
+                $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
+                $mailData['filename'] = 'emails.nonaktif0';
+                $_pengaju = json_decode($trxM->pengaju_property, true);
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'detail']) ];
+                $mailData['to'] = $_pengaju['email'];
+                $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
+                $this->insertToDoList($todolist, $mailData);
+                $this->sendEmail($mailData);
+                // finish
+            }
             return view('emails.nonaktif_ok');
         }
         // ko
@@ -870,6 +1054,19 @@ class TrxNonaktifController extends Controller
             $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$nik, 'pic'=>$pic, 'filename'=>'emails.nonaktif0']);
             $this->insertLog($id, $status, $nik, $keterangan);
             $this->checkApproval($id, $trxM);
+            if($status == 18){
+                // start
+                // parameter yang dipassing ke sendemail
+                $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
+                $mailData['filename'] = 'emails.nonaktif0';
+                $_pengaju = json_decode($trxM->pengaju_property, true);
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'detail']) ];
+                $mailData['to'] = $_pengaju['email'];
+                $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
+                $this->insertToDoList($todolist, $mailData);
+                $this->sendEmail($mailData);
+                // finish
+            }
             return view('emails.nonaktif_ok');
         }
         // atasan
@@ -885,7 +1082,7 @@ class TrxNonaktifController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Karyawan Non Aktif';
             $mailData['filename'] = 'emails.nonaktif1';
-            $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama']];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama']];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // finish
@@ -938,7 +1135,7 @@ class TrxNonaktifController extends Controller
             $_pengaju = json_decode($trxM->pengaju_property, true);
             $_kepada = json_decode($trxM->atasan_property, true);
             $pic = 'atasan';
-            $mailData['data'] = ['nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [$trxM->id, 'view' => 'approval', 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic]) ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -955,6 +1152,9 @@ class TrxNonaktifController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->authorize('auth');
+        $trxM = TrxNonaktifMaster::find( $id );
+        $trxM->delete();
+        return redirect( 'nonaktif' )->with( 'msg', 'Data is deleted successfully.' );
     }
 }

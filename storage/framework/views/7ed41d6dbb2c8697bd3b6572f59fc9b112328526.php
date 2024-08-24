@@ -102,6 +102,7 @@
                                         <th>Longitude</th>
                                         <th>Latitude</th>
                                         <th>Address</th>
+                                        <th>Map</th>
                                         <th>Status</th>
                                         <th>Type</th>
                                     </tr>
@@ -131,6 +132,7 @@
                                         <td><?php echo e($data->att_long); ?></td>
                                         <td><?php echo e($data->att_lat); ?></td>
                                         <td><?php echo e($data->att_address); ?></td>
+                                        <td><?php if(!empty($data->att_long) && !empty($data->att_lat)): ?><a href="https://www.google.com/maps/place/<?php echo e($data->att_lat); ?>,<?php echo e($data->att_long); ?>" target="_blank"><i class="fa fa-map-marker" style="font-size:25px;color:red;"></i></a><?php endif; ?></td>
                                         <td>
                                             <?php if($data->att_status == 'Book-in' || $data->att_status == 'Book-out'): ?>
                                                 <span class="badge badge-success"><?php echo e($data->att_status); ?></span>

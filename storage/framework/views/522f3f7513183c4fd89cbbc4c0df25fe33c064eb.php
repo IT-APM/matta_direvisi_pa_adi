@@ -84,6 +84,16 @@
                                             <td>Catatan Atasan</td>
                                             <td><?php if(!empty($catatan)): ?><?php echo e($catatan->keterangan); ?><?php endif; ?></td>
                                         </tr>
+                                        <?php
+                                        $where = ['id_trx' => $trxCuti->id];
+                                        $catatan = App\Models\TrxCutiLog::where($where)->whereIn('id_status', [8])->orderBy('id', 'desc')->first();
+                                        ?>
+                                        <?php if(!empty($catatan)): ?>
+                                        <tr>
+                                            <td>Catatan HCO</td>
+                                            <td><?php echo e($catatan->keterangan); ?></td>
+                                        </tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -123,6 +133,30 @@
                             </ul>
                         </div>
                     </div>
+                    
+                    <?php
+                    $where = ['id_trx' => $trxCuti->id];
+                    $catatan = App\Models\TrxCutiLog::where($where)->whereIn('id_status', [4,5])->orderBy('id', 'desc')->first();
+                    $isPast = Carbon\Carbon::parse($trxCuti->tanggal_mulai)->isPast();
+                    ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+                    <?php if(!empty($catatan) && !$isPast): ?>
+                    <div class="card">
+                        <div class="card-body typography">
+                            <h5>Catatan</h5>
+                            <form id="myform" name="myform" method="post" enctype="multipart/form-data" action="<?php echo e(route('cuti.update', $trxCuti->id)); ?>" target="_self" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                <?php echo method_field('PATCH'); ?>
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" id="nik" name="nik" value="<?php echo e(auth()->user()->nik); ?>">
+                                <input type="hidden" id="pic" name="pic" value="reject_hco">
+                                <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
+                                <br/>
+                                <button type="submit" name="status_cuti" value="8" class="btn btn-danger">Reject</button>
+                            </form>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    <?php endif; ?>
                 </div>
                 <!--  -->
                 <div class="col-xxl-6 col-md-6 appointment-sec box-col-6">
