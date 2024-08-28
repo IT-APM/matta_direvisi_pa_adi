@@ -193,6 +193,7 @@ Route::post('feeds/image/store', [ FeedController::class, 'ImageUploadStore' ])-
 Route::get('feeds/image/remove', [ FeedController::class, 'RemoveImage'])->name('feeds.image.remove')->middleware('can:hc');
 // 
 Route::resource('attendance', AttendanceController::class)->middleware('auth');
+Route::get('attendance/duration/{id}', [AttendanceController::class, 'duration'])->name('attendance.duration')->middleware('auth');
 Route::resource('recap_attendance', RecapAttendanceController::class)->middleware('auth');
 Route::resource('noattendance', NoAttendanceController::class)->middleware('can:hc');
 Route::resource('overtime', OvertimeController::class)->middleware('auth');

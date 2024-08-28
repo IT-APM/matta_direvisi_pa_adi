@@ -750,7 +750,7 @@ class TrxCutiController extends Controller
     public function getTanggalIndonesia($tgl)
     {
         $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        $strTgl = 'Hari ' . $hari[Carbon::createFromFormat('Y-m-d', $tgl)->dayOfWeek] . ', ';
+        $strTgl = $hari[Carbon::createFromFormat('Y-m-d', $tgl)->dayOfWeek] . ', ';
         $strTgl .= Carbon::createFromFormat('Y-m-d', $tgl)->format('d-m-Y');
         return $strTgl;
     }

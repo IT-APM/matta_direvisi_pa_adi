@@ -48,8 +48,16 @@ class TrxIjinController extends Controller
         //     $trxM->update();
         // }
         if(auth()->user()->userrole == 'nhc'){
-            $where = ['karyawan' => auth()->user()->nik];
-            $trx = TrxIjin::where($where)->orderBy('id', 'desc')->get();
+            // $where = ['karyawan' => auth()->user()->nik];
+            // $trx = TrxIjin::where($where)->orderBy('id', 'desc')->get();
+            $where = ['layer1' => auth()->user()->nik];
+            $bawahan = Karyawan::select('nik')->where($where)->get();
+            $karyawan = array();
+            array_push($karyawan, auth()->user()->nik);
+            foreach($bawahan as $data){
+                array_push($karyawan, $data->nik);
+            }
+            $trx = TrxIjin::whereIn('karyawan', $karyawan)->orderBy('id', 'desc')->get();
         }
         // filter parameter
         $arr_status = array();
@@ -88,8 +96,16 @@ class TrxIjinController extends Controller
             // }
             $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', $arr_karyawan)->orderBy('id', 'desc')->get();
             if(auth()->user()->userrole == 'nhc'){
-                $where = ['karyawan' => auth()->user()->nik];
-                $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', $arr_karyawan)->where($where)->orderBy('id', 'desc')->get();
+                // $where = ['karyawan' => auth()->user()->nik];
+                // $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', $arr_karyawan)->where($where)->orderBy('id', 'desc')->get();
+                $where = ['layer1' => auth()->user()->nik];
+                $bawahan = Karyawan::select('nik')->where($where)->get();
+                $karyawan = array();
+                array_push($karyawan, auth()->user()->nik);
+                foreach($bawahan as $data){
+                    array_push($karyawan, $data->nik);
+                }
+                $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', $arr_karyawan)->whereIn('karyawan', $karyawan)->orderBy('id', 'desc')->get();
             }
         }else{
             $arr_status = array();
@@ -472,5 +488,13 @@ class TrxIjinController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public static function getTanggalIndonesia($tgl)
+    {
+        $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $strTgl = $hari[Carbon::createFromFormat('Y-m-d', $tgl)->dayOfWeek] . ', ';
+        $strTgl .= Carbon::createFromFormat('Y-m-d', $tgl)->format('d-m-Y');
+        return $strTgl;
     }
 }

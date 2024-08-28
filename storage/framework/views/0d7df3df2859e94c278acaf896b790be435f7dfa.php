@@ -51,9 +51,12 @@
                         <td width="30%">Tipe Izin</td>
                         <td width="70%">: <?php echo e($trx->_tipe->tipe); ?></td>
                     </tr>
+                    <?php
+                    $tanggal = App\Http\Controllers\TrxIjinController::getTanggalIndonesia($trx->tanggal);
+                    ?>
                     <tr>
                         <td>Tanggal</td>
-                        <td>: <?php echo e(\Carbon\Carbon::parse($trx->tanggal)->format('d-m-Y')); ?></td>
+                        <td>: <?php echo e($tanggal); ?></td>
                     </tr>
                     <?php if($trx->tipe == 1 || $trx->tipe == 2): ?>
                     <tr>

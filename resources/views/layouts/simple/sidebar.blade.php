@@ -18,10 +18,8 @@
             <div id="sidebar-menu">
                 <ul class="sidebar-links" id="simple-bar">
                     <li class="back-btn">
-                        <a href="{{ route('todolist.index') }}"><img class="img-fluid"
-                                src="{{ asset('assets/images/logo/logo-icon.png') }}" alt=""></a>
-                        <div class="mobile-back text-end"><span>Back</span><i class="fa fa-angle-right ps-2"
-                                aria-hidden="true"></i></div>
+                        <a href="{{ route('todolist.index') }}"><img class="img-fluid" src="{{ asset('assets/images/logo/logo-icon.png') }}" alt=""></a>
+                        <div class="mobile-back text-end"><span>Back</span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
                     </li>
                     <li class="sidebar-main-title">
                         <div>
@@ -110,8 +108,7 @@
                             @endcan
                         </ul>
                     </li>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav"
-                            href="{{ route('feeds.view') }}">
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('feeds.view') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-knowledgebase') }}"></use>
                             </svg>
@@ -119,8 +116,7 @@
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-knowledgebase') }}"></use>
                             </svg><span>Feeds</span></a></li>
                     @can('iphone')
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav"
-                                href="{{ route('covid.index') }}">
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('covid.index') }}">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
                                 </svg>
@@ -132,16 +128,14 @@
                                 <h6>Clock-in Clock-out</h6>
                             </div>
                         </li>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav"
-                                href="{{ route('cico_att.index') }}">
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('cico_att.index') }}">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
                                 </svg>
                                 <svg class="fill-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
                                 </svg><span>Attendance</span></a></li>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav"
-                                href="{{ route('cico_ot.index') }}">
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('cico_ot.index') }}">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
                                 </svg>
@@ -154,16 +148,21 @@
                             <h6>Attendance</h6>
                         </div>
                     </li>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav"
-                            href="{{ route('attendance.index') }}">
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('attendance.index') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
                             </svg>
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
                             </svg><span>Attendance Log</span></a></li>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav"
-                            href="{{ route('recap_attendance.index') }}">
+                    {{-- <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('attendance.duration', 0) }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
+                            </svg><span>Attendance Duration</span></a></li> --}}
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('recap_attendance.index') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
                             </svg>
@@ -171,16 +170,14 @@
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
                             </svg><span>Attendance Recap</span></a></li>
                     @can('hc')
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav"
-                                href="{{ route('noattendance.index') }}">
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('noattendance.index') }}">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
                                 </svg>
                                 <svg class="fill-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
                                 </svg><span>No Attendance</span></a></li>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav"
-                                href="{{ route('health.index') }}">
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('health.index') }}">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
                                 </svg>
@@ -209,8 +206,7 @@
                         <li class="sidebar-list">
                             <a class="sidebar-link sidebar-title link-nav" href="{{ route('approval-index') }}">
                                 <svg class="stroke-icon">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-to-do') }}">
-                                    </use>
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-to-do') }}"></use>
                                 </svg>
                                 <svg class="fill-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#fill-to-do') }}"></use>

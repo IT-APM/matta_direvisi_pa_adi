@@ -58,12 +58,6 @@
                                         <input class="checkbox_animated" id="tipe[]" name="tipe[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_tipe)) checked @endif> {{ $data->tipe }}<br/>
                                         @endforeach
                                     </label>
-                                    <!-- <label class="h6">Nama Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_karyawan(this)" /> Check All
-                                    <label class="d-block" for="karyawan">
-                                        @foreach ($karyawan as $data)
-                                        <input class="checkbox_animated" id="karyawan[]" name="karyawan[]" type="checkbox" value="{{ $data->nik }}" @if(in_array($data->nik, $arr_karyawan)) checked @endif> {{ $data->nama }}<br/>
-                                        @endforeach
-                                    </label> -->
                                 </div>
                             </div>
                             <div class="row">
@@ -83,8 +77,11 @@
                                     <th>Action</th>
                                     <th>Karyawan</th>
                                     <th>NIP Karyawan</th>
-                                    <th>Atasan</th>
-                                    <th>NIP Atasan</th>
+                                    <th>Direktorat</th>
+                                    <th>Divisi</th>
+                                    <th>Departemen</th>
+                                    <th>Approval 1</th>
+                                    <th>Approval 2</th>
                                     <th>Tipe</th>
                                     <th>Tanggal</th>
                                     <th>Alasan</th>
@@ -94,6 +91,11 @@
                             </thead>
                             <tbody>
                                 @foreach ($trx as $data)
+                                @php
+                                    $karyawan_property = json_decode($data['karyawan_property'], true);
+                                    $atasan_property = json_decode($data['atasan_property'], true);
+                                    $layer2_property = json_decode($data['layer2_property'], true);
+                                @endphp
                                 <tr>
                                     <td>{{ ++$no }}</td>
                                     <td>{{ $data->id }}</td>
@@ -101,10 +103,13 @@
                                         <a href="{{ route('izin.show', [$data->id, 'view' => 'detail']) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
                                         &nbsp;<a href="{{ route('izin.show', [$data->id, 'view' => 'pdf']) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                     </td>
-                                    <td>{{ $data->_karyawan->nama }}</td>
-                                    <td>{{ $data->_karyawan->nik }}</td>
-                                    <td>{{ $data->_atasan->nama }}</td>
-                                    <td>{{ $data->_atasan->nik }}</td>
+                                    <td>{{ $karyawan_property['nama'] }}</td>
+                                    <td>{{ $karyawan_property['nik'] }}</td>
+                                    <td>{{ $karyawan_property['divisi'] }}</td>
+                                    <td>{{ $karyawan_property['dep'] }}</td>
+                                    <td>{{ $karyawan_property['sub_dep'] }}</td>
+                                    <td>{{ $atasan_property['nama'] }}</td>
+                                    <td>@if(!empty($data->layer2)){{ $layer2_property['nama'] }}@endif</td>
                                     <td>
                                         {{ $data->_tipe->tipe }}
                                         @if($data->tipe == 1 || $data->tipe == 2)
