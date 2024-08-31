@@ -476,7 +476,10 @@ class TrxPelatihanController extends Controller
                 $this->authorize('auth');
                 $where = ['id_trx' => $id];
                 $history = TrxPelatihanLog::where($where)->orderBy('created_at', 'desc')->get();
-                return view('formulir.pelatihan.view', compact('trx', 'pengaju', 'arrPeserta', 'arrAtasanPeserta', 'history', 'arrJenis', 'arrBenefit'));
+                $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
+                $anggaran = PelatihanAnggaran::orderBy('anggaran', 'asc')->get();
+                $benefit = PelatihanBenefit::orderBy('benefit', 'asc')->get();
+                return view('formulir.pelatihan.view', compact('trx', 'pengaju', 'arrPeserta', 'arrAtasanPeserta', 'history', 'arrJenis', 'arrBenefit', 'jenis', 'anggaran', 'benefit'));
                 break;
             case 'pdf':
                 $this->authorize('auth');
@@ -872,7 +875,17 @@ class TrxPelatihanController extends Controller
         $this->authorize('hc');
         $back_url = $request->back_url;
         $trx = TrxPelatihan::find( $id );
+        $trx->tahun = $request->tahun;
+        $trx->jenis = implode(';', $request->jenis);
+        $trx->judul = $request->judul;
+        $trx->penyelenggara = $request->penyelenggara;
+        $trx->tanggal_mulai = $request->tanggal_mulai;
+        $trx->tanggal_akhir = $request->tanggal_akhir;
+        $trx->tempat = $request->tempat;
         $trx->biaya = str_replace(',', '', $request->biaya);
+        $trx->benefit = implode(';', $request->benefit);
+        $trx->anggaran = $request->anggaran;
+        $trx->keterangan = $request->keterangan;
         $trx->update();
         return redirect()->to($back_url)->with( 'msg', 'Data is saved successfully.' );
     }

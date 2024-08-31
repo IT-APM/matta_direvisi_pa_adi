@@ -2,6 +2,8 @@
 
 <?php $__env->startSection('css'); ?>
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/datatables.css')); ?>">
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/sweetalert2.css')); ?>">
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/select2.css')); ?>">
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('style'); ?>
@@ -174,7 +176,7 @@
                         <!-- end -->
                         <!-- start -->
                         <div class="card-header">
-                            <h5>Pelatihan</h5>
+                            <h5>Pelatihan <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?><a data-bs-toggle="modal" data-bs-target="#modal_edit" href="#modal_edit" title="Edit"><i class="icon-pencil-alt"></i></a><?php endif; ?></h5>
                         </div>
                         <div class="card-body typography">
                             <table class="table table-striped">
@@ -218,7 +220,7 @@
                                     </tr>
                                     <tr>
                                         <td>Biaya</td>
-                                        <td>Rp. <?php echo e(number_format($trx->biaya, 2)); ?> <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?><a data-bs-toggle="modal" data-bs-target="#modal_biaya" href="#modal_biaya" title="Edit"><i class="icon-pencil-alt"></i></a><?php endif; ?></td>
+                                        <td>Rp. <?php echo e(number_format($trx->biaya, 2)); ?></td>
                                     </tr>
                                     <tr>
                                         <td>Benefit</td>
@@ -253,7 +255,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="modal_biaya" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
        <div class="modal-content">
         <form action="<?php echo e(route('pelatihan.save_update', [$trx->id, 'data_type' => 'biaya', 'back_url' => URL::full()])); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
@@ -263,13 +265,66 @@
              <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-                <div class="mb-0">
-                   <label class="col-form-label" for="recipient-name">Sebelum</label>
-                   <input type="text" name="biaya_sebelum" id="biaya_sebelum" class="form-control numbers" readonly value="Rp. <?php echo e(number_format($trx->biaya, 2)); ?>">
+                <div class="mt-0">
+                    <label class="form-label" for="tahun">Tahun*</label>
+                    <input min=0 type="number" name="tahun" id="tahun" class="form-control numbers" required="" value="<?php echo e($trx->tahun); ?>">
                 </div>
-                <div class="mb-0">
-                   <label class="col-form-label" for="message-text">Sesudah</label>
-                   <input min=0 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="biaya" id="biaya" class="form-control numbers" required="">
+                <div class="mt-2">
+                    <label class="form-label" for="jenis[]">Jenis Pelatihan*</label>
+                    <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="jenis[]" name="jenis[]" required="">
+                        <?php $__currentLoopData = $jenis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, explode(';', $trx->jenis))): ?> selected <?php endif; ?>><?php echo e($data->jenis); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                    <div class="invalid-feedback txt-danger">Jenis Pelatihan is required.</div>
+                </div>
+                <div class="mt-2">
+                    <label class="form-label" for="judul">Judul Pelatihan*</label>
+                    <input name="judul" id="judul" class="form-control" type="text" required="" value="<?php echo e($trx->judul); ?>">
+                </div>
+                <div class="mt-2">
+                    <label class="form-label" for="penyelenggara">Penyelenggara*</label>
+                    <input name="penyelenggara" id="penyelenggara" class="form-control" type="text" required="" value="<?php echo e($trx->penyelenggara); ?>">
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <label class="form-label" for="tanggal_mulai">Tanggal Mulai*</label>
+                        <input class="form-control" name="tanggal_mulai" id="tanggal_mulai" type="date" required="" value="<?php echo e($trx->tanggal_mulai); ?>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="tanggal_akhir">Tanggal Akhir*</label>
+                        <input class="form-control" name="tanggal_akhir" id="tanggal_akhir" type="date" required="" value="<?php echo e($trx->tanggal_akhir); ?>">
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <label class="form-label" for="tempat">Tempat*</label>
+                    <textarea class="form-control" id="tempat" name="tempat" rows="4" required=""><?php echo e($trx->tempat); ?></textarea>
+                </div>
+                <div class="mt-2">
+                    <label class="form-label" for="biaya">Biaya (Termasuk PPN, jika ada)*</label>
+                    <input min=0 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="biaya" id="biaya" class="form-control numbers" required="" value="<?php echo e($trx->biaya); ?>">
+                </div>
+                <div class="mt-2">
+                    <label class="form-label" for="benefit[]">Benefit*</label>
+                    <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="benefit[]" name="benefit[]" required="">
+                        <?php $__currentLoopData = $benefit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, explode(';', $trx->benefit))): ?> selected <?php endif; ?>><?php echo e($data->benefit); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                    <div class="invalid-feedback txt-danger">Benefit is required.</div>
+                </div>
+                <div class="mt-2">
+                    <label class="form-label" for="anggaran">Anggaran*</label>
+                    <select class="form-select col-sm-12" id="anggaran" name="anggaran" required="">
+                        <option selected="" disabled="" value="">Pilih...</option>
+                        <?php $__currentLoopData = $anggaran; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($data->id); ?>" <?php if($data->id==$trx->anggaran): ?> selected <?php endif; ?>><?php echo e($data->anggaran); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                </div>
+                <div class="mt-2">
+                    <label class="form-label" for="keterangan">Keterangan</label>
+                    <textarea class="form-control" id="keterangan" name="keterangan" rows="4" ><?php echo e($trx->keterangan); ?></textarea>
                 </div>
           </div>
           <div class="modal-footer">
@@ -285,6 +340,11 @@
 <?php $__env->startSection('script'); ?>
 <script src="<?php echo e(asset('assets/js/datatable/datatables/jquery.dataTables.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatables/datatable.custom.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/form-validation-custom.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/sweet-alert/sweetalert.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/sweet-alert/app.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/select2/select2.full.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/select2/select2-custom.js')); ?>"></script>
 <script type="text/javascript">
 function use_number(node) {
   var empty_val = false;

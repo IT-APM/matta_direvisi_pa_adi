@@ -72,25 +72,28 @@ class RecapAttendanceController extends Controller
             $divisi = Divisi::whereIn('kode_perusahaan', $arr_perusahaan)->get();
             $departemen = Departemen::whereIn('kode_divisi', $arr_divisi)->get();
             $sub_departemen = SubDepartemen::whereIn('kode_departemen', $arr_departemen)->get();
-            $karyawan = Karyawan::whereIn('kode_sub_departemen', $arr_sub_departemen)
-                ->whereNotIn('nik', ['Hco.all', 'IT.BM'])
-                ->whereIn('is_aktif', $arr_is_aktif)
-                ->get();
+            $karyawan = Karyawan::whereIn('kode_sub_departemen', $arr_sub_departemen)->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get();
             if(auth()->user()->userrole == 'nhc'){
                 // hanya karyawan saja
                 // $where = ['nik' => auth()->user()->nik];
                 // $karyawan = Karyawan::where($where)->get();
-                // karyawan beserta bawahan
+                // karyawan beserta bawahan1 dan bawahan2
                 $_karyawan = array();
                 array_push($_karyawan, auth()->user()->nik);
                 $where = ['layer1' => auth()->user()->nik];
-                $bawahan = Karyawan::select('nik')->where($where)->get();
-                foreach($bawahan as $_bawahan){
-                    array_push($_karyawan, $_bawahan->nik);
+                $bawahan1 = Karyawan::select('nik')->where($where)->get();
+                foreach($bawahan1 as $_bawahan1){
+                    array_push($_karyawan, $_bawahan1->nik);
+                    // bawahannya lagi
+                    $where = ['layer1' => $_bawahan1->nik];
+                    $bawahan2 = Karyawan::select('nik')->where($where)->get();
+                    foreach($bawahan2 as $_bawahan2){
+                        array_push($_karyawan, $_bawahan2->nik);
+                    }
                 }
                 // $where = ['is_aktif' => 1];
                 // $karyawan = Karyawan::where($where)->whereIn('nik', $_karyawan)->get();
-                $karyawan = Karyawan::whereIn('nik', $_karyawan)->get();
+                $karyawan = Karyawan::whereIn('nik', $_karyawan)->whereIn('is_aktif', $arr_is_aktif)->get();
             }
             // dd($karyawan);
             // $nik = '01032106835';

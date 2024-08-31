@@ -432,7 +432,7 @@
                             <li class="nav-item"><a class="nav-link active" id="pills-emp_photo-tab" data-bs-toggle="pill"
                                     href="#pills-emp_photo" role="tab" aria-controls="pills-emp_photo" aria-selected="false">Foto</a></li>
                             <li class="nav-item"><a class="nav-link" id="pills-emp_anak-tab" data-bs-toggle="pill"
-                                    href="#pills-emp_anak" role="tab" aria-controls="pills-emp_anak" aria-selected="false">Anak-anak</a></li>
+                                    href="#pills-emp_anak" role="tab" aria-controls="pills-emp_anak" aria-selected="false">Nama Anak</a></li>
                             <li class="nav-item"><a class="nav-link" id="pills-emp_edu-tab" data-bs-toggle="pill"
                                     href="#pills-emp_edu" role="tab" aria-controls="pills-emp_edu" aria-selected="false">Pendidikan</a></li>
                             <li class="nav-item"><a class="nav-link" id="pills-emp_lat-tab" data-bs-toggle="pill"

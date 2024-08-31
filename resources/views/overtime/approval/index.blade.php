@@ -37,7 +37,7 @@
                     @endif
                     <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                     <div class="collapse" id="collapse_filter">
-                        <form class="m-4" action="{{ route('approval-index') }}" method="get" enctype="multipart/form-data">
+                        <form class="mt-2" action="{{ route('approval-index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-sm-4">
                                     <label class="h6">Start Date</label>
