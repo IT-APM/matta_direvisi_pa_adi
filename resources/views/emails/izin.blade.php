@@ -72,8 +72,8 @@
                                     <td width="60%">{{ $trx->_tipe->tipe }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Tanggal</td>
-                                    <td>{{ $trx->tanggal }}</td>
+                                    <td>Hari, Tanggal</td>
+                                    <td>{{ App\Http\Controllers\TrxIjinController::getTanggalIndonesia($trx->tanggal) }}</td>
                                 </tr>
                                 @if($trx->tipe == 1 || $trx->tipe == 2)
                                 <tr>

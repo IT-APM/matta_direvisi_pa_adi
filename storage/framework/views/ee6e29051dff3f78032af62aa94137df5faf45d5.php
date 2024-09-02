@@ -211,6 +211,7 @@
                                             <th>Maker NIP</th>
                                             <th>Approve Name</th>
                                             <th>Rp Adj (Round)</th>
+                                            <th>Employee Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -229,6 +230,7 @@
                                             <td><?php echo e($data->ot_maker_by); ?></td>
                                             <td><?php echo e($data->_ot_approver_by->nama); ?></td>
                                             <td><?php echo e(number_format(round($data->ot_length_rp_adj, -3))); ?></td>
+                                            <td><?php echo e($_data['status_karyawan']); ?></td>
                                         </tr>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </tbody>

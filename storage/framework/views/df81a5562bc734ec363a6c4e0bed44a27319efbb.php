@@ -143,7 +143,7 @@
                                         </tr>
                                         <tr>
                                             <td>Tanggal</td>
-                                            <td><?php echo e(\Carbon\Carbon::parse($trx->tanggal)->format('d-m-Y')); ?></td>
+                                            <td><?php echo e(App\Http\Controllers\TrxIjinController::getTanggalIndonesia($trx->tanggal)); ?></td>
                                         </tr>
                                         <?php if($trx->tipe == 1 || $trx->tipe == 2): ?>
                                         <tr>

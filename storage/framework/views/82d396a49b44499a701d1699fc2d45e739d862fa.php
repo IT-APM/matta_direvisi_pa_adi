@@ -72,8 +72,8 @@
                                     <td width="60%"><?php echo e($trx->_tipe->tipe); ?></td>
                                 </tr>
                                 <tr>
-                                    <td>Tanggal</td>
-                                    <td><?php echo e($trx->tanggal); ?></td>
+                                    <td>Hari, Tanggal</td>
+                                    <td><?php echo e(App\Http\Controllers\TrxIjinController::getTanggalIndonesia($trx->tanggal)); ?></td>
                                 </tr>
                                 <?php if($trx->tipe == 1 || $trx->tipe == 2): ?>
                                 <tr>

@@ -142,7 +142,7 @@
                                         </tr>
                                         <tr>
                                             <td>Tanggal</td>
-                                            <td>{{ \Carbon\Carbon::parse($trx->tanggal)->format('d-m-Y') }}</td>
+                                            <td>{{ App\Http\Controllers\TrxIjinController::getTanggalIndonesia($trx->tanggal) }}</td>
                                         </tr>
                                         @if($trx->tipe == 1 || $trx->tipe == 2)
                                         <tr>

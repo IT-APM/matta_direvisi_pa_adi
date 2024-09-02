@@ -81,7 +81,7 @@
                                     <th>Approval 1</th>
                                     <th>Approval 2</th>
                                     <th>Tipe</th>
-                                    <th>Tanggal</th>
+                                    <th>Hari, Tanggal</th>
                                     <th>Alasan</th>
                                     <th>Status</th>
                                     <th>Created at</th>
@@ -116,7 +116,7 @@
 
                                         <?php endif; ?>
                                     </td>
-                                    <td><?php echo e(\Carbon\Carbon::parse($data->tanggal)->format('d-m-Y')); ?></td>
+                                    <td><?php echo e(App\Http\Controllers\TrxIjinController::getTanggalIndonesia($data->tanggal)); ?></td>
                                     <td><?php echo $data->alasan; ?></td>
                                     <td><?php echo e($data->_status->status); ?></td>
                                     <td><?php echo e($data->created_at); ?></td>

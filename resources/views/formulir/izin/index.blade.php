@@ -83,7 +83,7 @@
                                     <th>Approval 1</th>
                                     <th>Approval 2</th>
                                     <th>Tipe</th>
-                                    <th>Tanggal</th>
+                                    <th>Hari, Tanggal</th>
                                     <th>Alasan</th>
                                     <th>Status</th>
                                     <th>Created at</th>
@@ -116,7 +116,7 @@
                                         <br/>Jam {{ $data->jam_awal }} s/d {{ $data->jam_akhir }}
                                         @endif
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
+                                    <td>{{ App\Http\Controllers\TrxIjinController::getTanggalIndonesia($data->tanggal) }}</td>
                                     <td>{!! $data->alasan !!}</td>
                                     <td>{{ $data->_status->status }}</td>
                                     <td>{{ $data->created_at }}</td>

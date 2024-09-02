@@ -173,13 +173,6 @@
     <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.print.min.js')); ?>"></script>
     <script src="<?php echo e(asset('assets/js/sweet-alert/sweetalert.min.js')); ?>"></script>
     <script type="text/javascript">
-        function toggle_status(source) {
-            checkboxes = document.getElementsByName('status[]');
-            for (var i = 0, n = checkboxes.length; i < n; i++) {
-                checkboxes[i].checked = source.checked;
-            }
-        }
-
         function toggle_perpanjangan(source) {
             checkboxes = document.getElementsByName('perpanjangan[]');
             for (var i = 0, n = checkboxes.length; i < n; i++) {
@@ -189,13 +182,6 @@
 
         function toggle_perusahaan(source) {
             checkboxes = document.getElementsByName('perusahaan[]');
-            for (var i = 0, n = checkboxes.length; i < n; i++) {
-                checkboxes[i].checked = source.checked;
-            }
-        }
-
-        function toggle_alasan(source) {
-            checkboxes = document.getElementsByName('alasan[]');
             for (var i = 0, n = checkboxes.length; i < n; i++) {
                 checkboxes[i].checked = source.checked;
             }

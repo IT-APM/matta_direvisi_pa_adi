@@ -164,6 +164,13 @@
                                 <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
                             </svg><span>Attendance Recap</span></a></li>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('reminder_sp.index')); ?>">
+                                <svg class="stroke-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
+                                </svg><span>Reminder Warning Letter</span></a></li>
                         <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('noattendance.index')); ?>">
                                 <svg class="stroke-icon">
                                     <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>

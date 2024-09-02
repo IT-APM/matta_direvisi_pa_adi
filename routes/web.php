@@ -17,6 +17,7 @@ use App\Http\Controllers\SubDepartemenController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\RecapAttendanceController;
+use App\Http\Controllers\ReminderSpController;
 use App\Http\Controllers\NoAttendanceController;
 use App\Http\Controllers\OvertimeController;
 use App\Http\Controllers\WorkingDayController;
@@ -195,6 +196,8 @@ Route::get('feeds/image/remove', [ FeedController::class, 'RemoveImage'])->name(
 Route::resource('attendance', AttendanceController::class)->middleware('auth');
 Route::get('attendance/duration/{id}', [AttendanceController::class, 'duration'])->name('attendance.duration')->middleware('auth');
 Route::resource('recap_attendance', RecapAttendanceController::class)->middleware('auth');
+Route::resource('reminder_sp', ReminderSpController::class)->middleware('can:hc');
+Route::get('reminder_sp/reminder_sp/{id}', [ReminderSpController::class, 'reminder_sp'])->name('recap_attendance.reminder_sp');
 Route::resource('noattendance', NoAttendanceController::class)->middleware('can:hc');
 Route::resource('overtime', OvertimeController::class)->middleware('auth');
 Route::resource('working', WorkingDayController::class)->middleware('auth');

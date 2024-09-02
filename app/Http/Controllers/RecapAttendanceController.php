@@ -157,8 +157,8 @@ class RecapAttendanceController extends Controller
                 $persentase = 0;
                 if (count($arr_base) > 0) {
                     $persentase = count($arr_clock) / count($arr_base);
+                    array_push($trx, ['nik' => $nik, 'arr_base' => count($arr_base), 'arr_clock' => count($arr_clock), 'persentase' => $persentase * 100]);
                 }
-                array_push($trx, ['nik' => $nik, 'arr_base' => count($arr_base), 'arr_clock' => count($arr_clock), 'persentase' => $persentase * 100]);
             }
         } else {
             // NA
