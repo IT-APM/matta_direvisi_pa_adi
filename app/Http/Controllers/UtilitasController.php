@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\MtrUtility;
+use App\Models\MtrReminderSp;
 
 class UtilitasController extends Controller
 {
@@ -16,8 +17,9 @@ class UtilitasController extends Controller
     {
         //
         $utilitas = MtrUtility::get();
+        $reminder = MtrReminderSp::get();
         // return response()->json( [ 'utilitas' => $utilitas ], 200 );
-        return view( 'master.utilitas.upsert', compact( 'utilitas' ) );
+        return view( 'master.utilitas.upsert', compact( 'utilitas', 'reminder' ) );
     }
 
     /**
@@ -139,7 +141,25 @@ class UtilitasController extends Controller
         $utilitas = MtrUtility::find( 28 );
         $utilitas->informasi = $request->_28;
         $utilitas->update();
+        $utilitas = MtrUtility::find( 29 );
+        $utilitas->informasi = $request->_29;
+        $utilitas->update();
         // return response()->json( [ 'request' => $request->all() ], 200 );
+        return redirect( 'utilitas' )->with( 'msg', 'Data is saved successfully.' );
+    }
+    
+    public function update_sp(Request $request, $id)
+    {
+        // dd($request->all(), $id);
+        $reminder = MtrReminderSp::find( 1 );
+        $reminder->isi = $request->sp_1;
+        $reminder->update();
+        $reminder = MtrReminderSp::find( 2 );
+        $reminder->isi = $request->sp_2;
+        $reminder->update();
+        $reminder = MtrReminderSp::find( 3 );
+        $reminder->isi = $request->sp_3;
+        $reminder->update();
         return redirect( 'utilitas' )->with( 'msg', 'Data is saved successfully.' );
     }
 

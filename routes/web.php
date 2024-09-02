@@ -188,6 +188,7 @@ Route::resource('banner', BannerController::class)->middleware('can:hc');
 Route::resource('iphoneuser', IphoneUserController::class)->middleware('can:hc');
 Route::resource('hcouser', HcoUserController::class)->middleware('can:hc');
 Route::resource('utilitas', UtilitasController::class)->middleware('can:hc');
+Route::post('utilitas/update_sp/{id}', [ UtilitasController::class, 'update_sp'])->name('utilitas.update_sp')->middleware('can:hc');
 // 
 Route::resource('feeds', FeedController::class)->middleware('can:hc');
 Route::post('feeds/image/store', [ FeedController::class, 'ImageUploadStore' ])->name('feeds.image.store')->middleware('can:hc');
