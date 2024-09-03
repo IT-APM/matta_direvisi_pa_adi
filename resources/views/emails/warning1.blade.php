@@ -10,8 +10,8 @@
 
 <body>
     <div style="text-align:center;">
-        <img src="http://matta-reborn.alita.id/matta/assets/images/matta/sudah_absen_hari_ini.png" class="img-rounded" alt="Sudahkah anda absen hari ini" width="720" height="479">
-    </div><br/>
+        <img src="http://matta-reborn.alita.id/matta/assets/images/matta/sudah_absen_hari_ini.png" alt="Sudahkah anda absen hari ini" width="720" height="479">
+    </div>
     <div style="text-align:center;background-color:red;color:white;">
         <p style="padding:5px;">Surat Peringatan {{ $data['teguran_ke'] }}</p>
     </div>
