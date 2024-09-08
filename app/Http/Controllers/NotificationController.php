@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Karyawan;
 use App\Models\Overtime;
 use App\Models\ToDoList;
+use App\Models\MtrUtility;
 use URL;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +21,6 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        // 
         // $this->notif_approval_ot();
         // $this->notif_cico_reg();
         // $this->notif_cico_ot();
@@ -49,39 +49,47 @@ class NotificationController extends Controller
 
     public function getToken()
     {   
-        $token = json_decode(file_get_contents('C:/xampp/htdocs/matta/matta-reborn-98e4c-firebase-adminsdk-bej7z-18629c5910.json'),true);
-        $client_email = $token['client_email'];
-        $private_key = $token['private_key'];
-        $header = json_encode(['alg'=>'RS256', 'typ'=>'JWT']);
+        $_token = MtrUtility::find(30);
         $now = time();
-        $exp = $now + 60*5;
-        $payload = json_encode([
-            'iss'=>$client_email,
-            'scope'=>'https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/firebase.messaging',
-                'aud'=>'https://www.googleapis.com/oauth2/v4/token',
-                'exp'=>$exp,
-                'iat'=>$now
-        ]);
-        $base64UrlHeader = str_replace(['+','/','='],['-','_',''],base64_encode($header));
-        $base64UrlPayload = str_replace(['+','/','='],['-','_',''],base64_encode($payload));
-        $signatureInput = $base64UrlHeader.'.'.$base64UrlPayload;
-        openssl_sign($signatureInput, $signature, $private_key, 'sha256');
-        $base64UrlSignature = str_replace(['+','/','='],['-','_',''],base64_encode($signature));
-        $jwt = $base64UrlHeader.'.'.$base64UrlPayload.'.'.$base64UrlSignature;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://www.googleapis.com/oauth2/v4/token');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
-            'grant_type'=>'urn:ietf:params:oauth:grant-type:jwt-bearer',
-            'assertion'=>$jwt
-        ]));
-        $response = curl_exec($ch);
-        curl_close($ch);
-        $responseData = json_decode($response, true);
-        // dd($responseData);
-        return $responseData['access_token'];
+        if($now > strtotime($_token->updated_at)){
+            $token = json_decode(file_get_contents('C:/xampp/htdocs/matta/matta-reborn-98e4c-firebase-adminsdk-bej7z-18629c5910.json'),true);
+            $client_email = $token['client_email'];
+            $private_key = $token['private_key'];
+            $header = json_encode(['alg'=>'RS256', 'typ'=>'JWT']);
+            $exp = $now + 3600;
+            $payload = json_encode([
+                'iss'=>$client_email,
+                'scope'=>'https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/firebase.messaging',
+                    'aud'=>'https://www.googleapis.com/oauth2/v4/token',
+                    'exp'=>$exp,
+                    'iat'=>$now
+            ]);
+            $base64UrlHeader = str_replace(['+','/','='],['-','_',''],base64_encode($header));
+            $base64UrlPayload = str_replace(['+','/','='],['-','_',''],base64_encode($payload));
+            $signatureInput = $base64UrlHeader.'.'.$base64UrlPayload;
+            openssl_sign($signatureInput, $signature, $private_key, 'sha256');
+            $base64UrlSignature = str_replace(['+','/','='],['-','_',''],base64_encode($signature));
+            $jwt = $base64UrlHeader.'.'.$base64UrlPayload.'.'.$base64UrlSignature;
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, 'https://www.googleapis.com/oauth2/v4/token');
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+                'grant_type'=>'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                'assertion'=>$jwt
+            ]));
+            $response = curl_exec($ch);
+            curl_close($ch);
+            $responseData = json_decode($response, true);
+            // dd($responseData);
+            $_token->keterangan = $responseData['access_token'];
+            $_token->updated_at = date('Y-m-d H:i:s', $exp);
+            $_token->update();
+            return $responseData['access_token'];
+        }else{
+            return $_token->keterangan;
+        }
     }
 
     public function notif_feed($_title){
