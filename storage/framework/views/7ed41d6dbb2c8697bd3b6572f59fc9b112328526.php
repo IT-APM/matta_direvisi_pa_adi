@@ -84,89 +84,145 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="table-responsive mt-2">
-                            <table class="display" id="_datatable">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Tanggal</th>
-                                        <th>Timestamp</th>
-                                        <th>Nama</th>
-                                        <th>NIP</th>
-                                        <th>Perusahaan</th>
-                                        <th>Direktorat</th>
-                                        <th>Divisi</th>
-                                        <th>Departemen</th>
-                                        <th>Working Group</th>
-                                        <th>Action</th>
-                                        <th>Longitude</th>
-                                        <th>Latitude</th>
-                                        <th>Address</th>
-                                        <th>Map</th>
-                                        <th>Status</th>
-                                        <th>Type</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <?php $__currentLoopData = $att; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <tr>
-                                       <td><?php echo e(++$no); ?></td>
-                                       <td><?php echo e(\Carbon\Carbon::parse($data->att_date) ->format('d-m-Y')); ?></td>
-                                       <td><?php echo e(\Carbon\Carbon::parse($data->att_timestamp) ->format('d-m-Y H:i:s')); ?></td>
-                                       <td><?php echo e($data->_att_nik->nama); ?></td>
-                                       <td><?php echo e($data->att_nik); ?></td>
-                                       <td><?php echo e($data->_att_nik->_perusahaan->nama); ?></td>
-                                       <td><?php echo e($data->_att_nik->_divisi->nama); ?></td>
-                                       <td><?php echo e($data->_att_nik->_departemen->nama); ?></td>
-                                       <td><?php echo e($data->_att_nik->_subdepartemen->nama); ?></td>
-                                       <td><?php echo e($data->_att_nik->_wg->wg_name); ?></td>
-                                       <td>
-                                            <?php if($data->att_type == 'Clock-in'): ?>
-                                                <span class="badge rounded-pill badge-light-primary"><?php echo e($data->att_type); ?></span>
-                                            <?php elseif($data->att_type == 'Clock-out'): ?>
-                                                <span class="badge rounded-pill badge-light-success"><?php echo e($data->att_type); ?></span>
-                                            <?php else: ?>
-                                                <span class="badge rounded-pill badge-light-warning"><?php echo e($data->att_type); ?></span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td><?php echo e($data->att_long); ?></td>
-                                        <td><?php echo e($data->att_lat); ?></td>
-                                        <td><?php echo e($data->att_address); ?></td>
-                                        <td><?php if(!empty($data->att_long) && !empty($data->att_lat)): ?><a href="https://www.google.com/maps/place/<?php echo e($data->att_lat); ?>,<?php echo e($data->att_long); ?>" target="_blank"><i class="fa fa-map-marker" style="font-size:25px;color:red;"></i></a><?php endif; ?></td>
-                                        <td>
-                                            <?php if($data->att_status == 'Book-in' || $data->att_status == 'Book-out'): ?>
-                                                <span class="badge badge-success"><?php echo e($data->att_status); ?></span>
-                                            <?php elseif($data->att_status == 'Leave'): ?>
-                                                <span class="badge badge-warning"><?php echo e($data->att_status); ?></span>
-                                            <?php else: ?>
-                                                <span class="badge badge-danger"><?php echo e($data->att_status); ?></span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if($data->att_data_src == 'Regular'): ?>
-                                                <span class="badge badge-success"><?php echo e($data->att_data_src); ?></span>
-                                            <?php elseif($data->att_data_src == 'Overtime'): ?>
-                                                <span class="badge badge-primary"><?php echo e($data->att_data_src); ?></span>
-                                            <?php else: ?>
-                                                <span class="badge badge-warning"><?php echo e($data->att_data_src); ?></span>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </tbody>
-                                <!-- <tfoot>
-                                    <tr>
-                                        <th>No  </th>
-                                        <th>Timestamp</th>
-                                        <th>Nama</th>
-                                        <th>Action</th>
-                                        <th>Longitude</th>
-                                        <th>Latitude</th>
-                                        <th>Status</th>
-                                        <th>Type</th>
-                                    </tr>
-                                </tfoot> -->
-                            </table>
+                        <ul class="nav nav-tabs nav-primary mt-2" id="pills-warningtab" role="tablist">
+                            <li class="nav-item"><a class="nav-link active" id="rawdata-tab" data-bs-toggle="pill" href="#rawdata" role="tab" aria-controls="rawdata" aria-selected="false">Raw Data</a></li>
+                            <li class="nav-item"><a class="nav-link" id="duration-tab" data-bs-toggle="pill" href="#duration" role="tab" aria-controls="duration" aria-selected="true">Duration</a></li>
+                        </ul>
+                        <div class="tab-content" id="pills-warningtabContent">
+                            
+                            <div class="tab-pane fade show active" id="rawdata" role="tabpanel" aria-labelledby="rawdata-tab">
+                                <div class="table-responsive mt-2">
+                                    <table class="display" id="raw_datatable">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Tanggal</th>
+                                                <th>Timestamp</th>
+                                                <th>Nama</th>
+                                                <th>NIP</th>
+                                                <th>Perusahaan</th>
+                                                <th>Direktorat</th>
+                                                <th>Divisi</th>
+                                                <th>Departemen</th>
+                                                <th>Working Group</th>
+                                                <th>Action</th>
+                                                <th>Longitude</th>
+                                                <th>Latitude</th>
+                                                <th>Address</th>
+                                                <th>Map</th>
+                                                <th>Status</th>
+                                                <th>Type</th>
+                                            </tr>
+                                        </thead>
+                                        <?php $no = 0; ?>
+                                        <tbody>
+                                        <?php $__currentLoopData = $att; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <tr>
+                                                <td><?php echo e(++$no); ?></td>
+                                                <td><?php echo e(\Carbon\Carbon::parse($data->att_date) ->format('d-m-Y')); ?></td>
+                                                <td><?php echo e(\Carbon\Carbon::parse($data->att_timestamp) ->format('d-m-Y H:i:s')); ?></td>
+                                                <td><?php echo e($data->_att_nik->nama); ?></td>
+                                                <td><?php echo e($data->att_nik); ?></td>
+                                                <td><?php echo e($data->_att_nik->_perusahaan->nama); ?></td>
+                                                <td><?php echo e($data->_att_nik->_divisi->nama); ?></td>
+                                                <td><?php echo e($data->_att_nik->_departemen->nama); ?></td>
+                                                <td><?php echo e($data->_att_nik->_subdepartemen->nama); ?></td>
+                                                <td><?php echo e($data->_att_nik->_wg->wg_name); ?></td>
+                                                <td>
+                                                    <?php if($data->att_type == 'Clock-in'): ?>
+                                                        <span class="badge rounded-pill badge-light-primary"><?php echo e($data->att_type); ?></span>
+                                                    <?php elseif($data->att_type == 'Clock-out'): ?>
+                                                        <span class="badge rounded-pill badge-light-success"><?php echo e($data->att_type); ?></span>
+                                                    <?php else: ?>
+                                                        <span class="badge rounded-pill badge-light-warning"><?php echo e($data->att_type); ?></span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td><?php echo e($data->att_long); ?></td>
+                                                <td><?php echo e($data->att_lat); ?></td>
+                                                <td><?php echo e($data->att_address); ?></td>
+                                                <td><?php if(!empty($data->att_long) && !empty($data->att_lat)): ?><a href="https://www.google.com/maps/place/<?php echo e($data->att_lat); ?>,<?php echo e($data->att_long); ?>" target="_blank"><i class="fa fa-map-marker" style="font-size:25px;color:red;"></i></a><?php endif; ?></td>
+                                                <td>
+                                                    <?php if($data->att_status == 'Book-in' || $data->att_status == 'Book-out'): ?>
+                                                        <span class="badge badge-success"><?php echo e($data->att_status); ?></span>
+                                                    <?php elseif($data->att_status == 'Leave'): ?>
+                                                        <span class="badge badge-warning"><?php echo e($data->att_status); ?></span>
+                                                    <?php else: ?>
+                                                        <span class="badge badge-danger"><?php echo e($data->att_status); ?></span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <?php if($data->att_data_src == 'Regular'): ?>
+                                                        <span class="badge badge-success"><?php echo e($data->att_data_src); ?></span>
+                                                    <?php elseif($data->att_data_src == 'Overtime'): ?>
+                                                        <span class="badge badge-primary"><?php echo e($data->att_data_src); ?></span>
+                                                    <?php else: ?>
+                                                        <span class="badge badge-warning"><?php echo e($data->att_data_src); ?></span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="duration" role="tabpanel" aria-labelledby="duration-tab">
+                                <div class="table-responsive mt-2">
+                                    <table class="display" id="duration_datatable">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Tanggal</th>
+                                                <th>Clock-in</th>
+                                                <th>Clock-out</th>
+                                                <th>Durasi</th>
+                                                <th>Nama</th>
+                                                <th>NIP</th>
+                                                <th>Perusahaan</th>
+                                                <th>Direktorat</th>
+                                                <th>Divisi</th>
+                                                <th>Departemen</th>
+                                                <th>Working Group</th>
+                                                <th>Type</th>
+                                            </tr>
+                                        </thead>
+                                        <?php $no = 0; ?>
+                                        <?php if(!empty($duration)): ?>
+                                        <tbody>
+                                        <?php $__currentLoopData = $duration; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <tr>
+                                                <td><?php echo e(++$no); ?></td>
+                                                <td><?php echo e($data['att_date']); ?></td>
+                                                <td><?php echo e($data['Clock-in']); ?></td>
+                                                <td><?php echo e($data['Clock-out']); ?></td>
+                                                <td><?php echo e(\Carbon\Carbon::parse(strtotime($data['Clock-out'])-strtotime($data['Clock-in']))->format('H:i:s')); ?></td>
+                                                <?php
+                                                $where = ['nik' => $data['att_nik']];
+                                                $karyawan = App\Models\Karyawan::where($where)->first();
+                                                ?>
+                                                <td><?php echo e($karyawan->nama); ?></td>
+                                                <td><?php echo e($data['att_nik']); ?></td>
+                                                <td><?php echo e($karyawan->_perusahaan->nama); ?></td>
+                                                <td><?php echo e($karyawan->_divisi->nama); ?></td>
+                                                <td><?php echo e($karyawan->_departemen->nama); ?></td>
+                                                <td><?php echo e($karyawan->_subdepartemen->nama); ?></td>
+                                                <td><?php echo e($karyawan->_wg->wg_name); ?></td>
+                                                <td>
+                                                    <?php if($data['att_data_src'] == 'Regular'): ?>
+                                                        <span class="badge badge-success"><?php echo e($data['att_data_src']); ?></span>
+                                                    <?php elseif($data['att_data_src'] == 'Overtime'): ?>
+                                                        <span class="badge badge-primary"><?php echo e($data['att_data_src']); ?></span>
+                                                    <?php else: ?>
+                                                        <span class="badge badge-warning"><?php echo e($data['att_data_src']); ?></span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </tbody>
+                                        <?php endif; ?>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -217,7 +273,7 @@ function toggle_wg_id(source) {
     }
 }
 // 
-$('#_datatable').DataTable( {
+$('#raw_datatable').DataTable({
 	// dom: 'lBfrtip',
     dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
       "<'row'<'col-sm-12'rt>>" +
@@ -226,7 +282,17 @@ $('#_datatable').DataTable( {
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
-} );
+});
+$('#duration_datatable').DataTable({
+	// dom: 'lBfrtip',
+    dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
+      "<'row'<'col-sm-12'rt>>" +
+      "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+	buttons: [
+		'copy', 'csv', 'excel', 'pdf', 'print'
+	],
+    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+});
 </script>
 <?php $__env->stopSection(); ?>
 

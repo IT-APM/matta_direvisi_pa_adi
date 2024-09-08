@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Semangat Pagi {{ $data['nama_to'] }} / {{ $data['nik_to'] }},</p>
 <p><strong>Pengajuan {{ $data['title'] }} anda sudah <b style='color:green;'>SELESAI</b> disetujui para pihak.</strong></p>
 <p></p>
@@ -21,5 +22,4 @@
   </tr>
 </table>
 </p>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+@include('emails.footer')

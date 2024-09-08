@@ -155,13 +155,6 @@
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
                             </svg><span>Attendance Log</span></a></li>
-                    {{-- <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('attendance.duration', 0) }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
-                            </svg><span>Attendance Duration</span></a></li> --}}
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('recap_attendance.index') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>

@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Semangat Pagi {{ $data['nama_to'] }} / {{ $data['nik_to'] }},</p>
 <p><strong>Terdapat Pengajuan {{ $data['title'] }} @if(str_contains($data['view'], 'reject')) <b style='color:red;'>(DITOLAK)</b> @endif yang harus anda review.</strong></p>
 <p></p>
@@ -23,5 +24,4 @@
 </p>
 <p>Klik link berikut untuk melakukan review tersebut:</p>
 <h1><strong>Klik <a href="{{ $data['link'] }}" target="_blank">{{ $data['title'] }}</a></strong></h1>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+@include('emails.footer')

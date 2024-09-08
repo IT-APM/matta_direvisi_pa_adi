@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Semangat Pagi,</p>
 <p><strong>Terdapat Formulir Karyawan Non Aktif yang harus anda input.</strong></p>
 <p></p>
@@ -19,5 +20,6 @@
 </p>
 <p>Klik link berikut untuk melakukan input tersebut:</p>
 <h1><strong>Klik <a href="{{ $data['link'] }}" target="_blank">Formulir Karyawan Non Aktif</a></strong></h1>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+</body>
+</html>

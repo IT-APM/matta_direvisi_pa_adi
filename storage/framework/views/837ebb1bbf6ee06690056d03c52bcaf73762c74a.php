@@ -42,6 +42,11 @@
                         <form class="mt-2" action="<?php echo e(route('izin.index')); ?>" method="get" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-sm-3">
+                                    <label class="h6 mt-2">Tanggal Izin</label>
+                                    <br/>Dari <input class="form-control" name="date_from" id="date_from" type="date" required="" value="<?php echo e($date_from); ?>">
+                                    Sampai <input class="form-control" name="date_to" id="date_to" type="date" required="" value="<?php echo e($date_to); ?>">
+                                </div>
+                                <div class="col-sm-3">
                                     <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status(this)" /> Check All
                                     <label class="d-block" for="status">
                                         <?php $__currentLoopData = $status; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -49,11 +54,21 @@
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </label>
                                 </div>
-                                <div class="col-sm-5">
+                                <div class="col-sm-3">
                                     <label class="h6">Tipe Izin</label>&nbsp;<input type="checkbox" onClick="toggle_tipe(this)" /> Check All
                                     <label class="d-block" for="tipe">
                                         <?php $__currentLoopData = $tipe; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <input class="checkbox_animated" id="tipe[]" name="tipe[]" type="checkbox" value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, $arr_tipe)): ?> checked <?php endif; ?>> <?php echo e($data->tipe); ?><br/>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="h6">Aktif/Non Aktif</label>&nbsp;<input type="checkbox"
+                                        onClick="toggle_is_aktif(this)" /> Check All
+                                    <label class="d-block" for="is_aktif">
+                                        <?php $__currentLoopData = $is_aktif; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <input class="checkbox_animated" id="is_aktif[]" name="is_aktif[]" type="checkbox" value="<?php echo e($data['id']); ?>" <?php if(in_array($data['id'], $arr_is_aktif)): ?> checked <?php endif; ?>>
+                                            <?php echo e($data['is_aktif']); ?><br />
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </label>
                                 </div>
@@ -87,6 +102,7 @@
                                     <th>Created at</th>
                                 </tr>
                             </thead>
+                            <?php $no = 0; ?>
                             <tbody>
                                 <?php $__currentLoopData = $trx; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <?php
@@ -157,6 +173,12 @@
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.html5.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.print.min.js')); ?>"></script>
 <script type="text/javascript">
+    function toggle_is_aktif(source) {
+        checkboxes = document.getElementsByName('is_aktif[]');
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
 function toggle_status(source) {
     checkboxes = document.getElementsByName('status[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
@@ -165,12 +187,6 @@ function toggle_status(source) {
 }
 function toggle_tipe(source) {
     checkboxes = document.getElementsByName('tipe[]');
-    for(var i=0, n=checkboxes.length;i<n;i++) {
-        checkboxes[i].checked = source.checked;
-    }
-}
-function toggle_karyawan(source) {
-    checkboxes = document.getElementsByName('karyawan[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }

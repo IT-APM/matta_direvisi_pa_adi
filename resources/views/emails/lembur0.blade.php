@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Dear {{ $data['atasan'] }},</p>
 <p>Semangat Pagi,</p>
 <p><strong>Terdapat Pengajuan Lembur yang harus anda review</strong></p>
@@ -51,5 +52,4 @@ Contoh : Pengajuan OT untuk besok atau pekan depan dapat dibuat saat ini<br/>
 A. OT yang telan mendapatkan PERSETUJUAN Atasan terkait.<br/>
 B. Durasi OT yang dihitung adalah WAKTU CLOCK IN dan CLOCK OUT pada periode pengajuan OT. Selain durasi diluar periode OT, TIDAK DIHITUNG SEBAGAI REALISASI OT.<br/>
 C. Kegiatan CLOCK IN dan CLOCK OUT WAJIB dilakukan seluruhnya oleh Pengaju OT. Tanpa CLOCK IN dan CLOCK OUT, perhitungan OT tidak muncul di sistem dan dianggap tidak mempunyai realisasi OT.</p>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+@include('emails.footer')

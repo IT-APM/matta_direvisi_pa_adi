@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Semangat Pagi,</p>
 <p><strong>Terdapat Formulir Karyawan Non Aktif yang harus anda proses</strong></p>
 <p>Berikut datanya:<br />
@@ -20,6 +21,6 @@
     </tr>
 </table>
 </p>
-</p>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+</body>
+</html>

@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>MATTA</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
 <p>Semangat Pagi,</p>
 <p><?php echo $data['pesan']; ?></p>
 <p></p>
@@ -23,5 +31,6 @@
 </p>
 <p>Klik link berikut untuk download pdf Formulir Permohonan Cuti:</p>
 <h1><strong>Klik <a href="<?php echo e($data['link']); ?>" target="_blank">Formulir Permohonan Cuti</a></strong></h1>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p><?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/cuti_done.blade.php ENDPATH**/ ?>
+<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+</body>
+</html><?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/cuti_done.blade.php ENDPATH**/ ?>

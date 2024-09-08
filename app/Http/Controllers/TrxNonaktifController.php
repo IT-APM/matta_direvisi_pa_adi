@@ -1155,6 +1155,7 @@ class TrxNonaktifController extends Controller
         $this->authorize('auth');
         $trxM = TrxNonaktifMaster::find( $id );
         $trxM->delete();
+        ToDoList::where('id_trx', '=', $id)->where('title', 'like', 'Formulir Karyawan Non Aktif%')->delete();
         return redirect( 'nonaktif' )->with( 'msg', 'Data is deleted successfully.' );
     }
 }

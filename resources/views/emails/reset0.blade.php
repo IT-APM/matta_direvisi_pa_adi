@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Semangat Pagi,</p>
 <p><strong>Berikut adalah data anda:</strong></p>
 <p></p>
@@ -22,5 +23,4 @@
 </p>
 <p>Klik link berikut untuk melakukan Reset Password:</p>
 <h1><strong>Klik <a href="{{ $data['link'] }}" target="_blank">Reset Password</a></strong></h1>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+@include('emails.footer')

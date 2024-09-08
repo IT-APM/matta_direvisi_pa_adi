@@ -44,6 +44,11 @@
                         <form class="mt-2" action="{{ route('izin.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-sm-3">
+                                    <label class="h6 mt-2">Tanggal Izin</label>
+                                    <br/>Dari <input class="form-control" name="date_from" id="date_from" type="date" required="" value="{{ $date_from }}">
+                                    Sampai <input class="form-control" name="date_to" id="date_to" type="date" required="" value="{{ $date_to }}">
+                                </div>
+                                <div class="col-sm-3">
                                     <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status(this)" /> Check All
                                     <label class="d-block" for="status">
                                         @foreach ($status as $data)
@@ -51,11 +56,21 @@
                                         @endforeach
                                     </label>
                                 </div>
-                                <div class="col-sm-5">
+                                <div class="col-sm-3">
                                     <label class="h6">Tipe Izin</label>&nbsp;<input type="checkbox" onClick="toggle_tipe(this)" /> Check All
                                     <label class="d-block" for="tipe">
                                         @foreach ($tipe as $data)
                                         <input class="checkbox_animated" id="tipe[]" name="tipe[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_tipe)) checked @endif> {{ $data->tipe }}<br/>
+                                        @endforeach
+                                    </label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="h6">Aktif/Non Aktif</label>&nbsp;<input type="checkbox"
+                                        onClick="toggle_is_aktif(this)" /> Check All
+                                    <label class="d-block" for="is_aktif">
+                                        @foreach ($is_aktif as $data)
+                                            <input class="checkbox_animated" id="is_aktif[]" name="is_aktif[]" type="checkbox" value="{{ $data['id'] }}" @if (in_array($data['id'], $arr_is_aktif)) checked @endif>
+                                            {{ $data['is_aktif'] }}<br />
                                         @endforeach
                                     </label>
                                 </div>
@@ -89,6 +104,7 @@
                                     <th>Created at</th>
                                 </tr>
                             </thead>
+                            @php $no = 0; @endphp
                             <tbody>
                                 @foreach ($trx as $data)
                                 @php
@@ -157,6 +173,12 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
 <script type="text/javascript">
+    function toggle_is_aktif(source) {
+        checkboxes = document.getElementsByName('is_aktif[]');
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
 function toggle_status(source) {
     checkboxes = document.getElementsByName('status[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
@@ -165,12 +187,6 @@ function toggle_status(source) {
 }
 function toggle_tipe(source) {
     checkboxes = document.getElementsByName('tipe[]');
-    for(var i=0, n=checkboxes.length;i<n;i++) {
-        checkboxes[i].checked = source.checked;
-    }
-}
-function toggle_karyawan(source) {
-    checkboxes = document.getElementsByName('karyawan[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }

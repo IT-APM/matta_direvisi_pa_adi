@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Dear {{ $data['nama'] }},</p>
 <p>Semangat Pagi,</p>
 <p><strong>Pengajuan lembur anda telah disetujui. </strong></p>
@@ -37,5 +38,4 @@
 <p>Silahkan melakukan clock-in dan clock-out pada jam tersebut.<br/>
 <p>Karyawan yang mengajukan lembur diwajibkan untuk melakukan clock-in dan clock-out sesuai dengan jam pengajuan lembur.</p></p>
 <h1>Perhatian: Karyawan yang tidak melakukan clock-in dan clock-out pada saat lembur maka tidak dimasukkan kedalam perhitungan pengajuan lembur.</h1>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+@include('emails.footer')

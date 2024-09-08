@@ -19,14 +19,14 @@
         <div>
             <div>
                 <p>Dear Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }}</p>
-                <p>Terimakasih telah menggunakan Aplikasi Mobile / Web MATTA untuk kegiatan Absensi Kehadiran. Kami informasikan bahwa Absensi Kehadiran wajib dilakukan sekurang-kurangnya 80%.</p>
+                <p>Terima kasih telah menggunakan Aplikasi Mobile / Web MATTA untuk kegiatan Absensi Kehadiran. Kami informasikan bahwa Absensi Kehadiran wajib dilakukan sekurang-kurangnya 80%.</p>
                 <p>Bersama ini Kami sampaikan bahwa absensi kehadiran Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }} pada tanggal {{ \Carbon\Carbon::parse($data['trx']->date_from)->format('d-m-Y') }} sd {{ \Carbon\Carbon::parse($data['trx']->date_to)->format('d-m-Y') }} kurang dari 80% dari yang seharusnya terpenuhi (hadir = {{ $data['trx']->arr_clock }} dari jumlah hari kerja = {{ $data['trx']->arr_base }}).</p>
                 <p>Persentase kehadiran anda adalah {{ round($data['trx']->persentase) }} %.</p>
                 <div style="text-align:center;background-color:red;color:white;">
                     @if($data['trx']->arr_clock == 0)
-                    <p style="padding:5px;">Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }} tidak melakukan Absensi Kehadiran sama sekali.</p>
+                    <p style="padding:5px;">Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }} tidak melakukan Absensi Kehadiran sama sekali</p>
                     @else
-                    <p style="padding:5px;">Mohon untuk dapat lebih ditingkatkan lagi Absensi Kehadirannya.</p>
+                    <p style="padding:5px;">Mohon untuk dapat lebih ditingkatkan lagi Absensi Kehadirannya</p>
                 @endif
                 </div>
                 @if($data['teguran_ke'] == 'Pertama')
@@ -39,8 +39,8 @@
                 <p>Sehubungan dengan Surat Peringatan Kedua telah kami kirimkan melalui email seperti tertera pada history body email ini, dengan berat hati kami terbitkan Surat Peringatan {{ $data['teguran_ke'] }} (akan dikirimkan dalam email terpisah).</p>
                 <p>Jika bulan selanjutnya belum menunjukan peningkatan absensi kehadiran, maka akan kami terbitkan Surat Peringatan Ketiga. Kami harap kedisplinan absensi kehadiran dapat menunjukan peningkatan.</p>
                 @endif
-                <p>Terimakasih atas perhatiannya.</p>
-                <p>Best Regards,<br />Human Capital & Organization<br />www.alita.id</p>
+                <p>Terima kasih atas perhatiannya.</p>
+                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                 <p>{{ $data['datetime'] }}</p>
             </div>
         </div>

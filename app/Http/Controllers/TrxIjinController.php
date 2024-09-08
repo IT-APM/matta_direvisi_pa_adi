@@ -39,7 +39,6 @@ class TrxIjinController extends Controller
     public function index(Request $request)
     {
         //
-        $no = 0;
         $trx = TrxIjin::orderBy('id', 'desc')->get();
         // foreach ($trx as $value) {
         //     $trxM = TrxIjin::find( $value->id );
@@ -62,20 +61,28 @@ class TrxIjinController extends Controller
         // filter parameter
         $arr_status = array();
         $arr_tipe = array();
-        $arr_karyawan = array();
+        // $arr_karyawan = array();
         foreach ($trx as $data){
             array_push($arr_status, $data->status);
             array_push($arr_tipe, $data->tipe);
-            array_push($arr_karyawan, $data->karyawan);
+            // array_push($arr_karyawan, $data->karyawan);
         }
+        $arr_is_aktif = [['id' => 1, 'is_aktif' => 'Aktif'], ['id' => 0, 'is_aktif' => 'Non Aktif']];
+        $is_aktif = $arr_is_aktif;
         $status = IjinStatus::whereIn('id', $arr_status)->orderBy('id', 'asc')->get();
         $tipe = IjinTipe::whereIn('id', $arr_tipe)->orderBy('id', 'asc')->get();
-        $karyawan = Karyawan::whereIn('nik', $arr_karyawan)->orderBy('nama', 'asc')->get();
+        // $karyawan = Karyawan::whereIn('nik', $arr_karyawan)->orderBy('nama', 'asc')->get();
+        $date_from = '';
+        $date_to = '';
         // start filter
         if($request->filter == true){
+            $date_from = $request->date_from;
+            $date_to = $request->date_to;
+            // 
             $_status = $request->input('status', []);
             $_tipe = $request->input('tipe', []);
-            $_karyawan = $request->input('karyawan', []);
+            // $_karyawan = $request->input('karyawan', []);
+            $_is_aktif = $request->input('is_aktif', []);
             if(count($_status) > 0){
                 $arr_status = $_status;
             }
@@ -88,16 +95,19 @@ class TrxIjinController extends Controller
             else{
                 $arr_tipe = array();
             }
-            if(count($_karyawan) > 0){
-                $arr_karyawan = $_karyawan;
-            }
+            // if(count($_karyawan) > 0){
+            //     $arr_karyawan = $_karyawan;
+            // }
             // else{
             //     $arr_karyawan = array();
             // }
-            $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', $arr_karyawan)->orderBy('id', 'desc')->get();
+            if (count($_is_aktif) > 0) {
+                $arr_is_aktif = $_is_aktif;
+            } else {
+                $arr_is_aktif = [];
+            }
+            $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', Karyawan::select('nik')->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get())->whereBetween('tanggal', [$date_from, $date_to])->orderBy('id', 'desc')->get();
             if(auth()->user()->userrole == 'nhc'){
-                // $where = ['karyawan' => auth()->user()->nik];
-                // $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', $arr_karyawan)->where($where)->orderBy('id', 'desc')->get();
                 $where = ['layer1' => auth()->user()->nik];
                 $bawahan = Karyawan::select('nik')->where($where)->get();
                 $karyawan = array();
@@ -105,16 +115,14 @@ class TrxIjinController extends Controller
                 foreach($bawahan as $data){
                     array_push($karyawan, $data->nik);
                 }
-                $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', $arr_karyawan)->whereIn('karyawan', $karyawan)->orderBy('id', 'desc')->get();
+                $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', $karyawan)->whereIn('karyawan', Karyawan::select('nik')->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get())->whereBetween('tanggal', [$date_from, $date_to])->orderBy('id', 'desc')->get();
             }
         }else{
             $arr_status = array();
             $arr_tipe = array();
-            $arr_karyawan = array();
         }
         // end filter
-        return view( 'formulir.izin.index', compact( 'trx', 'no', 'status', 'tipe', 'karyawan', 'arr_status', 'arr_tipe', 'arr_karyawan'));
-        // return view('formulir.izin.index', compact('trx', 'no'));
+        return view( 'formulir.izin.index', compact( 'trx', 'status', 'tipe', 'arr_status', 'arr_tipe', 'date_from', 'date_to', 'arr_is_aktif', 'is_aktif'));
     }
 
     /**

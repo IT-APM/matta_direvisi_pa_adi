@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Semangat Pagi,</p>
 <p><strong>Terdapat Formulir Reimbursement yang harus anda review</strong></p>
 <p></p>
@@ -19,5 +20,4 @@
 </p>
 <p>Klik link berikut untuk melakukan review tersebut:</p>
 <h1><strong>Klik <a href="{{ $data['link'] }}" target="_blank">Formulir Reimbursement</a></strong></h1>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+@include('emails.footer')

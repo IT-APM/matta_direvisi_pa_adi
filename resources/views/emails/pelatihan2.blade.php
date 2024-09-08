@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Semangat Pagi,</p>
 <p><strong>Formulir Pengajuan Pelatihan anda sudah disetujui para pihak.</strong></p>
 <p>Berikut datanya:</p>
@@ -47,5 +48,4 @@
 </table>
 <p>Klik link berikut untuk melakukan review tersebut:</p>
 <h1><strong>Klik <a href="{{ $data['link'] }}" target="_blank">Formulir Pengajuan Pelatihan</a></strong></h1>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+@include('emails.footer')

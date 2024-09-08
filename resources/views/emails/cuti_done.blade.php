@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Semangat Pagi,</p>
 <p>{!! $data['pesan'] !!}</p>
 <p></p>
@@ -22,6 +23,4 @@
 </table>
 </p>
 <p>Klik link berikut untuk download pdf Formulir Permohonan Cuti:</p>
-<h1><strong>Klik <a href="{{ $data['link'] }}" target="_blank">Formulir Permohonan Cuti</a></strong></h1>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+@include('emails.footer')

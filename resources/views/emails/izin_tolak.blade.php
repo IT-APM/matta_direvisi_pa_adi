@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Semangat Pagi,</p>
 <p><strong>Pengajuan Formulir Izin anda ditolak.</strong></p>
 <p>Berikut datanya:<br />
@@ -20,6 +21,4 @@
     </tr>
 </table>
 </p>
-</p>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+@include('emails.footer')

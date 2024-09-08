@@ -11,7 +11,7 @@
 <body>
     <div style="text-align:center;">
         <img src="http://matta-reborn.alita.id/matta/assets/images/matta/sudah_absen_hari_ini.png" alt="Sudahkah anda absen hari ini" width="720" height="479">
-    </div><br/>
+    </div>
     <div style="text-align:center;background-color:red;color:white;">
         <p style="padding:5px;">Surat Teguran <?php echo e($data['teguran_ke']); ?></p>
     </div>
@@ -19,14 +19,14 @@
         <div>
             <div>
                 <p>Dear Bapak/Ibu/Sdr/i. <?php echo e($nik_property['nama']); ?></p>
-                <p>Terimakasih telah menggunakan Aplikasi Mobile / Web MATTA untuk kegiatan Absensi Kehadiran. Kami informasikan bahwa Absensi Kehadiran wajib dilakukan sekurang-kurangnya 80%.</p>
+                <p>Terima kasih telah menggunakan Aplikasi Mobile / Web MATTA untuk kegiatan Absensi Kehadiran. Kami informasikan bahwa Absensi Kehadiran wajib dilakukan sekurang-kurangnya 80%.</p>
                 <p>Bersama ini Kami sampaikan bahwa absensi kehadiran Bapak/Ibu/Sdr/i. <?php echo e($nik_property['nama']); ?> pada tanggal <?php echo e(\Carbon\Carbon::parse($data['trx']->date_from)->format('d-m-Y')); ?> sd <?php echo e(\Carbon\Carbon::parse($data['trx']->date_to)->format('d-m-Y')); ?> kurang dari 80% dari yang seharusnya terpenuhi (hadir = <?php echo e($data['trx']->arr_clock); ?> dari jumlah hari kerja = <?php echo e($data['trx']->arr_base); ?>).</p>
                 <p>Persentase kehadiran anda adalah <?php echo e(round($data['trx']->persentase)); ?> %.</p>
                 <div style="text-align:center;background-color:red;color:white;">
                     <?php if($data['trx']->arr_clock == 0): ?>
-                    <p style="padding:5px;">Bapak/Ibu/Sdr/i. <?php echo e($nik_property['nama']); ?> tidak melakukan Absensi Kehadiran sama sekali.</p>
+                    <p style="padding:5px;">Bapak/Ibu/Sdr/i. <?php echo e($nik_property['nama']); ?> tidak melakukan Absensi Kehadiran sama sekali</p>
                     <?php else: ?>
-                    <p style="padding:5px;">Mohon untuk dapat lebih ditingkatkan lagi Absensi Kehadirannya.</p>
+                    <p style="padding:5px;">Mohon untuk dapat lebih ditingkatkan lagi Absensi Kehadirannya</p>
                     <?php endif; ?>
                 </div>
                 <?php if($data['teguran_ke'] == 'Kelima'): ?>
@@ -34,7 +34,7 @@
                 <?php else: ?>
                 <p>Informasi ini juga sebagai Surat Teguran <?php echo e($data['teguran_ke']); ?> untuk Bapak/Ibu/Sdr/i. <?php echo e($nik_property['nama']); ?>. Kami harap dapat melakukan Absensi Kehadiran setiap hari ke depannya.</p>
                 <?php endif; ?>
-                <p>Terimakasih atas perhatiannya.</p>
+                <p>Terima kasih atas perhatiannya.</p>
                 <p>Best Regards,<br />Human Capital & Organization<br />www.alita.id</p>
                 <p><?php echo e($data['datetime']); ?></p>
             </div>

@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Semangat Pagi,</p>
 <p><strong>Berikut adalah data anda:</strong></p>
 <p></p>
@@ -21,5 +22,4 @@
 </table>
 </p>
 <h1><strong>Password baru anda adalah: {{ $data['new_password'] }}</strong></h1>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+@include('emails.footer')

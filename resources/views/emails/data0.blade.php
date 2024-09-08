@@ -48,7 +48,7 @@
                     </tr>
                 </tbody>
             </table>
-            <br/>Terima kasih,<br>HCO
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
         </td>
     </tr>
 </table>

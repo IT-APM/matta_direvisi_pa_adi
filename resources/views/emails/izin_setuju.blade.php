@@ -1,3 +1,4 @@
+@include('emails.header')
 <p>Semangat Pagi,</p>
 <p><strong>Pengajuan Formulir Izin anda telah disetujui.</strong></p>
 <p>Berikut datanya:<br />
@@ -22,5 +23,4 @@
 </p>
 <p>Klik link berikut untuk download pdf Formulir Izin:</p>
 <h1><strong>Klik <a href="{{ $data['link'] }}" target="_blank">Formulir Izin</a></strong></h1>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p>
+@include('emails.footer')
