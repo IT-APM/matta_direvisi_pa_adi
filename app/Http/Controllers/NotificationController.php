@@ -21,6 +21,39 @@ class NotificationController extends Controller
      */
     public function index()
     {
+        // start uji coba
+        // $nik = ['RFIAL068','RFIAL113','01032411873'];
+        // $karyawan = Karyawan::select('nik', 'nama', 'mobile_id')->whereIn('nik', $nik)->whereNotNull('mobile_id')->get();
+        // foreach ($karyawan as $value) {
+        //     try {
+        //         $client = new \GuzzleHttp\Client();
+        //         $response = $client->request('POST', URL::to('https://fcm.googleapis.com/v1/projects/matta-reborn-98e4c/messages:send'), [
+        //             'headers' => [
+        //                 'Authorization' => 'Bearer '.$this->getToken(),
+        //                 'Content-Type' => 'application/json',
+        //             ],
+        //             'json' => [
+        //                 'message' => [
+        //                     'token' => $value->mobile_id,
+        //                     'notification' => [
+        //                         'title' => '',
+        //                         'body' => '',
+        //                     ],
+        //                 ],
+        //             ],
+        //         ]);
+        //     } catch (\GuzzleHttp\Exception\RequestException $e) {
+        //         $where = ['mobile_id' => $value->mobile_id];
+        //         $karyawan = Karyawan::where($where)->first();
+        //         $karyawan->mobile_id = NULL;
+        //         $karyawan->update();
+        //         // dd($karyawan);
+        //         if ($e->hasResponse()) {
+        //             $response = $e->getResponse();
+        //         }
+        //     }
+        // }
+        // end uji coba
         // $this->notif_approval_ot();
         // $this->notif_cico_reg();
         // $this->notif_cico_ot();
@@ -243,82 +276,126 @@ class NotificationController extends Controller
 
     public function sendNotifCiCo($nama, $to, $cico)
     {
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', URL::to('https://fcm.googleapis.com/v1/projects/matta-reborn-98e4c/messages:send'), [
-            'headers' => [
-                'Authorization' => 'Bearer '.$this->getToken(),
-                'Content-Type' => 'application/json',
-            ],
-            'json' => [
-                'message' => [
-                    'token' => $to,
-                    'notification' => [
-                        'title' => 'MATTA REBORN',
-                        'body' => 'Hai '.$nama.', Anda belum melakukan '.$cico.'. Silahkan untuk melakukan '.$cico.' dahulu. Terima kasih.',
+        try {
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('POST', URL::to('https://fcm.googleapis.com/v1/projects/matta-reborn-98e4c/messages:send'), [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$this->getToken(),
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'message' => [
+                        'token' => $to,
+                        'notification' => [
+                            'title' => 'MATTA REBORN',
+                            'body' => 'Hai '.$nama.', Anda belum melakukan '.$cico.'. Silahkan untuk melakukan '.$cico.' dahulu. Terima kasih.',
+                        ],
                     ],
                 ],
-            ],
-        ]);
+            ]);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $where = ['mobile_id' => $to];
+            $karyawan = Karyawan::where($where)->first();
+            $karyawan->mobile_id = NULL;
+            $karyawan->update();
+            // dd($karyawan);
+            if ($e->hasResponse()) {
+                $response = $e->getResponse();
+            }
+        }
     }
 
     public function sendNotifProsesOT($nama, $to, $pengaju)
     {
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', URL::to('https://fcm.googleapis.com/v1/projects/matta-reborn-98e4c/messages:send'), [
-            'headers' => [
-                'Authorization' => 'Bearer '.$this->getToken(),
-                'Content-Type' => 'application/json',
-            ],
-            'json' => [
-                'message' => [
-                    'token' => $to,
-                    'notification' => [
-                        'title' => 'MATTA REBORN',
-                        'body' => 'Hai '.$nama.', Ada pengajuan Overtime atas nama '.$pengaju.'. Silahkan untuk memproses pengajuan Overtime tersebut. Terima kasih.',
+        try {
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('POST', URL::to('https://fcm.googleapis.com/v1/projects/matta-reborn-98e4c/messages:send'), [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$this->getToken(),
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'message' => [
+                        'token' => $to,
+                        'notification' => [
+                            'title' => 'MATTA REBORN',
+                            'body' => 'Hai '.$nama.', Ada pengajuan Overtime atas nama '.$pengaju.'. Silahkan untuk memproses pengajuan Overtime tersebut. Terima kasih.',
+                        ],
                     ],
                 ],
-            ],
-        ]);
+            ]);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $where = ['mobile_id' => $to];
+            $karyawan = Karyawan::where($where)->first();
+            $karyawan->mobile_id = NULL;
+            $karyawan->update();
+            // dd($karyawan);
+            if ($e->hasResponse()) {
+                $response = $e->getResponse();
+            }
+        }
     }
 
     public function sendNotifFormulir($nama, $title, $to, $pengaju)
     {
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', URL::to('https://fcm.googleapis.com/v1/projects/matta-reborn-98e4c/messages:send'), [
-            'headers' => [
-                'Authorization' => 'Bearer '.$this->getToken(),
-                'Content-Type' => 'application/json',
-            ],
-            'json' => [
-                'message' => [
-                    'token' => $to,
-                    'notification' => [
-                        'title' => 'MATTA REBORN',
-                        'body' => 'Hai '.$nama.', Ada '.$title.' atas nama '.$pengaju.'. Silahkan untuk memproses '.$title.' tersebut. Terima kasih.',
+        try {
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('POST', URL::to('https://fcm.googleapis.com/v1/projects/matta-reborn-98e4c/messages:send'), [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$this->getToken(),
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'message' => [
+                        'token' => $to,
+                        'notification' => [
+                            'title' => 'MATTA REBORN',
+                            'body' => 'Hai '.$nama.', Ada '.$title.' atas nama '.$pengaju.'. Silahkan untuk memproses '.$title.' tersebut. Terima kasih.',
+                        ],
                     ],
                 ],
-            ],
-        ]);
+            ]);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $where = ['mobile_id' => $to];
+            $karyawan = Karyawan::where($where)->first();
+            $karyawan->mobile_id = NULL;
+            $karyawan->update();
+            // dd($karyawan);
+            if ($e->hasResponse()) {
+                $response = $e->getResponse();
+            }
+        }
     }
 
     public function sendNotifFeed($nama, $to, $_title)
     {
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', URL::to('https://fcm.googleapis.com/v1/projects/matta-reborn-98e4c/messages:send'), [
-            'headers' => [
-                'Authorization' => 'Bearer '.$this->getToken(),
-                'Content-Type' => 'application/json',
-            ],
-            'json' => [
-                'message' => [
-                    'token' => $to,
-                    'notification' => [
-                        'title' => 'MATTA REBORN',
-                        'body' => 'Hai '.$nama.', Ada Feed baru perihal '.$_title.' yang harus anda lihat. Terima kasih.',
+        try {
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('POST', URL::to('https://fcm.googleapis.com/v1/projects/matta-reborn-98e4c/messages:send'), [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$this->getToken(),
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'message' => [
+                        'token' => $to,
+                        'notification' => [
+                            'title' => 'MATTA REBORN',
+                            'body' => 'Hai '.$nama.', Ada Feed baru perihal '.$_title.' yang harus anda lihat. Terima kasih.',
+                        ],
                     ],
                 ],
-            ],
-        ]);
+            ]);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $where = ['mobile_id' => $to];
+            $karyawan = Karyawan::where($where)->first();
+            $karyawan->mobile_id = NULL;
+            $karyawan->update();
+            // dd($karyawan);
+            if ($e->hasResponse()) {
+                $response = $e->getResponse();
+            }
+        }
     }
 
     /**

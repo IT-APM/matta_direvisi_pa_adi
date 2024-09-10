@@ -198,21 +198,32 @@ class FeedController extends Controller
 
     public function sendNotifFeed($nama, $to, $_title)
     {
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', URL::to('https://fcm.googleapis.com/v1/projects/matta-reborn-98e4c/messages:send'), [
-            'headers' => [
-                'Authorization' => 'Bearer '.(new NotificationController)->getToken(),
-                'Content-Type' => 'application/json',
-            ],
-            'json' => [
-                'message' => [
-                    'token' => $to,
-                    'notification' => [
-                        'title' => 'MATTA REBORN',
-                        'body' => 'Hai '.$nama.', Ada Feed baru perihal '.$_title.' yang harus anda lihat. Terima kasih.',
+        try {
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('POST', URL::to('https://fcm.googleapis.com/v1/projects/matta-reborn-98e4c/messages:send'), [
+                'headers' => [
+                    'Authorization' => 'Bearer '.(new NotificationController)->getToken(),
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'message' => [
+                        'token' => $to,
+                        'notification' => [
+                            'title' => 'MATTA REBORN',
+                            'body' => 'Hai '.$nama.', Ada Feed baru perihal '.$_title.' yang harus anda lihat. Terima kasih.',
+                        ],
                     ],
                 ],
-            ],
-        ]);
+            ]);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $where = ['mobile_id' => $to];
+            $karyawan = Karyawan::where($where)->first();
+            $karyawan->mobile_id = NULL;
+            $karyawan->update();
+            // dd($karyawan);
+            if ($e->hasResponse()) {
+                $response = $e->getResponse();
+            }
+        }
     }
 }
