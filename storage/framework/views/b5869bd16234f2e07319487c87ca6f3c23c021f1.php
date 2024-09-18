@@ -23,19 +23,19 @@ $koordinator_property = json_decode($trxMaster->koordinator_property, true);
 				<table width="100%" border="1" cellspacing="0" cellpadding="2">
 					<tr>
 						<td width="25%">&nbsp;<img src="<?php echo e(public_path('assets/images/matta/alita_new.png')); ?>" alt="Logo Alita"></td>
-                        <td width="50%"><div class="center"><strong>FORM BIAYA PERJALANAN DINAS</strong></div></td>
+                        <td width="50%"><div class="center" style="font-weight: bold; font-size: 12px">FORM BIAYA PERJALANAN DINAS</div></td>
                         <td width="25%"><div class="center">No: <?php echo e($trxMaster->id); ?></div></td>
 					</tr>
 				</table>
 				<!--  -->
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr>
-						<td align="center"><h3>
+						<td align="center"><strong>
 						<?php if($trxMaster->luar_dalam == 'ca_dalam'): ?> CASH ADVANCE PERJALANAN DINAS DALAM NEGERI
 						<?php elseif($trxMaster->luar_dalam == 'ca_luar'): ?> CASH ADVANCE PERJALANAN DINAS LUAR NEGERI
 						<?php elseif($trxMaster->luar_dalam == 'reimburse'): ?> REIMBURSEMENT PERJALANAN DINAS
 						<?php endif; ?>
-						</h3></td>
+						</strong></td>
 					</tr>
 				</table>
 				<hr/>

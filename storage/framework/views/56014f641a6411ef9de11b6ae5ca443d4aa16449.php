@@ -19,7 +19,7 @@
 				<table width="100%" border="1" cellspacing="0" cellpadding="2">
 					<tr>
 						<td width="25%">&nbsp;<img src="<?php echo e(public_path('assets/images/matta/alita_new.png')); ?>" alt="Logo Alita"></td>
-                        <td width="50%"><div class="center"><strong>FORM PERMOHONAN IZIN SAKIT</strong></div></td>
+                        <td width="50%"><div class="center" style="font-weight: bold; font-size: 12px">FORM PERMOHONAN IZIN SAKIT</div></td>
                         <td width="25%"><div class="center">No: <?php echo e($trxSakit->id); ?></div></td>
 					</tr>
 				</table>

@@ -167,24 +167,27 @@
                                             <th scrope="row">1</th>
                                             @if ($data['luar_dalam'] == 'ca_dalam')
                                             <td>
-                                                <select onclick="getData(1);" class="form-select col-sm-12" id="tujuan1_1" name="tujuan1_1" required="">
+                                                <select onchange="getData(1);" class="form-select js-example-basic-single col-sm-12" id="tujuan1_1" name="tujuan1_1" required="">
                                                     <option selected="" disabled="" value="">Pilih...</option>
                                                     @foreach ($area as $_data)
                                                     <option value="{{ $_data->id }}">{{ $_data->propinsi }}</option>
                                                     @endforeach
                                                 </select>
+                                                <div class="invalid-feedback txt-danger">Field is required.</div>
                                             </td>
                                             <td>
-                                                <select class="form-select col-sm-12" id="tujuan2_1" name="tujuan2_1" required=""></select>
+                                                <select class="form-select js-example-basic-single col-sm-12" id="tujuan2_1" name="tujuan2_1" required=""></select>
+                                                <div class="invalid-feedback txt-danger">Field is required.</div>
                                             </td>
                                             @elseif ($data['luar_dalam'] == 'ca_luar')
                                             <td>
-                                                <select class="form-select col-sm-12" id="tujuan1_1" name="tujuan1_1" required="">
+                                                <select class="form-select js-example-basic-single col-sm-12" id="tujuan1_1" name="tujuan1_1" required="">
                                                     <option selected="" disabled="" value="">Pilih...</option>
                                                     @foreach ($negara as $_data)
                                                     <option value="{{ $_data->id }}">{{ $_data->negara }}</option>
                                                     @endforeach
                                                 </select>
+                                                <div class="invalid-feedback txt-danger">Field is required.</div>
                                             </td>
                                             @endif
                                             <td><input class="form-control" type="date" name="tanggal_mulai[]" id="tanggal_mulai[]" placeholder="Tanggal dari" required=""></td>
@@ -349,11 +352,11 @@
             cols += '<th scrope="row">' + counter_info + '</th>';
             // ca_dalam
             @if ($data['luar_dalam'] == 'ca_dalam')
-            cols += '<td><select onclick="getData(' + counter_info + ');" class="form-select col-sm-12" id="tujuan1_' + counter_info + '" name="tujuan1_' + counter_info + '" required=""><option selected="" disabled="" value="">Pilih...</option>@foreach ($area as $_data)<option value="{{ $_data->id }}">{{ $_data->propinsi }}</option>@endforeach</select></td>';
-            cols += '<td><select class="form-select col-sm-12" id="tujuan2_' + counter_info + '" name="tujuan2_' + counter_info + '" required=""></select></td>';
+            cols += '<td><select onchange="getData(' + counter_info + ');" class="form-select js-example-basic-single col-sm-12" id="tujuan1_' + counter_info + '" name="tujuan1_' + counter_info + '" required=""><option selected="" disabled="" value="">Pilih...</option>@foreach ($area as $_data)<option value="{{ $_data->id }}">{{ $_data->propinsi }}</option>@endforeach</select></td>';
+            cols += '<td><select class="form-select js-example-basic-single col-sm-12" id="tujuan2_' + counter_info + '" name="tujuan2_' + counter_info + '" required=""></select></td>';
             // ca_luar
             @elseif ($data['luar_dalam'] == 'ca_luar')
-            cols += '<td><select class="form-select col-sm-12" id="tujuan1_' + counter_info + '" name="tujuan1_' + counter_info + '" required=""><option selected="" disabled="" value="">Pilih...</option>@foreach ($negara as $_data)<option value="{{ $_data->id }}">{{ $_data->negara }}</option> @endforeach</select></td>';
+            cols += '<td><select class="form-select js-example-basic-single col-sm-12" id="tujuan1_' + counter_info + '" name="tujuan1_' + counter_info + '" required=""><option selected="" disabled="" value="">Pilih...</option>@foreach ($negara as $_data)<option value="{{ $_data->id }}">{{ $_data->negara }}</option> @endforeach</select></td>';
             @endif
             cols += '<td><input class="form-control" type="date" name="tanggal_mulai[]" id="tanggal_mulai[]" placeholder="Tanggal dari" required=""></td>';
             cols += '<td><input class="form-control" type="date" name="tanggal_akhir[]" id="tanggal_akhir[]" placeholder="Tanggal sampai" required=""></td>';

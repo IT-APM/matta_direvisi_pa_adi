@@ -19,13 +19,13 @@
             <td><table width="100%" border="1" cellspacing="0" cellpadding="2">
                     <tr>
                         <td width="25%">&nbsp;<img src="{{ public_path('assets/images/matta/alita_new.png') }}" alt="Logo Alita"></td>
-                        <td width="50%"><div class="center"><strong>FORM KARYAWAN NON AKTIF</strong></div></td>
+                        <td width="50%"><div class="center" style="font-weight: bold; font-size: 12px">FORM KARYAWAN NON AKTIF</div></td>
                         <td width="25%"><div class="center">No: {{ $trxM->id }}</div></td>
                     </tr>
                 </table>
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="center"><strong>Karyawan</strong></td>
+                        <td align="center"><strong>KARYAWAN</strong></td>
                     </tr>
                 </table>
                 <hr />
@@ -39,7 +39,7 @@
                 <!-- di -->
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="center"><strong>Direktorat / Divisi / Departemen</strong></td>
+                        <td align="center"><strong>DIREKTORAT / DIVISI / DEPARTEMEN</strong></td>
                     </tr>
                 </table>
                 <hr />
@@ -73,7 +73,7 @@
                 <!-- ga -->
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="center"><strong>General Affairs</strong></td>
+                        <td align="center"><strong>GENERAL AFFAIRS</strong></td>
                     </tr>
                 </table>
                 <hr />
@@ -141,7 +141,7 @@
                 <!-- hc -->
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="center"><strong>Human Capital</strong></td>
+                        <td align="center"><strong>HUMAN CAPITAL</strong></td>
                     </tr>
                 </table>
                 <hr />
@@ -175,7 +175,7 @@
                 <!-- ko -->
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="center"><strong>Koperasi Karyawan</strong></td>
+                        <td align="center"><strong>KOPERASI KARYAWAN</strong></td>
                     </tr>
                 </table>
                 <hr />
