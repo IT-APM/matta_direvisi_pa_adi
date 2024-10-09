@@ -160,6 +160,7 @@ class NotificationController extends Controller
         }
         // return response()->json( [ 'success' => true, 'arr'=>$arr ], 200 );
         Storage::put('notif/'.Carbon::now()->format('Ymd_His').'.formulir.txt', json_encode($arr));
+        // Storage::put('notif/'.Carbon::now()->format('Ymd').'.formulir.txt', json_encode($arr));
         // return $arr;
     }
 
@@ -213,6 +214,7 @@ class NotificationController extends Controller
         }
         // return response()->json( [ 'success' => true, 'result'=>$result ], 200 );
         Storage::put('notif/'.Carbon::now()->format('Ymd_His').'.reg.txt', json_encode($result));
+        // Storage::put('notif/'.Carbon::now()->format('Ymd').'.reg.txt', json_encode($result));
     }
 
     public function notif_cico_ot()
@@ -252,6 +254,7 @@ class NotificationController extends Controller
             }
         }
         Storage::put('notif/'.Carbon::now()->format('Ymd_His').'.ot.txt', json_encode($result));
+        // Storage::put('notif/'.Carbon::now()->format('Ymd').'.ot.txt', json_encode($result));
     }
 
     public function notif_approval_ot()
@@ -272,6 +275,7 @@ class NotificationController extends Controller
         }
         // 
         Storage::put('notif/'.Carbon::now()->format('Ymd_His').'.app_ot.txt', json_encode($result));
+        // Storage::put('notif/'.Carbon::now()->format('Ymd').'.app_ot.txt', json_encode($result));
     }
 
     public function sendNotifCiCo($nama, $to, $cico)
