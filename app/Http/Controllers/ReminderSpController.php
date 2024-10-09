@@ -19,84 +19,90 @@ class ReminderSpController extends Controller
     // reminder_sp
     public function reminder_sp($id)
     {
-        // $date_from = '2024-08-01';
-        // $date_to = '2024-08-31';
-        $month = '-1 month';
-        $date_from = Carbon::now()->modify($month)->startOfMonth()->format('Y-m-d');
-        $date_to = Carbon::now()->modify($month)->endOfMonth()->format('Y-m-d');
-        // dd($date_from, $date_to);
-        // pengecualian nik
-        $kecuali = explode(',', MtrReminderSp::find(2)->isi);
-        array_push($kecuali, 'Hco.all', 'IT.BM');
-        $where = ['is_aktif' => 1];
-        $karyawan = Karyawan::where($where)->whereNotIn('nik', $kecuali)->where('nik', 'not like', 'CS%')->get();
-        $arr_date = (new RecapAttendanceController)->dateRange($date_from, $date_to);
-        $trx = [];
-        foreach ($karyawan as $_karyawan) {
-            $nik = $_karyawan->nik;
-            $arr_base = [];
-            $arr_clock = [];
-            $tanggal_bergabung = $_karyawan->tanggal_bergabung;
-            // cek apakah karyawan berjenis kerja reguler
-            if ($_karyawan->_wg->is_reguler == 1) {
-                foreach ($arr_date as $data) {
-                    if (!(new RecapAttendanceController)->isWeekend($data)) {
-                        if (!(new RecapAttendanceController)->isHoliday($data)) {
-                            if (!(new RecapAttendanceController)->isCuti($nik, $data)) {
-                                array_push($arr_base, $data);
-                            }
-                            if ((new RecapAttendanceController)->isSakit($nik, $data)) {
-                                if (($key = array_search($data, $arr_base)) !== false) {
-                                    unset($arr_base[$key]);
+        // dijalankan hanya di tanggal 01 setiap bulannya
+        if(explode('-', Carbon::now()->format('Y-m-d'))[2] == '01'){
+            $date_from = Carbon::now()->subMonth()->startOfMonth()->format('Y-m-d');
+            $date_to = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+            // dd($date_from, $date_to);
+            // pengecualian nik
+            $kecuali = explode(',', MtrReminderSp::find(2)->isi);
+            array_push($kecuali, 'Hco.all', 'IT.BM');
+            $where = ['is_aktif' => 1];
+            $karyawan = Karyawan::where($where)->whereNotIn('nik', $kecuali)->where('nik', 'not like', 'CS%')->get();
+            $arr_date = (new RecapAttendanceController)->dateRange($date_from, $date_to);
+            // pengecualian karena pada tanggal ini terjadi suspend domain alita.id
+            $arr_date = array_values(array_diff($arr_date, ['2024-09-23']));
+            // dd($arr_date);
+            $trx = [];
+            foreach ($karyawan as $_karyawan) {
+                $nik = $_karyawan->nik;
+                $arr_base = [];
+                $arr_clock = [];
+                $tanggal_bergabung = $_karyawan->tanggal_bergabung;
+                // cek apakah karyawan berjenis kerja reguler
+                if ($_karyawan->_wg->is_reguler == 1) {
+                    foreach ($arr_date as $data) {
+                        if (!(new RecapAttendanceController)->isWeekend($data)) {
+                            if (!(new RecapAttendanceController)->isHoliday($data)) {
+                                if (!(new RecapAttendanceController)->isCuti($nik, $data)) {
+                                    array_push($arr_base, $data);
+                                }
+                                if ((new RecapAttendanceController)->isSakit($nik, $data)) {
+                                    if (($key = array_search($data, $arr_base)) !== false) {
+                                        unset($arr_base[$key]);
+                                    }
+                                }
+                                if ($tanggal_bergabung > $data) {
+                                    if (($key = array_search($data, $arr_base)) !== false) {
+                                        unset($arr_base[$key]);
+                                    }
                                 }
                             }
-                            if ($tanggal_bergabung > $data) {
-                                if (($key = array_search($data, $arr_base)) !== false) {
-                                    unset($arr_base[$key]);
-                                }
+                        }
+                    }
+                }
+                // karyawan non reguler dengan jadwal kerja sesuai working group nya
+                else {
+                    $where = ['nik' => $nik];
+                    $data = WorkingDay::where($where)->whereIn('working_date', $arr_date)->get();
+                    foreach ($data as $_data) {
+                        if (!(new RecapAttendanceController)->isCuti($nik, $_data->working_date)) {
+                            array_push($arr_base, $_data->working_date);
+                        }
+                        if ((new RecapAttendanceController)->isSakit($nik, $_data->working_date)) {
+                            if (($key = array_search($_data->working_date, $arr_base)) !== false) {
+                                unset($arr_base[$key]);
+                            }
+                        }
+                        if ($tanggal_bergabung > $data) {
+                            if (($key = array_search($data, $arr_base)) !== false) {
+                                unset($arr_base[$key]);
                             }
                         }
                     }
                 }
-            }
-            // karyawan non reguler dengan jadwal kerja sesuai working group nya
-            else {
-                $where = ['nik' => $nik];
-                $data = WorkingDay::where($where)->whereIn('working_date', $arr_date)->get();
-                foreach ($data as $_data) {
-                    if (!(new RecapAttendanceController)->isCuti($nik, $_data->working_date)) {
-                        array_push($arr_base, $_data->working_date);
-                    }
-                    if ((new RecapAttendanceController)->isSakit($nik, $_data->working_date)) {
-                        if (($key = array_search($_data->working_date, $arr_base)) !== false) {
-                            unset($arr_base[$key]);
-                        }
-                    }
-                    if ($tanggal_bergabung > $data) {
-                        if (($key = array_search($data, $arr_base)) !== false) {
-                            unset($arr_base[$key]);
-                        }
+                foreach ($arr_base as $data) {
+                    if ((new RecapAttendanceController)->isClockin($nik, $data)) {
+                        array_push($arr_clock, $data);
                     }
                 }
-            }
-            foreach ($arr_base as $data) {
-                if ((new RecapAttendanceController)->isClockin($nik, $data)) {
-                    array_push($arr_clock, $data);
+                $persentase = 0;
+                if (count($arr_base) > 0) {
+                    $persentase = count($arr_clock) / count($arr_base);
+                }
+                $nik_property = $this->getNikProperty($nik);
+                // tangkap jika kurang dari 80% dan ada hari kehadirannya
+                if(round($persentase*100) < MtrReminderSp::find(1)->isi && count($arr_base) > 0){
+                    $remindersp = ['date_from' => $date_from, 'date_to' => $date_to, 'nik' => $nik, 'nik_property' => $nik_property, 'arr_base' => count($arr_base), 'arr_clock' => count($arr_clock), 'persentase' => $persentase * 100];
+                    array_push($trx, $remindersp);
+                    $this->insertTrxReminderSp($remindersp);
                 }
             }
-            $persentase = 0;
-            if (count($arr_base) > 0) {
-                $persentase = count($arr_clock) / count($arr_base);
-            }
-            $nik_property = $this->getNikProperty($nik);
-            // tangkap jika kurang dari 80% dan ada hari kehadirannya
-            if(round($persentase*100) < MtrReminderSp::find(1)->isi && count($arr_base) > 0){
-                $remindersp = ['date_from' => $date_from, 'date_to' => $date_to, 'nik' => $nik, 'nik_property' => $nik_property, 'arr_base' => count($arr_base), 'arr_clock' => count($arr_clock), 'persentase' => $persentase * 100];
-                array_push($trx, $remindersp);
-                $this->insertTrxReminderSp($remindersp);
-            }
+            // dd($trx);
+            dd('DONE');
+        }else{
+            dd('NA');
         }
-        dd($trx);
     }
 
     public function insertTrxReminderSp($trx)
