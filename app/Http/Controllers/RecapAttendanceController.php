@@ -100,6 +100,9 @@ class RecapAttendanceController extends Controller
             // $date_from = '2023-12-01';
             // $date_to = '2023-12-31';
             $arr_date = $this->dateRange($date_from, $date_to);
+            // pengecualian karena pada tanggal ini terjadi suspend domain alita.id
+            $arr_date = array_values(array_diff($arr_date, ['2024-09-23']));
+            // dd($arr_date);
             // $where = ['is_aktif'=>1, 'wg_id'=>1, 'kode_sub_departemen'=>122];
             // $karyawan = Karyawan::where($where)->get();
             foreach ($karyawan as $_karyawan) {
