@@ -404,15 +404,15 @@ class TrxPenilaianSkorController extends Controller
                     // 
                 }
                 // jika penilai 3 ada maka dilanjut ke penilai 3
-                if(!empty($trx->nik_penilai_3)){
-                    $penilai3 = json_decode($trx->penilai3_property, true);
-                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 5, 'pic' => 'nik_penilai_3']) ];
-                    $mailData['to'] = $penilai3['email'];
-                    $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 5, 'pic' => 'nik_penilai_3'];
-                    $this->insertToDoList($todolist, $mailData);
-                    $this->sendEmail($mailData);
-                    // 
-                }
+                // if(!empty($trx->nik_penilai_3)){
+                //     $penilai3 = json_decode($trx->penilai3_property, true);
+                //     $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 5, 'pic' => 'nik_penilai_3']) ];
+                //     $mailData['to'] = $penilai3['email'];
+                //     $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 5, 'pic' => 'nik_penilai_3'];
+                //     $this->insertToDoList($todolist, $mailData);
+                //     $this->sendEmail($mailData);
+                //     // 
+                // }
             }
             // 6 = Penilaian Outsourcing
             elseif($trx->id_tipe == 6){
@@ -442,8 +442,9 @@ class TrxPenilaianSkorController extends Controller
                     // 
                 }
             }
+        }
         // formulir diinput oleh penilai 2 atau 3
-        }elseif($trx->id_status==5 || $trx->id_status==6 || $trx->id_status==7){
+        elseif($trx->id_status==5 || $trx->id_status==6 || $trx->id_status==7){
             // 
             $karyawan = json_decode($trx->karyawan_property, true);
             $atasan = json_decode($trx->penilai1_property, true);
@@ -457,7 +458,10 @@ class TrxPenilaianSkorController extends Controller
             // template email tidak ada link done 180 to hco
             $mailData['filename'] = 'emails.penilaian1';
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
-            $this->sendEmail($mailData);
+            // jika layer3 tidak ada maka email done to hco
+            if(empty($trx->nik_penilai_3)){
+                $this->sendEmail($mailData);
+            }
             // jika diinput penilai 2
             if($request->pic == 'nik_penilai_2' && $nPenilai2 == 0){
                 $trx->id_status = 6;
@@ -466,6 +470,18 @@ class TrxPenilaianSkorController extends Controller
                 $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_2, 'pic'=>'nik_penilai_2', 'filename'=>'emails.penilaian0']);
                 // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
                 $this->insertLog($id, 6, $trx->nik_penilai_2, $request->kes_rek, $request->is_perpanjang, $request->bulan);
+                // 
+                if(!empty($trx->nik_penilai_3)){
+                    $penilai3 = json_decode($trx->penilai3_property, true);
+                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 6, 'pic' => 'nik_penilai_3']) ];
+                    // template email ada link agar bisa diklik dan diinput pic
+                    $mailData['filename'] = 'emails.penilaian0';
+                    $mailData['to'] = $penilai3['email'];
+                    $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 6, 'pic' => 'nik_penilai_3'];
+                    $this->insertToDoList($todolist, $mailData);
+                    $this->sendEmail($mailData);
+                    // 
+                }
             }
             // jika diinput penilai 3
             elseif($request->pic == 'nik_penilai_3' && $nPenilai3 == 0){
@@ -475,6 +491,8 @@ class TrxPenilaianSkorController extends Controller
                 $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_3, 'pic'=>'nik_penilai_3', 'filename'=>'emails.penilaian0']);
                 // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
                 $this->insertLog($id, 7, $trx->nik_penilai_3, $request->kes_rek, $request->is_perpanjang, $request->bulan);
+                // template email tidak ada link done 180 to hco
+                $this->sendEmail($mailData);
             }
         }
         // formulir diinput oleh penilai 2
