@@ -213,7 +213,7 @@ class NotificationController extends Controller
             }
         }
         // return response()->json( [ 'success' => true, 'result'=>$result ], 200 );
-        Storage::put('notif/'.Carbon::now()->format('Ymd_His').'.reg.txt', json_encode($result));
+        Storage::put('notif/reg/'.Carbon::now()->format('Ymd_His').'.reg.txt', json_encode($result));
         // Storage::put('notif/'.Carbon::now()->format('Ymd').'.reg.txt', json_encode($result));
     }
 
