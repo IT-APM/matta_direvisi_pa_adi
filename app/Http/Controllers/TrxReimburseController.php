@@ -169,8 +169,10 @@ class TrxReimburseController extends Controller
         // 
         $hubungan = ReimburseHubungan::orderBy('id', 'asc')->get();
         $layanan = ReimburseLayanan::orderBy('id', 'asc')->get();
+        $layanan_istri = ReimburseLayanan::whereIn('id', [1,4,5,6])->orderBy('id', 'asc')->get();
+        $layanan_anak = ReimburseLayanan::whereIn('id', [1])->orderBy('id', 'asc')->get();
         $lampiran = ReimburseLampiran::orderBy('id', 'asc')->get();
-        return view('formulir.reimburse.insert', compact('karyawan', 'plafon', 'hubungan', 'layanan', 'lampiran'));
+        return view('formulir.reimburse.insert', compact('karyawan', 'plafon', 'hubungan', 'layanan', 'lampiran', 'layanan_istri', 'layanan_anak'));
     }
 
     /**
@@ -181,17 +183,24 @@ class TrxReimburseController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         // return redirect()->back()->with('error','hello');
         // karyawan masih di hardcode
         // $nik_karyawan = '01031801682';
         $nik_karyawan = auth()->user()->nik;
         $periode = Carbon::now()->format('Y');
         // agregate semua input array
-        $hubungan = $request->input('hubungan', []);
-        $nama_pasien = $request->input('nama_pasien', []);
-        $layanan = $request->input('layanan', []);
-        $tanggal = $request->input('tanggal', []);
-        $jumlah_klaim = $request->input('jumlah_klaim', []);
+        // $hubungan = $request->input('hubungan', []);
+        // $nama_pasien = $request->input('nama_pasien', []);
+        // $layanan = $request->input('layanan', []);
+        // $tanggal = $request->input('tanggal', []);
+        // $jumlah_klaim = $request->input('jumlah_klaim', []);
+        // 
+        $hubungan = array_values(array_filter([$request->_hubungan1, $request->_hubungan3, $request->_hubungan4, $request->_hubungan5, $request->_hubungan6]));
+        $nama_pasien = array_values(array_filter([$request->nama_pasien1, $request->nama_pasien3, $request->nama_pasien4, $request->nama_pasien5, $request->nama_pasien6]));
+        $layanan = array_values(array_filter([$request->layanan1, $request->layanan3, $request->layanan4, $request->layanan5, $request->layanan6]));
+        $tanggal = array_values(array_filter([$request->tanggal1, $request->tanggal3, $request->tanggal4, $request->tanggal5, $request->tanggal6]));
+        $jumlah_klaim = array_values(array_filter([$request->jumlah_klaim1, $request->jumlah_klaim3, $request->jumlah_klaim4, $request->jumlah_klaim5, $request->jumlah_klaim6]));
         $jumlah_klaim = str_replace( ',', '', $jumlah_klaim );
         // return response()->json( [ 'jumlah_klaim' => str_replace( ',', '', $jumlah_klaim ) ], 200 );
         // 
