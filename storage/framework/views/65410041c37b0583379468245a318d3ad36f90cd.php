@@ -1,3 +1,4 @@
+<?php echo $__env->make('emails.header', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <p>Semangat Pagi,</p>
 <p><strong>Terdapat Formulir Penilaian Karyawan yang harus anda lengkapi</strong></p>
 <p></p>
@@ -27,5 +28,4 @@
 </p>
 <p>Klik link berikut untuk melakukan pengisian Formulir Penilaian Karyawan tersebut:</p>
 <h1><strong>Klik <a href="<?php echo e($data['link']); ?>" target="_blank">Formulir Penilaian Karyawan</a></strong></h1>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p><?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/penilaian0.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('emails.footer', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/penilaian0.blade.php ENDPATH**/ ?>

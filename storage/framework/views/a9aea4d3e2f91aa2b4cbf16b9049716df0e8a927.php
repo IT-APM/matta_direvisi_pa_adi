@@ -171,7 +171,7 @@
                                             <input name="telepon_darurat" id="telepon_darurat" class="form-control" type="text" <?php if($status=='edit' ): ?> value="<?php echo e($karyawan->telepon_darurat); ?>" <?php endif; ?> >
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label" for="kode_kawin">Status Kawin</label>
+                                            <label class="form-label" for="kode_kawin">Status Sipil</label>
                                             <select class="form-select" id="kode_kawin" name="kode_kawin" >
                                                 <option selected="" disabled="" value="">Pilih...</option>
                                                 <?php $__currentLoopData = $kawin; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>

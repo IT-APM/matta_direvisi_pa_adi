@@ -51,7 +51,7 @@
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label" for="jenis_pengajuan">Jenis Pengajuan</label>
-                                <select class="form-select" id="jenis_pengajuan" name="jenis_pengajuan">
+                                <select class="form-select" id="jenis_pengajuan" name="jenis_pengajuan" required="">
                                     <option selected="" disabled="" value="">Pilih...</option>
                                     <?php $__currentLoopData = $pengajuan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <option value="<?php echo e($data->id); ?>"><?php echo e($data->pengajuan); ?></option>

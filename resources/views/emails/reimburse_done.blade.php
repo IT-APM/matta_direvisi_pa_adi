@@ -1,6 +1,6 @@
 @include('emails.header')
 <p>Semangat Pagi,</p>
-<p><strong>Formulir Reimbursement anda telah disetujui para pihak</strong></p>
+<p><strong>Formulir Reimbursement anda telah {{ $data['status'] }} para pihak</strong></p>
 <p></p>
 <p>Berikut datanya:<br />
 <table width="100%" border="0" cellspacing="1" cellpadding="1">

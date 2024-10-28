@@ -190,19 +190,19 @@ class TrxReimburseController extends Controller
         $nik_karyawan = auth()->user()->nik;
         $periode = Carbon::now()->format('Y');
         // agregate semua input array
-        // $hubungan = $request->input('hubungan', []);
-        // $nama_pasien = $request->input('nama_pasien', []);
-        // $layanan = $request->input('layanan', []);
-        // $tanggal = $request->input('tanggal', []);
-        // $jumlah_klaim = $request->input('jumlah_klaim', []);
+        $hubungan = $request->input('hubungan', []);
+        $nama_pasien = $request->input('nama_pasien', []);
+        $layanan = $request->input('layanan', []);
+        $tanggal = $request->input('tanggal', []);
+        $jumlah_klaim = $request->input('jumlah_klaim', []);
         // 
-        $hubungan = array_values(array_filter([$request->_hubungan1, $request->_hubungan3, $request->_hubungan4, $request->_hubungan5, $request->_hubungan6]));
-        $nama_pasien = array_values(array_filter([$request->nama_pasien1, $request->nama_pasien3, $request->nama_pasien4, $request->nama_pasien5, $request->nama_pasien6]));
-        $layanan = array_values(array_filter([$request->layanan1, $request->layanan3, $request->layanan4, $request->layanan5, $request->layanan6]));
-        $tanggal = array_values(array_filter([$request->tanggal1, $request->tanggal3, $request->tanggal4, $request->tanggal5, $request->tanggal6]));
-        $jumlah_klaim = array_values(array_filter([$request->jumlah_klaim1, $request->jumlah_klaim3, $request->jumlah_klaim4, $request->jumlah_klaim5, $request->jumlah_klaim6]));
+        // $hubungan = array_values(array_filter([$request->_hubungan1, $request->_hubungan3, $request->_hubungan4, $request->_hubungan5, $request->_hubungan6]));
+        // $nama_pasien = array_values(array_filter([$request->nama_pasien1, $request->nama_pasien3, $request->nama_pasien4, $request->nama_pasien5, $request->nama_pasien6]));
+        // $layanan = array_values(array_filter([$request->layanan1, $request->layanan3, $request->layanan4, $request->layanan5, $request->layanan6]));
+        // $tanggal = array_values(array_filter([$request->tanggal1, $request->tanggal3, $request->tanggal4, $request->tanggal5, $request->tanggal6]));
+        // $jumlah_klaim = array_values(array_filter([$request->jumlah_klaim1, $request->jumlah_klaim3, $request->jumlah_klaim4, $request->jumlah_klaim5, $request->jumlah_klaim6]));
+        // 
         $jumlah_klaim = str_replace( ',', '', $jumlah_klaim );
-        // return response()->json( [ 'jumlah_klaim' => str_replace( ',', '', $jumlah_klaim ) ], 200 );
         // 
         $lampiran = $request->input('lampiran', []);
         $file_lampiran = $request->file('file_lampiran', []);
@@ -721,8 +721,7 @@ class TrxReimburseController extends Controller
     
     public function updateDetail(Request $request, $id)
     {
-        //
-        // return response()->json( [ 'request' => $request->all(), 'id' => $id ], 200 );// ambil plafon
+        // dd($request->all(), $id);
         $trxM = TrxReimburseMaster::find($request->trxMId);
         $trxD = TrxReimburseDetail::find($id);
         // 
@@ -829,6 +828,9 @@ class TrxReimburseController extends Controller
         $trxD->tanggal = $tanggal;
         $trxD->jumlah_klaim = $jumlah_klaim_akhir;
         $trxD->update();
+        if(!empty($request->delete)){
+            $trxD->delete();
+        }
         // 
         $this->insertLog($request->trxMId, 5, auth()->user()->nik, 'updateDetail');
         // return response()->json( [ 'request' => $request->all(), 'id' => $id ], 200 );
@@ -853,14 +855,24 @@ class TrxReimburseController extends Controller
         $this->deleteToDoList(['id_trx'=>$id, 'pic'=>'pic', 'filename'=>'emails.reimburse0']);
         $this->insertLog($id, $status_pengajuan, MtrUtility::find(12)->informasi, $catatan);
         if($request->status_pengajuan == 2){
-            // dd($request->all(), $id);
             // start
             // parameter yang dipassing ke sendemail
             $karyawan = json_decode($trx->karyawan_property, true);
             $mailData['title'] = 'Formulir Reimbursement';
             $mailData['filename'] = 'emails.reimburse_done';
             $mailData['to'] = $karyawan['email'];
-            $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [$trx->id, 'view' => 'pdf'])];
+            $mailData['data'] = ['status' => 'disetujui', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [$trx->id, 'view' => 'pdf'])];
+            $this->sendEmail($mailData);
+            // finish
+        }
+        else if($request->status_pengajuan == 3){
+            // start
+            // parameter yang dipassing ke sendemail
+            $karyawan = json_decode($trx->karyawan_property, true);
+            $mailData['title'] = 'Formulir Reimbursement';
+            $mailData['filename'] = 'emails.reimburse_done';
+            $mailData['to'] = $karyawan['email'];
+            $mailData['data'] = ['status' => 'ditolak', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [$trx->id, 'view' => 'pdf'])];
             $this->sendEmail($mailData);
             // finish
         }
@@ -875,6 +887,6 @@ class TrxReimburseController extends Controller
      */
     public function destroy($id)
     {
-        //
+        dd($id);
     }
 }

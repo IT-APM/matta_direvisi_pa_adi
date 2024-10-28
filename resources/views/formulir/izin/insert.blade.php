@@ -24,6 +24,13 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    @if(Session::has('error'))
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h4>ERROR:</h4>
+                        <h5>{{ session('error') }}</h5>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
                     <form action="{{ route('izin.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @csrf
                         <div class="row g-3">

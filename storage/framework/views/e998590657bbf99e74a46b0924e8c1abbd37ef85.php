@@ -77,8 +77,13 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Karyawan</th>
-                                    <th>Admin</th>
+                                    <th>NIP Karyawan</th>
+                                    <th>Nama Karyawan</th>
+                                    <th>Direktorat</th>
+                                    <th>Divisi</th>
+                                    <th>Departemen</th>
+                                    <th>NIP Admin</th>
+                                    <th>Nama Admin</th>
                                     <th>Golongan</th>
                                     <th>Aktif</th>
                                     <th>Action</th>
@@ -88,8 +93,13 @@
                                 <?php $__currentLoopData = $trx; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
                                     <td><?php echo e(++$no); ?></td>
-                                    <td><?php echo e($data->_nik->nama); ?> / <?php echo e($data->nik); ?></td>
-                                    <td><?php echo e($data->_admin->nama); ?> / <?php echo e($data->admin); ?></td>
+                                    <td><?php echo e($data->nik); ?></td>
+                                    <td><?php echo e($data->_nik->nama); ?></td>
+                                    <td><?php echo e($data->_nik->_divisi->nama); ?></td>
+                                    <td><?php echo e($data->_nik->_departemen->nama); ?></td>
+                                    <td><?php echo e($data->_nik->_subdepartemen->nama); ?></td>
+                                    <td><?php echo e($data->admin); ?></td>
+                                    <td><?php echo e($data->_admin->nama); ?></td>
                                     <td><?php echo e($data->_peran->nama); ?></td>
                                     <td><?php if($data->is_active==1): ?> <span class="badge bg-success">Aktif</span> <?php else: ?> <span class="badge bg-danger">Non Aktif</span> <?php endif; ?></td>
                                     <td>

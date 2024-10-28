@@ -23,6 +23,13 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    <?php if(Session::has('error')): ?>
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h4>ERROR:</h4>
+                        <h5><?php echo e(session('error')); ?></h5>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <?php endif; ?>
                     <form action="<?php echo e(route('izin.store')); ?>" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                         <?php echo csrf_field(); ?>
                         <div class="row g-3">

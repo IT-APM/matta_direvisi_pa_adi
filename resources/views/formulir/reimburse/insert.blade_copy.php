@@ -75,7 +75,7 @@
                         </table>
                     </div>
                 </div>
-                <form action="{{ route('reimburse.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
+                <form action="{{ route('reimburse.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return validateForm()">
                     @csrf
                     <!--  -->
                     <div class="card-header">
@@ -83,72 +83,207 @@
                     </div>
                     <div class="card-body typography">
                         <div class="row g-3">
-                            <div class="col-md-12">
-                                <div class="table-responsive">
-                                    <table class="table" id="trx_reimburse_detail">
-                                        <thead>
-                                            <tr>
-                                                <th>
-                                                    <h6>Hubungan Dengan Karyawan</h6>
-                                                </th>
-                                                <th>
-                                                    <h6>Nama Pasien</h6>
-                                                </th>
-                                                <th>
-                                                    <h6>Layanan</h6>
-                                                </th>
-                                                <th>
-                                                    <h6>Tanggal Layanan</h6>
-                                                </th>
-                                                <th>
-                                                    <h6>Nominal Klaim</h6>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr id="reimburse_detail0">
-                                                <td>
-                                                    <select class="form-select" id="hubungan[]" name="hubungan[]" required="">
-                                                        <option selected="" disabled="" value="">Pilih...</option>
-                                                        @foreach ($hubungan as $data)
-                                                        <option value="{{ $data->id }}">{{ $data->hubungan }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input name="nama_pasien[]" id="nama_pasien[]" class="form-control" type="text" required="">
-                                                </td>
-                                                <td>
-                                                    <select class="form-select" id="layanan[]" name="layanan[]" required="">
-                                                        <option selected="" disabled="" value="">Pilih...</option>
-                                                        @foreach ($layanan as $data)
-                                                        <option value="{{ $data->id }}">{{ $data->layanan }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input class="form-control" name="tanggal[]" id="tanggal[]" type="date" required="">
-                                                </td>
-                                                <td>
-                                                    <input min=1 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="jumlah_klaim[]" id="jumlah_klaim[]" class="form-control numbers" required="">
-                                                </td>
-                                            </tr>
-                                            <tr id="reimburse_detail1"></tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div class="col-md-3">
+                                <h6>Hubungan Dengan Karyawan</h6>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select" id="_hubungan" name="_hubungan" required="">
+                                    <option selected="" disabled="" value="">Pilih...</option>
+                                    @foreach ($hubungan as $data)
+                                    <option value="{{ $data->id }}">{{ $data->hubungan }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
-                        <br />
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                <button id="add_row" class="btn btn-primary pull-left"><i class="fa fa-plus"></i> Add Row</button>
-                                <button id='delete_row' class="pull-right btn btn-danger"><i class="fa fa-minus"></i> Delete Row</button>
+                        {{-- 1=Karyawan --}}
+                        <div class="row g-3" id="reimburse1">
+                            <input type="hidden" id="_hubungan1" name="_hubungan1" value="1">
+                            <div class="col-md-3">
+                                <label class="form-label">Hubungan Dengan Karyawan</label>
+                                <select class="form-select" id="hubungan1" name="hubungan1" required="">
+                                    <option selected="" disabled="" value="">Pilih...</option>
+                                    @foreach ($hubungan as $data)
+                                    <option value="{{ $data->id }}" @if($data->id == 1) selected @endif>{{ $data->hubungan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Nama Pasien</label>
+                                <input name="nama_pasien1" id="nama_pasien1" class="form-control" type="text" required="" value="{{ $karyawan->nama }}">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Layanan</label>
+                                <select class="form-select" id="layanan1" name="layanan1" required="">
+                                    <option selected="" disabled="" value="">Pilih...</option>
+                                    @foreach ($layanan as $data)
+                                    <option value="{{ $data->id }}">{{ $data->layanan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Tanggal Layanan</label>
+                                <input class="form-control" name="tanggal1" id="tanggal1" type="date" required="">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Nominal Klaim</label>
+                                <input min=1 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="jumlah_klaim1" id="jumlah_klaim1" class="form-control numbers" required="">
+                            </div>
+                            <div class="col-md-1">
+                                <a id='delete_row1' data-toggle="tooltip" title="Delete" class="pull-right btn btn-danger mt-4"><i class="fa fa-trash"></i></a>
                             </div>
                         </div>
-                        <br/>Catatan khusus baris pertama:<br/>
+                        {{-- 3=Istri dari Karyawan --}}
+                        <div class="row g-3" id="reimburse3">
+                            <input type="hidden" id="_hubungan3" name="_hubungan3" value="3">
+                            <div class="col-md-3">
+                                <label class="form-label">Hubungan Dengan Karyawan</label>
+                                <select class="form-select" id="hubungan3" name="hubungan3" required="">
+                                    <option selected="" disabled="" value="">Pilih...</option>
+                                    @foreach ($hubungan as $data)
+                                    <option value="{{ $data->id }}" @if($data->id == 3) selected @endif>{{ $data->hubungan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Nama Pasien</label>
+                                <input name="nama_pasien3" id="nama_pasien3" class="form-control" type="text" required="">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Layanan</label>
+                                <select class="form-select" id="layanan3" name="layanan3" required="">
+                                    <option selected="" disabled="" value="">Pilih...</option>
+                                    @foreach ($layanan_istri as $data)
+                                    <option value="{{ $data->id }}">{{ $data->layanan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Tanggal Layanan</label>
+                                <input class="form-control" name="tanggal3" id="tanggal3" type="date" required="">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Nominal Klaim</label>
+                                <input min=1 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="jumlah_klaim3" id="jumlah_klaim3" class="form-control numbers" required="">
+                            </div>
+                            <div class="col-md-1">
+                                <a id='delete_row3' data-toggle="tooltip" title="Delete" class="pull-right btn btn-danger mt-4"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                        {{-- 4=Anak ke-1 --}}
+                        <div class="row g-3" id="reimburse4">
+                            <input type="hidden" id="_hubungan4" name="_hubungan4" value="4">
+                            <div class="col-md-3">
+                                <label class="form-label">Hubungan Dengan Karyawan</label>
+                                <select class="form-select" id="hubungan4" name="hubungan4" required="">
+                                    <option selected="" disabled="" value="">Pilih...</option>
+                                    @foreach ($hubungan as $data)
+                                    <option value="{{ $data->id }}" @if($data->id == 4) selected @endif>{{ $data->hubungan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Nama Pasien</label>
+                                <input name="nama_pasien4" id="nama_pasien4" class="form-control" type="text" required="">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Layanan</label>
+                                <select class="form-select" id="layanan4" name="layanan4" required="">
+                                    <option selected="" disabled="" value="">Pilih...</option>
+                                    @foreach ($layanan_anak as $data)
+                                    <option value="{{ $data->id }}">{{ $data->layanan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Tanggal Layanan</label>
+                                <input class="form-control" name="tanggal4" id="tanggal4" type="date" required="">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Nominal Klaim</label>
+                                <input min=1 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="jumlah_klaim4" id="jumlah_klaim4" class="form-control numbers" required="">
+                            </div>
+                            <div class="col-md-1">
+                                <a id='delete_row4' data-toggle="tooltip" title="Delete" class="pull-right btn btn-danger mt-4"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                        {{-- 5=Anak ke-2 --}}
+                        <div class="row g-3" id="reimburse5">
+                            <input type="hidden" id="_hubungan5" name="_hubungan5" value="5">
+                            <div class="col-md-3">
+                                <label class="form-label">Hubungan Dengan Karyawan</label>
+                                <select class="form-select" id="hubungan5" name="hubungan5" required="">
+                                    <option selected="" disabled="" value="">Pilih...</option>
+                                    @foreach ($hubungan as $data)
+                                    <option value="{{ $data->id }}" @if($data->id == 5) selected @endif>{{ $data->hubungan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Nama Pasien</label>
+                                <input name="nama_pasien5" id="nama_pasien5" class="form-control" type="text" required="">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Layanan</label>
+                                <select class="form-select" id="layanan5" name="layanan5" required="">
+                                    <option selected="" disabled="" value="">Pilih...</option>
+                                    @foreach ($layanan_anak as $data)
+                                    <option value="{{ $data->id }}">{{ $data->layanan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Tanggal Layanan</label>
+                                <input class="form-control" name="tanggal5" id="tanggal5" type="date" required="">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Nominal Klaim</label>
+                                <input min=1 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="jumlah_klaim5" id="jumlah_klaim5" class="form-control numbers" required="">
+                            </div>
+                            <div class="col-md-1">
+                                <a id='delete_row5' data-toggle="tooltip" title="Delete" class="pull-right btn btn-danger mt-4"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                        {{-- 6=Anak ke-3 --}}
+                        <div class="row g-3" id="reimburse6">
+                            <input type="hidden" id="_hubungan6" name="_hubungan6" value="6">
+                            <div class="col-md-3">
+                                <label class="form-label">Hubungan Dengan Karyawan</label>
+                                <select class="form-select" id="hubungan6" name="hubungan6" required="">
+                                    <option selected="" disabled="" value="">Pilih...</option>
+                                    @foreach ($hubungan as $data)
+                                    <option value="{{ $data->id }}" @if($data->id == 6) selected @endif>{{ $data->hubungan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Nama Pasien</label>
+                                <input name="nama_pasien6" id="nama_pasien6" class="form-control" type="text" required="">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Layanan</label>
+                                <select class="form-select" id="layanan6" name="layanan6" required="">
+                                    <option selected="" disabled="" value="">Pilih...</option>
+                                    @foreach ($layanan_anak as $data)
+                                    <option value="{{ $data->id }}">{{ $data->layanan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Tanggal Layanan</label>
+                                <input class="form-control" name="tanggal6" id="tanggal6" type="date" required="">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Nominal Klaim</label>
+                                <input min=1 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="jumlah_klaim6" id="jumlah_klaim6" class="form-control numbers" required="">
+                            </div>
+                            <div class="col-md-1">
+                                <a id='delete_row6' data-toggle="tooltip" title="Delete" class="pull-right btn btn-danger mt-4"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                        <br/>Catatan:<br/>
                         1. Jika kolom Hubungan Dengan Karyawan dipilih Karyawan maka kolom Nama Pasien akan otomatis terisi nama karyawan.
                         <br/>2. Jika kolom Layanan dipilih Kehamilan, Persalinan-Normal atau Persalinan-Caesar maka kolom Nominal Klaim akan otomatis terisi plafon.
+                        {{--  --}}
                     </div>
                     <!-- <hr/> -->
                     <div class="row g-3">
@@ -251,24 +386,7 @@ function use_text(node) {
 }
 // 
 $(document).ready(function() {
-    // 
-    let row_number = 1;
-    $("#add_row").click(function(e) {
-        e.preventDefault();
-        let new_row_number = row_number - 1;
-        $('#reimburse_detail' + row_number).html($('#reimburse_detail' + new_row_number).html()).find('td:first-child');
-        $('#trx_reimburse_detail').append('<tr id="reimburse_detail' + (row_number + 1) + '"></tr>');
-        row_number++;
-    });
-
-    $("#delete_row").click(function(e) {
-        e.preventDefault();
-        if (row_number > 1) {
-            $("#reimburse_detail" + (row_number - 1)).html('');
-            row_number--;
-        }
-    });
-    // 
+    //  
     let row_number_lampiran = 1;
     $("#add_row_lampiran").click(function(e) {
         e.preventDefault();
@@ -285,28 +403,208 @@ $(document).ready(function() {
             row_number_lampiran--;
         }
     });
-    // $("select[id^=hubungan]").change(function() {
-    $('select[id="hubungan[]"]').change(function() {
+    // default semua hide dan disable=true
+    reimburse1(0);
+    reimburse3(0);
+    reimburse4(0);
+    reimburse5(0);
+    reimburse6(0);
+    // 
+    $("#_hubungan").change(function() {
         var selectedValue = $(this).val();
-        // alert(selectedValue);
+        var selectedText = $(this).find("option:selected").text();
         if (selectedValue == 1) {
-            // $("input[id^=nama_pasien]").val('{{ $karyawan->nama }}');
-            $('input[id="nama_pasien[]"]').first().val('{{ $karyawan->nama }}');
+            reimburse1(1);
+        }else if (selectedValue == 3) {
+            reimburse3(1);
+        }else if (selectedValue == 4) {
+            reimburse4(1);
+        }else if (selectedValue == 5) {
+            reimburse5(1);
+        }else if (selectedValue == 6) {
+            reimburse6(1);
         }
     });
-    $('select[id="layanan[]"]').change(function() {
+    // 1=Karyawan
+    $("#delete_row1").click(function() {
+        // $('#_hubungan').prop('selectedIndex', 0);
+        $('#jumlah_klaim1').val('')
+        reimburse1(0);
+    });
+    // 3=Istri dari Karyawan
+    $("#delete_row3").click(function() {
+        // $('#_hubungan').prop('selectedIndex', 0);
+        $('#jumlah_klaim3').val('')
+        reimburse3(0);
+    });
+    // 4=Anak ke-1
+    $("#delete_row4").click(function() {
+        // $('#_hubungan').prop('selectedIndex', 0);
+        $('#jumlah_klaim4').val('')
+        reimburse4(0);
+    });
+    // 5=Anak ke-2
+    $("#delete_row5").click(function() {
+        // $('#_hubungan').prop('selectedIndex', 0);
+        $('#jumlah_klaim5').val('')
+        reimburse5(0);
+    });
+    // 6=Anak ke-3
+    $("#delete_row6").click(function() {
+        // $('#_hubungan').prop('selectedIndex', 0);
+        $('#jumlah_klaim6').val('')
+        reimburse6(0);
+    });
+    // 1=Karyawan
+    function reimburse1(cek) {
+        // jika 1 maka aktif
+        if (cek == 1) {
+            $('#reimburse1').show();
+            $("#hubungan1").prop('disabled', true);
+            $("#_hubungan1").prop('disabled', false);
+            $("#nama_pasien1").prop('disabled', false);
+            $("#layanan1").prop('disabled', false);
+            $("#tanggal1").prop('disabled', false);
+            $("#jumlah_klaim1").prop('disabled', false);
+        }
+        // jika 0 maka non aktif
+        else {
+            $('#reimburse1').hide();
+            $("#hubungan1").prop('disabled', true);
+            $("#_hubungan1").prop('disabled', true);
+            $("#nama_pasien1").prop('disabled', true);
+            $("#layanan1").prop('disabled', true);
+            $("#tanggal1").prop('disabled', true);
+            $("#jumlah_klaim1").prop('disabled', true);
+        }
+    }
+    // 3=Istri dari Karyawan
+    function reimburse3(cek) {
+        // jika 1 maka aktif
+        if (cek == 1) {
+            $('#reimburse3').show();
+            $("#hubungan3").prop('disabled', true);
+            $("#_hubungan3").prop('disabled', false);
+            $("#nama_pasien3").prop('disabled', false);
+            $("#layanan3").prop('disabled', false);
+            $("#tanggal3").prop('disabled', false);
+            $("#jumlah_klaim3").prop('disabled', false);
+        }
+        // jika 0 maka non aktif
+        else {
+            $('#reimburse3').hide();
+            $("#hubungan3").prop('disabled', true);
+            $("#_hubungan3").prop('disabled', true);
+            $("#nama_pasien3").prop('disabled', true);
+            $("#layanan3").prop('disabled', true);
+            $("#tanggal3").prop('disabled', true);
+            $("#jumlah_klaim3").prop('disabled', true);
+        }
+    }
+    // 4=Anak ke-1
+    function reimburse4(cek) {
+        // jika 1 maka aktif
+        if (cek == 1) {
+            $('#reimburse4').show();
+            $("#hubungan4").prop('disabled', true);
+            $("#_hubungan4").prop('disabled', false);
+            $("#nama_pasien4").prop('disabled', false);
+            $("#layanan4").prop('disabled', false);
+            $("#tanggal4").prop('disabled', false);
+            $("#jumlah_klaim4").prop('disabled', false);
+        }
+        // jika 0 maka non aktif
+        else {
+            $('#reimburse4').hide();
+            $("#hubungan4").prop('disabled', true);
+            $("#_hubungan4").prop('disabled', true);
+            $("#nama_pasien4").prop('disabled', true);
+            $("#layanan4").prop('disabled', true);
+            $("#tanggal4").prop('disabled', true);
+            $("#jumlah_klaim4").prop('disabled', true);
+        }
+    }
+    // 5=Anak ke-2
+    function reimburse5(cek) {
+        // jika 1 maka aktif
+        if (cek == 1) {
+            $('#reimburse5').show();
+            $("#hubungan5").prop('disabled', true);
+            $("#_hubungan5").prop('disabled', false);
+            $("#nama_pasien5").prop('disabled', false);
+            $("#layanan5").prop('disabled', false);
+            $("#tanggal5").prop('disabled', false);
+            $("#jumlah_klaim5").prop('disabled', false);
+        }
+        // jika 0 maka non aktif
+        else {
+            $('#reimburse5').hide();
+            $("#hubungan5").prop('disabled', true);
+            $("#_hubungan5").prop('disabled', true);
+            $("#nama_pasien5").prop('disabled', true);
+            $("#layanan5").prop('disabled', true);
+            $("#tanggal5").prop('disabled', true);
+            $("#jumlah_klaim5").prop('disabled', true);
+        }
+    }
+    // 6=Anak ke-3
+    function reimburse6(cek) {
+        // jika 1 maka aktif
+        if (cek == 1) {
+            $('#reimburse6').show();
+            $("#hubungan6").prop('disabled', true);
+            $("#_hubungan6").prop('disabled', false);
+            $("#nama_pasien6").prop('disabled', false);
+            $("#layanan6").prop('disabled', false);
+            $("#tanggal6").prop('disabled', false);
+            $("#jumlah_klaim6").prop('disabled', false);
+        }
+        // jika 0 maka non aktif
+        else {
+            $('#reimburse6').hide();
+            $("#hubungan6").prop('disabled', true);
+            $("#_hubungan6").prop('disabled', true);
+            $("#nama_pasien6").prop('disabled', true);
+            $("#layanan6").prop('disabled', true);
+            $("#tanggal6").prop('disabled', true);
+            $("#jumlah_klaim6").prop('disabled', true);
+        }
+    }
+    // 
+    $("#layanan1").change(function() {
         var selectedValue = $(this).val();
-        // alert(selectedValue);
         if (selectedValue == 4) {
-            $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->kehamilan }}');
+            $('#jumlah_klaim1').val('{{ $plafon->kehamilan }}');
         }else if (selectedValue == 5) {
-            $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->persalinan_normal }}');
+            $('#jumlah_klaim1').val('{{ $plafon->persalinan_normal }}');
         }else if (selectedValue == 6) {
-            $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->persalinan_caesar }}');
-        }else{
-            // $('input[id="jumlah_klaim[]"]').first().val(0);
+            $('#jumlah_klaim1').val('{{ $plafon->persalinan_caesar }}');
+        }
+    });
+    // 
+    $("#layanan3").change(function() {
+        var selectedValue = $(this).val();
+        if (selectedValue == 4) {
+            $('#jumlah_klaim3').val('{{ $plafon->kehamilan }}');
+        }else if (selectedValue == 5) {
+            $('#jumlah_klaim3').val('{{ $plafon->persalinan_normal }}');
+        }else if (selectedValue == 6) {
+            $('#jumlah_klaim3').val('{{ $plafon->persalinan_caesar }}');
         }
     });
 });
+    // 
+    function validateForm() {
+        var check = $('#jumlah_klaim1').val()+$('#jumlah_klaim3').val()+$('#jumlah_klaim4').val()+$('#jumlah_klaim5').val()+$('#jumlah_klaim6').val();
+        // alert(check);
+        if(check <= 0){
+            // $('#_hubungan').prop('selectedIndex', 0);
+            alert('Isian Reimbursement tidak boleh kosong');
+            return false;
+        }
+        else{
+            return confirm('Are you sure want to submit this data?');
+        }
+    }
 </script>
 @endsection

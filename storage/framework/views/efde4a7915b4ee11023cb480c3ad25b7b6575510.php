@@ -147,6 +147,10 @@
                                 $where = ['id_trx' => $trxM->id, 'nik_pic' => App\Models\MtrUtility::find(12)->informasi];
                                 $info = App\Models\TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
                             ?>
+                            <tr>
+                                <td>Catatan Oleh HCO</td>
+                                <td><?php if(!empty($info)): ?> <?php echo e($info->keterangan); ?> <?php endif; ?></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -180,9 +184,21 @@
                                     <td><?php if(!empty($value->tanggal)): ?> <?php echo e(\Carbon\Carbon::parse($value->tanggal)->format('d-m-Y')); ?> <?php endif; ?></td>
                                     <td>Rp. <?php echo e(number_format($value->jumlah_klaim, 2)); ?></td>
                                     <td>
+                                        <form action="<?php echo e(route('reimburse.updateDetail', $value->id)); ?>" method="POST">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('POST'); ?>
+                                            <input type="hidden" id="trxMId" name="trxMId" value="<?php echo e($value->id_reimburse); ?>" >
+                                            <input type="hidden" id="_id_layanan" name="_id_layanan" value="<?php echo e($value->id_layanan); ?>" >
+                                            <input type="hidden" id="id_hubungan" name="id_hubungan" value="<?php echo e($value->id_hubungan); ?>" >
+                                            <input type="hidden" id="nama_pasien" name="nama_pasien" value="<?php echo e($value->nama_pasien); ?>" >
+                                            <input type="hidden" id="tanggal" name="tanggal" value="<?php echo e($value->tanggal); ?>" >
+                                            <input type="hidden" id="jumlah_klaim" name="jumlah_klaim" value="0" >
+                                            <input type="hidden" id="delete" name="delete" value="1" >
                                             <ul class="action">
                                                 <li class="edit"><a href="<?php echo e(route('reimburse.editDetail', $value->id)); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                             </ul>
+                                        </form>
                                     </td>
                                 </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -200,5 +216,24 @@
 <?php $__env->startSection('script'); ?>
 <script src="<?php echo e(asset('assets/js/datatable/datatables/jquery.dataTables.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatables/datatable.custom.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/sweet-alert/sweetalert.min.js')); ?>"></script>
+<script type="text/javascript">
+$(document).on('click', '#btn-delete', function(event) {
+    var form = $(this).closest("form");
+    event.preventDefault();
+    swal({
+            title: "Are you sure to delete this?",
+            text: "If you delete this, it will be gone forever.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                form.submit();
+            }
+        });
+});
+</script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.simple.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\matta\resources\views/formulir/reimburse/detail/edit.blade.php ENDPATH**/ ?>

@@ -67,49 +67,49 @@
                             <h5>Para Pihak</h5>
                         </div>
                         <div class="card-body">
-                                            <div class="appointment-table table-responsive">
-                                                <table class="table table-bordernone">
-                                                    <tbody>
-                                                        <!-- pengaju -->
-                                                        <tr>
-                                                            <td><a href="{{ asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg') }}"
-                                                                    target="_blank"><img class="img-thumbnail"
-                                                                        src="{{ asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg') }}"
-                                                                        alt="user"></a></td>
-                                                            <td class="img-content-box">
-                                                                <h6 class="m-10">Pengaju</h6><span
-                                                                    class="f-light m-10">{{ $pengaju['nama'] }} / {{ $pengaju['nik'] }}<br />{{ $pengaju['jabatan'] }}
-                                                                    <br />{{ $pengaju['divisi'] }} / {{ $pengaju['dep'] }} / {{ $pengaju['sub_dep'] }}</span>
-                                                            </td>
-                                                        </tr>
-                                                        <!-- layer1 -->
-                                                        <tr>
-                                                            <td><a href="{{ asset('assets/images/matta/karyawan/'.$layer1['nik'].'/'.$layer1['nik'].'.jpg') }}"
-                                                                    target="_blank"><img class="img-thumbnail"
-                                                                        src="{{ asset('assets/images/matta/karyawan/'.$layer1['nik'].'/'.$layer1['nik'].'.jpg') }}"
-                                                                        alt="user"></a></td>
-                                                            <td class="img-content-box">
-                                                                <h6 class="m-10">Layer 1</h6><span
-                                                                    class="f-light m-10">{{ $layer1['nama'] }} / {{ $layer1['nik'] }}<br />{{ $layer1['jabatan'] }}
-                                                                    <br />{{ $layer1['divisi'] }} / {{ $layer1['dep'] }} / {{ $layer1['sub_dep'] }}</span>
-                                                            </td>
-                                                        </tr>
-                                                        <!-- layer2 -->
-                                                        <tr>
-                                                            <td><a href="{{ asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg') }}"
-                                                                    target="_blank"><img class="img-thumbnail"
-                                                                        src="{{ asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg') }}"
-                                                                        alt="user"></a></td>
-                                                            <td class="img-content-box">
-                                                                <h6 class="m-10">Layer 2</h6><span
-                                                                    class="f-light m-10">{{ $layer2['nama'] }} / {{ $layer2['nik'] }}<br />{{ $layer2['jabatan'] }}
-                                                                    <br />{{ $layer2['divisi'] }} / {{ $layer2['dep'] }} / {{ $layer2['sub_dep'] }}</span>
-                                                            </td>
-                                                        </tr>
-                                                        <!--  -->
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                            <div class="appointment-table table-responsive">
+                                <table class="table table-bordernone">
+                                    <tbody>
+                                        <!-- pengaju -->
+                                        <tr>
+                                            <td><a href="{{ asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg') }}"
+                                                    target="_blank"><img class="img-thumbnail"
+                                                        src="{{ asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg') }}"
+                                                        alt="user"></a></td>
+                                            <td class="img-content-box">
+                                                <h6 class="m-10">Pengaju</h6><span
+                                                    class="f-light m-10">{{ $pengaju['nama'] }} / {{ $pengaju['nik'] }}<br />{{ $pengaju['jabatan'] }}
+                                                    <br />{{ $pengaju['divisi'] }} / {{ $pengaju['dep'] }} / {{ $pengaju['sub_dep'] }}</span>
+                                            </td>
+                                        </tr>
+                                        <!-- layer1 -->
+                                        <tr>
+                                            <td><a href="{{ asset('assets/images/matta/karyawan/'.$layer1['nik'].'/'.$layer1['nik'].'.jpg') }}"
+                                                    target="_blank"><img class="img-thumbnail"
+                                                        src="{{ asset('assets/images/matta/karyawan/'.$layer1['nik'].'/'.$layer1['nik'].'.jpg') }}"
+                                                        alt="user"></a></td>
+                                            <td class="img-content-box">
+                                                <h6 class="m-10">Layer 1</h6><span
+                                                    class="f-light m-10">{{ $layer1['nama'] }} / {{ $layer1['nik'] }}<br />{{ $layer1['jabatan'] }}
+                                                    <br />{{ $layer1['divisi'] }} / {{ $layer1['dep'] }} / {{ $layer1['sub_dep'] }}</span>
+                                            </td>
+                                        </tr>
+                                        <!-- layer2 -->
+                                        <tr>
+                                            <td><a href="{{ asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg') }}"
+                                                    target="_blank"><img class="img-thumbnail"
+                                                        src="{{ asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg') }}"
+                                                        alt="user"></a></td>
+                                            <td class="img-content-box">
+                                                <h6 class="m-10">Layer 2</h6><span
+                                                    class="f-light m-10">{{ $layer2['nama'] }} / {{ $layer2['nik'] }}<br />{{ $layer2['jabatan'] }}
+                                                    <br />{{ $layer2['divisi'] }} / {{ $layer2['dep'] }} / {{ $layer2['sub_dep'] }}</span>
+                                            </td>
+                                        </tr>
+                                        <!--  -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -120,28 +120,24 @@
                             <h5>History</h5>
                         </div>
                         <div class="card-body">
-                                            <ul>
-                                                @foreach ($history as $_history)
-                                                <li class="d-flex">
-                                                    @if ($loop->first)
-                                                    <div class="activity-dot-success"></div>
-                                                    @elseif ($loop->last)
-                                                    <div class="activity-dot-warning"></div>
-                                                    @else
-                                                    <div class="activity-dot-primary"></div>
-                                                    @endif
-                                                    <div class="ms-3">
-                                                        <p class="d-flex justify-content-between mb-2"><span
-                                                                class="date-content light-background">{{ $_history->created_at }}</span>
-                                                        </p>
-                                                        <h6>{{ $_history->_status->status_pengajuan }}<span
-                                                                class="dot-notification"></span></h6>
-                                                        <p class="f-light">Oleh {{ $_history->_pic->nama }} /
-                                                            {{ $_history->nik_pic }}</p>
-                                                    </div>
-                                                </li>
-                                                @endforeach
-                                            </ul>
+                            <ul>
+                                @foreach ($history as $_history)
+                                <li class="d-flex">
+                                    @if ($loop->first)
+                                    <div class="activity-dot-success"></div>
+                                    @elseif ($loop->last)
+                                    <div class="activity-dot-warning"></div>
+                                    @else
+                                    <div class="activity-dot-primary"></div>
+                                    @endif
+                                    <div class="ms-3">
+                                        <p class="d-flex justify-content-between mb-2"><span class="date-content light-background">{{ $_history->created_at }}</span></p>
+                                        <h6>{{ $_history->_status->status_pengajuan }}<span class="dot-notification"></span></h6>
+                                        <p class="f-light">Oleh {{ $_history->_pic->nama }} / {{ $_history->nik_pic }}</p>
+                                    </div>
+                                </li>
+                                @endforeach
+                            </ul>
                         </div>
                     </div>
                 </div>

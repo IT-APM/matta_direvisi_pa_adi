@@ -171,7 +171,7 @@
                                             <input name="telepon_darurat" id="telepon_darurat" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->telepon_darurat }}" @endif >
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label" for="kode_kawin">Status Kawin</label>
+                                            <label class="form-label" for="kode_kawin">Status Sipil</label>
                                             <select class="form-select" id="kode_kawin" name="kode_kawin" >
                                                 <option selected="" disabled="" value="">Pilih...</option>
                                                 @foreach ($kawin as $data)

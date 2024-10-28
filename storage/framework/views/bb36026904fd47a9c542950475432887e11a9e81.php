@@ -1,3 +1,4 @@
+<?php echo $__env->make('emails.header', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <p>Semangat Pagi,</p>
 <p><strong>Terdapat Formulir Pengajuan Pelatihan yang harus anda proses</strong></p>
 <p>Berikut datanya:</p>
@@ -45,5 +46,4 @@
     </td>
   </tr>
 </table>
-<p>Terima kasih,</p>
-<p><strong>HC</strong></p><?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/pelatihan1.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('emails.footer', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/pelatihan1.blade.php ENDPATH**/ ?>

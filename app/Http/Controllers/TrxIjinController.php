@@ -136,6 +136,11 @@ class TrxIjinController extends Controller
         $tipe = IjinTipe::whereNotIn('id', [1])->orderBy('tipe', 'asc')->get();
         return view('formulir.izin.insert', compact('tipe'));
     }
+    
+    public function isOverlapping($startA, $endA, $startB, $endB)
+    {
+        return $startA <= $endB && $startB <= $endA;
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -165,6 +170,40 @@ class TrxIjinController extends Controller
         if($check){
             $layer2 = null;
             $layer2_property = null;
+        }
+        // 3=Work From Anywhere (WFA)
+        // 4=Work From Home (WFH)
+        $where = [ 'karyawan' => $karyawan, 'tanggal' => $request->tanggal ];
+        // 3=Reject by L1
+        // 7=Reject by L2
+        $check = TrxIjin::where($where)->whereIn('tipe', [2,3,4])->whereNotIn('status', [3,7])->exists();
+        // Work From Anywhere (WFA)/Work From Home (WFH) tidak boleh di tanggal yang sama
+        if($check && in_array($request->tipe, [3,4])){
+            return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) tidak boleh di tanggal yang sama');
+        }
+        // 2=Izin 1/2 hari
+        $where = [ 'karyawan' => $karyawan, 'tanggal' => $request->tanggal ];
+        // 3=Reject by L1
+        // 7=Reject by L2
+        $check = TrxIjin::where($where)->whereIn('tipe', [2])->whereNotIn('status', [3,7])->orderBy('id', 'desc')->first();
+        if(!empty($check)){
+            $startA = Carbon::parse($check->tanggal.' '.$check->jam_awal);
+            $endA = Carbon::parse($check->tanggal.' '.$check->jam_akhir);
+            $startB = Carbon::parse($request->tanggal.' '.$request->jam_awal);
+            $endB = Carbon::parse($request->tanggal.' '.$request->jam_akhir);
+            // Izin 1/2 hari tidak boleh waktunya beririsan
+            if($this->isOverlapping($startA, $endA, $startB, $endB) && in_array($request->tipe, [2])){
+                return redirect()->back()->with('error', 'Izin 1/2 hari tidak boleh beririsan dengan pengajuan izin sebelumnya');
+            }
+        }
+        // 2=Izin 1/2 hari
+        $where = [ 'karyawan' => $karyawan, 'tanggal' => $request->tanggal ];
+        // 3=Reject by L1
+        // 7=Reject by L2
+        $check = TrxIjin::where($where)->whereIn('tipe', [2])->whereNotIn('status', [3,7])->count();
+        // Izin 1/2 hari tidak boleh lebih 2x sehari
+        if($check == 2 && in_array($request->tipe, [2])){
+            return redirect()->back()->with('error', 'Izin 1/2 hari tidak boleh melebihi 2x');
         }
         // 1 = Submit by Requestor
         $status = 1;

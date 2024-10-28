@@ -1,4 +1,4 @@
-
+<?php echo $__env->make('emails.header', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <p>Semangat Pagi,</p>
 <p><strong>Terdapat Formulir Permohonan Cuti yang harus anda review</strong></p>
 <p></p>
@@ -24,4 +24,4 @@
 </p>
 <p>Klik link berikut untuk melakukan review tersebut:</p>
 <h1><strong>Klik <a href="<?php echo e($data['link']); ?>" target="_blank">Formulir Permohonan Cuti</a></strong></h1>
-<?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/cuti0.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('emails.footer', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/cuti0.blade.php ENDPATH**/ ?>

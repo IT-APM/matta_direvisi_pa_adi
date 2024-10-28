@@ -143,6 +143,27 @@
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
                                 </svg><span>Overtime</span></a></li>
                     @endcan
+                    @can('hc')
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Recruitment</h6>
+                        </div>
+                    </li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('recruitment.index') }}">
+                        <svg class="stroke-icon">
+                            <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                        </svg>
+                        <svg class="fill-icon">
+                            <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"> </use>
+                        </svg><span>List of Recuitment</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('recruitment.applicant_list', 0) }}">
+                        <svg class="stroke-icon">
+                            <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                        </svg>
+                        <svg class="fill-icon">
+                            <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"> </use>
+                        </svg><span>List of Applicant</span></a></li>
+                    @endcan
                     <li class="sidebar-main-title">
                         <div>
                             <h6>Attendance</h6>

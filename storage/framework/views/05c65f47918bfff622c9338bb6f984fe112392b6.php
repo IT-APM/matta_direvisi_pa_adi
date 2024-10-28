@@ -237,7 +237,7 @@
                             </div>
                             <div class="col-sm-4 col-md-4">
                                 <div class="mb-3">
-                                    <label class="form-label">Status Kawin</label>
+                                    <label class="form-label">Status Sipil</label>
                                     <select class="form-select" id="kode_kawin" name="kode_kawin" >
                                         <option selected="" disabled="" value="">Pilih...</option>
                                         <?php $__currentLoopData = $kawin; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>

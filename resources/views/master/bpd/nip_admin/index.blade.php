@@ -76,8 +76,13 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Karyawan</th>
-                                    <th>Admin</th>
+                                    <th>NIP Karyawan</th>
+                                    <th>Nama Karyawan</th>
+                                    <th>Direktorat</th>
+                                    <th>Divisi</th>
+                                    <th>Departemen</th>
+                                    <th>NIP Admin</th>
+                                    <th>Nama Admin</th>
                                     <th>Golongan</th>
                                     <th>Aktif</th>
                                     <th>Action</th>
@@ -87,8 +92,13 @@
                                 @foreach ($trx as $data)
                                 <tr>
                                     <td>{{ ++$no }}</td>
-                                    <td>{{ $data->_nik->nama }} / {{ $data->nik }}</td>
-                                    <td>{{ $data->_admin->nama }} / {{ $data->admin }}</td>
+                                    <td>{{ $data->nik }}</td>
+                                    <td>{{ $data->_nik->nama }}</td>
+                                    <td>{{ $data->_nik->_divisi->nama }}</td>
+                                    <td>{{ $data->_nik->_departemen->nama }}</td>
+                                    <td>{{ $data->_nik->_subdepartemen->nama }}</td>
+                                    <td>{{ $data->admin }}</td>
+                                    <td>{{ $data->_admin->nama }}</td>
                                     <td>{{ $data->_peran->nama }}</td>
                                     <td>@if($data->is_active==1) <span class="badge bg-success">Aktif</span> @else <span class="badge bg-danger">Non Aktif</span> @endif</td>
                                     <td>
