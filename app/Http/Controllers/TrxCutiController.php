@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 // 
 use App\Models\Karyawan;
 use App\Models\TrxCuti;
@@ -346,26 +347,35 @@ class TrxCutiController extends Controller
     public function isSetahun($nik_karyawan, $waktu, $tipe_cuti)
     {
         $cek = true;
-        $where = ['nik' => $nik_karyawan, 'is_aktif' => 1];
-        $tanggal = Karyawan::where($where)->whereIn('kode_status', [1,2])->first();
-        if (!empty($tanggal)) {
-            $tanggal_mulai = $tanggal->tanggal_mulai;
-            $fromDate = Carbon::createFromFormat('Y-m-d', date("Y-m-d", strtotime("+1 years", strtotime($tanggal_mulai))));
-            $inputDate = Carbon::createFromFormat('Y-m-d', $waktu);
-            $cek1 = $fromDate <= $inputDate;
-            // 
-            // $tanggal_bergabung = $tanggal->tanggal_bergabung;
-            // $fromDate = Carbon::createFromFormat('Y-m-d', date("Y-m-d", strtotime("+1 years", strtotime($tanggal_bergabung))));
-            // $inputDate = Carbon::createFromFormat('Y-m-d', $waktu);
-            // $cek2 = $fromDate <= $inputDate;
-            $cek2 = true;
-            $cek = $cek1 && $cek2;
+        $message = 'Mulai bekerja lebih dari setahun';
+        // jika NIK berawalan F, CS dan P tidak bisa cuti
+        if((Str::startsWith($nik_karyawan, 'F') || Str::startsWith($nik_karyawan, 'CS') || Str::startsWith($nik_karyawan, 'P'))){
+            $cek = false;
+            $message = 'Pengajuan Cuti Tahunan';
         }
-        // semua bisa cuti tanggungan perusahaan jika karyawan belum setahun
+        // 
+        else{
+            $where = ['nik' => $nik_karyawan];
+            $tanggal = Karyawan::where($where)->first();
+            if (!empty($tanggal)) {
+                $tanggal_mulai = $tanggal->tanggal_mulai;
+                $fromDate = Carbon::createFromFormat('Y-m-d', date("Y-m-d", strtotime("+1 years", strtotime($tanggal_mulai))));
+                $inputDate = Carbon::createFromFormat('Y-m-d', $waktu);
+                $cek1 = $fromDate <= $inputDate;
+                // 
+                // $tanggal_bergabung = $tanggal->tanggal_bergabung;
+                // $fromDate = Carbon::createFromFormat('Y-m-d', date("Y-m-d", strtotime("+1 years", strtotime($tanggal_bergabung))));
+                // $inputDate = Carbon::createFromFormat('Y-m-d', $waktu);
+                // $cek2 = $fromDate <= $inputDate;
+                $cek2 = true;
+                $cek = $cek1 && $cek2;
+            }
+        }
+        // semua bisa cuti tanggungan perusahaan
         if($tipe_cuti > 0){
             $cek = true;
         }
-        return ['status' => $cek, 'message' => 'Mulai bekerja lebih dari setahun'];
+        return ['status' => $cek, 'message' => $message];
     }
 
     /**
