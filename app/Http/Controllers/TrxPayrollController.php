@@ -8,13 +8,17 @@ use Illuminate\Support\Facades\Auth;
 use App\Mail\MattaRebornMail;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
+use DB;
+use Elibyy\TCPDF\Facades\TCPDF;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use URL;
 // 
+use App\Models\Overtime;
 use App\Models\MtrUtility;
 use App\Models\Karyawan;
 use App\Models\MtrPayroll;
+use App\Models\MtrPayrollLog;
 use App\Models\MtrPayrollAddsub;
 use App\Models\MtrPayrollBpjstk;
 use App\Models\MtrPayrollBpjskes;
@@ -29,6 +33,148 @@ use App\Models\TrxPayrollBpjskes;
 use App\Models\TrxPayrollBpjskesLog;
 class TrxPayrollController extends Controller
 {
+    
+    public function history($id, Request $request)
+    {
+        // dd($id, $request->all());
+        $payroll = TrxPayrollLog::orderBy('id', 'asc')->get();
+        return view('payroll.history', compact('payroll'));
+    }
+    public function bkp($id)
+    {
+        // bkp MtrPayroll
+        $trx = MtrPayroll::all();
+        foreach($trx as $_trx){
+            MtrPayrollLog::insert(array(
+                'nik' => $_trx->nik,
+                'nik' => $_trx->nik,
+                'bulan' => $_trx->bulan,
+                'tahun' => $_trx->tahun,
+                'gapok' => $_trx->gapok,
+                'status' => $_trx->status,
+                'pasangan' => $_trx->pasangan,
+                'anak' => $_trx->anak,
+                'tambahan' => $_trx->tambahan,
+                'no_ktp' => $_trx->no_ktp,
+                'no_kpj' => $_trx->no_kpj,
+                'no_jkn' => $_trx->no_jkn,
+                'nama_rek' => $_trx->nama_rek,
+                'nama_bank' => $_trx->nama_bank,
+                'no_rek' => $_trx->no_rek,
+                'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
+                'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+            ));
+        }
+        // bkp TrxPayroll
+        $trx = TrxPayroll::all();
+        foreach($trx as $_trx){
+            // kesehatan data bulan berjalan
+            $date_from = Carbon::createFromFormat('Y-m-d', "{$_trx->tahun}-{$_trx->bulan}-01")->startOfMonth()->format('Y-m-d');
+            $date_to = Carbon::createFromFormat('Y-m-d', "{$_trx->tahun}-{$_trx->bulan}-01")->endOfMonth()->format('Y-m-d');
+            // $total_kesehatan = 0;
+            // 4 = Kehamilan
+            $kehamilan = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$_trx->nik."' AND DATE(b.created_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (4)"))[0]->jumlah_klaim;
+            // $total_kesehatan += $kehamilan;
+            // 5,6 = Persalinan-Normal dan Persalinan-Caesar
+            $persalinan = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$_trx->nik."' AND DATE(b.created_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (5,6)"))[0]->jumlah_klaim;
+            // $total_kesehatan += $persalinan;
+            // 2,3 = Kacamata-Frame dan Kacamata-Lensa
+            $kacamata = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$_trx->nik."' AND DATE(b.created_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (2,3)"))[0]->jumlah_klaim;
+            // $total_kesehatan += $kacamata;
+            // 1 = Kesehatan
+            $kesehatan = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$_trx->nik."' AND DATE(b.created_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (1)"))[0]->jumlah_klaim;
+            // $total_kesehatan += $kesehatan;
+            // overtime data bulan lalu
+            $date_from = Carbon::createFromFormat('Y-m-d', "{$_trx->tahun}-{$_trx->bulan}-01")->subMonth()->startOfMonth()->format('Y-m-d');
+            $date_to = Carbon::createFromFormat('Y-m-d', "{$_trx->tahun}-{$_trx->bulan}-01")->subMonth()->endOfMonth()->format('Y-m-d');
+            $where = ['ot_maker_by'=>$_trx->nik, 'ot_approver_status'=>'Approve'];
+            // $overtime = Overtime::where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy('id', 'asc')->get();
+            $overtime = Overtime::select(DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
+            $overtime = $overtime->sum('ot_length_rp_adj');
+            TrxPayrollLog::insert(array(
+                'nik' => $_trx->nik,
+                'nik_property' => $_trx->nik_property,
+                'bulan' => $_trx->bulan,
+                'tahun' => $_trx->tahun,
+                'gapok' => $_trx->gapok,
+                'status' => $_trx->status,
+                'kehamilan' => $kehamilan,
+                'persalinan' => $persalinan,
+                'kacamata' => $kacamata,
+                'kesehatan' => $kesehatan,
+                'overtime' => $overtime,
+                'created_by' => $_trx->created_by,
+                'updated_by' => $_trx->updated_by,
+                'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
+                'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+            ));
+        }
+        // bkp TrxPayrollAddsub
+        $trx = TrxPayrollAddsub::all();
+        foreach($trx as $_trx){
+            TrxPayrollAddsubLog::insert(array(
+                'nik' => $_trx->nik,
+                'bulan' => $_trx->bulan,
+                'tahun' => $_trx->tahun,
+                'angka' => $_trx->angka,
+                'id_addsub' => $_trx->id_addsub,
+                'tipe' => $_trx->tipe,
+                'status' => $_trx->status,
+                'created_by' => $_trx->created_by,
+                'updated_by' => $_trx->updated_by,
+                'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
+                'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+            ));
+        }
+        // bkp TrxPayrollBpjstk
+        $trx = TrxPayrollBpjstk::all();
+        foreach($trx as $_trx){
+            TrxPayrollBpjstkLog::insert(array(
+                'nik' => $_trx->nik,
+                'bulan' => $_trx->bulan,
+                'tahun' => $_trx->tahun,
+                'upah' => $_trx->upah,
+                'maksimal' => $_trx->maksimal,
+                'angka' => $_trx->angka,
+                'persen' => $_trx->persen,
+                'id_bpjstk' => $_trx->id_bpjstk,
+                'status' => $_trx->status,
+                'created_by' => $_trx->created_by,
+                'updated_by' => $_trx->updated_by,
+                'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
+                'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+            ));
+        }
+        // bkp TrxPayrollBpjskes
+        $trx = TrxPayrollBpjskes::all();
+        foreach($trx as $_trx){
+            TrxPayrollBpjskesLog::insert(array(
+                'nik' => $_trx->nik,
+                'bulan' => $_trx->bulan,
+                'tahun' => $_trx->tahun,
+                'pasangan' => $_trx->pasangan,
+                'anak' => $_trx->anak,
+                'tambahan' => $_trx->tambahan,
+                'upah' => $_trx->upah,
+                'maksimal' => $_trx->maksimal,
+                'angka' => $_trx->angka,
+                'persen' => $_trx->persen,
+                'id_bpjskes' => $_trx->id_bpjskes,
+                'status' => $_trx->status,
+                'created_by' => $_trx->created_by,
+                'updated_by' => $_trx->updated_by,
+                'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
+                'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+            ));
+        }
+        // menjadi bulan dan tahun berjalan
+        MtrPayroll::whereNotNull('id')->update(['bulan' => Carbon::now()->month, 'tahun' => Carbon::now()->year]);
+        TrxPayroll::truncate();
+        TrxPayrollAddsub::truncate();
+        TrxPayrollBpjstk::truncate();
+        TrxPayrollBpjskes::truncate();
+        dd('done');
+    }
     public function upsert_master(Request $request)
     {
         // dd($request->all(), $request->input('id_data'));

@@ -170,13 +170,6 @@
                                 <h6>Payroll</h6>
                             </div>
                         </li>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('payroll.index')); ?>">
-                                <svg class="stroke-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
-                                </svg><span>Payroll Transaction</span></a></li>
                         <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('payroll.master', 0)); ?>">
                                 <svg class="stroke-icon">
                                     <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
@@ -184,6 +177,20 @@
                                 <svg class="fill-icon">
                                     <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
                                 </svg><span>Payroll Master</span></a></li>
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('payroll.index')); ?>">
+                                <svg class="stroke-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
+                                </svg><span>Payroll Transaction</span></a></li>
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('payroll.history', 0)); ?>">
+                                <svg class="stroke-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
+                                </svg><span>Payroll History</span></a></li>
                     <?php endif; ?>
                     <li class="sidebar-main-title">
                         <div>

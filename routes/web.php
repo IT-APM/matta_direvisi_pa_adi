@@ -206,6 +206,8 @@ Route::resource('payroll', TrxPayrollController::class)->middleware('can:payroll
 Route::get('payroll/master/{id}', [TrxPayrollController::class, 'master'])->name('payroll.master')->middleware('can:payroll');
 Route::post('payroll/master/addsub', [TrxPayrollController::class, 'upsert_master'])->name('payroll.upsert_master')->middleware('can:payroll');
 Route::post('payroll/upload_payroll', [ TrxPayrollController::class, 'upload_payroll'])->name('payroll.upload_payroll')->middleware('can:payroll');
+Route::get('payroll/bkp/{id}', [TrxPayrollController::class, 'bkp'])->name('payroll.bkp');
+Route::get('payroll/history/{id}', [TrxPayrollController::class, 'history'])->name('payroll.history')->middleware('can:payroll');
 // 
 Route::resource('recruitment', TrxRecruitmentController::class)->middleware('can:hc');
 Route::get('recruitment/apply/{id}', [TrxRecruitmentController::class, 'apply'])->name('recruitment.apply');
