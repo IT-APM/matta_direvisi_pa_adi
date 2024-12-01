@@ -491,7 +491,7 @@
                                                     <td><input type="text" class="form-control" value="<?php echo e($data->tahun_masuk); ?>"></td>
                                                     <td><input type="text" class="form-control" value="<?php echo e($data->tahun_keluar); ?>"></td>
                                                     <td><input type="text" class="form-control" value="<?php echo e($data->jabatan); ?>"></td>
-                                                    <td><input type="text" class="form-control" value="<?php echo e($data->gaji); ?>"></td>
+                                                    <td><input type="text" class="form-control" value="Rp. <?php echo e(number_format($data->gaji, 0)); ?>"></td>
                                                     <td><input type="text" class="form-control" value="<?php echo e($data->alasan); ?>"></td>
                                                 </tr>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -556,7 +556,7 @@
                                     </div>
                                     <div class="col-12">
                                         <label for="gaji" class="form-label">6. Gaji yang diharapkan (Rupiah)<span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" name="gaji" id="gaji" value="<?php echo e($trx->gaji); ?>">
+                                        <input type="text" class="form-control" name="gaji" id="gaji" value="Rp. <?php echo e(number_format($trx->gaji, 0)); ?>">
                                     </div>
                                 </div>
                             </div>

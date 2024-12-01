@@ -732,6 +732,8 @@ class TrxPenilaianController extends Controller
     {
         //
         $this->authorize('hc');
+        $where = [ 'id_trx' => $id ];
+        $history = TrxPenilaianLog::where($where)->orderBy('created_at','desc')->get();
         $penilaian = TrxPenilaian::find( $id );
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
@@ -838,7 +840,7 @@ class TrxPenilaianController extends Controller
             $angka_rata = TrxPenilaianSkor::where($where)->sum('skor_penilai_1');
         }
         // 
-        return view( 'formulir.penilaian.update', compact( 'penilaian', 'karyawan', '_karyawan', 'penilai1', 'penilai2', 'penilai3', 'status', 'tipe', 'perpanjang', 'angka_skor', 'angka_rata', 'isian_kes_rek', 'angka_total' ) );
+        return view( 'formulir.penilaian.update', compact( 'history', 'penilaian', 'karyawan', '_karyawan', 'penilai1', 'penilai2', 'penilai3', 'status', 'tipe', 'perpanjang', 'angka_skor', 'angka_rata', 'isian_kes_rek', 'angka_total' ) );
     }
 
     /**

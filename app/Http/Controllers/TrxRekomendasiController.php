@@ -118,9 +118,21 @@ class TrxRekomendasiController extends Controller
         // karyawan masih di hardcode dengan level minimal 4 = Assistant Manager
         // $nik_atasan = '01021403097';
         $nik_atasan = auth()->user()->nik;
+        $arr_karyawan = [];
         // karyawan yang bisa direkomendasikan adalah bawahan langsung pengaju
         $where = ['layer1' => $nik_atasan, 'is_aktif' => 1];
-        $karyawan = Karyawan::where($where)->orderBy('nama', 'asc')->get();
+        $karyawan = Karyawan::where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
+        foreach ($karyawan as $data){
+            array_push($arr_karyawan, $data->nik);
+        }
+        // juga bawahannya lagi
+        $where = ['is_aktif' => 1];
+        $karyawan = Karyawan::whereIn('layer1', $arr_karyawan)->where($where)->orderBy('nama', 'asc')->get();
+        foreach ($karyawan as $data){
+            array_push($arr_karyawan, $data->nik);
+        }
+        // dd($arr_karyawan);
+        $karyawan = Karyawan::whereIn('nik', $arr_karyawan)->orderBy('nama', 'asc')->get();
         // approval dengan level minimal 4 = Assistant Manager
         $where = [ 'is_aktif' => 1];
         $approval = Karyawan::where($where)->where('kode_level','>=',4)->orderBy('nama', 'asc')->get();
@@ -156,13 +168,14 @@ class TrxRekomendasiController extends Controller
         // 
         $nik_karyawan = $request->nik_karyawan;
         // 
-        $where = ['nik' => $nik_karyawan];
-        $karyawan = Karyawan::where($where)->first();
-        $nik_atasan = $karyawan->layer1;
+        // $where = ['nik' => $nik_karyawan];
+        // $karyawan = Karyawan::where($where)->first();
+        // $nik_atasan = $karyawan->layer1;
         // 
         // pengaju masih di hardcode dengan level minimal 4 = Assistant Manager
         // $pengaju = '01021403097';
         $pengaju = auth()->user()->nik;
+        $nik_atasan = $pengaju;
         $where = ['nik' => $pengaju];
         $karyawan = Karyawan::where($where)->first();
         $nik_reviewer1 = $karyawan->layer1;

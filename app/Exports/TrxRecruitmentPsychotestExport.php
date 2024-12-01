@@ -75,7 +75,7 @@ class TrxRecruitmentPsychotestExport implements FromCollection, WithHeadings, Wi
     public function collection()
     {
         $id = $this->id;
-        $arr = TrxRecruitmentPsychotest::where(['id_identitas'=>$id[0], 'jenis'=>$id[1]])->orderBy('id', 'asc')->get();
+        $arr = TrxRecruitmentPsychotest::where(['id_identitas'=>$id[0], 'jenis'=>$id[1]])->where('nomor', '>', 0)->orderBy('id', 'asc')->get();
         $data = [[]];
         // tipe 1
         if($id[1] == 1){

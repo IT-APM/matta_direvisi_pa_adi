@@ -69,12 +69,12 @@ class TrxBpdController extends Controller
         // ambil data manajemen berdasarkan adminnya
         $where = ['id_peran' => 3, 'is_active' => 1, 'admin' => $nik];
         $mgt = BpdNikPeran::where($where)->get();
-        $trx = TrxBpdMaster::orderBy('updated_at', 'desc')->get();
+        $trx = TrxBpdMaster::where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get();
         if(auth()->user()->userrole == 'nhc'){
-            $trx = TrxBpdMaster::where('admin', $nik)->orderBy('id', 'desc')->get();
+            $trx = TrxBpdMaster::where('admin', $nik)->where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get();
             // jika bukan admin
             if(count($admin)==0){
-                $trx = TrxBpdMaster::orWhere('pengaju', $nik)->orWhere('koordinator', $nik)->orWhere('layer1', $nik)->orWhere('layer2', $nik)->orWhere('hco', $nik)->orderBy('updated_at', 'desc')->get();
+                $trx = TrxBpdMaster::orWhere('pengaju', $nik)->orWhere('koordinator', $nik)->orWhere('layer1', $nik)->orWhere('layer2', $nik)->orWhere('hco', $nik)->where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get();
             }
         }
         // filter parameter
@@ -120,12 +120,12 @@ class TrxBpdController extends Controller
             }
             $_pengaju = Karyawan::select('nik')->where('nama','LIKE','%'.$pengaju.'%')->get();
             $nik_karyawan = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get()->toArray();
-            $trx = TrxBpdMaster::whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_pengaju)->whereIn('luar_dalam', $arr_luar_dalam)->whereIn('status_id', $arr_status_id)->orderBy('updated_at', 'desc')->get();
+            $trx = TrxBpdMaster::whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_pengaju)->whereIn('luar_dalam', $arr_luar_dalam)->whereIn('status_id', $arr_status_id)->orderBy('id', 'desc')->get();
             if(auth()->user()->userrole == 'nhc'){
-                $trx = TrxBpdMaster::where('admin', $nik)->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_pengaju)->whereIn('luar_dalam', $arr_luar_dalam)->whereIn('status_id', $arr_status_id)->orderBy('updated_at', 'desc')->get();
+                $trx = TrxBpdMaster::where('admin', $nik)->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_pengaju)->whereIn('luar_dalam', $arr_luar_dalam)->whereIn('status_id', $arr_status_id)->orderBy('id', 'desc')->get();
                 // jika bukan admin
                 if(count($admin)==0){
-                    $trx = TrxBpdMaster::orWhere('pengaju', $nik)->orWhere('koordinator', $nik)->orWhere('layer1', $nik)->orWhere('layer2', $nik)->orWhere('hco', $nik)->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_pengaju)->whereIn('luar_dalam', $arr_luar_dalam)->whereIn('status_id', $arr_status_id)->orderBy('updated_at', 'desc')->get();
+                    $trx = TrxBpdMaster::orWhere('pengaju', $nik)->orWhere('koordinator', $nik)->orWhere('layer1', $nik)->orWhere('layer2', $nik)->orWhere('hco', $nik)->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_pengaju)->whereIn('luar_dalam', $arr_luar_dalam)->whereIn('status_id', $arr_status_id)->orderBy('id', 'desc')->get();
                 }
             }
         }else{

@@ -5,10 +5,8 @@
 </head>
 <body>
 
-<p><strong>Dengan hormat,</strong></p>
-
-<p>Sehubungan dengan proses Seleksi Penerimaan Karyawan yang sedang berlangsung di PT Alita Praya Mitra, dengan ini kami mengundang Bapak/Ibu/Sdr/i <?php echo e($data['trx']->nama); ?> untuk mengikuti tahapan psikotes sebagai bagian dari proses Seleksi Penerimaan Karyawan di PT Alita Praya Mitra.</p>
-
+<p>Yth. <?php echo e($data['trx']->nama); ?>,<br/>Dengan hormat,</p>
+<p>Sehubungan dengan proses Seleksi Penerimaan Karyawan yang sedang berlangsung di PT Alita Praya Mitra, dengan ini kami mengundang Bapak/Ibu/Saudara/i <?php echo e($data['trx']->nama); ?> untuk mengikuti tahapan psikotes sebagai bagian dari proses Seleksi Penerimaan Karyawan di PT Alita Praya Mitra.</p>
 <p>Jadwal pelaksanaan psikotes adalah sebagai berikut:</p>
 <table border="0" cellpadding="1" cellspacing="1">	
 		<tr>
@@ -38,13 +36,13 @@
 			
 		</tr>
 </table>
-<p>Untuk kelancaran Psikotes, mohon Bapak/Ibu/Sdr/i <?php echo e($data['trx']->nama); ?> mempersiapkan beberapa perlengkapan sebagai berikut:<br />
+<p>Untuk kelancaran Psikotes, mohon Bapak/Ibu/Saudara/i <?php echo e($data['trx']->nama); ?> mempersiapkan beberapa perlengkapan sebagai berikut:<br />
 1. Laptop / Komputer<br />
 2. Kertas HVS kosong warna putih 2 lembar<br />
 3. Pensil HB<br />
 4. Jaringan internet yang stabil</p>
 
-<p>Mohon Bapak/Ibu/Sdr/i <?php echo e($data['trx']->nama); ?> hadir tepat waktu sesuai jadwal yang telah diinformasikan. Apabila ada hal-hal yang ingin ditanyakan lebih lanjut, silahkan menghubungi:</p>
+<p>Mohon Bapak/Ibu/Saudara/i <?php echo e($data['trx']->nama); ?> hadir tepat waktu sesuai jadwal yang telah diinformasikan. Apabila ada hal-hal yang ingin ditanyakan lebih lanjut, silahkan menghubungi:</p>
 
 <p>Sdr. Sofyan Farid Ma'arif<br />
 Telepon: 087884350690 (hanya Whatsapp)<br />

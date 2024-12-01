@@ -258,6 +258,7 @@ $(document).ready(function() {
         let new_row_number = row_number - 1;
         $('#reimburse_detail' + row_number).html($('#reimburse_detail' + new_row_number).html()).find('td:first-child');
         $('#trx_reimburse_detail').append('<tr id="reimburse_detail' + (row_number + 1) + '"></tr>');
+        $('#reimburse_detail' + row_number + ' input[id="jumlah_klaim[]"]').attr('readonly', false);
         row_number++;
     });
 
@@ -294,19 +295,107 @@ $(document).ready(function() {
             $('input[id="nama_pasien[]"]').first().val('{{ $karyawan->nama }}');
         }
     });
-    $('select[id="layanan[]"]').change(function() {
+    var nama0 = '#reimburse_detail0';
+    $(nama0).on('change', 'select[id="layanan[]"]', function () {
         var selectedValue = $(this).val();
-        // alert(selectedValue);
         if (selectedValue == 4) {
-            $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->kehamilan }}');
+            $(nama0 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->kehamilan }}');
+            $(nama0 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
         }else if (selectedValue == 5) {
-            $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->persalinan_normal }}');
+            $(nama0 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_normal }}');
+            $(nama0 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
         }else if (selectedValue == 6) {
-            $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->persalinan_caesar }}');
+            $(nama0 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_caesar }}');
+            $(nama0 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
         }else{
-            // $('input[id="jumlah_klaim[]"]').first().val(0);
+            $(nama0 + ' input[id="jumlah_klaim[]"]').attr('readonly', false);
+            $(nama0 + ' input[id="jumlah_klaim[]"]').val();
         }
     });
+    var nama1 = '#reimburse_detail1';
+    $(nama1).on('change', 'select[id="layanan[]"]', function () {
+        var selectedValue = $(this).val();
+        if (selectedValue == 4) {
+            $(nama1 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->kehamilan }}');
+            $(nama1 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else if (selectedValue == 5) {
+            $(nama1 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_normal }}');
+            $(nama1 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else if (selectedValue == 6) {
+            $(nama1 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_caesar }}');
+            $(nama1 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else{
+            $(nama1 + ' input[id="jumlah_klaim[]"]').attr('readonly', false);
+            $(nama1 + ' input[id="jumlah_klaim[]"]').val();
+        }
+    });
+    var nama2 = '#reimburse_detail2';
+    $(nama2).on('change', 'select[id="layanan[]"]', function () {
+        var selectedValue = $(this).val();
+        if (selectedValue == 4) {
+            $(nama2 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->kehamilan }}');
+            $(nama2 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else if (selectedValue == 5) {
+            $(nama2 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_normal }}');
+            $(nama2 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else if (selectedValue == 6) {
+            $(nama2 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_caesar }}');
+            $(nama2 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else{
+            $(nama2 + ' input[id="jumlah_klaim[]"]').attr('readonly', false);
+            $(nama2 + ' input[id="jumlah_klaim[]"]').val();
+        }
+    });
+    var nama3 = '#reimburse_detail3';
+    $(nama3).on('change', 'select[id="layanan[]"]', function () {
+        var selectedValue = $(this).val();
+        if (selectedValue == 4) {
+            $(nama3 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->kehamilan }}');
+            $(nama3 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else if (selectedValue == 5) {
+            $(nama3 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_normal }}');
+            $(nama3 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else if (selectedValue == 6) {
+            $(nama3 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_caesar }}');
+            $(nama3 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else{
+            $(nama3 + ' input[id="jumlah_klaim[]"]').attr('readonly', false);
+            $(nama3 + ' input[id="jumlah_klaim[]"]').val();
+        }
+    });
+    var nama4 = '#reimburse_detail4';
+    $(nama4).on('change', 'select[id="layanan[]"]', function () {
+        var selectedValue = $(this).val();
+        if (selectedValue == 4) {
+            $(nama4 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->kehamilan }}');
+            $(nama4 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else if (selectedValue == 5) {
+            $(nama4 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_normal }}');
+            $(nama4 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else if (selectedValue == 6) {
+            $(nama4 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_caesar }}');
+            $(nama4 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }else{
+            $(nama4 + ' input[id="jumlah_klaim[]"]').attr('readonly', false);
+            $(nama4 + ' input[id="jumlah_klaim[]"]').val();
+        }
+    });
+    // $('select[id="layanan[]"]').change(function() {
+    //     var selectedValue = $(this).val();
+    //     // alert(selectedValue);
+    //     if (selectedValue == 4) {
+    //         $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->kehamilan }}');
+    //         $('input[id="jumlah_klaim[]"]').first().attr('readonly', true);
+    //     }else if (selectedValue == 5) {
+    //         $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->persalinan_normal }}');
+    //         $('input[id="jumlah_klaim[]"]').first().attr('readonly', false);
+    //     }else if (selectedValue == 6) {
+    //         $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->persalinan_caesar }}');
+    //     }else{
+    //         $('input[id="jumlah_klaim[]"]').first().attr('readonly', false);
+    //         $('input[id="jumlah_klaim[]"]').first().val();
+    //     }
+    // });
 });
 </script>
 @endsection

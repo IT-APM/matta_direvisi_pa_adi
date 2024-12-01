@@ -42,6 +42,31 @@
                 <hr class="mt-2 mb-2" />
                 <div class="row g-0">
                     <div class="col-12 col-md-12">
+                        <h4 class="text-center">IDENTITTAS</h4>
+                    </div>
+                    <hr class="mt-2 mb-2" />
+                    <div class="row">
+                        <div class="col-12 col-md-4">
+                            <div class="col-12 mb-2">
+                                <label class="form-label" for="nama">Nama</label>
+                                <input class="form-control" name="nama" id="nama" type="text" readonly="" value="{{ $_trx->nama }}">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="col-12 mb-2">
+                                <label class="form-label" for="tempat_tanggal_lahir">Tempat/Tanggal Lahir</label>
+                                <input class="form-control" name="tempat_tanggal_lahir" id="tempat_tanggal_lahir" type="text" readonly="" value="{{ $_trx->tempat_lahir }}/{{ Carbon\Carbon::parse($_trx->tanggal_lahir)->format('d-m-Y') }}">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="col-12 mb-2">
+                                <label class="form-label" for="ktp">No KTP</label>
+                                <input class="form-control" name="ktp" id="ktp" type="text" readonly="" value="{{ $_trx->ktp }}">
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mt-2 mb-2" />
+                    <div class="col-12 col-md-12">
                         <h4 class="text-center">ORGANISASI</h4>
                     </div>
                     <hr class="mt-2 mb-2" />
@@ -126,6 +151,24 @@
                         </div>
                     </div>
                     <hr class="mt-2 mb-2" />
+                    <div class="col-12 col-md-12">
+                        <h4 class="text-center">CATATAN DAN LAMPIRAN</h4>
+                    </div>
+                    <hr class="mt-2 mb-2" />
+                    <div class="row">
+                        <div class="col-12 col-md-12">
+                            <div class="col-12 mb-2">
+                                <label class="form-label" for="catatan">Catatan HCO</label>
+                                <textarea class="form-control" id="catatan" name="catatan" rows="4" >{{ $log->catatan }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-12">
+                            <div class="col-12 mb-2">
+                                @if(!empty($log->lampiran))Download Lampiran&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$log->lampiran) }}" target="_blank" data-toggle="tooltip" title="File Lampiran"><i class="fa fa-file-text-o"></i></a>@endif
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mt-2 mb-2" />
                     <div class="row">
                         <form action="{{ route('recruitment.negotiation_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                             @csrf
@@ -134,25 +177,28 @@
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="catatan">Catatan</label>
+                                        <label class="form-label" for="catatan">Catatan Oleh Kandidat</label>
                                         <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="lampiran">Lampiran</label>
+                                        <label class="form-label" for="lampiran">Lampiran Oleh Kandidat</label>
                                         <input name="lampiran" id="lampiran" class="form-control" type="file">
                                         <label class="form-label">*Maksimal 5 MB dengan format pdf/image(jpg, jpeg, png)</label>
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="col-12 mb-2">
-                                        {{-- 13=Negotiation Deal by Candidate --}}
-                                        <button type="submit" name="id_status" value="13" class="btn btn-success">Setuju</button>
-                                        {{-- 14=Negotiation No Deal by Candidate --}}
-                                        <button type="submit" name="id_status" value="14" class="btn btn-danger">Tidak Setuju</button>
-                                    </div>
+                            </div>
+                            <hr class="mt-2 mb-2" />
+                            <div class="row mb-2 text-center">
+                                <div class="col-12 col-md-4">&nbsp;</div>
+                                <div class="col-12 col-md-4">
+                                    {{-- 17=Negotiation Deal by Candidate --}}
+                                    <button type="submit" name="id_status" value="17" class="btn btn-success">Setuju</button>
+                                    {{-- 18=Negotiation No Deal by Candidate --}}
+                                    <button type="submit" name="id_status" value="18" class="btn btn-danger">Tidak Setuju</button>
                                 </div>
+                                <div class="col-12 col-md-4">&nbsp;</div>
                             </div>
                         </form>
                     </div>

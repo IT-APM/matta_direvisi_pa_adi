@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 use App\Models\IphoneUser;
 use App\Models\BpdNikPeran;
+use App\Models\MtrUtility;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -27,6 +28,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+        // 
         Gate::define('hc', function(User $user) {
             // return $user->hasAnyRoles(['hc', 'instructor']);
             return $user->userrole == 'hc';
@@ -52,6 +54,10 @@ class AuthServiceProvider extends ServiceProvider
             $where = ['nik' => $user->nik];
             $check = IphoneUser::where($where)->exists();
             return $check;
+        });
+        
+        Gate::define('payroll', function(User $user) {
+            return in_array($user->nik, explode(',', MtrUtility::find(32)->informasi));
         });
         
         Gate::define('bpd', function(User $user) {

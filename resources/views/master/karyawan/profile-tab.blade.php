@@ -67,8 +67,8 @@
                         <!--  -->
                         <div class="tab-content" id="pills-warningtabContent">
                             <div class="tab-pane fade show active" id="pills-emp_profile" role="tabpanel" aria-labelledby="pills-emp_profile-tab">
-                                <p class="mb-0 m-t-10">
-                                    <div class="row m-t-10">
+                                <p class="mb-0 mt-2">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="lensa">NIP</label>
                                             @if ($status=='edit' )
@@ -78,7 +78,7 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="nama">Nama</label>
                                             <input name="nama" id="nama" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->nama }}" @endif required="">
@@ -92,7 +92,7 @@
                                             <input name="tanggal_lahir" id="tanggal_lahir" class="form-control" type="date" @if ($status=='edit' ) value="{{ $karyawan->tanggal_lahir }}" @endif >
                                         </div>
                                     </div>
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="kode_kelamin">Jenis Kelamin</label>
                                             <select class="form-select" id="kode_kelamin" name="kode_kelamin" >
@@ -121,7 +121,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="no_ktp">NIK KTP</label>
                                             <input name="no_ktp" id="no_ktp" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->no_ktp }}" @endif >
@@ -137,7 +137,7 @@
                                             <input name="no_bpjstk" id="no_bpjstk" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->no_bpjstk }}" @endif >
                                         </div>
                                     </div>
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="alamat_domisili">Alamat Domisili</label>
                                             <textarea name="alamat_domisili" id="alamat_domisili" class="form-control" rows="3" >@if ($status == 'edit'){{ $karyawan->alamat_domisili }}@endif</textarea>
@@ -151,7 +151,7 @@
                                             <textarea name="alamat_npwp" id="alamat_npwp" class="form-control" rows="3" >@if ($status == 'edit'){{ $karyawan->alamat_npwp }}@endif</textarea>
                                         </div>
                                     </div>
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="telepon1">Telepon 1</label>
                                             <input name="telepon1" id="telepon1" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->telepon1 }}" @endif >
@@ -165,7 +165,7 @@
                                             <input name="telepon3" id="telepon3" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->telepon3 }}" @endif >
                                         </div>
                                     </div>
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="telepon_darurat">Telepon Darurat</label>
                                             <input name="telepon_darurat" id="telepon_darurat" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->telepon_darurat }}" @endif >
@@ -184,12 +184,26 @@
                                             <input name="nama_pasangan" id="nama_pasangan" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->nama_pasangan }}" @endif >
                                         </div>
                                     </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="no_rek">Nomor Rekening</label>
+                                            <input name="no_rek" id="no_rek" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->no_rek }}" @endif >
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="nama_bank">Nama Bank</label>
+                                            <input name="nama_bank" id="nama_bank" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->nama_bank }}" @endif >
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="nama_rek">Rekening Atas Nama</label>
+                                            <input name="nama_rek" id="nama_rek" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->nama_rek }}" @endif >
+                                        </div>
+                                    </div>
                                 </p>
                             </div>
                             <!--  -->
                             <div class="tab-pane fade" id="pills-emp_organization" role="tabpanel" aria-labelledby="pills-emp_organization-tab">
                                 <p class="mb-0 m-t-30">
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="email">Email</label>
                                             <input name="email" id="email" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->email }}" @endif required="">
@@ -213,7 +227,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="kode_divisi">Direktorat</label>
                                             <select class="form-select" id="kode_divisi" name="kode_divisi" required="">
@@ -248,7 +262,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="layer1">Layer 1</label>
                                             <select class="form-select js-example-basic-single col-sm-12" id="layer1" name="layer1" required="">
@@ -280,7 +294,7 @@
                                             <div class="invalid-feedback txt-danger">Field is required.</div>
                                         </div>
                                     </div>
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="kode_status">Status Karyawan</label>
                                             <select class="form-select id="kode_status" name="kode_status" required="">
@@ -313,7 +327,7 @@
                             </div>
                             <div class="tab-pane fade" id="pills-emp_salary" role="tabpanel" aria-labelledby="pills-emp_salary-tab">
                                 <p class="mb-0 m-t-30">
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="kode_level">Gaji Pokok</label>
                                             <input id="gaji_pokok" name="gaji_pokok" min="0" class="form-control numbers" type="number" @if ($status=='edit' ) value="{{ $karyawan->gaji_pokok }}" @endif required="">
@@ -323,7 +337,7 @@
                             </div>
                             <div class="tab-pane fade" id="pills-emp_level" role="tabpanel" aria-labelledby="pills-emp_level-tab">
                                 <p class="mb-0 m-t-30">
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="kode_level">Level</label>
                                             <select class="form-select" id="kode_level" name="kode_level" required="">
@@ -348,7 +362,7 @@
                                             <input name="tanggal_mulai" id="tanggal_mulai" class="form-control" type="date" @if ($status=='edit' ) value="{{ $karyawan->tanggal_mulai }}" @endif >
                                         </div>
                                     </div>
-                                    <div class="row m-t-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="tanggal_bergabung">Tanggal Bergabung</label>
                                             <input name="tanggal_bergabung" id="tanggal_bergabung" class="form-control" type="date" @if ($status=='edit' ) value="{{ $karyawan->tanggal_bergabung }}" @endif >
@@ -367,7 +381,7 @@
                             @if ($status == 'edit')
                             <div class="tab-pane fade" id="pills-emp_history" role="tabpanel" aria-labelledby="pills-emp_history-tab">
                                 <p class="mb-0 m-t-30">
-                                    <!-- <div class="row m-t-10"> -->
+                                    <!-- <div class="row mt-2"> -->
                                     <div class="table-responsive">
                                         <table class="display" id="emp-history">
                                             <thead>

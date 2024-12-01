@@ -284,6 +284,9 @@ class KaryawanController extends Controller
         $karyawan->kode_kelamin = $request->kode_kelamin;
         $karyawan->kode_warga = $request->kode_warga;
         $karyawan->kode_kawin = $request->kode_kawin;
+        $karyawan->no_rek = $request->no_rek;
+        $karyawan->nama_bank = $request->nama_bank;
+        $karyawan->nama_rek = $request->nama_rek;
         $karyawan->created_by = auth()->user()->nik;
         $karyawan->save();
         // 
@@ -435,6 +438,9 @@ class KaryawanController extends Controller
         $karyawan->kode_kelamin = $request->kode_kelamin;
         $karyawan->kode_warga = $request->kode_warga;
         $karyawan->kode_kawin = $request->kode_kawin;
+        $karyawan->no_rek = $request->no_rek;
+        $karyawan->nama_bank = $request->nama_bank;
+        $karyawan->nama_rek = $request->nama_rek;
         $karyawan->updated_by = auth()->user()->nik;
         $karyawan->update();
         return redirect( 'karyawan' )->with( 'msg', 'Data is saved successfully.' );

@@ -200,6 +200,12 @@ class TrxKebutuhanDetailController extends Controller
             $file_ijazah->move('public/assets/kebutuhan/', $namafile);
             $trxD->file_ijazah = $namafile;
         }
+        if($request->has('file_offering')){
+            $file_offering = $request->file('file_offering');
+            $namafile = 'file_offering_'.$id . '_' . time() . '.' . $file_offering->getClientOriginalExtension();
+            $file_offering->move('public/assets/kebutuhan/', $namafile);
+            $trxD->file_offering = $namafile;
+        }
         $trxD->keterangan1 = $request->keterangan1;
         // BENEFIT
         $trxD->take_home_pay = $request->take_home_pay;

@@ -114,7 +114,7 @@
                         </div>
             </div>
         </div>
-        <div class="col-sm-12">
+        <div class="col-sm-8">
             <div class="card">
                 <div class="card-header">
                     <h5>Para Pihak</h5>
@@ -288,6 +288,33 @@
                         <br />
                         <button class="btn btn-success" type="submit">Update</button> | <a href="{{ route('penilaian.index') }}" class="btn btn-warning" type="button">Back</a>
                     </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 notification">
+            <div class="card">
+                <div class="card-header card-no-border">
+                    <h5>History</h5>
+                </div>
+                <div class="card-body pt-0">
+                    <ul>
+                        @foreach ($history as $_history)
+                        <li class="d-flex">
+                            @if ($loop->first)
+                            <div class="activity-dot-success"></div>
+                            @elseif ($loop->last)
+                            <div class="activity-dot-warning"></div>
+                            @else
+                            <div class="activity-dot-primary"></div>
+                            @endif
+                            <div class="ms-3">
+                                <p class="d-flex justify-content-between mb-2"><span class="date-content light-background">{{ $_history->created_at }}</span></p>
+                                <h6>{{ $_history->_status->status_penilaian }}<span class="dot-notification"></span></h6>
+                                <p class="f-light">Oleh {{ $_history->_pic->nama }} / {{ $_history->nik_pic }}</p>
+                            </div>
+                        </li>
+                        @endforeach
+                    </ul>
                 </div>
             </div>
         </div>

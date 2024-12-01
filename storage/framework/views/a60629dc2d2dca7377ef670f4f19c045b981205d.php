@@ -5,9 +5,9 @@
 </head>
 <body>
 
-<p><strong>Dengan hormat,</strong></p>
+<p>Yth. <?php echo e($data['trx']->nama); ?>,<br/>Dengan hormat,</p>
 
-<p>Sehubungan dengan proses Seleksi Penerimaan Karyawan yang sedang berlangsung di PT Alita Praya Mitra, dengan ini kami mengundang Bapak/Ibu/Sdr/i <?php echo e($data['trx']->nama); ?> untuk mengikuti tahapan interview sebagai bagian dari proses Seleksi Penerimaan Karyawan di PT Alita Praya Mitra.</p>
+<p>Sehubungan dengan proses Seleksi Penerimaan Karyawan yang sedang berlangsung di PT Alita Praya Mitra, dengan ini kami mengundang Bapak/Ibu/Saudara/i <?php echo e($data['trx']->nama); ?> untuk mengikuti tahapan interview sebagai bagian dari proses Seleksi Penerimaan Karyawan di PT Alita Praya Mitra.</p>
 
 <p>Jadwal pelaksanaan interview adalah sebagai berikut:</p>
 <table border="0" cellpadding="1" cellspacing="1">	
@@ -41,15 +41,15 @@
 		<tr>
 			<td>Tempat / Link</td>
 			<td>:</td>
-			<td><a href="https://meet.google.com/wwk-edyg-xzb" data-toggle="tooltip" title='Klik Link'>Klik Link</a></td>
+			<td><a href="<?php echo e($data['href']); ?>" data-toggle="tooltip" title='Klik Link'>Klik Link</a></td>
 		</tr>
 		<?php endif; ?>
 </table>
-<p>Untuk kelancaran Interview, mohon Bapak/Ibu/Sdr/i <?php echo e($data['trx']->nama); ?> mempersiapkan beberapa perlengkapan sebagai berikut:<br />
+<p>Untuk kelancaran Interview, mohon Bapak/Ibu/Saudara/i <?php echo e($data['trx']->nama); ?> mempersiapkan beberapa perlengkapan sebagai berikut:<br />
 1. Laptop / Komputer<br />
 2. Jaringan internet yang stabil</p>
 
-<p>Mohon Bapak/Ibu/Sdr/i <?php echo e($data['trx']->nama); ?> hadir tepat waktu sesuai jadwal yang telah diinformasikan. Apabila ada hal-hal yang ingin ditanyakan lebih lanjut, silahkan menghubungi:</p>
+<p>Mohon Bapak/Ibu/Saudara/i <?php echo e($data['trx']->nama); ?> hadir tepat waktu sesuai jadwal yang telah diinformasikan. Apabila ada hal-hal yang ingin ditanyakan lebih lanjut, silahkan menghubungi:</p>
 
 <p>Sdr. Sofyan Farid Ma'arif<br />
 Telepon: 087884350690 (hanya Whatsapp)<br />

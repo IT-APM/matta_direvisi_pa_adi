@@ -161,6 +161,11 @@
                                 <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
                                 <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
                             </div>
+                            <div class="col-md-3">
+                                @php $no=30; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-12">
@@ -184,6 +189,8 @@
                                 <label class="form-label" for="sp_{{ $no+1 }}">{{ $reminder[$no]->judul }}</label>
                                 <input name="sp_{{ $no+1 }}" id="sp_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $reminder[$no]->isi }}">
                             </div>
+                        </div>
+                        <div class="row mt-2">
                             <div class="col-md-6">
                                 @php $no=1; @endphp
                                 <label class="form-label" for="sp_{{ $no+1 }}">{{ $reminder[$no]->judul }}</label>
@@ -196,6 +203,26 @@
                             </div>
                         </div>
                     </form>
+                    {{--  --}}
+                    @can('payroll')
+                    <h5 class="mt-3">Payroll</h5>
+                    <form action="{{ route('utilitas.update_payroll', 0) }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to save this data?');">
+                    @method('POST')
+                    @csrf
+                        <div class="row mt-2">
+                            <div class="col-md-3">
+                                @php $no=31; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <button class="btn btn-success" type="submit">Save</button> | <a href="{{ route('utilitas.index') }}" class="btn btn-warning" type="button">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                    @endcan
                 </div>
                 {{--  --}}
             </div>

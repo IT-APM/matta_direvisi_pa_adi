@@ -117,6 +117,11 @@
                                     <?php if(!empty($trxD->file_ijazah)): ?> <a href="<?php echo e(asset('assets/kebutuhan/'.$trxD->file_ijazah)); ?>" target="_blank">Download Ijazah</a> <?php endif; ?>
                                 </div>
                                 <div class="col-md-12 pb-2">
+                                    <label class="form-label" for="file_offering">Upload Offering Letter</label>
+                                    <input name="file_offering" id="file_offering" class="form-control" type="file" >
+                                    <?php if(!empty($trxD->file_offering)): ?> <a href="<?php echo e(asset('assets/kebutuhan/'.$trxD->file_offering)); ?>" target="_blank">Download Offering Letter</a> <?php endif; ?>
+                                </div>
+                                <div class="col-md-12 pb-2">
                                     <label class="form-label" for="keterangan1">Keterangan</label>
                                     <textarea class="form-control" id="keterangan1" name="keterangan1" rows="4"><?php echo e($trxD->keterangan1); ?></textarea>
                                 </div>

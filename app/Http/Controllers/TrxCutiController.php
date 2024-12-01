@@ -347,13 +347,19 @@ class TrxCutiController extends Controller
     {
         $cek = true;
         $where = ['nik' => $nik_karyawan, 'is_aktif' => 1];
-        $tanggal_mulai = Karyawan::where($where)->whereIn('kode_status', [1,2])->first();
-        if (!empty($tanggal_mulai)) {
-            $tanggal_mulai = $tanggal_mulai->tanggal_mulai;
+        $tanggal = Karyawan::where($where)->whereIn('kode_status', [1,2])->first();
+        if (!empty($tanggal)) {
+            $tanggal_mulai = $tanggal->tanggal_mulai;
             $fromDate = Carbon::createFromFormat('Y-m-d', date("Y-m-d", strtotime("+1 years", strtotime($tanggal_mulai))));
             $inputDate = Carbon::createFromFormat('Y-m-d', $waktu);
-            $cek = $fromDate <= $inputDate;
-            // $cek = false;
+            $cek1 = $fromDate <= $inputDate;
+            // 
+            // $tanggal_bergabung = $tanggal->tanggal_bergabung;
+            // $fromDate = Carbon::createFromFormat('Y-m-d', date("Y-m-d", strtotime("+1 years", strtotime($tanggal_bergabung))));
+            // $inputDate = Carbon::createFromFormat('Y-m-d', $waktu);
+            // $cek2 = $fromDate <= $inputDate;
+            $cek2 = true;
+            $cek = $cek1 && $cek2;
         }
         // semua bisa cuti tanggungan perusahaan jika karyawan belum setahun
         if($tipe_cuti > 0){

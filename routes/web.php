@@ -19,6 +19,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\RecapAttendanceController;
 use App\Http\Controllers\ReminderSpController;
 use App\Http\Controllers\TrxRecruitmentController;
+use App\Http\Controllers\TrxPayrollController;
 use App\Http\Controllers\NoAttendanceController;
 use App\Http\Controllers\OvertimeController;
 use App\Http\Controllers\WorkingDayController;
@@ -190,6 +191,7 @@ Route::resource('iphoneuser', IphoneUserController::class)->middleware('can:hc')
 Route::resource('hcouser', HcoUserController::class)->middleware('can:hc');
 Route::resource('utilitas', UtilitasController::class)->middleware('can:hc');
 Route::post('utilitas/update_sp/{id}', [ UtilitasController::class, 'update_sp'])->name('utilitas.update_sp')->middleware('can:hc');
+Route::post('utilitas/update_payroll/{id}', [ UtilitasController::class, 'update_payroll'])->name('utilitas.update_payroll')->middleware('can:payroll');
 // 
 Route::resource('feeds', FeedController::class)->middleware('can:hc');
 Route::post('feeds/image/store', [ FeedController::class, 'ImageUploadStore' ])->name('feeds.image.store')->middleware('can:hc');
@@ -199,6 +201,12 @@ Route::resource('attendance', AttendanceController::class)->middleware('auth');
 Route::resource('recap_attendance', RecapAttendanceController::class)->middleware('auth');
 Route::resource('reminder_sp', ReminderSpController::class)->middleware('can:hc');
 Route::get('reminder_sp/reminder_sp/{id}', [ReminderSpController::class, 'reminder_sp'])->name('reminder_sp.reminder_sp');
+// 
+Route::resource('payroll', TrxPayrollController::class)->middleware('can:payroll');
+Route::get('payroll/master/{id}', [TrxPayrollController::class, 'master'])->name('payroll.master')->middleware('can:payroll');
+Route::post('payroll/master/addsub', [TrxPayrollController::class, 'upsert_master'])->name('payroll.upsert_master')->middleware('can:payroll');
+Route::post('payroll/upload_payroll', [ TrxPayrollController::class, 'upload_payroll'])->name('payroll.upload_payroll')->middleware('can:payroll');
+// 
 Route::resource('recruitment', TrxRecruitmentController::class)->middleware('can:hc');
 Route::get('recruitment/apply/{id}', [TrxRecruitmentController::class, 'apply'])->name('recruitment.apply');
 Route::get('recruitment/psychotest/{id}', [TrxRecruitmentController::class, 'psychotest'])->name('recruitment.psychotest');
@@ -214,6 +222,9 @@ Route::get('recruitment/psychotestexcel/{id}', [TrxRecruitmentController::class,
 Route::post('recruitment/negotiation_send', [ TrxRecruitmentController::class, 'negotiation_send'])->name('recruitment.negotiation_send')->middleware('can:hc');
 Route::get('recruitment/negotiation_process/{id}', [TrxRecruitmentController::class, 'negotiation_process'])->name('recruitment.negotiation_process');
 Route::post('recruitment/negotiation_save', [ TrxRecruitmentController::class, 'negotiation_save'])->name('recruitment.negotiation_save');
+Route::get('recruitment/upload_dokumen_get/{id}', [TrxRecruitmentController::class, 'upload_dokumen_get'])->name('recruitment.upload_dokumen_get');
+Route::get('recruitment/get_interpretation/{id}', [TrxRecruitmentController::class, 'get_interpretation'])->name('recruitment.get_interpretation')->middleware('can:hc');
+Route::post('recruitment/upload_dokumen_post', [ TrxRecruitmentController::class, 'upload_dokumen_post'])->name('recruitment.upload_dokumen_post');
 Route::resource('noattendance', NoAttendanceController::class)->middleware('can:hc');
 Route::resource('overtime', OvertimeController::class)->middleware('auth');
 Route::resource('working', WorkingDayController::class)->middleware('auth');

@@ -157,7 +157,7 @@
                                             <textarea class="form-control" rows="5" id="alamat_ktp" name="alamat_ktp" required=""></textarea>
                                         </div>
                                         <div class="col-12">
-                                            <label for="alamat_domisili" class="form-label">Alamat (Domisili)<span class="text-danger">*</span></label>&nbsp;<input class="form-check-input" type="checkbox" value="" name="sama" id="sama" style="width: 15px; height: 15px; border: 2px solid" required="">&nbsp;Sesuai KTP
+                                            <label for="alamat_domisili" class="form-label">Alamat (Domisili)<span class="text-danger">*</span></label>&nbsp;<input class="form-check-input" type="checkbox" value="" name="sama" id="sama" style="width: 15px; height: 15px; border: 2px solid">&nbsp;Sesuai KTP
                                             <textarea class="form-control" rows="5" id="alamat_domisili" name="alamat_domisili" required=""></textarea>
                                         </div>
                                         <div class="col-12">

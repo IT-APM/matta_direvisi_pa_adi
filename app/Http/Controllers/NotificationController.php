@@ -177,9 +177,10 @@ class NotificationController extends Controller
         $sekarang = Carbon::now()->format('Y-m-d H:i:s');
         $result = array();
         $where = ['is_aktif' => 1];
-        $arr_wg_id = array(2, 10, 11, 12, 13, 14, 15, 16);
+        // $arr_wg_id = array(2, 10, 11, 12, 13, 14, 15, 16);
+        $arr_wg_id = array(1);
         // reguler
-        $karyawan = Karyawan::select('nik', 'nama', 'mobile_id')->where($where)->whereNotIn('wg_id', $arr_wg_id)->whereNotNull('mobile_id')->get();
+        $karyawan = Karyawan::select('nik', 'nama', 'mobile_id')->where($where)->whereIn('wg_id', $arr_wg_id)->whereNotNull('mobile_id')->get();
         foreach ($karyawan as $value) {
             $client = new \GuzzleHttp\Client();
             $response = $client->request('GET', URL::to('/').'/api/matta/show?id=absensi&nik='.$value->nik);
@@ -195,7 +196,7 @@ class NotificationController extends Controller
             }
         }
         // non reguler
-        $karyawan = Karyawan::select('nik', 'nama', 'mobile_id')->where($where)->whereIn('wg_id', $arr_wg_id)->whereNotNull('mobile_id')->get();
+        $karyawan = Karyawan::select('nik', 'nama', 'mobile_id')->where($where)->whereNotIn('wg_id', $arr_wg_id)->whereNotNull('mobile_id')->get();
         foreach ($karyawan as $value) {
             $client = new \GuzzleHttp\Client();
             $response = $client->request('GET', URL::to('/').'/api/matta/show?id=group&nik='.$value->nik);

@@ -164,6 +164,27 @@
                             <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-form')); ?>"> </use>
                         </svg><span>List of Applicant</span></a></li>
                     <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
+                        <li class="sidebar-main-title">
+                            <div>
+                                <h6>Payroll</h6>
+                            </div>
+                        </li>
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('payroll.index')); ?>">
+                                <svg class="stroke-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
+                                </svg><span>Payroll Transaction</span></a></li>
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('payroll.master', 0)); ?>">
+                                <svg class="stroke-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
+                                </svg><span>Payroll Master</span></a></li>
+                    <?php endif; ?>
                     <li class="sidebar-main-title">
                         <div>
                             <h6>Attendance</h6>

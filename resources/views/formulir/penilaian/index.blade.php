@@ -163,11 +163,11 @@
                                                     href="{{ route('penilaian.show', [$data->id, 'view' => 'result']) }}"
                                                     data-toggle="tooltip" title="Result" target="_blank"><i
                                                         class="fa fa-file-text-o"></i></a>
-                                                @if($data->nik_penilai_1 == auth()->user()->nik || $data->nik_penilai_2 == auth()->user()->nik || $data->nik_penilai_3 == auth()->user()->nik)
+                                                {{-- @if($data->nik_penilai_1 == auth()->user()->nik || $data->nik_penilai_2 == auth()->user()->nik || $data->nik_penilai_3 == auth()->user()->nik)
                                                 &nbsp;<a href="{{ route('revisi_penilaian', [$data->id]) }}"
                                                     data-toggle="tooltip" title='Revision'><i class="icon-pencil-alt"
                                                         style="color:red"></i></a>
-                                                @endif
+                                                @endif --}}
                                                 @can('hc')
                                                     &nbsp;<a href="{{ route('penilaian.edit', [$data->id]) }}"
                                                         data-toggle="tooltip" title='Update'><i

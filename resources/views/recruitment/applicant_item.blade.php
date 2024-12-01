@@ -491,7 +491,7 @@
                                                     <td><input type="text" class="form-control" value="{{ $data->tahun_masuk }}"></td>
                                                     <td><input type="text" class="form-control" value="{{ $data->tahun_keluar }}"></td>
                                                     <td><input type="text" class="form-control" value="{{ $data->jabatan }}"></td>
-                                                    <td><input type="text" class="form-control" value="{{ $data->gaji }}"></td>
+                                                    <td><input type="text" class="form-control" value="Rp. {{ number_format($data->gaji, 0) }}"></td>
                                                     <td><input type="text" class="form-control" value="{{ $data->alasan }}"></td>
                                                 </tr>
                                                 @endforeach
@@ -556,7 +556,7 @@
                                     </div>
                                     <div class="col-12">
                                         <label for="gaji" class="form-label">6. Gaji yang diharapkan (Rupiah)<span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" name="gaji" id="gaji" value="{{ $trx->gaji }}">
+                                        <input type="text" class="form-control" name="gaji" id="gaji" value="Rp. {{ number_format($trx->gaji, 0) }}">
                                     </div>
                                 </div>
                             </div>

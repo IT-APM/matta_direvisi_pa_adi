@@ -42,11 +42,13 @@
                         <?php if($soal->jenis == 1): ?>
                         EPPS
                         <?php elseif($soal->jenis == 2): ?>
-                        PAPI Kostick
+                        PAPI KOSTIC
                         <?php elseif($soal->jenis == 3): ?>
                         DISC
                         <?php elseif($soal->jenis == 4): ?>
-                        BAUM dan DAP
+                        BAUM
+                        <?php elseif($soal->jenis == 5): ?>
+                        DAP
                         <?php endif; ?>
                     </h3>
                 </div>
@@ -59,7 +61,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12">
-                                <?php if($soal->jenis == 1): ?>
+                                <?php if($soal->jenis == 1 && $soal->nomor > 0): ?>
                                 <span class="text-uppercase fw-bold">Petunjuk Pengerjaan</span>
                                 <span>
                                     
@@ -69,7 +71,14 @@
                                     <br />Akan ada pernyataan yang kedua duanya menggambarkan dengan diri anda atau tidak menggambarkan dengan diri anda dan anda tidak diperbolehkan memilih kedua pernyataan.
                                     <br />Anda hanya diperbolehkan memilih satu pernyataan dalam 1 soal.
                                 </span>
-                                <?php elseif($soal->jenis == 2): ?>
+                                <?php elseif($soal->jenis == 2 && $soal->nomor == 0): ?>
+                                <span>
+                                    <p>Semangat Pagi!</p>
+                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-2 dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
+                                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+                                </span>
+                                <?php elseif($soal->jenis == 2 && $soal->nomor > 0): ?>
                                 <span class="text-uppercase fw-bold">Petunjuk Pengerjaan</span>
                                 <span>
                                     
@@ -77,7 +86,14 @@
                                     <br />Bila tidak satupun dari sebuah pasangan pernyataan itu cocok, pilihlah yang saudara anggap paling mendekati.
                                     <br />Kerjakan secepat mungkin dan pilihlah hanya satu pernyataan dari tiap pasang.
                                 </span>
-                                <?php elseif($soal->jenis == 3): ?>
+                                <?php elseif($soal->jenis == 3 && $soal->nomor == 0): ?>
+                                <span>
+                                    <p>Semangat Pagi!</p>
+                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-3 dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
+                                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+                                </span>
+                                <?php elseif($soal->jenis == 3 && $soal->nomor > 0): ?>
                                 <span class="text-uppercase fw-bold">Petunjuk Pengerjaan</span>
                                 <span>
                                     
@@ -86,7 +102,21 @@
                                     <br />2. Memilih pada kolom di bawah huruf  [K] di samping kalimat yang PALING TIDAK menggambarkan diri anda.
                                     <br />PERHATIKAN: Setiap nomor hanya ada 1 yang dipilih di bawah masing-masing kolom P dan K.
                                 </span>
-                                <?php elseif($soal->jenis == 4): ?>
+                                <?php elseif($soal->jenis == 4 && $soal->nomor == 0): ?>
+                                <span>
+                                    <p>Semangat Pagi!</p>
+                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-4 dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
+                                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+                                </span>
+                                <?php elseif($soal->jenis == 5 && $soal->nomor == 0): ?>
+                                <span>
+                                    <p>Semangat Pagi!</p>
+                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-5 dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
+                                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+                                </span>
+                                <?php elseif(in_array($soal->jenis, [4,5]) && $soal->nomor > 0): ?>
                                 <span class="text-uppercase fw-bold">Petunjuk Pengerjaan</span>
                                 <span>
                                     <br />Mohon Sediakan:
@@ -99,34 +129,42 @@
                                 </span>
                                 <?php endif; ?>
                             </div>
+                            <?php if($soal->nomor > 0): ?>
                             <hr class="mt-2 mb-2" />
                             <div class="col-12">
                                 <span>Nomor <?php echo e($soal->nomor); ?> dari <?php echo e($jumlah); ?></span>
                             </div>
                             <hr class="mt-2 mb-2" />
+                            <?php endif; ?>
                             <?php if(in_array($soal->jenis, [1,2])): ?>
                             <form
                                 action="<?php echo e(route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))])); ?>"
                                 method="GET" enctype="multipart/form-data"
-                                onsubmit="return confirm('Are you sure want to submit this data?');">
+                                <?php if($soal->nomor == 0): ?> onsubmit="return confirm('Are you sure want to start this test?');" <?php elseif($soal->nomor > 0): ?> onsubmit="return confirm('Are you sure want to submit this data?');" <?php endif; ?>>
                                 <?php echo csrf_field(); ?>
                             <?php elseif(in_array($soal->jenis, [3])): ?>
                             <form name="_form" id="_form"
                                 action="<?php echo e(route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))])); ?>"
                                 method="GET" enctype="multipart/form-data"
-                                onsubmit="return validateForm()">
+                                <?php if($soal->nomor == 0): ?> onsubmit="return confirm('Are you sure want to start this test?');" <?php elseif($soal->nomor > 0): ?> onsubmit="return validateForm()" <?php endif; ?>>
                                 <?php echo csrf_field(); ?>
-                            <?php elseif($soal->jenis == 4): ?>
+                            <?php elseif(in_array($soal->jenis, [4,5]) && $soal->nomor == 0): ?>
+                            <form name="_form" id="_form"
+                                action="<?php echo e(route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))])); ?>"
+                                method="GET" enctype="multipart/form-data"
+                                <?php if($soal->nomor == 0): ?> onsubmit="return confirm('Are you sure want to start this test?');" <?php elseif($soal->nomor > 0): ?> onsubmit="return confirm('Are you sure want to submit this data?');" <?php endif; ?>>
+                                <?php echo csrf_field(); ?>
+                            <?php elseif(in_array($soal->jenis, [4,5]) && $soal->nomor > 0): ?>
                             <form
                                 action="<?php echo e(route('recruitment.psychotest_file')); ?>"
                                 method="POST" enctype="multipart/form-data"
-                                onsubmit="return confirm('Are you sure want to submit this data?');">
+                                <?php if($soal->nomor == 0): ?> onsubmit="return confirm('Are you sure want to start this test?');" <?php elseif($soal->nomor > 0): ?> onsubmit="return confirm('Are you sure want to submit this data?');" <?php endif; ?>>
                                 <?php echo csrf_field(); ?>
                                 <input type="hidden" id="id" name="id" value="<?php echo e(Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))); ?>">
                             <?php endif; ?>
                                 <input type="hidden" id="je" name="je" value="<?php echo e($soal->jenis); ?>">
                                 <input type="hidden" id="no" name="no" value="<?php echo e($soal->nomor); ?>">
-                                <?php if(in_array($soal->jenis, [1,2,3])): ?>
+                                <?php if(in_array($soal->jenis, [1,2,3]) && $soal->nomor > 0): ?>
                                     <?php if(in_array($soal->jenis, [1,2])): ?>
                                     <div class="col-12">
                                         <div class="table-responsive">
@@ -139,9 +177,12 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td class="text-center">A&nbsp;<input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="a" id="a" required="" value="1">
-                                                            <br/>B&nbsp;<input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="a" id="a" required="" value="2"></td>
-                                                        <td><?php echo e($soal->soal1); ?><br/><?php echo e($soal->soal2); ?></td>
+                                                        <td class="text-center">A&nbsp;<input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="a" id="a" required="" value="1"></td>
+                                                        <td><?php echo e($soal->soal1); ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center">B&nbsp;<input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="a" id="a" required="" value="2"></td>
+                                                        <td><?php echo e($soal->soal2); ?></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -160,19 +201,50 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td class="text-center"><input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="p" id="p" required="" value="1">
-                                                            <br/><input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="p" id="p" required="" value="2">
-                                                            <br/><input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="p" id="p" required="" value="3">
-                                                            <br/><input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="p" id="p" required="" value="4">
+                                                        <td class="text-center">
+                                                            <input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="p" id="p" required="" value="1">
                                                         </td>
-                                                        <td class="text-center"><input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="k" id="k" required="" value="1">
-                                                            <br/><input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="k" id="k" required="" value="2">
-                                                            <br/><input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="k" id="k" required="" value="3">
-                                                            <br/><input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="k" id="k" required="" value="4">
+                                                        <td class="text-center">
+                                                            <input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="k" id="k" required="" value="1">
                                                         </td>
-                                                        <td><?php echo e($soal->soal1); ?><br/><?php echo e($soal->soal2); ?>
+                                                        <td>
+                                                            <?php echo e($soal->soal1); ?>
 
-                                                            <br/><?php echo e($soal->soal3); ?><br/><?php echo e($soal->soal4); ?>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="p" id="p" required="" value="2">
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="k" id="k" required="" value="2">
+                                                        </td>
+                                                        <td>
+                                                            <?php echo e($soal->soal2); ?>
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="p" id="p" required="" value="3">
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="k" id="k" required="" value="3">
+                                                        </td>
+                                                        <td>
+                                                            <?php echo e($soal->soal3); ?>
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="p" id="p" required="" value="4">
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input style="width: 20px; height: 20px; border: 1px solid" class="form-check-input" type="radio" name="k" id="k" required="" value="4">
+                                                        </td>
+                                                        <td>
+                                                            <?php echo e($soal->soal4); ?>
 
                                                         </td>
                                                     </tr>
@@ -181,9 +253,9 @@
                                         </div>
                                     </div>
                                     <?php endif; ?>
-                                <?php elseif($soal->jenis == 4): ?>
+                                <?php elseif(in_array($soal->jenis, [4,5]) && $soal->nomor > 0): ?>
                                 <div class="row g-0">
-                                    <?php if($soal->nomor == 1): ?>
+                                    <?php if($soal->jenis == 4): ?>
                                     <div class="col-12 col-md-6">
                                         <span>GAMBAR POHON
                                             <br />1. Gambarlah sebuah pohon yang berbatang keras atau berkambium!
@@ -197,7 +269,7 @@
                                             </p>
                                         </span>
                                     </div>
-                                    <?php elseif($soal->nomor == 2): ?>
+                                    <?php elseif($soal->jenis == 5): ?>
                                     <div class="col-12 col-md-6">
                                         <span>GAMBAR MANUSIA
                                             <br />1. Gambarlah manusia secara utuh!
@@ -222,7 +294,11 @@
                                 <?php endif; ?>
                                 <hr class="mt-2 mb-2" />
                                 <div class="col-12 text-center">
+                                    <?php if($soal->nomor > 0): ?>
                                     <button class="btn btn-primary" type="submit">Submit</button>
+                                    <?php elseif($soal->nomor == 0): ?>
+                                    <button class="btn btn-primary" type="submit">Start</button>
+                                    <?php endif; ?>
                                 </div>
                             </form>
                         </div>
@@ -238,7 +314,7 @@ $(document).ready(function () {
         $p_val = $('input[name=p]:checked', '#_form ').val();
         $k_val = $('input[name=k]:checked', '#_form ').val();
         if($p_val == $k_val){
-            alert('Isian P tidak boleh sama dengan K');
+            alert('Isian Huruf [P] tidak boleh sama dengan Huruf [K]');
         }
         // alert('p: '+$p_val);
         // alert('k: '+$k_val);
@@ -249,7 +325,7 @@ function validateForm() {
     $p_val = $('input[name=p]:checked', '#_form ').val();
     $k_val = $('input[name=k]:checked', '#_form ').val();
     if($p_val == $k_val){
-        alert('Isian P tidak boleh sama dengan K');
+        alert('Isian Huruf [P] tidak boleh sama dengan Huruf [K]');
         return false;
     }
     else{

@@ -444,7 +444,8 @@ class TrxPenilaianSkorController extends Controller
             }
         }
         // formulir diinput oleh penilai 2 atau 3
-        elseif($trx->id_status==5 || $trx->id_status==6 || $trx->id_status==7){
+        // karyawan reguler
+        elseif(($trx->id_status==5 || $trx->id_status==6 || $trx->id_status==7) && $trx->id_tipe != 6){
             // 
             $karyawan = json_decode($trx->karyawan_property, true);
             $atasan = json_decode($trx->penilai1_property, true);
@@ -495,41 +496,56 @@ class TrxPenilaianSkorController extends Controller
                 $this->sendEmail($mailData);
             }
         }
-        // formulir diinput oleh penilai 2
-        elseif($trx->id_status==3 || $trx->id_status==15){
-            // 6 = Penilaian Outsourcing
-            if($trx->id_tipe == 6){
-                // dd($request->all(), $id);
-                $karyawan = json_decode($trx->karyawan_property, true);
-                $atasan = json_decode($trx->penilai1_property, true);
-                $mailData['title'] = 'Formulir Penilaian Karyawan';
-                // $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'] ];
-                $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaian.edit', [$trx->id]) ];
-                $mailData['title'] .= ' - Outsourcing';
-                // template email tidak ada link done to hco
-                $mailData['filename'] = 'emails.penilaian0_outsourcing';
-                $mailData['to'] = explode('/', MtrUtility::find(28)->informasi)[1];
-                $todolist = ['id_trx' => $trx->id, 'nik' => explode('/', MtrUtility::find(28)->informasi)[0], 'id_status' => $trx->id_status, 'pic' => 'hco'];
+        // formulir diinput oleh penilai 2 atau penilai 3
+        // 6 = Penilaian Outsourcing
+        elseif(($trx->id_status==3 || $trx->id_status==6 || $trx->id_status==15) && $trx->id_tipe == 6){
+            // dd($request->all(), $id);
+            $karyawan = json_decode($trx->karyawan_property, true);
+            $atasan = json_decode($trx->penilai1_property, true);
+            $mailData['title'] = 'Formulir Penilaian Karyawan';
+            // $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'] ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaian.edit', [$trx->id]) ];
+            $mailData['title'] .= ' - Outsourcing';
+            // template email tidak ada link done to hco
+            $mailData['filename'] = 'emails.penilaian0_outsourcing';
+            $mailData['to'] = explode('/', MtrUtility::find(28)->informasi)[1];
+            $todolist = ['id_trx' => $trx->id, 'nik' => explode('/', MtrUtility::find(28)->informasi)[0], 'id_status' => $trx->id_status, 'pic' => 'hco'];
+            // $this->insertToDoList($todolist, $mailData);
+            // $this->sendEmail($mailData);
+            // jika layer3 tidak ada maka email done to hco
+            if(empty($trx->nik_penilai_3)){
                 $this->insertToDoList($todolist, $mailData);
                 $this->sendEmail($mailData);
-                // jika diinput penilai 2
-                if($request->pic == 'nik_penilai_2' && $nPenilai2 == 0){
-                    $trx->id_status = 6;
-                    $trx->kes_rek_2 = $request->kes_rek;
-                    $trx->update();
-                    $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_2, 'pic'=>'nik_penilai_2', 'filename'=>'emails.penilaian0_outsourcing']);
-                    // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
-                    $this->insertLog($id, 6, $trx->nik_penilai_2, $request->kes_rek, $request->is_perpanjang, $request->bulan);
+            }
+            // jika diinput penilai 2
+            if($request->pic == 'nik_penilai_2' && $nPenilai2 == 0){
+                $trx->id_status = 6;
+                $trx->kes_rek_2 = $request->kes_rek;
+                $trx->update();
+                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_2, 'pic'=>'nik_penilai_2', 'filename'=>'emails.penilaian0_outsourcing']);
+                // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
+                $this->insertLog($id, 6, $trx->nik_penilai_2, $request->kes_rek, $request->is_perpanjang, $request->bulan);
+                // 
+                if(!empty($trx->nik_penilai_3)){
+                    $penilai3 = json_decode($trx->penilai3_property, true);
+                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 15, 'pic' => 'nik_penilai_3']) ];
+                    $mailData['to'] = $penilai3['email'];
+                    $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 15, 'pic' => 'nik_penilai_3'];
+                    $this->insertToDoList($todolist, $mailData);
+                    $this->sendEmail($mailData);
+                    // 
                 }
-                // jika diinput penilai 3
-                elseif($request->pic == 'nik_penilai_3' && $nPenilai3 == 0){
-                    $trx->id_status = 7;
-                    $trx->kes_rek_3 = $request->kes_rek;
-                    $trx->update();
-                    $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_3, 'pic'=>'nik_penilai_3', 'filename'=>'emails.penilaian0_outsourcing']);
-                    // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
-                    $this->insertLog($id, 7, $trx->nik_penilai_3, $request->kes_rek, $request->is_perpanjang, $request->bulan);
-                }
+            }
+            // jika diinput penilai 3
+            elseif($request->pic == 'nik_penilai_3' && $nPenilai3 == 0){
+                $trx->id_status = 7;
+                $trx->kes_rek_3 = $request->kes_rek;
+                $trx->update();
+                $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_3, 'pic'=>'nik_penilai_3', 'filename'=>'emails.penilaian0_outsourcing']);
+                // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
+                $this->insertLog($id, 7, $trx->nik_penilai_3, $request->kes_rek, $request->is_perpanjang, $request->bulan);
+                $this->insertToDoList($todolist, $mailData);
+                $this->sendEmail($mailData);
             }
         }
         return view( 'emails.penilaian_ok' );

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Auth;
+use App\Models\MtrRecruitmentResume;
+use App\Models\TrxRecruitmentResume;
 use App\Models\TrxKebutuhanMaster;
 use App\Models\TrxRecruitment;
 use App\Models\MtrRecruitmentStatus;
@@ -155,13 +158,15 @@ class TrxRecruitmentController extends Controller
         // dd($id);
         $where = ['id_identitas' => $id];
         $history = TrxRecruitmentLog::where($where)->orderBy('id', 'desc')->get();
+        $resume = TrxRecruitmentResume::where($where)->orderBy('id', 'asc')->get();
         $trx = TrxRecruitmentIdentitas::find($id);
         $trxM = TrxKebutuhanMaster::find($trx->id_kebutuhan);
+        $nego = TrxRecruitmentNegosiasi::where($where)->orderBy('id', 'desc')->first();
         $benefit = MtrRecruitmentBenefit::orderBy('benefit', 'asc')->get();
         $catat_pegawai = MtrRecruitmentCatatPegawai::orderBy('pencatatan', 'asc')->get();
         $status_pegawai = MtrRecruitmentStatusPegawai::orderBy('status', 'asc')->get();
         // 4=Psychotest Send
-        // 6=Interview User_HCO Send
+        // 6=Interview User and HCO Send
         // 8=Interview User Send
         // 10=Interview HCO Send
         $id_status = [4,6,8,10];
@@ -179,34 +184,64 @@ class TrxRecruitmentController extends Controller
         // 11=Interview HCO Done
         if(in_array(16, $log_status) && (in_array(7, $log_status)||in_array(9, $log_status)||in_array(11, $log_status))){
             // 12=Negotiation Process
+            // array_push($id_status, 12);
+            // 22=Psychotest and Interview Pass
+            // 23=Psychotest and Interview Not Pass
+            array_push($id_status, 22,23);
+        }
+        // 22=Psychotest and Interview Pass
+        if(in_array(22, $log_status)){
+            // 6=Interview User and HCO Send
+            // 8=Interview User Send
+            // 10=Interview HCO Send
+            // 23=Psychotest and Interview Not Pass
+            $id_status = array_values(array_diff($id_status, [6,8,10,23]));
+            // 12=Negotiation Process
             array_push($id_status, 12);
         }
         // 12=Negotiation Process
         if(in_array(12, $log_status)){
-            $id_status = array_values(array_diff($id_status, [6,8,10,16]));
-            // 13=Negotiation Deal
-            // 14=Negotiation Failed
-            $id_status = [13,14];
-        }
-        // 13=Negotiation Deal
-        // 14=Negotiation Failed
-        if(in_array(13, $log_status) || in_array(14, $log_status)){
-            // 15=Recruitment Done
-            $id_status = [15];
-        }
-        // 15=Recruitment Done
-        if(in_array(15, $log_status)){
             $id_status = [];
+            // $id_status = array_values(array_diff($id_status, [6,8,10,16]));
+            // 13=Negotiation Deal by HCO
+            // 14=Negotiation No Deal by HCO
+            // $id_status = [13,14];
         }
         // dd($log_status);
         $id_status = MtrRecruitmentStatus::whereIn('id', $id_status)->whereNotIn('id', $log_status)->orderBy('id', 'asc')->get();
+        // 17=Negotiation Deal by Candidate
+        // 18=Negotiation No Deal by Candidate
+        if(in_array($trx->id_status, [17,18])){
+            // 13=Negotiation Deal by HCO
+            // 14=Negotiation No Deal by HCO
+            // 21=Re-Negotiation Process
+            $id_status = [13,14,21];
+            $id_status = MtrRecruitmentStatus::whereIn('id', $id_status)->orderBy('id', 'asc')->get();
+        }
+        // 14=Negotiation No Deal by HCO
+        // 20=COC and File Upload Done
+        // 23=Psychotest and Interview Not Pass
+        if(in_array($trx->id_status, [14,20,23])){
+            // 15=Recruitment Done
+            // $id_status = [15];
+            // 24=Join
+            // 25=Not Join
+            $id_status = [24,25];
+            $id_status = MtrRecruitmentStatus::whereIn('id', $id_status)->orderBy('id', 'asc')->get();
+        }
+        // 15=Recruitment Done
+        // 24=Join
+        // 25=Not Join
+        if(in_array($trx->id_status, [15,24,25])){
+            $id_status = [];
+        }
         // kode_level=3=Supervisor (SPV)
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->whereNotIn('kode_sub_departemen', [263])->orderBy('nama', 'asc')->get();
         $karyawan_user_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
         $where = ['is_aktif' => 1, 'kode_sub_departemen' => 263];
         $karyawan_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
-        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai'));
+        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume'));
         
     }
 
@@ -246,9 +281,10 @@ class TrxRecruitmentController extends Controller
     public function applicant_list($id)
     {
         // dd($id);
-        $trx = TrxRecruitmentIdentitas::orderBy('id', 'desc')->get();
+        $trx = TrxRecruitmentIdentitas::orderBy('id', 'asc')->get();
         $trx1 = TrxRecruitmentInterview::orderBy('id_identitas', 'asc')->orderBy('id', 'desc')->get();
-        return view('recruitment.applicant_list', compact('trx', 'trx1'));
+        $trx2 = TrxRecruitmentNegosiasiLog::orderBy('id_identitas', 'asc')->orderBy('id', 'desc')->get();
+        return view('recruitment.applicant_list', compact('trx', 'trx1', 'trx2'));
     }
 
     public function applicant_item($id)
@@ -274,46 +310,316 @@ class TrxRecruitmentController extends Controller
 
     public function negotiation_save(Request $request)
     {
-        // dd($request->all());
         $id = Crypt::decrypt($request->id);
+        // dd($id, $request->all());
         $id_identitas = Crypt::decrypt($request->id_identitas);
-        $id_status = $request->id_status;
-        // dd($id, $id_identitas, $request->all());
-        $trx = TrxRecruitmentNegosiasi::find($id);
-        $trx->id_status = $id_status;
-        // 
-        $_trx = TrxRecruitmentIdentitas::find($id_identitas);
-        $_trx->id_status = $id_status;
-        // start
-        // id_identitas,id_status,pic,pic_property,aktifitas,keterangan
-        $arr = [$_trx->id,$_trx->id_status,$_trx->nama,'','negosiasi',$request->catatan];
+        $namafile='';
         if($request->hasFile('lampiran')){
             $lampiran = $request->file('lampiran');
             $request->validate([
                 'lampiran' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
             ]);
             $extension = $lampiran->getClientOriginalExtension();
-            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $namafile = $id_identitas.'_'.now()->getTimestampMs().'.'.$extension;
             $lampiran->move('public/assets/recruitment/upload/', $namafile);
-            array_push($arr, $namafile);
+        }
+        $id_status = $request->id_status;
+        // dd($id_status);
+        $_trx = TrxRecruitmentIdentitas::find($id_identitas);
+        $_trx->id_status = $id_status;
+        $_trx->update();
+        $nama = $_trx->nama;
+        if(Auth::check()){
+            $nik = auth()->user()->nik;
+            $nama = Karyawan::where(['nik'=>$nik])->first()->nama.'/'.$nik;
+        }
+        $trx = TrxRecruitmentNegosiasi::find($id);
+        $trx->id_status = $id_status;
+        // 21=Re-Negotiation Process
+        if($id_status == 21){
+            $trx->thp = str_replace(',', '', $request->thp);
+            $trx->benefit_utama = implode(',', $request->input('benefit_utama', []));
+            $trx->benefit_lainnya = $request->benefit_lainnya;
+            $trx->tgl_bergabung = $request->tgl_bergabung;
+            $trx->id_catat_pegawai = $request->id_catat_pegawai;
+            $trx->id_status_pegawai = $request->id_status_pegawai;
+            $trx->masa_kerja = $request->masa_kerja;
         }
         $trx->update();
-        // 
+        // start
+        // id_identitas,id_status,pic,pic_property,aktifitas,catatan
+        $arr = [$id_identitas,$id_status,$nama,'','negosiasi',''];
+        // pic,is_hco,catatan,lampiran
+        $data = [$nama, 0, $request->catatan, $namafile];
+        if(Auth::check()){
+            $data = [$nama, 1, $request->catatan, $namafile];
+        }
+        // jika diinput oleh kandidat maka pic menjadi nama kandidat dan is_hco=0
+        // if(in_array($id_status, [17,18])){
+        //     $data = array_replace($data, array(0=>$_trx->nama, 1=>0));
+        //     $arr = array_replace($arr, array(2=>$_trx->nama));
+        // }
+        if($id_status != 15){
+            $this->insertNegotiationLog($trx, $data);
+        }
+        $this->insertLog($arr);
+        // end
+        // 13=Negotiation Deal by HCO
+        // 19=COC and File Upload Send
+        // jika 13 maka otomatis berlanjut ke 19
+        if($id_status == 13){
+            $id_status = 19;
+            $_trx->id_status = $id_status;
+            $_trx->file_dokumen_ttd = $request->file_dokumen_ttd;
+            $_trx->update();
+            $trx->id_status = $id_status;
+            $trx->update();
+            // start
+            // id_identitas,id_status,pic,pic_property,aktifitas,catatan
+            $arr = [$id_identitas,$id_status,$nama.'/'.$nik,'','negosiasi',''];
+            $this->insertLog($arr);
+            // end
+            
+        }
+        // kirim email
+        $info = '';
+        // 17=Negotiation Deal by Candidate
+        if($id_status == 17){
+            $info = 'Proses Negosiasi Disetujui Kandidat';
+        }
+        // 18=Negotiation No Deal by Candidate
+        elseif($id_status == 18){
+            $info = 'Proses Negosiasi Tidak Disetujui Kandidat';
+        }
+        // 13=Negotiation Deal by HCO
+        elseif($id_status == 13){
+            $info = 'Proses Negosiasi Disetujui HCO';
+        }
+        // 14=Negotiation No Deal by HCO
+        elseif($id_status == 14){
+            $info = 'Proses Negosiasi Tidak Disetujui HCO';
+        }
+        // 19=COC and File Upload Send
+        elseif($id_status == 19){
+            $info = 'Kelengkapan Dokumen Karyawan Baru';
+        }
+        // 21=Re-Negotiation Process
+        elseif($id_status == 21){
+            $info = 'Proses Negosiasi Kembali';
+        }
+        // 17=Negotiation Deal by Candidate
+        // 18=Negotiation No Deal by Candidate
+        if(in_array($id_status, [17,18])){
+            $msg = '<p>Hai '.$_trx->nama.',<br/>'.$info.' sudah disampaikan.
+            <br/>Kami akan menggunakan email anda ('.$_trx->email.') sebagai alamat email untuk korespondensi.<br/>Terima kasih,</p>
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            // parameter yang dipassing ke sendemail
+            $mailData['title'] = $info;
+            $mailData['data'] = ['msg'=>$msg];
+            $mailData['filename'] = 'emails.recruitment0';
+            $mailData['to'] = $_trx->email;
+            $this->sendEmail($mailData);
+            return view('recruitment.thank', compact('msg'));
+        }
+        // 14=Negotiation No Deal by HCO
+        elseif($id_status == 14){
+            // $msg = '<p>Hai '.$_trx->nama.',<br/>Mohon maaf, '.$info.'.
+            // <br/>Terima kasih,</p>
+            // <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            // // parameter yang dipassing ke sendemail
+            // $mailData['title'] = $info;
+            // $mailData['data'] = ['msg'=>$msg];
+            // $mailData['filename'] = 'emails.recruitment0';
+            // $mailData['to'] = $_trx->email;
+            // $this->sendEmail($mailData);
+            return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
+        }
+        // 19=COC and File Upload Send
+        elseif($id_status == 19){
+            // parameter yang dipassing ke sendemail
+            $mailData['title'] = $info;
+            $mailData['filename'] = 'emails.recruitment4';
+            $mailData['data'] = ['trx' => $_trx];
+            $mailData['to'] = $_trx->email;
+            $this->sendEmail($mailData);
+            return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
+        }
+        // 21=Re-Negotiation Process
+        elseif($id_status == 21){
+            $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
+            $posisi = $_trx_->_pekerjaan->pekerjaan;
+            // parameter yang dipassing ke sendemail
+            $mailData['title'] = $info;
+            $mailData['filename'] = 'emails.recruitment3';
+            $mailData['data'] = ['trx' => $_trx, 'posisi' => $posisi];
+            $mailData['to'] = $_trx->email;
+            $this->sendEmail($mailData);
+            return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
+        }
+        // 15=Recruitment Done
+        // elseif($id_status == 15){
+        //     return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
+        // }
+    }
+
+    public function negotiation_process($id)
+    {
+        $id = Crypt::decrypt($id)[0];
+        // dd($id);
+        $_trx = TrxRecruitmentIdentitas::find($id);
+        // 12=Negotiation Process
+        // 21=Re-Negotiation Process
+        if(in_array($_trx->id_status, [12,21])){
+            $trx = TrxRecruitmentNegosiasi::where(['id_identitas'=>$id])->first();
+            $log = TrxRecruitmentNegosiasiLog::where(['id_identitas'=>$id])->whereIn('id_status', [12,21])->orderBy('id', 'desc')->first();
+            return view('recruitment.negotiation_process', compact('trx', 'log', '_trx'));
+        }else{
+            $msg = '<p>Hai '.$_trx->nama.',</p>';
+            $msg .= '<p>Proses saat ini tidak/belum tersedia.</p>';
+            $msg .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            return view('recruitment.thank', compact('msg'));
+        }
+    }
+
+    public function upload_dokumen_post(Request $request)
+    {
+        $id = Crypt::decrypt($request->id);
+        $id_status = $request->id_status;
+        // dd($id, $request->all());
+        $_trx = TrxRecruitmentIdentitas::find($id);
+        $namafile='';
+        if($request->hasFile('file_sertifikat_keahlian')){
+            $file_sertifikat_keahlian = $request->file('file_sertifikat_keahlian');
+            $request->validate([
+                'file_sertifikat_keahlian' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_sertifikat_keahlian->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_sertifikat_keahlian->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_sertifikat_keahlian = $namafile;
+        }
+        if($request->hasFile('file_ktp')){
+            $file_ktp = $request->file('file_ktp');
+            $request->validate([
+                'file_ktp' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_ktp->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_ktp->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_ktp = $namafile;
+        }
+        if($request->hasFile('file_kk')){
+            $file_kk = $request->file('file_kk');
+            $request->validate([
+                'file_kk' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_kk->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_kk->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_kk = $namafile;
+        }
+        if($request->hasFile('file_npwp')){
+            $file_npwp = $request->file('file_npwp');
+            $request->validate([
+                'file_npwp' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_npwp->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_npwp->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_npwp = $namafile;
+        }
+        if($request->hasFile('file_bpjs_tk')){
+            $file_bpjs_tk = $request->file('file_bpjs_tk');
+            $request->validate([
+                'file_bpjs_tk' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_bpjs_tk->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_bpjs_tk->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_bpjs_tk = $namafile;
+        }
+        if($request->hasFile('file_bpjs_kes')){
+            $file_bpjs_kes = $request->file('file_bpjs_kes');
+            $request->validate([
+                'file_bpjs_kes' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_bpjs_kes->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_bpjs_kes->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_bpjs_kes = $namafile;
+        }
+        if($request->hasFile('file_buku_tabungan')){
+            $file_buku_tabungan = $request->file('file_buku_tabungan');
+            $request->validate([
+                'file_buku_tabungan' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_buku_tabungan->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_buku_tabungan->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_buku_tabungan = $namafile;
+        }
+        if($request->hasFile('file_ket_sehat')){
+            $file_ket_sehat = $request->file('file_ket_sehat');
+            $request->validate([
+                'file_ket_sehat' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_ket_sehat->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_ket_sehat->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_ket_sehat = $namafile;
+        }
+        if($request->hasFile('file_skck')){
+            $file_skck = $request->file('file_skck');
+            $request->validate([
+                'file_skck' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_skck->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_skck->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_skck = $namafile;
+        }
+        if($request->hasFile('file_ijazah')){
+            $file_ijazah = $request->file('file_ijazah');
+            $request->validate([
+                'file_ijazah' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_ijazah->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_ijazah->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_ijazah = $namafile;
+        }
+        if($request->hasFile('file_covid')){
+            $file_covid = $request->file('file_covid');
+            $request->validate([
+                'file_covid' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_covid->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_covid->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_covid = $namafile;
+        }
+        if($request->hasFile('file_dokumen_ttd')){
+            $file_dokumen_ttd = $request->file('file_dokumen_ttd');
+            $request->validate([
+                'file_dokumen_ttd' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $file_dokumen_ttd->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $file_dokumen_ttd->move('public/assets/recruitment/upload/', $namafile);
+            $_trx->file_dokumen_ttd = $namafile;
+        }
+        $_trx->id_status = $id_status;
         $_trx->update();
-        // 
-        $this->insertNegotiationLog($trx);
+        // start
+        // id_identitas,id_status,pic,pic_property,aktifitas,catatan
+        $arr = [$_trx->id,$_trx->id_status,$_trx->nama,'','upload',''];
         $this->insertLog($arr);
         // end
         // kirim email
-        $info = 'Proses Negosiasi Disetujui Kandidat';
-        if($id_status == 14){
-            $info = 'Proses Negosiasi Tidak Disetujui Kandidat';
-        }
-        $msg = '<p>Hai '.$_trx->nama.',<br/>'.$info.' sudah disampaikan.
-        <br/>Kami akan menggunakan email anda ('.$_trx->email.') sebagai alamat email untuk korespondensi.<br/>Terima kasih,</p>
+        $msg = '<p>Hai '.$_trx->nama.',<br/>Proses Upload Dokumen Selesai<br/>Terima kasih,</p>
         <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
         // parameter yang dipassing ke sendemail
-        $mailData['title'] = $info;
+        $mailData['title'] = 'Upload Dokumen Selesai';
         $mailData['data'] = ['msg'=>$msg];
         $mailData['filename'] = 'emails.recruitment0';
         $mailData['to'] = $_trx->email;
@@ -321,15 +627,47 @@ class TrxRecruitmentController extends Controller
         return view('recruitment.thank', compact('msg'));
     }
 
-    public function negotiation_process($id)
+    public function get_interpretation($id)
     {
         $id = Crypt::decrypt($id);
         // dd($id);
-        $trx = TrxRecruitmentNegosiasi::where(['id_identitas'=>$id])->first();
-        return view('recruitment.negotiation_process', compact('trx'));
+        $_id = $id[0];
+        $_trx = TrxRecruitmentIdentitas::find($_id);
+        $where = ['id_identitas' => $_id];
+        $resume = TrxRecruitmentResume::where($where)->orderBy('id', 'asc')->get();
+        // dd($_trx);
+        return view('recruitment.get_interpretation', compact('_trx', 'resume'));
     }
 
-    public function insertNegotiationLog($_trx)
+    public function upload_dokumen_get($id)
+    {
+        $id = Crypt::decrypt($id);
+        // dd($id);
+        $_id = $id[0];
+        // ada 2 kondisi yang bisa didapat pada array index-1
+        // yaitu negotiation untuk kandidiat upload file
+        // dan view untuk lihat file yang diupload
+        $kondisi = $id[1];
+        $_trx = TrxRecruitmentIdentitas::find($_id);
+        // negotiation
+        if($kondisi == 'negotiation'){
+            // 19=COC and File Upload Send
+            if($_trx->id_status == 19){
+                return view('recruitment.upload_dokumen', compact('_trx'));
+            }else{
+                $msg = '<p>Hai '.$_trx->nama.',</p>';
+                $msg .= '<p>Proses saat ini tidak/belum tersedia.</p>';
+                $msg .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                return view('recruitment.thank', compact('msg'));
+            }
+        }
+        // view
+        elseif($kondisi == 'view'){
+            return view('recruitment.upload_dokumen', compact('_trx'));
+        }
+    }
+
+    public function insertNegotiationLog($_trx, $data)
     {
         $trx = new TrxRecruitmentNegosiasiLog;
         $trx->id_identitas = $_trx->id_identitas;
@@ -344,15 +682,32 @@ class TrxRecruitmentController extends Controller
         $trx->id_catat_pegawai = $_trx->id_catat_pegawai;
         $trx->id_status_pegawai = $_trx->id_status_pegawai;
         $trx->masa_kerja = $_trx->masa_kerja;
+        $trx->pic = $data[0];
+        $trx->is_hco = $data[1];
+        $trx->catatan = $data[2];
+        $trx->lampiran = $data[3];
         $trx->save();
     }
 
     public function negotiation_send(Request $request)
     {
+        $nik = auth()->user()->nik;
+        $nama = Karyawan::where(['nik'=>$nik])->first()->nama;
         // dd($request->all());
         $id = Crypt::decrypt($request->id);
         // dd($id);
         $id_status = $request->id_status;
+        $namafile='';
+        if($request->hasFile('lampiran')){
+            $lampiran = $request->file('lampiran');
+            $request->validate([
+                'lampiran' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+            ]);
+            $extension = $lampiran->getClientOriginalExtension();
+            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            $lampiran->move('public/assets/recruitment/upload/', $namafile);
+            // array_push($arr, $namafile);
+        }
         $trx = new TrxRecruitmentNegosiasi;
         $trx->id_identitas = $id;
         $trx->id_status = $id_status;
@@ -368,21 +723,24 @@ class TrxRecruitmentController extends Controller
         $trx->masa_kerja = $request->masa_kerja;
         $trx->save();
         // 
-        $this->insertNegotiationLog($trx);
+        // pic,is_hco,catatan,lampiran
+        $data = [$nama.'/'.$nik, 1, $request->catatan, $namafile];
+        $this->insertNegotiationLog($trx, $data);
         // 
         $trx = TrxRecruitmentIdentitas::find($id);
         $trx->id_status = $id_status;
         $trx->update();
+        // 
+        $_trx = TrxKebutuhanMaster::find($trx->id_kebutuhan);
+        $posisi = $_trx->_pekerjaan->pekerjaan;
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Proses Negosiasi';
         $mailData['filename'] = 'emails.recruitment3';
-        $mailData['data'] = ['trx' => $trx];
+        $mailData['data'] = ['trx' => $trx, 'posisi' => $posisi];
         $mailData['to'] = $trx->email;
         $this->sendEmail($mailData);
         // start
-        // id_identitas,id_status,pic,pic_property,aktifitas,keterangan
-        $nik = auth()->user()->nik;
-        $nama = Karyawan::where(['nik'=>$nik])->first()->nama;
+        // id_identitas,id_status,pic,pic_property,aktifitas,catatan
         $arr = [$trx->id,$id_status,$nama.'/'.$nik,'','negosiasi',''];
         $this->insertLog($arr);
         return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
@@ -390,15 +748,18 @@ class TrxRecruitmentController extends Controller
 
     public function interview_save(Request $request)
     {
-        // dd($request->all());
+        $nik = auth()->user()->nik;
+        $nama = Karyawan::where(['nik'=>$nik])->first()->nama;
         $id = Crypt::decrypt($request->id);
-        // dd($id);
+        // dd($id, $request->all());
         $id_status = $request->id_status;
-        // 6=Interview User_HCO Send
+        // 6=Interview User and HCO Send
         // 8=Interview User Send
         // 10=Interview HCO Send
         if($id_status == 6 || $id_status == 8 || $id_status == 10){
             $_trx = TrxRecruitmentIdentitas::find($id);
+            $_trx->id_status = $id_status;
+            $_trx->update();
             $metode = $request->metode;
             $trx = new TrxRecruitmentInterview;
             $trx->id_identitas = $id;
@@ -417,7 +778,7 @@ class TrxRecruitmentController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Undangan Interview '.$metode;
             $mailData['filename'] = 'emails.recruitment2';
-            $mailData['data'] = ['trx' => $trx, 'metode' => $metode];
+            $mailData['data'] = ['trx' => $_trx, 'metode' => $metode, 'href' => MtrUtility::find(31)->informasi];
             $mailData['to'] = $_trx->email;
             $mailData['cc'] = Karyawan::whereIn('nik', $request->interviewer)->pluck('email')->toArray();
             $this->sendEmail($mailData);
@@ -428,48 +789,126 @@ class TrxRecruitmentController extends Controller
         elseif($id_status == 16){
             $_trx = TrxRecruitmentIdentitas::find($id);
             $_trx->id_status = $id_status;
-            if($request->hasFile('interpretasi')){
-                $interpretasi = $request->file('interpretasi');
-                $request->validate([
-                    'interpretasi' => 'file|max:1024',
-                ]);
-                $extension = $interpretasi->getClientOriginalExtension();
-                $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
-                $interpretasi->move('public/assets/recruitment/upload/', $namafile);
-                $_trx->interpretasi = $namafile;
-            }
             $_trx->update();
+            $data = $request->all();
+            foreach($data as $_id => $value){
+                if(str_starts_with($_id, 'jawaban_')){
+                    $_trx_ = TrxRecruitmentResume::find(explode('_', $_id)[1]);
+                    $_trx_->jawaban = $value;
+                    $_trx_->update();
+                }else if(str_starts_with($_id, 'keterangan_')){
+                    $_trx_ = TrxRecruitmentResume::find(explode('_', $_id)[1]);
+                    $_trx_->keterangan = $value;
+                    $_trx_->update();
+                }
+            }
+            // if($request->hasFile('interpretasi')){
+            //     $interpretasi = $request->file('interpretasi');
+            //     $request->validate([
+            //         'interpretasi' => 'file|max:1024',
+            //     ]);
+            //     $extension = $interpretasi->getClientOriginalExtension();
+            //     $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+            //     $interpretasi->move('public/assets/recruitment/upload/', $namafile);
+            //     $_trx->interpretasi = $namafile;
+            // }
+        }
+        // 22=Psychotest and Interview Pass
+        // 23=Psychotest and Interview Not Pass
+        elseif(in_array($id_status, [22,23])){
+            $_trx = TrxRecruitmentIdentitas::find($id);
+            $_trx->id_status = $id_status;
+            $_trx->update();
+        }
+        // 24=Join
+        // 25=Not Join
+        elseif(in_array($id_status, [24,25])){
+            $_trx = TrxRecruitmentIdentitas::find($id);
+            // 
+            $namafile='';
+            if($request->hasFile('lampiran')){
+                $lampiran = $request->file('lampiran');
+                $request->validate([
+                    'lampiran' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+                ]);
+                $extension = $lampiran->getClientOriginalExtension();
+                $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+                $lampiran->move('public/assets/recruitment/upload/', $namafile);
+            }
+            $nego = TrxRecruitmentNegosiasi::where(['id_identitas' => $id])->orderBy('id', 'desc')->first();
+            $nego->id_status = $id_status;
+            $nego->update();
+            $data = [$nama.'/'.$nik, 1, $request->catatan, $namafile];
+            $this->insertNegotiationLog($nego, $data);
+            // 
+            $_trx->id_status = $id_status;
+            $_trx->update();
+            $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
+            $posisi = $_trx_->_pekerjaan->pekerjaan;
+            $bagian = json_decode($_trx_->pengaju_property, true);
+            $bagian = $bagian['divisi'].'/'.$bagian['dep'].'/'.$bagian['sub_dep'];
+            // 24=Join
+            if($id_status == 24){
+                // kirim email
+                $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
+                <p>Sehubungan dengan proses seleksi yang telah Bapak/Ibu/Saudara/i '.$_trx->nama.' ikuti untuk Posisi '.$posisi.', dengan ini kami sampaikan bahwa Bapak/Ibu/Saudara/i diterima di PT. Alita Praya Mitra sebagai '.$posisi.' di Direktorat/Divisi/Departemen '.$bagian.'.</p>
+                <p>Kami akan menghubungi Bapak/Ibu/Saudara/i  terkait proses selanjutnya. Mohon untuk memastikan bahwa  email anda '.$_trx->email.' dan nomor telepon yang dicantumkan dalam keadaan aktif untuk korespondensi.</p>
+                <p>Terima kasih atas kesediaannya mengikuti proses seleksi di PT. Alita Praya Mitra.</p>
+                <p>Terima kasih atas perhatiannya.<br/>Salam sehat dan sukses selalu.</p>
+                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                // parameter yang dipassing ke sendemail
+                $mailData['title'] = 'Pemberitahuan Proses Seleksi Diterima';
+                $mailData['data'] = ['msg'=>$msg];
+                $mailData['filename'] = 'emails.recruitment0';
+                $mailData['to'] = $_trx->email;
+                $this->sendEmail($mailData);
+            }
+            // 25=Not Join
+            elseif($id_status == 25){
+                // kirim email
+                $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
+                <p>Sehubungan dengan proses seleksi yang telah Bapak/Ibu/Saudara/i '.$_trx->nama.' ikuti untuk Posisi '.$posisi.', dengan ini kami sampaikan bahwa Bapak/Ibu/Saudara/i, dengan berat hari kami sampaikan bahwa Bapak/Ibu/Saudara/i belum dapat bergabung di PT. Alita Praya Mitra dikarenakan belum memenuhi kualifikasi yang dibutuhkan untuk posisi tersebut.</p>
+                <p>Terimakasih atas kesediaannya mengikuti proses seleksi di PT. Alita Praya Mitra.<br/>Kami harap Bapak/Ibu/Saudara/i dapat bekerjasama dengan kami di lain kesempatan.</p>
+                <p>Terima kasih atas perhatiannya.<br/>Salam sehat dan sukses selalu.</p>
+                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                // parameter yang dipassing ke sendemail
+                $mailData['title'] = 'Pemberitahuan Proses Seleksi Ditolak';
+                $mailData['data'] = ['msg'=>$msg];
+                $mailData['filename'] = 'emails.recruitment0';
+                $mailData['to'] = $_trx->email;
+                $this->sendEmail($mailData);
+            }
         }
         // 12=Negotiation Process
-        elseif($id_status == 12){
-            $_trx = TrxRecruitmentIdentitas::find($id);
-            $_trx->id_status = $id_status;
-            $_trx->update();
-        }
-        // 13=Negotiation Deal
-        // 14=Negotiation Failed
+        // elseif($id_status == 12){
+        //     $_trx = TrxRecruitmentIdentitas::find($id);
+        //     $_trx->id_status = $id_status;
+        //     $_trx->update();
+        // }
+        // 13=Negotiation Deal by HCO
+        // 14=Negotiation No Deal by HCO
         // upload file Negotiation
-        elseif($id_status == 13 || $id_status == 14){
-            $_trx = TrxRecruitmentIdentitas::find($id);
-            $_trx->id_status = $id_status;
-            if($request->hasFile('negosiasi')){
-                $negosiasi = $request->file('negosiasi');
-                $request->validate([
-                    'negosiasi' => 'file|max:1024',
-                ]);
-                $extension = $negosiasi->getClientOriginalExtension();
-                $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
-                $negosiasi->move('public/assets/recruitment/upload/', $namafile);
-                $_trx->negosiasi = $namafile;
-            }
-            $_trx->update();
-        }
+        // elseif($id_status == 13 || $id_status == 14){
+        //     $_trx = TrxRecruitmentIdentitas::find($id);
+        //     $_trx->id_status = $id_status;
+        //     if($request->hasFile('negosiasi')){
+        //         $negosiasi = $request->file('negosiasi');
+        //         $request->validate([
+        //             'negosiasi' => 'file|max:1024',
+        //         ]);
+        //         $extension = $negosiasi->getClientOriginalExtension();
+        //         $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+        //         $negosiasi->move('public/assets/recruitment/upload/', $namafile);
+        //         $_trx->negosiasi = $namafile;
+        //     }
+        //     $_trx->update();
+        // }
         // 15=Recruitment Done
-        elseif($id_status == 15){
-            $_trx = TrxRecruitmentIdentitas::find($id);
-            $_trx->id_status = $id_status;
-            $_trx->update();
-        }
+        // elseif($id_status == 15){
+        //     $_trx = TrxRecruitmentIdentitas::find($id);
+        //     $_trx->id_status = $id_status;
+        //     $_trx->update();
+        // }
         // $_trx = TrxRecruitmentIdentitas::find($trx->id_identitas);
         // $posisi = $_trx->_kebutuhan->_pekerjaan->pekerjaan;
         // $where = ['is_aktif' => 1];
@@ -479,9 +918,9 @@ class TrxRecruitmentController extends Controller
         // $trx->check_out = $request->check_out;
         // 7=Interview Send
         // $id_status = 7;
+        // upload file_interview
         if($request->hasFile('file_interview')){
             $trx = TrxRecruitmentInterview::find($id);
-            $_trx = TrxRecruitmentIdentitas::find($trx->id_identitas);
             $file_interview = $request->file('file_interview');
             $request->validate([
                 'file_interview' => 'file|max:20480',
@@ -490,8 +929,8 @@ class TrxRecruitmentController extends Controller
             $namafile = $trx->id_identitas.'_'.now()->getTimestampMs().'.'.$extension;
             $file_interview->move('public/assets/recruitment/upload/', $namafile);
             $trx->file_interview = $namafile;
-            // 6=Interview User_HCO Send
-            // 7=Interview User_HCO Done
+            // 6=Interview User and HCO Send
+            // 7=Interview User and HCO Done
             // 8=Interview User Send
             // 9=Interview User Done
             // 10=Interview HCO Send
@@ -507,14 +946,31 @@ class TrxRecruitmentController extends Controller
                 $trx->id_status = 11;
                 $id_status = 11;
             }
+            // 
             $trx->update();
+            // 
+            $_trx = TrxRecruitmentIdentitas::find($trx->id_identitas);
+            $_trx->id_status = $id_status;
+            $_trx->update();
             // end
+            $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
+            $posisi = $_trx_->_pekerjaan->pekerjaan;
+            // kirim email
+            $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
+            <p>Kami ucapkan terima kasih atas partisipasi Bapak/Ibu/Saudara/i dalam proses Interview untuk posisi '.$posisi.' di PT. Alita Praya Mitra. Kami telah menerima hasil interview Bapak/Ibu/Saudara/i dan saat ini kami sedang melakukan proses evaluasi lebih lanjut.</p>
+            <p>Kami akan segera menghubungi Bapak/Ibu/Saudara/i apabila terdapat informasi tambahan atau informasi jika ada tahapan seleksi selanjutnya.</p>
+            <p>Demikian kami sampaikan, terima kasih atas perhatian dan kerja samanya.</p>
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            // parameter yang dipassing ke sendemail
+            $mailData['title'] = 'Interview Selesai';
+            $mailData['data'] = ['msg'=>$msg];
+            $mailData['filename'] = 'emails.recruitment0';
+            $mailData['to'] = $_trx->email;
+            $this->sendEmail($mailData);
             // return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
         }
         // start
-        // id_identitas,id_status,pic,pic_property,aktifitas,keterangan
-        $nik = auth()->user()->nik;
-        $nama = Karyawan::where(['nik'=>$nik])->first()->nama;
+        // id_identitas,id_status,pic,pic_property,aktifitas,catatan
         $arr = [$_trx->id,$id_status,$nama.'/'.$nik,'','internal',''];
         $this->insertLog($arr);
         return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
@@ -537,7 +993,7 @@ class TrxRecruitmentController extends Controller
         }
         $trx->update();
         // start
-        // id_identitas,id_status,pic,pic_property,aktifitas,keterangan
+        // id_identitas,id_status,pic,pic_property,aktifitas,catatan
         $nik = auth()->user()->nik;
         $nama = Karyawan::where(['nik'=>$nik])->first()->nama;
         $arr = [$trx->id,$trx->id_status,$nama.'/'.$nik,'','internal',''];
@@ -574,11 +1030,25 @@ class TrxRecruitmentController extends Controller
         $trx->pic = $id[2];
         $trx->pic_property = $id[3];
         $trx->aktifitas = $id[4];
-        $trx->keterangan = $id[5];
+        $trx->catatan = $id[5];
         if(!empty($id[6])){
             $trx->lampiran = $id[6];
         }
         $trx->save();
+    }
+
+    public function insertInterpretation($trx)
+    {
+        $data = MtrRecruitmentResume::orderBy('id', 'asc')->get();
+        foreach($data as $_data){
+            $_trx = new TrxRecruitmentResume;
+            $_trx->id_identitas = $trx->id;
+            $_trx->nomor = $_data->nomor;
+            $_trx->urutan = $_data->urutan;
+            $_trx->pernyataan1 = $_data->pernyataan1;
+            $_trx->pernyataan2 = $_data->pernyataan2;
+            $_trx->save();
+        }
     }
 
     public function insertPsychotest($id)
@@ -586,6 +1056,7 @@ class TrxRecruitmentController extends Controller
         // dd($id);
         // insert jenis=0
         // $where = ['jenis'=>0];
+        // Pengantar
         $trx = MtrRecruitmentSoal::find(1);
         $_trx = new TrxRecruitmentPsychotest;
         $_trx->id_identitas = $id->id;
@@ -608,6 +1079,14 @@ class TrxRecruitmentController extends Controller
             $_trx->soal2 = $soal2[$x];
             $_trx->save();
         }
+        // Pengantar
+        $trx = MtrRecruitmentSoal::find(452);
+        $_trx = new TrxRecruitmentPsychotest;
+        $_trx->id_identitas = $id->id;
+        $_trx->jenis = $trx->jenis;
+        $_trx->nomor = $trx->nomor;
+        $_trx->soal1 = $trx->soal;
+        $_trx->save();
         // insert jenis=2
         $jenis = 2;
         $where = ['jenis'=>$jenis, 'urutan'=>1];
@@ -623,6 +1102,14 @@ class TrxRecruitmentController extends Controller
             $_trx->soal2 = $soal2[$x];
             $_trx->save();
         }
+        // Pengantar
+        $trx = MtrRecruitmentSoal::find(633);
+        $_trx = new TrxRecruitmentPsychotest;
+        $_trx->id_identitas = $id->id;
+        $_trx->jenis = $trx->jenis;
+        $_trx->nomor = $trx->nomor;
+        $_trx->soal1 = $trx->soal;
+        $_trx->save();
         // insert jenis=3
         $jenis = 3;
         $where = ['jenis'=>$jenis, 'urutan'=>1];
@@ -644,9 +1131,17 @@ class TrxRecruitmentController extends Controller
             $_trx->soal4 = $soal4[$x];
             $_trx->save();
         }
+        // Pengantar
+        $trx = MtrRecruitmentSoal::find(730);
+        $_trx = new TrxRecruitmentPsychotest;
+        $_trx->id_identitas = $id->id;
+        $_trx->jenis = $trx->jenis;
+        $_trx->nomor = $trx->nomor;
+        $_trx->soal1 = $trx->soal;
+        $_trx->save();
         // insert jenis=4
         $jenis = 4;
-        $where = ['jenis'=>$jenis];
+        $where = ['jenis'=>$jenis, 'urutan'=>1];
         $soal1 = MtrRecruitmentSoal::where($where)->orderBy('id', 'asc')->pluck('soal')->toArray();
         for($x = 0; $x < count($soal1); $x++){
             $_trx = new TrxRecruitmentPsychotest;
@@ -656,19 +1151,26 @@ class TrxRecruitmentController extends Controller
             $_trx->soal1 = $soal1[$x];
             $_trx->save();
         }
-        // $where = ['jenis'=>$jenis, 'urutan'=>1];
-        // $soal1 = MtrRecruitmentSoal::where($where)->orderBy('id', 'asc')->pluck('soal')->toArray();
-        // $where = ['jenis'=>$jenis, 'urutan'=>2];
-        // $soal2 = MtrRecruitmentSoal::where($where)->orderBy('id', 'asc')->pluck('soal')->toArray();
-        // for($x = 0; $x < count($soal1); $x++){
-        //     $_trx = new TrxRecruitmentPsychotest;
-        //     $_trx->id_identitas = $id->id;
-        //     $_trx->jenis = $jenis;
-        //     $_trx->nomor = $x+1;
-        //     $_trx->soal1 = $soal1[$x];
-        //     $_trx->soal2 = $soal2[$x];
-        //     $_trx->save();
-        // }
+        // Pengantar
+        $trx = MtrRecruitmentSoal::find(732);
+        $_trx = new TrxRecruitmentPsychotest;
+        $_trx->id_identitas = $id->id;
+        $_trx->jenis = $trx->jenis;
+        $_trx->nomor = $trx->nomor;
+        $_trx->soal1 = $trx->soal;
+        $_trx->save();
+        // insert jenis=5
+        $jenis = 5;
+        $where = ['jenis'=>$jenis, 'urutan'=>1];
+        $soal1 = MtrRecruitmentSoal::where($where)->orderBy('id', 'asc')->pluck('soal')->toArray();
+        for($x = 0; $x < count($soal1); $x++){
+            $_trx = new TrxRecruitmentPsychotest;
+            $_trx->id_identitas = $id->id;
+            $_trx->jenis = $jenis;
+            $_trx->nomor = $x+1;
+            $_trx->soal1 = $soal1[$x];
+            $_trx->save();
+        }
     }
 
     public function psychotest(Request $request, $id)
@@ -696,6 +1198,8 @@ class TrxRecruitmentController extends Controller
                 $soal->update();
             }
             $trx = TrxRecruitmentIdentitas::find($id);
+            $_trx_ = TrxKebutuhanMaster::find($trx->id_kebutuhan);
+            $posisi = $_trx_->_pekerjaan->pekerjaan;
             $where = ['id_identitas' => $id];
             $soal = TrxRecruitmentPsychotest::where($where)->whereNull('check_out')->orderBy('id', 'asc')->first();
             if(!empty($soal)){
@@ -703,7 +1207,7 @@ class TrxRecruitmentController extends Controller
                 // dd(Carbon::now()->diffInSeconds(Carbon::parse($trx->check_out)));
                 if((Carbon::now() > Carbon::parse($trx->check_in)) && (Carbon::now() < Carbon::parse($trx->check_out))){
                     $where = ['id_identitas' => $soal->id_identitas, 'jenis' => $soal->jenis];
-                    $jumlah = TrxRecruitmentPsychotest::where($where)->count();
+                    $jumlah = TrxRecruitmentPsychotest::where($where)->where('nomor', '>', 0)->count();
                     $soal->check_in = $_now;
                     if(empty($_id[2])){
                         $remain = $trx->remain;
@@ -719,23 +1223,25 @@ class TrxRecruitmentController extends Controller
                         return view('recruitment.psychotest_exe', compact('trx','soal', 'jumlah'));
                     }
                 }else{
-                    $msg = '';
-                    $msg .= '<p>Saat ini Tahapan Psikotest tidak tersedia.
-                    <br/>Agar kemudian dapat diperhatikan waktu yang sudah diagendakan.</p>';
-                    $msg .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                    $msg = '<p>Yth. '.$trx->nama.',</p>
+                    <p>Saat ini Tahapan Psikotest belum tersedia.<br/>Agar kemudian dapat diperhatikan waktu yang sudah diagendakan.</p>
+                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
                     return view('recruitment.thank', compact('msg'));
                 }
             }else{
-                $msg = '';
                 if(empty($trx->check_in)){
-                    $msg .= '<p>Saat ini Tahapan Psikotest belum tersedia.
-                    <br/>Agar kemudian dapat diperhatikan waktu yang sudah diagendakan.</p>';
+                    $msg = '<p>Yth. '.$trx->nama.',</p>
+                    <p>Saat ini Tahapan Psikotest belum tersedia.<br/>Agar kemudian dapat diperhatikan waktu yang sudah diagendakan.</p>
+                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                    return view('recruitment.thank', compact('msg'));
                 }else{
-                    $msg .= '<p>Terima kasih atas partisipasinya pada Tahapan Psikotest - Seleksi Penerimaan Karyawan ini.
-                    <br/>Semoga anda dapat bergabung bersama kami.</p>';
+                    $msg = '<p>Yth. '.$trx->nama.',<br/>Dengan hormat,</p>
+                    <p>Kami ucapkan terima kasih atas partisipasi Bapak/Ibu/Saudara/i dalam proses psikotes untuk posisi '.$posisi.' di PT. Alita Praya Mitra. Kami telah menerima hasil pengerjaan psikotes Bapak/Ibu/Saudara/i dan saat ini kami sedang melakukan proses evaluasi lebih lanjut.</p>
+                    <p>Kami akan segera menghubungi Bapak/Ibu/Saudara/i apabila terdapat informasi tambahan atau informasi jika ada tahapan seleksi selanjutnya.</p>
+                    <p>Demikian kami sampaikan, terima kasih atas perhatian dan kerja samanya.</p>
+                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                    return view('recruitment.thank', compact('msg'));
                 }
-                $msg .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
-                return view('recruitment.thank', compact('msg'));
             }
         } catch (DecryptException $e) {
             return view('errors.403');
@@ -756,8 +1262,8 @@ class TrxRecruitmentController extends Controller
                 $soal = TrxRecruitmentPsychotest::find($_id[2]);
                 $soal->check_out = $_now;
                 $remain = $soal->remain - $_now->diffInSeconds(Carbon::parse($soal->check_in));
-                if($soal->jenis == 4){
-                    if($soal->nomor == 1){
+                if(in_array($soal->jenis, [4,5])){
+                    if($soal->jenis == 4){
                         $gambar_pohon = $request->file('gambar_pohon');
                         $request->validate([
                             'gambar_pohon' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
@@ -768,7 +1274,7 @@ class TrxRecruitmentController extends Controller
                         $soal->jawaban1 = $namafile;
                         $soal->update();
                     }
-                    elseif($soal->nomor == 2){
+                    elseif($soal->jenis == 5){
                         $gambar_manusia = $request->file('gambar_manusia');
                         $request->validate([
                             'gambar_manusia' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
@@ -786,7 +1292,7 @@ class TrxRecruitmentController extends Controller
             $soal = TrxRecruitmentPsychotest::where($where)->whereNull('check_out')->orderBy('id', 'asc')->first();
             if(!empty($soal)){
                 $where = ['id_identitas' => $soal->id_identitas, 'jenis' => $soal->jenis];
-                $jumlah = TrxRecruitmentPsychotest::where($where)->count();
+                $jumlah = TrxRecruitmentPsychotest::where($where)->where('nomor', '>', 0)->count();
                 $soal->check_in = $_now;
                 if(empty($_id[2])){
                     $remain = $trx->remain;
@@ -803,13 +1309,18 @@ class TrxRecruitmentController extends Controller
                 $trx->id_status = 5;
                 $trx->update();
                 // start
-                // id_identitas,id_status,pic,pic_property,aktifitas,keterangan
+                // id_identitas,id_status,pic,pic_property,aktifitas,catatan
                 $arr = [$trx->id,$trx->id_status,$trx->nama,'','external',''];
                 $this->insertLog($arr);
+                // 
+                $_trx = TrxKebutuhanMaster::find($trx->id_kebutuhan);
+                $posisi = $_trx->_pekerjaan->pekerjaan;
                 // end
                 // kirim email
-                $msg = '<p>Hai '.$trx->nama.',<br/>Psikotes anda sudah selesai.
-                <br/>Kami akan menggunakan email anda ('.$trx->email.') sebagai alamat email untuk korespondensi.<br/>Terima kasih,</p>
+                $msg = '<p>Yth. '.$trx->nama.',<br/>Dengan hormat,</p>
+                <p>Kami ucapkan terima kasih atas partisipasi Bapak/Ibu/Saudara/i dalam proses psikotes untuk posisi '.$posisi.' di PT. Alita Praya Mitra. Kami telah menerima hasil pengerjaan psikotes Bapak/Ibu/Saudara/i dan saat ini kami sedang melakukan proses evaluasi lebih lanjut.</p>
+                <p>Kami akan segera menghubungi Bapak/Ibu/Saudara/i apabila terdapat informasi tambahan atau informasi jika ada tahapan seleksi selanjutnya.</p>
+                <p>Demikian kami sampaikan, terima kasih atas perhatian dan kerja samanya.</p>
                 <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
                 // parameter yang dipassing ke sendemail
                 $mailData['title'] = 'Psikotes Selesai';
@@ -906,7 +1417,7 @@ class TrxRecruitmentController extends Controller
         $trx = TrxRecruitment::find($id_recruitment);
         $id_kebutuhan = $trx->id_kebutuhan;
         $trx = TrxKebutuhanMaster::find($id_kebutuhan);
-        // $posisi = $trx->_pekerjaan->pekerjaan;
+        $posisi = $trx->_pekerjaan->pekerjaan;
         // dd($id);
         $trx = new TrxRecruitmentIdentitas;
         $trx->id_recruitment = $id_recruitment;
@@ -962,8 +1473,9 @@ class TrxRecruitmentController extends Controller
         $trx->pekerjaan = $request->pekerjaan;
         $trx->usia = Carbon::parse($request->tanggal_lahir)->age;
         $trx->save();
+        $this->insertInterpretation($trx);
         // start
-        // id_identitas,id_status,pic,pic_property,aktifitas,keterangan
+        // id_identitas,id_status,pic,pic_property,aktifitas,catatan
         $arr = [$trx->id,$trx->id_status,$trx->nama,'','external',''];
         $this->insertLog($arr);
         // end
@@ -984,16 +1496,16 @@ class TrxRecruitmentController extends Controller
             $_trx->save();
         }
         // TrxRecruitmentSaudara
-        $kakak_adik = $request->input('kakak_adik', []);
+        // $kakak_adik = $request->input('kakak_adik', []);
         $nama_saudara = $request->input('nama_saudara', []);
         $usia_saudara = $request->input('usia_saudara', []);
         $kelamin_saudara = $request->input('kelamin_saudara', []);
         $pendidikan_saudara = $request->input('pendidikan_saudara', []);
         $pekerjaan_saudara = $request->input('pekerjaan_saudara', []);
-        for($x = 0; $x < count($kakak_adik); $x++){
+        for($x = 0; $x < count($nama_saudara); $x++){
             $_trx = new TrxRecruitmentSaudara;
             $_trx->id_identitas = $trx->id;
-            $_trx->kakak_adik = $kakak_adik[$x];
+            // $_trx->kakak_adik = $kakak_adik[$x];
             $_trx->nama = $nama_saudara[$x];
             $_trx->usia = $usia_saudara[$x];
             $_trx->kelamin = $kelamin_saudara[$x];
@@ -1070,8 +1582,10 @@ class TrxRecruitmentController extends Controller
             $_trx->save();
         }
         $nomor = $trx->id_kebutuhan.'/'.$trx->id;
-        $msg = '<p>Hai '.$trx->nama.',<br/>Lamaran anda dengan nomor '.$nomor.' akan segera kami proses.
-        <br/>Kami akan menggunakan email anda ('.$trx->email.') sebagai alamat email untuk korespondensi.<br/>Terima kasih,</p>
+        $msg = '<p>Yth. '.$trx->nama.',<br/>Dengan hormat,</p>
+        <p>Kami sampaikan terima kasih atas minat Bapak/Ibu/Saudara/i dengan melamar pada posisi '.$posisi.' di PT. Alita Praya Mitra. Lamaran kerja Bapak/Ibu/Saudara/i telah kami terima dan akan kami pelajari lebih lanjut sesuai kualifikasi yang dibutuhkan.</p>
+        <p>Proses seleksi akan memerlukan waktu. Jika dalam kurun waktu 14 (empat belas) hari kerja kami belum menghubungi Bapak/Ibu/Saudara/i, kami sampaikan bahwa lamaran Bapak/Ibu/Saudara/i belum memenuhi kualifikasi yang kami butuhkan. Mohon untuk memastikan bahwa  email anda  '.$trx->email.' dan nomor telepon yang di cantumkan dalam keadaan aktif untuk korespondensi.</p>
+        <p>Terima kasih,</p>
         <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Lamaran Pekerjaan';
@@ -1113,7 +1627,7 @@ class TrxRecruitmentController extends Controller
         if($id[1] == 1){
             $filename = 'EPPS_';
         }elseif($id[1] == 2){
-            $filename = 'PAPI Kostick_';
+            $filename = 'PAPI KOSTIC_';
         }elseif($id[1] == 3){
             $filename = 'DISC_';
         }
