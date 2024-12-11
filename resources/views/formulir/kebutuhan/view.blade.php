@@ -218,6 +218,32 @@
                                 </tbody>
                             </table>
                         </div>
+                        {{--  --}}
+                        <div class="card-header">
+                            <h5>FinDim / Cost Allocation</h5>
+                        </div>
+                        <div class="card-body typography">
+                            <table class="table table-striped">
+                                <tbody>
+                                    <tr>
+                                        <td width="40%">Project</td>
+                                        <td width="60%">{{ $trxM->_findim_project->project_id }} - {{ $trxM->_findim_project->project_desc }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Divisi</td>
+                                        <td>{{ $trxM->_findim_divisi->divisi_id }} - {{ $trxM->_findim_divisi->divisi_desc }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Departemen</td>
+                                        <td>{{ $trxM->_findim_departemen->departemen_id }} - {{ $trxM->_findim_departemen->departemen_desc }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sub Departemen</td>
+                                        <td>{{ $trxM->_findim_subdepartemen->subdepartemen_id }} - {{ $trxM->_findim_subdepartemen->subdepartemen_desc }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                         <!--  -->
                         <div class="card-header">
                             <h5>Tanggal</h5>

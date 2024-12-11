@@ -404,6 +404,8 @@ class TrxCutiController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
+        $preview = $request->preview;
         // start
         // $nik_karyawan = $request->nik_karyawan;
         $nik_karyawan = auth()->user()->nik;
@@ -501,6 +503,29 @@ class TrxCutiController extends Controller
         // $trx->telepon = $dataKaryawan->telepon1;
         $trx->keterangan = $request->keterangan;
         $trx->status_cuti = 1;
+        // 
+        if($preview == 'preview'){
+            $tanggal_mulai = $this->getTanggalIndonesia($trx->tanggal_mulai);
+            $tanggal_akhir = $this->getTanggalIndonesia($trx->tanggal_akhir);
+            $tanggal_cuti = explode(';', $trx->tanggal_cuti);
+            $arrTanggalCuti = array();
+            foreach ($tanggal_cuti as $value) {
+                array_push($arrTanggalCuti, $this->getTanggalIndonesia($value));
+            }
+            $is_reguler = Karyawan::where('nik', $trx->nik_karyawan)->first()->_wg->is_reguler;
+            $tanggal_masuk = $this->getTanggalMasuk($trx->tanggal_akhir, $is_reguler, $trx->nik_karyawan);
+            $arrTanggal = ['tanggal_mulai' => $tanggal_mulai, 'tanggal_akhir' => $tanggal_akhir, 'arrTanggalCuti' => $arrTanggalCuti, 'tanggal_masuk' => $tanggal_masuk];
+            $pic_property = explode(';', $trx->pic_property);
+            $arrPicProperty = array();
+            foreach ($pic_property as $value) {
+                array_push($arrPicProperty, json_decode($value, true));
+            }
+            if ($cek) {
+                return view('formulir.cuti.preview', compact('trx', 'arrTanggal', 'arrPicProperty', 'cek', 'arr'));
+            } else {
+                return view('formulir.cuti.preview', compact('trx', 'arrTanggal', 'arrPicProperty', 'cek', 'arr'));
+            }
+        }
         // 
         if ($cek) {
             $trx->save();

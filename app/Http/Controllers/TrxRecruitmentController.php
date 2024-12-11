@@ -410,9 +410,19 @@ class TrxRecruitmentController extends Controller
         // 17=Negotiation Deal by Candidate
         // 18=Negotiation No Deal by Candidate
         if(in_array($id_status, [17,18])){
-            $msg = '<p>Hai '.$_trx->nama.',<br/>'.$info.' sudah disampaikan.
-            <br/>Kami akan menggunakan email anda ('.$_trx->email.') sebagai alamat email untuk korespondensi.<br/>Terima kasih,</p>
+            $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan Hormat,</p>
+            <p>Kami ingin menginformasikan bahwa proses negosiasi dengan Bapak/Ibu/Saudara/i '.$_trx->nama.' telah disetujui. Kandidat menyatakan kesediaannya untuk menerima ketentuan yang telah disepakati.</p>
+            <p>Kami akan melanjutkan ke tahap berikutnya sesuai dengan prosedur yang berlaku. Apabila ada hal lain yang perlu ditanyakan, mohon disampaikan kepada kami.</p>
+            <p>Terima kasih,</p>
             <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            // 18=Negotiation No Deal by Candidate
+            if($id_status == 18){
+                $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan Hormat,</p>
+                <p>Kami ingin menginformasikan bahwa proses negosiasi dengan Bapak/Ibu/Saudara/i '.$_trx->nama.' belum mencapai kesepakatan. Kandidat menyatakan ketidaksediaannya untuk menerima ketentuan yang telah diajukan.</p>
+                <p>Kami akan meninjau kembali langkah selanjutnya terkait proses ini dan segera memberikan pembaharuan apabila diperlukan. Jika ada saran atau hal lain yang perlu dipertimbangkan, kami siap untuk mendiskusikannya lebih lanjut.</p>
+                <p>Terima kasih,</p>
+                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            }
             // parameter yang dipassing ke sendemail
             $mailData['title'] = $info;
             $mailData['data'] = ['msg'=>$msg];
@@ -474,9 +484,10 @@ class TrxRecruitmentController extends Controller
             $log = TrxRecruitmentNegosiasiLog::where(['id_identitas'=>$id])->whereIn('id_status', [12,21])->orderBy('id', 'desc')->first();
             return view('recruitment.negotiation_process', compact('trx', 'log', '_trx'));
         }else{
-            $msg = '<p>Hai '.$_trx->nama.',</p>';
-            $msg .= '<p>Proses saat ini tidak/belum tersedia.</p>';
-            $msg .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan Hormat,</p>
+            <p>Proses saat ini tidak/belum tersedia.</p>
+            <p>Terima kasih,</p>
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
             return view('recruitment.thank', compact('msg'));
         }
     }
@@ -616,7 +627,10 @@ class TrxRecruitmentController extends Controller
         $this->insertLog($arr);
         // end
         // kirim email
-        $msg = '<p>Hai '.$_trx->nama.',<br/>Proses Upload Dokumen Selesai<br/>Terima kasih,</p>
+        $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan Hormat,</p>
+        <p>Kami informasikan bahwa proses upload dokumen telah selesai dilakukan. Seluruh dokumen Bapak/Ibu/Saudara/i '.$_trx->nama.' telah berhasil kami terima sesuai kebutuhan.</p>
+        <p>Apabila terdapat hal lain yang perlu dikonfirmasikan kembali, mohon menghubungi kami kembali.</p>
+        <p>Terima kasih,</p>
         <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Upload Dokumen Selesai';
@@ -655,9 +669,10 @@ class TrxRecruitmentController extends Controller
             if($_trx->id_status == 19){
                 return view('recruitment.upload_dokumen', compact('_trx'));
             }else{
-                $msg = '<p>Hai '.$_trx->nama.',</p>';
-                $msg .= '<p>Proses saat ini tidak/belum tersedia.</p>';
-                $msg .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan Hormat,</p>
+                <p>Proses saat ini tidak/belum tersedia.</p>
+                <p>Terima kasih,</p>
+                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
                 return view('recruitment.thank', compact('msg'));
             }
         }
@@ -758,6 +773,8 @@ class TrxRecruitmentController extends Controller
         // 10=Interview HCO Send
         if($id_status == 6 || $id_status == 8 || $id_status == 10){
             $_trx = TrxRecruitmentIdentitas::find($id);
+            $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
+            $posisi = $_trx_->_pekerjaan->pekerjaan;
             $_trx->id_status = $id_status;
             $_trx->update();
             $metode = $request->metode;
@@ -778,10 +795,17 @@ class TrxRecruitmentController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Undangan Interview '.$metode;
             $mailData['filename'] = 'emails.recruitment2';
-            $mailData['data'] = ['trx' => $_trx, 'metode' => $metode, 'href' => MtrUtility::find(31)->informasi];
+            $mailData['data'] = ['trx' => $_trx, 'metode' => $metode, 'href' => MtrUtility::find(31)->informasi, 'posisi' => $posisi];
             $mailData['to'] = $_trx->email;
-            $mailData['cc'] = Karyawan::whereIn('nik', $request->interviewer)->pluck('email')->toArray();
+            // $mailData['cc'] = Karyawan::whereIn('nik', $request->interviewer)->pluck('email')->toArray();
             $this->sendEmail($mailData);
+            $interviewer = Karyawan::whereIn('nik', $request->interviewer)->get();
+            foreach($interviewer as $_interviewer){
+                $mailData['filename'] = 'emails.recruitment2a';
+                $mailData['to'] = $_interviewer->email;
+                $mailData['data'] = ['trx' => $_trx, 'metode' => $metode, 'href' => MtrUtility::find(31)->informasi, 'posisi' => $posisi, 'interviewer' => $_interviewer];
+                $this->sendEmail($mailData);
+            }
             // return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
         }
         // 16=Interpretation
@@ -1223,15 +1247,19 @@ class TrxRecruitmentController extends Controller
                         return view('recruitment.psychotest_exe', compact('trx','soal', 'jumlah'));
                     }
                 }else{
-                    $msg = '<p>Yth. '.$trx->nama.',</p>
-                    <p>Saat ini Tahapan Psikotest belum tersedia.<br/>Agar kemudian dapat diperhatikan waktu yang sudah diagendakan.</p>
+                    $msg = '<p>Yth. '.$trx->nama.',<br/>Dengan Hormat,</p>
+                    <p>Kami ingin menginformasikan bahwa psikotest belum dapat dimulai karena belum sesuai dengan jadwal dan waktu yang telah diinformasikan.</p>
+                    <p>Mohon kesediaannya untuk menunggu sesuai jadwal dan waktu yang telah diinformasikan. Apabila ada pertanyaan atau kebutuhan lainnya, jangan ragu untuk menghubungi kami melalui [nomor telepon/email].</p>
+                    <p>Terima kasih,</p>
                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
                     return view('recruitment.thank', compact('msg'));
                 }
             }else{
                 if(empty($trx->check_in)){
-                    $msg = '<p>Yth. '.$trx->nama.',</p>
-                    <p>Saat ini Tahapan Psikotest belum tersedia.<br/>Agar kemudian dapat diperhatikan waktu yang sudah diagendakan.</p>
+                    $msg = '<p>Yth. '.$trx->nama.',<br/>Dengan Hormat,</p>
+                    <p>Kami ingin menginformasikan bahwa psikotest belum dapat dimulai karena belum sesuai dengan jadwal dan waktu yang telah diinformasikan.</p>
+                    <p>Mohon kesediaannya untuk menunggu sesuai jadwal dan waktu yang telah diinformasikan. Apabila ada pertanyaan atau kebutuhan lainnya, jangan ragu untuk menghubungi kami melalui [nomor telepon/email].</p>
+                    <p>Terima kasih,</p>
                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
                     return view('recruitment.thank', compact('msg'));
                 }else{

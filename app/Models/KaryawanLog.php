@@ -14,6 +14,10 @@ class KaryawanLog extends Model
         return $this->belongsTo('App\Models\Karyawan', 'nik', 'nik');
     }
 
+    public function _insert_by(){
+        return $this->belongsTo('App\Models\Karyawan', 'insert_by', 'nik');
+    }
+
     public function getCreatedAtAttribute()
     {
         return \Carbon\Carbon::parse($this->attributes['created_at']) ->format('d-m-Y H:i:s');

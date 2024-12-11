@@ -51,20 +51,6 @@
                                         @endforeach
                                     </label>
                                 </div>
-                                <!-- <div class="col-sm-5">
-                                    <label class="h6">Nama Pengaju</label>&nbsp;<input type="checkbox" onClick="toggle_pengaju(this)" /> Check All
-                                    <label class="d-block" for="pengaju">
-                                        @foreach ($pengaju as $data)
-                                        <input class="checkbox_animated" id="pengaju[]" name="pengaju[]" type="checkbox" value="{{ $data->nik }}" @if(in_array($data->nik, $arr_pengaju)) checked @endif> {{ $data->nama }}<br/>
-                                        @endforeach
-                                    </label>
-                                    <label class="h6">Nama Atasan Pengaju</label>&nbsp;<input type="checkbox" onClick="toggle_atasan_pengaju(this)" /> Check All
-                                    <label class="d-block" for="atasan_pengaju">
-                                        @foreach ($atasan_pengaju as $data)
-                                        <input class="checkbox_animated" id="atasan_pengaju[]" name="atasan_pengaju[]" type="checkbox" value="{{ $data->nik }}" @if(in_array($data->nik, $arr_atasan_pengaju)) checked @endif> {{ $data->nama }}<br/>
-                                        @endforeach
-                                    </label>
-                                </div> -->
                             </div>
                             <div class="row">
                                 <div class="col-sm-12">
@@ -83,10 +69,10 @@
                                     <th>Action</th>
                                     <th>Pengaju</th>
                                     <th>NIP Pengaju</th>
-                                    <th>Atasan Pengaju</th>
-                                    <th>NIP Atasan Pengaju</th>
+                                    <th>Layer 1 Pengaju</th>
+                                    <th>NIP Layer 1 Pengaju</th>
                                     <th>Peserta</th>
-                                    <th>Atasan Peserta</th>
+                                    <th>Layer 1 Peserta</th>
                                     <th>Pelatihan</th>
                                     <th>Biaya</th>
                                     <th>Status Pengajuan</th>
@@ -126,21 +112,6 @@
                                 </tr>
                                 @endforeach
                             </tbody>
-                            <!-- <tfoot>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Pengaju</th>
-                                    <th>NIP Pengaju</th>
-                                    <th>Atasan Pengaju</th>
-                                    <th>NIP Atasan Pengaju</th>
-                                    <th>Peserta</th>
-                                    <th>Atasan Peserta</th>
-                                    <th>Pelatihan</th>
-                                    <th>Status Pengajuan</th>
-                                    <th>Created at</th>
-                                    <th>Action</th>
-                                </tr>
-                            </tfoot> -->
                         </table>
                     </div>
                 </div>

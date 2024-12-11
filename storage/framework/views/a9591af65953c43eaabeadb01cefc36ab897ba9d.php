@@ -91,10 +91,35 @@
                 <hr />
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="center"><strong>TUGAS, WEWENANG DAN TANGGUNG JAWAB</strong></td>
+                        <td align="center"><strong>FINDIM / COST ALLOCATION</strong></td>
                     </tr>
                 </table>
                 <hr />
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td width="30%">Project</td>
+                        <td width="70%">: <?php echo e($trxM->_findim_project->project_id); ?> - <?php echo e($trxM->_findim_project->project_desc); ?></td>
+                    </tr>
+                    <tr>
+                        <td>Divisi</td>
+                        <td>: <?php echo e($trxM->_findim_divisi->divisi_id); ?> - <?php echo e($trxM->_findim_divisi->divisi_desc); ?></td>
+                    </tr>
+                    <tr>
+                        <td>Departemen</td>
+                        <td>: <?php echo e($trxM->_findim_departemen->departemen_id); ?> - <?php echo e($trxM->_findim_departemen->departemen_desc); ?></td>
+                    </tr>
+                    <tr>
+                        <td>Sub Departemen</td>
+                        <td>: <?php echo e($trxM->_findim_subdepartemen->subdepartemen_id); ?> - <?php echo e($trxM->_findim_subdepartemen->subdepartemen_desc); ?></td>
+                    </tr>
+                </table>
+                <hr />
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td align="center"><strong>TUGAS, WEWENANG DAN TANGGUNG JAWAB</strong></td>
+                    </tr>
+                </table>
+                
                 <table width="100%" border="1" cellspacing="0" cellpadding="2">
                     <tr>
                         <td width="30%">Tugas</td>
@@ -109,7 +134,7 @@
                         <td><?php echo nl2br($trxM->tanggung_jawab); ?></td>
                     </tr>
                 </table>
-                <hr />
+                
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
                         <td align="center"><strong>KUALIFIKASI / SPESIFIKASI JABATAN</strong></td>

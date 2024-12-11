@@ -57,7 +57,7 @@
                                         <input name="nama" id="nama" class="form-control" type="text"
                                             value="{{ $nama }}">
                                         @if (auth()->user()->userrole == 'hc')
-                                            <label class="h6 mt-2" for="atasan">Atasan</label>
+                                            <label class="h6 mt-2" for="atasan">Layer 1</label>
                                             <input name="atasan" id="atasan" class="form-control" type="text"
                                                 value="{{ $atasan }}">
                                         @endif
@@ -126,8 +126,8 @@
                                         <th>Status Perpanjangan</th>
                                         <th>Karyawan</th>
                                         <th>NIP Karyawan</th>
-                                        <th>Atasan</th>
-                                        <th>NIP Atasan</th>
+                                        <th>Layer 1</th>
+                                        <th>NIP Layer 1</th>
                                         <th>Perusahaan</th>
                                         <th>Alasan</th>
                                         <th>Tanggal Berakhir</th>
@@ -218,20 +218,6 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                <!-- <tfoot>
-                                                <tr>
-                                                    <th>No</th>
-                                                    <th>Karyawan</th>
-                                                    <th>NIP Karyawan</th>
-                                                    <th>Atasan</th>
-                                                    <th>NIP Atasan</th>
-                                                    <th>Alasan</th>
-                                                    <th>Tanggal Berakhir</th>
-                                                    <th>Status</th>
-                                                    <th>Created at</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </tfoot> -->
                             </table>
                         </div>
                     </div>

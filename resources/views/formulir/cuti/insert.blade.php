@@ -49,7 +49,7 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    <form action="{{ route('cuti.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form target="_self" id="form" name="form" action="{{ route('cuti.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @csrf
                         <div class="row g-3">
                             <div class="col-md-4">
@@ -85,6 +85,7 @@
                                     <option value="{{ $data->nik }}">{{ $data->nama }} - {{ $data->nik }}</option>
                                     @endforeach
                                 </select>
+                                <div class="invalid-feedback text-danger">Required</div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label" for="telepon">Telepon Pengaju</label>
@@ -107,7 +108,7 @@
                             </div>
                         </div>
                         <br />
-                        <button class="btn btn-success" type="submit">Submit</button> | <a href="{{ URL::previous() }}" class="btn btn-warning" type="button">Back</a>
+                        <button id="submit" name="submit" value="submit" class="btn btn-success" type="submit">Submit</button> | <button class="btn btn-primary" type="submit" id="preview" name="preview" value="preview">Preview</button> | <a href="{{ URL::previous() }}" class="btn btn-warning" type="button">Back</a>
                     </form>
                 </div>
             </div>
@@ -135,6 +136,12 @@ $(document).ready(function() {
             $("#jumlah_hari").prop('disabled', true);
             $('#div_jumlah_hari').hide();
         }
+    });
+    $('form#form #submit').click(function() {
+        $('form#form').attr('target', '_self');
+    });
+    $('form#form #preview').click(function() {
+        $('form#form').attr('target', '_blank');
     });
 });
 </script>

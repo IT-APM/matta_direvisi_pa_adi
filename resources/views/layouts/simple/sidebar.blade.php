@@ -309,6 +309,10 @@
                                 <li><a href="{{ route('divisi.index') }}">Directorate</a></li>
                                 <li><a href="{{ route('departemen.index') }}">Division</a></li>
                                 <li><a href="{{ route('subdepartemen.index') }}">Department</a></li>
+                                <li><a href="{{ route('findim_project.index') }}">FinDim Project</a></li>
+                                <li><a href="{{ route('findim_divisi.index') }}">FinDim Division</a></li>
+                                <li><a href="{{ route('findim_departemen.index') }}">FinDim Department</a></li>
+                                <li><a href="{{ route('findim_subdepartemen.index') }}">FinDim Sub Department</a></li>
                                 <li><a href="{{ route('plafon.index') }}">Health Reimbursement<br />Limits</a></li>
                                 <li><a href="{{ route('jabatan.index') }}">Job Position</a></li>
                                 <li><a href="{{ route('feeds.index') }}">Feeds</a></li>

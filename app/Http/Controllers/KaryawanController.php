@@ -21,6 +21,10 @@ use App\Models\WorkingGroup;
 use App\Models\Level;
 use App\Models\Jabatan;
 use App\Models\User;
+use App\Models\MtrFindimProject;
+use App\Models\MtrFindimDivisi;
+use App\Models\MtrFindimDepartemen;
+use App\Models\MtrFindimSubdepartemen;
 // 
 use App\Models\MtrUtility;
 use App\Mail\MattaRebornMail;
@@ -309,7 +313,7 @@ class KaryawanController extends Controller
      */
     public function show($id)
     {
-        //
+        // dd($id);
         if($id != auth()->user()->nik){
             return redirect()->route('error-404');
         }
@@ -347,7 +351,7 @@ class KaryawanController extends Controller
      */
     public function edit($id)
     {
-        //
+        // dd($id);
         $status = 'edit';
         $karyawan = Karyawan::find( $id );
         $layer = Karyawan::all();
@@ -356,6 +360,10 @@ class KaryawanController extends Controller
         $agama = Agama::all();
         $warga = Warga::all();
         $kawin = Kawin::all();
+        $findim_project = MtrFindimProject::all();
+        $findim_divisi = MtrFindimDivisi::all();
+        $findim_departemen = MtrFindimDepartemen::all();
+        $findim_subdepartemen = MtrFindimSubdepartemen::all();
         // $perusahaan = Perusahaan::all();
         // $divisi = Divisi::where('kode_perusahaan', $karyawan->kode_perusahaan)->get();
         // $dep = Departemen::where('kode_divisi', $karyawan->kode_divisi)->get();
@@ -381,10 +389,11 @@ class KaryawanController extends Controller
         $no_anak = 0;
         $history = KaryawanLog::where($where)->orderBy( 'id', 'desc' )->get();
         $no_history = 0;
-        $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan"];
+        // $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan"];
+        $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama"];
         // $folder = 'matta\karyawan'.$karyawan->nik;
         // return response()->json( [ 'data' => public_path($folder) ], 200 );
-        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'pendidikan', 'no_pendidikan', 'pelatihan', 'no_pelatihan', 'sertifikasi', 'no_sertifikasi', 'anak', 'no_anak', 'history', 'no_history', 'lbl_history' ) );
+        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'pendidikan', 'no_pendidikan', 'pelatihan', 'no_pelatihan', 'sertifikasi', 'no_sertifikasi', 'anak', 'no_anak', 'history', 'no_history', 'lbl_history', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen' ) );
     }
 
     /**
@@ -396,8 +405,7 @@ class KaryawanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-        // return response()->json( [ 'success' => true, 'message' => 'Data successfully viewed', 'data' => $request->all(), 'id' => $id ], 200 );
+        // dd($request->all(), $id);
         $karyawan = Karyawan::find( $id );
         $karyawan->nama = $request->nama;
         $karyawan->tempat_lahir = $request->tempat_lahir;
@@ -442,7 +450,70 @@ class KaryawanController extends Controller
         $karyawan->nama_bank = $request->nama_bank;
         $karyawan->nama_rek = $request->nama_rek;
         $karyawan->updated_by = auth()->user()->nik;
+        $getOriginal = $karyawan->getOriginal();
         $karyawan->update();
+        // simpan jika ada perubahan
+        $getChanges = $karyawan->getChanges();
+        $_arr = ["tanggal_lahir","tempat_lahir","alamat_domisili","alamat_ktp","alamat_npwp","telepon1","telepon2","telepon3","no_ktp","no_npwp","no_bpjs","no_bpjstk","nama_pasangan","nama","telepon_darurat","nama_anak","email","alamat_kantor","layer1","layer2","layer3","is_aktif","gaji_pokok","tanggal_mulai","tanggal_bergabung","tanggal_berakhir","tanggal_karyawan_tetap","no_rek","nama_bank","nama_rek"];
+        $arr = array();
+        foreach ($_arr as $value){
+            if ($karyawan->wasChanged($value)){
+                $arr[$value] = ['before'=>$getOriginal[$value], 'after'=>$getChanges[$value]];
+            }
+        }
+        // ,"kode_kelamin","kode_agama","kode_kawin","kode_warga"
+        if ($karyawan->wasChanged('kode_kelamin')){
+            $arr['kode_kelamin'] = ['before'=>Kelamin::find($getOriginal['kode_kelamin'])->kelamin, 'after'=>Kelamin::find($getChanges['kode_kelamin'])->kelamin];
+        }
+        if ($karyawan->wasChanged('kode_agama')){
+            $arr['kode_agama'] = ['before'=>Agama::find($getOriginal['kode_agama'])->agama, 'after'=>Agama::find($getChanges['kode_agama'])->agama];
+        }
+        if ($karyawan->wasChanged('kode_kawin')){
+            $arr['kode_kawin'] = ['before'=>Kawin::find($getOriginal['kode_kawin'])->status_kawin, 'after'=>Kawin::find($getChanges['kode_kawin'])->status_kawin];
+        }
+        if ($karyawan->wasChanged('kode_warga')){
+            $arr['kode_warga'] = ['before'=>Warga::find($getOriginal['kode_warga'])->kewarganegaraan, 'after'=>Warga::find($getChanges['kode_warga'])->kewarganegaraan];
+        }
+        // kode_perusahaan,kode_divisi,kode_departemen,kode_sub_departemen,kode_status,wg_id,kode_level,kode_jabatan
+        if ($karyawan->wasChanged('kode_perusahaan')){
+            $arr['kode_perusahaan'] = ['before'=>Perusahaan::find($getOriginal['kode_perusahaan'])->nama, 'after'=>Perusahaan::find($getChanges['kode_perusahaan'])->nama];
+        }
+        if ($karyawan->wasChanged('kode_divisi')){
+            $arr['kode_divisi'] = ['before'=>Divisi::find($getOriginal['kode_divisi'])->nama, 'after'=>Divisi::find($getChanges['kode_divisi'])->nama];
+        }
+        if ($karyawan->wasChanged('kode_departemen')){
+            $arr['kode_departemen'] = ['before'=>Departemen::find($getOriginal['kode_departemen'])->nama, 'after'=>Departemen::find($getChanges['kode_departemen'])->nama];
+        }
+        if ($karyawan->wasChanged('kode_sub_departemen')){
+            $arr['kode_sub_departemen'] = ['before'=>SubDepartemen::find($getOriginal['kode_sub_departemen'])->nama, 'after'=>SubDepartemen::find($getChanges['kode_sub_departemen'])->nama];
+        }
+        if ($karyawan->wasChanged('kode_status')){
+            $arr['kode_status'] = ['before'=>KaryawanStatus::find($getOriginal['kode_status'])->status_karyawan, 'after'=>KaryawanStatus::find($getChanges['kode_status'])->status_karyawan];
+        }
+        if ($karyawan->wasChanged('wg_id')){
+            $arr['wg_id'] = ['before'=>WorkingGroup::find($getOriginal['wg_id'])->wg_name, 'after'=>WorkingGroup::find($getChanges['wg_id'])->wg_name];
+        }
+        if ($karyawan->wasChanged('kode_level')){
+            $arr['kode_level'] = ['before'=>Level::find($getOriginal['kode_level'])->level, 'after'=>Level::find($getChanges['kode_level'])->level];
+        }
+        if ($karyawan->wasChanged('kode_jabatan')){
+            $arr['kode_jabatan'] = ['before'=>Jabatan::find($getOriginal['kode_jabatan'])->jabatan, 'after'=>Jabatan::find($getChanges['kode_jabatan'])->jabatan];
+        }
+        if(!empty($getChanges)){
+            $log = New KaryawanLog;
+            $log->nik = $karyawan->nik;
+            $log->perubahan = json_encode($arr);
+            $log->insert_by = auth()->user()->nik;
+            $log->save();
+            // start sendEmail
+            $mailData['title'] = 'Perubahan Data Karyawan';
+            $mailData['filename'] = 'emails.data0';
+            $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama"];
+            $mailData['data'] = ['insert_by' => $log->_insert_by->nama.' / '.$log->insert_by, 'nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at];
+            $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
+            $this->sendEmail($mailData);
+            // end sendEmail
+        }
         return redirect( 'karyawan' )->with( 'msg', 'Data is saved successfully.' );
     }
     
@@ -520,12 +591,14 @@ class KaryawanController extends Controller
             $log = New KaryawanLog;
             $log->nik = auth()->user()->nik;
             $log->perubahan = json_encode($arr);
+            $log->insert_by = auth()->user()->nik;
             $log->save();
             // start sendEmail
             $mailData['title'] = 'Perubahan Data Karyawan';
             $mailData['filename'] = 'emails.data0';
             $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan"];
-            $mailData['data'] = ['nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at];
+            // $mailData['data'] = ['nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at];
+            $mailData['data'] = ['insert_by' => $log->_insert_by->nama.' / '.$log->insert_by, 'nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // end sendEmail

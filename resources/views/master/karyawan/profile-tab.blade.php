@@ -59,6 +59,8 @@
                                     href="#pills-emp_salary" role="tab" aria-controls="pills-emp_salary" aria-selected="false">Gaji Pokok</a></li>
                             <li class="nav-item"><a class="nav-link" id="pills-emp_level-tab" data-bs-toggle="pill"
                                     href="#pills-emp_level" role="tab" aria-controls="pills-emp_level" aria-selected="false">Level/Jabatan/Tanggal</a></li>
+                            <li class="nav-item"><a class="nav-link" id="pills-emp_findim-tab" data-bs-toggle="pill"
+                                    href="#pills-emp_findim" role="tab" aria-controls="pills-emp_findim" aria-selected="false">FinDim/Cost Allocation</a></li>
                             @if ($status == 'edit')
                             <li class="nav-item"><a class="nav-link" id="pills-emp_history-tab" data-bs-toggle="pill"
                                     href="#pills-emp_history" role="tab" aria-controls="pills-emp_history" aria-selected="false">Perubahan Data</a></li>
@@ -202,7 +204,7 @@
                             </div>
                             <!--  -->
                             <div class="tab-pane fade" id="pills-emp_organization" role="tabpanel" aria-labelledby="pills-emp_organization-tab">
-                                <p class="mb-0 m-t-30">
+                                <p class="mb-0 mt-2">
                                     <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="email">Email</label>
@@ -326,7 +328,7 @@
                                 </p>
                             </div>
                             <div class="tab-pane fade" id="pills-emp_salary" role="tabpanel" aria-labelledby="pills-emp_salary-tab">
-                                <p class="mb-0 m-t-30">
+                                <p class="mb-0 mt-2">
                                     <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="kode_level">Gaji Pokok</label>
@@ -336,7 +338,7 @@
                                 </p>
                             </div>
                             <div class="tab-pane fade" id="pills-emp_level" role="tabpanel" aria-labelledby="pills-emp_level-tab">
-                                <p class="mb-0 m-t-30">
+                                <p class="mb-0 mt-2">
                                     <div class="row mt-2">
                                         <div class="col-md-4">
                                             <label class="form-label" for="kode_level">Level</label>
@@ -378,9 +380,67 @@
                                     </div>
                                 </p>
                             </div>
+                            {{--  --}}
+                            <div class="tab-pane fade" id="pills-emp_findim" role="tabpanel" aria-labelledby="pills-emp_findim-tab">
+                                <p class="mb-0 mt-2">
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="findim_project">Project</label>
+                                            <select class="form-select js-example-basic-single col-sm-12" id="findim_project" name="findim_project" required="">
+                                                <option selected="" disabled="" value="">Pilih...</option>
+                                                @if ($status=='edit' ) 
+                                                @foreach ($findim_project as $data)
+                                                <option value="{{ $data->id }}" @if($data->id == $karyawan->findim_project) selected @endif >{{ $data->project_id }} - {{ $data->project_desc }}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                            <div class="invalid-feedback txt-danger">Project is required.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="findim_divisi">Divisi</label>
+                                            <select class="form-select js-example-basic-single col-sm-12" id="findim_divisi" name="findim_divisi" required="">
+                                                <option selected="" disabled="" value="">Pilih...</option>
+                                                @if ($status=='edit' ) 
+                                                @foreach ($findim_divisi as $data)
+                                                <option value="{{ $data->id }}" @if($data->id == $karyawan->findim_divisi) selected @endif >{{ $data->divisi_id }} - {{ $data->divisi_desc }}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                            <div class="invalid-feedback txt-danger">Divisi is required.</div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="findim_departemen">Departemen</label>
+                                            <select class="form-select js-example-basic-single col-sm-12" id="findim_departemen" name="findim_departemen" required="">
+                                                <option selected="" disabled="" value="">Pilih...</option>
+                                                @if ($status=='edit' ) 
+                                                @foreach ($findim_departemen as $data)
+                                                <option value="{{ $data->id }}" @if($data->id == $karyawan->findim_departemen) selected @endif >{{ $data->departemen_id }} - {{ $data->departemen_desc }}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                            <div class="invalid-feedback txt-danger">Departemen is required.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="findim_subdepartemen">Sub Departemen</label>
+                                            <select class="form-select js-example-basic-single col-sm-12" id="findim_subdepartemen" name="findim_subdepartemen" required="">
+                                                <option selected="" disabled="" value="">Pilih...</option>
+                                                @if ($status=='edit' ) 
+                                                @foreach ($findim_subdepartemen as $data)
+                                                <option value="{{ $data->id }}" @if($data->id == $karyawan->findim_subdepartemen) selected @endif >{{ $data->subdepartemen_id }} - {{ $data->subdepartemen_desc }}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                            <div class="invalid-feedback txt-danger">Sub Departemen is required.</div>
+                                        </div>
+                                    </div>
+                                </p>
+                            </div>
+                            {{--  --}}
                             @if ($status == 'edit')
                             <div class="tab-pane fade" id="pills-emp_history" role="tabpanel" aria-labelledby="pills-emp_history-tab">
-                                <p class="mb-0 m-t-30">
+                                <p class="mb-0 mt-2">
                                     <!-- <div class="row mt-2"> -->
                                     <div class="table-responsive">
                                         <table class="display" id="emp-history">
@@ -388,6 +448,7 @@
                                                 <tr>
                                                     <th>No</th>
                                                     <th>Karyawan</th>
+                                                    <th>Diubah Oleh</th>
                                                     <th>Perubahan Data</th>
                                                     <th>Waktu Perubahan</th>
                                                 </tr>
@@ -398,6 +459,7 @@
                                                 <tr>
                                                     <td>{{ ++$no_history }}</td>
                                                     <td>{{ $data->_nik->nama }} / {{ $data->nik }}</td>
+                                                    <td>{{ $data->_insert_by->nama }} / {{ $data->insert_by }}</td>
                                                     <!-- <td>{{ $data->perubahan }}</td> -->
                                                     <td>
                                                         <table class="table table-striped">
@@ -456,7 +518,7 @@
                         </ul>
                         <div class="tab-content" id="pills-warningtabContent">
                             <div class="tab-pane fade show active" id="pills-emp_photo" role="tabpanel" aria-labelledby="pills-emp_photo-tab">
-                                <p class="mb-0 m-t-30">
+                                <p class="mb-0 mt-2">
                                 @if (file_exists(public_path().'/assets/images/matta/karyawan/'.$karyawan->nik.'/'.$karyawan->nik.'.jpg'))
                                     <a href="{{ asset('assets/images/matta/karyawan/'.$karyawan->nik.'/'.$karyawan->nik.'.jpg') }}" target="_blank">
                                         <img class="rounded" width="300" alt="" src="{{ asset('assets/images/matta/karyawan/'.$karyawan->nik.'/'.$karyawan->nik.'.jpg') }}">
@@ -481,7 +543,7 @@
                                 </form>
                             </div>
                             <div class="tab-pane fade" id="pills-emp_anak" role="tabpanel" aria-labelledby="pills-emp_anak-tab">
-                                <p class="mb-0 m-t-30">
+                                <p class="mb-0 mt-2">
                                     <a href="{{ route('karyawananak.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-anak">
@@ -510,7 +572,7 @@
                                 </p>
                             </div>
                             <div class="tab-pane fade" id="pills-emp_edu" role="tabpanel" aria-labelledby="pills-emp_edu-tab">
-                                <p class="mb-0 m-t-30">
+                                <p class="mb-0 mt-2">
                                     <a href="{{ route('karyawanpendidikan.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-pendidikan">
@@ -541,7 +603,7 @@
                                 </p>
                             </div>
                             <div class="tab-pane fade" id="pills-emp_lat" role="tabpanel" aria-labelledby="pills-emp_lat-tab">
-                            <p class="mb-0 m-t-30">
+                            <p class="mb-0 mt-2">
                                     <a href="{{ route('karyawanpelatihan.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-pelatihan">
@@ -570,7 +632,7 @@
                                 </p>
                             </div>
                             <div class="tab-pane fade" id="pills-emp_ser" role="tabpanel" aria-labelledby="pills-emp_ser-tab">
-                            <p class="mb-0 m-t-30">
+                            <p class="mb-0 mt-2">
                                     <a href="{{ route('karyawansertifikasi.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-sertifikasi">

@@ -47,7 +47,7 @@
                                     <label class="h6" for="nama">Karyawan</label>
                                     <input name="nama" id="nama" class="form-control" type="text" value="{{ $nama }}">
                                     @if(auth()->user()->userrole == 'hc')
-                                    <label class="h6 mt-2" for="atasan">Atasan</label>
+                                    <label class="h6 mt-2" for="atasan">Layer 1</label>
                                     <input name="atasan" id="atasan" class="form-control" type="text" value="{{ $atasan }}">
                                     @endif
                                     {{-- <br/> --}}
@@ -92,7 +92,7 @@
                                     <th>Karyawan</th>
                                     <th>NIP</th>
                                     <th>PIC Pengganti</th>
-                                    <th>Atasan</th>
+                                    <th>Layer 1</th>
                                     <th>Tanggal Cuti</th>
                                     <th>Status</th>
                                     <th>Sisa Cuti</th>

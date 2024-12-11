@@ -309,6 +309,10 @@
                                 <li><a href="<?php echo e(route('divisi.index')); ?>">Directorate</a></li>
                                 <li><a href="<?php echo e(route('departemen.index')); ?>">Division</a></li>
                                 <li><a href="<?php echo e(route('subdepartemen.index')); ?>">Department</a></li>
+                                <li><a href="<?php echo e(route('findim_project.index')); ?>">FinDim Project</a></li>
+                                <li><a href="<?php echo e(route('findim_divisi.index')); ?>">FinDim Division</a></li>
+                                <li><a href="<?php echo e(route('findim_departemen.index')); ?>">FinDim Department</a></li>
+                                <li><a href="<?php echo e(route('findim_subdepartemen.index')); ?>">FinDim Sub Department</a></li>
                                 <li><a href="<?php echo e(route('plafon.index')); ?>">Health Reimbursement<br />Limits</a></li>
                                 <li><a href="<?php echo e(route('jabatan.index')); ?>">Job Position</a></li>
                                 <li><a href="<?php echo e(route('feeds.index')); ?>">Feeds</a></li>

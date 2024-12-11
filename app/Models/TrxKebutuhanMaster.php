@@ -10,6 +10,22 @@ class TrxKebutuhanMaster extends Model
     use HasFactory;
     protected $table = 'trx_tbl_kebutuhan_master';
 
+    public function _findim_project(){
+        return $this->belongsTo('App\Models\MtrFindimProject', 'findim_project', 'id');
+    }
+
+    public function _findim_divisi(){
+        return $this->belongsTo('App\Models\MtrFindimDivisi', 'findim_divisi', 'id');
+    }
+
+    public function _findim_departemen(){
+        return $this->belongsTo('App\Models\MtrFindimDepartemen', 'findim_departemen', 'id');
+    }
+
+    public function _findim_subdepartemen(){
+        return $this->belongsTo('App\Models\MtrFindimSubdepartemen', 'findim_subdepartemen', 'id');
+    }
+
     public function _pengaju(){
         return $this->belongsTo('App\Models\Karyawan', 'pengaju', 'nik');
     }

@@ -70,9 +70,9 @@
                                         <th>NIP</th>
                                         <th>Nama</th>
                                         <th>Email</th>
-                                        <th>NIP Atasan</th>
-                                        <th>Nama Atasan</th>
-                                        <th>Email Atasan</th>
+                                        <th>NIP Layer 1</th>
+                                        <th>Nama Layer 1</th>
+                                        <th>Email Layer 1</th>
                                         <th>Perusahaan</th>
                                         <th>Direktorat</th>
                                         <th>Divisi</th>

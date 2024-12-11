@@ -91,10 +91,35 @@
                 <hr />
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="center"><strong>TUGAS, WEWENANG DAN TANGGUNG JAWAB</strong></td>
+                        <td align="center"><strong>FINDIM / COST ALLOCATION</strong></td>
                     </tr>
                 </table>
                 <hr />
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td width="30%">Project</td>
+                        <td width="70%">: {{ $trxM->_findim_project->project_id }} - {{ $trxM->_findim_project->project_desc }}</td>
+                    </tr>
+                    <tr>
+                        <td>Divisi</td>
+                        <td>: {{ $trxM->_findim_divisi->divisi_id }} - {{ $trxM->_findim_divisi->divisi_desc }}</td>
+                    </tr>
+                    <tr>
+                        <td>Departemen</td>
+                        <td>: {{ $trxM->_findim_departemen->departemen_id }} - {{ $trxM->_findim_departemen->departemen_desc }}</td>
+                    </tr>
+                    <tr>
+                        <td>Sub Departemen</td>
+                        <td>: {{ $trxM->_findim_subdepartemen->subdepartemen_id }} - {{ $trxM->_findim_subdepartemen->subdepartemen_desc }}</td>
+                    </tr>
+                </table>
+                <hr />
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td align="center"><strong>TUGAS, WEWENANG DAN TANGGUNG JAWAB</strong></td>
+                    </tr>
+                </table>
+                {{-- <hr /> --}}
                 <table width="100%" border="1" cellspacing="0" cellpadding="2">
                     <tr>
                         <td width="30%">Tugas</td>
@@ -109,7 +134,7 @@
                         <td>{!! nl2br($trxM->tanggung_jawab) !!}</td>
                     </tr>
                 </table>
-                <hr />
+                {{-- <hr /> --}}
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
                         <td align="center"><strong>KUALIFIKASI / SPESIFIKASI JABATAN</strong></td>

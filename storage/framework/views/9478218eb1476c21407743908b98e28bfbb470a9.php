@@ -66,52 +66,52 @@
                             <h5>Para Pihak</h5>
                         </div>
                         <div class="card-body">
-                                            <div class="appointment-table table-responsive">
-                                                <table class="table table-bordernone">
-                                                    <tbody>
-                                                        <!-- pengaju -->
-                                                        <tr>
-                                                            <td><a href="<?php echo e(asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg')); ?>"
-                                                                    target="_blank"><img class="img-thumbnail"
-                                                                        src="<?php echo e(asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg')); ?>"
-                                                                        alt="user"></a></td>
-                                                            <td class="img-content-box">
-                                                                <h6 class="m-10">Pengaju</h6><span
-                                                                    class="f-light m-10"><?php echo e($pengaju['nama']); ?> / <?php echo e($pengaju['nik']); ?><br /><?php echo e($pengaju['jabatan']); ?>
+                            <div class="appointment-table table-responsive">
+                                <table class="table table-bordernone">
+                                    <tbody>
+                                        <!-- pengaju -->
+                                        <tr>
+                                            <td><a href="<?php echo e(asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg')); ?>"
+                                                    target="_blank"><img class="img-thumbnail"
+                                                        src="<?php echo e(asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg')); ?>"
+                                                        alt="user"></a></td>
+                                            <td class="img-content-box">
+                                                <h6 class="m-10">Pengaju</h6><span
+                                                    class="f-light m-10"><?php echo e($pengaju['nama']); ?> / <?php echo e($pengaju['nik']); ?><br /><?php echo e($pengaju['jabatan']); ?>
 
-                                                                    <br /><?php echo e($pengaju['divisi']); ?> / <?php echo e($pengaju['dep']); ?> / <?php echo e($pengaju['sub_dep']); ?></span>
-                                                            </td>
-                                                        </tr>
-                                                        <!-- layer1 -->
-                                                        <tr>
-                                                            <td><a href="<?php echo e(asset('assets/images/matta/karyawan/'.$layer1['nik'].'/'.$layer1['nik'].'.jpg')); ?>"
-                                                                    target="_blank"><img class="img-thumbnail"
-                                                                        src="<?php echo e(asset('assets/images/matta/karyawan/'.$layer1['nik'].'/'.$layer1['nik'].'.jpg')); ?>"
-                                                                        alt="user"></a></td>
-                                                            <td class="img-content-box">
-                                                                <h6 class="m-10">Layer 1</h6><span
-                                                                    class="f-light m-10"><?php echo e($layer1['nama']); ?> / <?php echo e($layer1['nik']); ?><br /><?php echo e($layer1['jabatan']); ?>
+                                                    <br /><?php echo e($pengaju['divisi']); ?> / <?php echo e($pengaju['dep']); ?> / <?php echo e($pengaju['sub_dep']); ?></span>
+                                            </td>
+                                        </tr>
+                                        <!-- layer1 -->
+                                        <tr>
+                                            <td><a href="<?php echo e(asset('assets/images/matta/karyawan/'.$layer1['nik'].'/'.$layer1['nik'].'.jpg')); ?>"
+                                                    target="_blank"><img class="img-thumbnail"
+                                                        src="<?php echo e(asset('assets/images/matta/karyawan/'.$layer1['nik'].'/'.$layer1['nik'].'.jpg')); ?>"
+                                                        alt="user"></a></td>
+                                            <td class="img-content-box">
+                                                <h6 class="m-10">Layer 1</h6><span
+                                                    class="f-light m-10"><?php echo e($layer1['nama']); ?> / <?php echo e($layer1['nik']); ?><br /><?php echo e($layer1['jabatan']); ?>
 
-                                                                    <br /><?php echo e($layer1['divisi']); ?> / <?php echo e($layer1['dep']); ?> / <?php echo e($layer1['sub_dep']); ?></span>
-                                                            </td>
-                                                        </tr>
-                                                        <!-- layer2 -->
-                                                        <tr>
-                                                            <td><a href="<?php echo e(asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg')); ?>"
-                                                                    target="_blank"><img class="img-thumbnail"
-                                                                        src="<?php echo e(asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg')); ?>"
-                                                                        alt="user"></a></td>
-                                                            <td class="img-content-box">
-                                                                <h6 class="m-10">Layer 2</h6><span
-                                                                    class="f-light m-10"><?php echo e($layer2['nama']); ?> / <?php echo e($layer2['nik']); ?><br /><?php echo e($layer2['jabatan']); ?>
+                                                    <br /><?php echo e($layer1['divisi']); ?> / <?php echo e($layer1['dep']); ?> / <?php echo e($layer1['sub_dep']); ?></span>
+                                            </td>
+                                        </tr>
+                                        <!-- layer2 -->
+                                        <tr>
+                                            <td><a href="<?php echo e(asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg')); ?>"
+                                                    target="_blank"><img class="img-thumbnail"
+                                                        src="<?php echo e(asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg')); ?>"
+                                                        alt="user"></a></td>
+                                            <td class="img-content-box">
+                                                <h6 class="m-10">Layer 2</h6><span
+                                                    class="f-light m-10"><?php echo e($layer2['nama']); ?> / <?php echo e($layer2['nik']); ?><br /><?php echo e($layer2['jabatan']); ?>
 
-                                                                    <br /><?php echo e($layer2['divisi']); ?> / <?php echo e($layer2['dep']); ?> / <?php echo e($layer2['sub_dep']); ?></span>
-                                                            </td>
-                                                        </tr>
-                                                        <!--  -->
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                    <br /><?php echo e($layer2['divisi']); ?> / <?php echo e($layer2['dep']); ?> / <?php echo e($layer2['sub_dep']); ?></span>
+                                            </td>
+                                        </tr>
+                                        <!--  -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -122,28 +122,24 @@
                             <h5>History</h5>
                         </div>
                         <div class="card-body">
-                                            <ul>
-                                                <?php $__currentLoopData = $history; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_history): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <li class="d-flex">
-                                                    <?php if($loop->first): ?>
-                                                    <div class="activity-dot-success"></div>
-                                                    <?php elseif($loop->last): ?>
-                                                    <div class="activity-dot-warning"></div>
-                                                    <?php else: ?>
-                                                    <div class="activity-dot-primary"></div>
-                                                    <?php endif; ?>
-                                                    <div class="ms-3">
-                                                        <p class="d-flex justify-content-between mb-2"><span
-                                                                class="date-content light-background"><?php echo e($_history->created_at); ?></span>
-                                                        </p>
-                                                        <h6><?php echo e($_history->_status->status_pengajuan); ?><span
-                                                                class="dot-notification"></span></h6>
-                                                        <p class="f-light">Oleh <?php echo e($_history->_pic->nama); ?> /
-                                                            <?php echo e($_history->nik_pic); ?></p>
-                                                    </div>
-                                                </li>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </ul>
+                            <ul>
+                                <?php $__currentLoopData = $history; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_history): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <li class="d-flex">
+                                    <?php if($loop->first): ?>
+                                    <div class="activity-dot-success"></div>
+                                    <?php elseif($loop->last): ?>
+                                    <div class="activity-dot-warning"></div>
+                                    <?php else: ?>
+                                    <div class="activity-dot-primary"></div>
+                                    <?php endif; ?>
+                                    <div class="ms-3">
+                                        <p class="d-flex justify-content-between mb-2"><span class="date-content light-background"><?php echo e($_history->created_at); ?></span></p>
+                                        <h6><?php echo e($_history->_status->status_pengajuan); ?><span class="dot-notification"></span></h6>
+                                        <p class="f-light">Oleh <?php echo e($_history->_pic->nama); ?> / <?php echo e($_history->nik_pic); ?></p>
+                                    </div>
+                                </li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -220,6 +216,32 @@
                                     <tr>
                                         <td>Alasan Permintaan</td>
                                         <td><?php echo $trxM->penjelasan; ?></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="card-header">
+                            <h5>FinDim / Cost Allocation</h5>
+                        </div>
+                        <div class="card-body typography">
+                            <table class="table table-striped">
+                                <tbody>
+                                    <tr>
+                                        <td width="40%">Project</td>
+                                        <td width="60%"><?php echo e($trxM->_findim_project->project_id); ?> - <?php echo e($trxM->_findim_project->project_desc); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Divisi</td>
+                                        <td><?php echo e($trxM->_findim_divisi->divisi_id); ?> - <?php echo e($trxM->_findim_divisi->divisi_desc); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Departemen</td>
+                                        <td><?php echo e($trxM->_findim_departemen->departemen_id); ?> - <?php echo e($trxM->_findim_departemen->departemen_desc); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sub Departemen</td>
+                                        <td><?php echo e($trxM->_findim_subdepartemen->subdepartemen_id); ?> - <?php echo e($trxM->_findim_subdepartemen->subdepartemen_desc); ?></td>
                                     </tr>
                                 </tbody>
                             </table>

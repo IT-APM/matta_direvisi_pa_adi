@@ -256,6 +256,56 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <div class="col-md-12">
+                            <div class="card-header">
+                                <h5>FinDim / Cost Allocation</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="findim_project">Project</label>
+                                        <select class="form-select js-example-basic-single col-sm-12" id="findim_project" name="findim_project" required="">
+                                            <option selected="" value="">Pilih...</option>
+                                            <?php $__currentLoopData = $findim_project; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($data->id); ?>"><?php echo e($data->project_id); ?> - <?php echo e($data->project_desc); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                        <div class="invalid-feedback txt-danger">Project is required.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="findim_divisi">Divisi</label>
+                                        <select class="form-select js-example-basic-single col-sm-12" id="findim_divisi" name="findim_divisi" required="">
+                                            <option selected="" value="">Pilih...</option>
+                                            <?php $__currentLoopData = $findim_divisi; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($data->id); ?>"><?php echo e($data->divisi_id); ?> - <?php echo e($data->divisi_desc); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                        <div class="invalid-feedback txt-danger">Divisi is required.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="findim_departemen">Departemen</label>
+                                        <select class="form-select js-example-basic-single col-sm-12" id="findim_departemen" name="findim_departemen" required="">
+                                            <option selected="" value="">Pilih...</option>
+                                            <?php $__currentLoopData = $findim_departemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($data->id); ?>"><?php echo e($data->departemen_id); ?> - <?php echo e($data->departemen_desc); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                        <div class="invalid-feedback txt-danger">Departemen is required.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="findim_subdepartemen">Sub Departemen</label>
+                                        <select class="form-select js-example-basic-single col-sm-12" id="findim_subdepartemen" name="findim_subdepartemen" required="">
+                                            <option selected="" value="">Pilih...</option>
+                                            <?php $__currentLoopData = $findim_subdepartemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($data->id); ?>"><?php echo e($data->subdepartemen_id); ?> - <?php echo e($data->subdepartemen_desc); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                        <div class="invalid-feedback txt-danger">Sub Departemen is required.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- finish -->
                         <div class="col-md-12">
                             <div class="card-header">
@@ -280,6 +330,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
                     <hr/>
                     <div class="card-body">

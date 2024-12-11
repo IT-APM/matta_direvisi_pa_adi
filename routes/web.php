@@ -111,6 +111,16 @@ use App\Http\Controllers\OpenDataController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocalizationController;
 // 
+use App\Http\Controllers\TrxFindimProjectController;
+use App\Http\Controllers\TrxFindimDivisiController;
+use App\Http\Controllers\TrxFindimDepartemenController;
+use App\Http\Controllers\TrxFindimSubdepartemenController;
+// 
+Route::resource('findim_project', TrxFindimProjectController::class)->middleware('can:hc');
+Route::resource('findim_divisi', TrxFindimDivisiController::class)->middleware('can:hc');
+Route::resource('findim_departemen', TrxFindimDepartemenController::class)->middleware('can:hc');
+Route::resource('findim_subdepartemen', TrxFindimSubdepartemenController::class)->middleware('can:hc');
+// 
 Route::get('getKaryawanPerusahaan/{id}', [OpenDataController::class, 'getKaryawanPerusahaan'])->name('getKaryawanPerusahaan');
 Route::get('getDivisi/{id}', [OpenDataController::class, 'getDivisi'])->name('getDivisi');
 Route::get('getDepartemen/{id}', [OpenDataController::class, 'getDepartemen'])->name('getDepartemen');

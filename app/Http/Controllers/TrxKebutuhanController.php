@@ -9,6 +9,11 @@ use App\Models\Karyawan;
 use App\Models\Jabatan;
 use App\Models\Level;
 // 
+use App\Models\MtrFindimProject;
+use App\Models\MtrFindimDivisi;
+use App\Models\MtrFindimDepartemen;
+use App\Models\MtrFindimSubdepartemen;
+// 
 use App\Models\Kelamin;
 use App\Models\Propinsi;
 use App\Models\PropinsiKota;
@@ -139,7 +144,11 @@ class TrxKebutuhanController extends Controller
         $kepribadian = KepribadianSub::orderBy('sub_kepribadian', 'asc')->get();
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
-        return view('formulir.kebutuhan.insert', compact('karyawan', 'pekerjaan', 'level', 'status_kerja', 'kelamin', 'area', 'kota', 'jenis_permintaan', 'jenjang_pendidikan', 'jurusan_pendidikan', 'pengalaman_kerja', 'pelatihan', 'sertifikasi', 'keterampilan', 'kepribadian'));
+        $findim_project = MtrFindimProject::all();
+        $findim_divisi = MtrFindimDivisi::all();
+        $findim_departemen = MtrFindimDepartemen::all();
+        $findim_subdepartemen = MtrFindimSubdepartemen::all();
+        return view('formulir.kebutuhan.insert', compact('karyawan', 'pekerjaan', 'level', 'status_kerja', 'kelamin', 'area', 'kota', 'jenis_permintaan', 'jenjang_pendidikan', 'jurusan_pendidikan', 'pengalaman_kerja', 'pelatihan', 'sertifikasi', 'keterampilan', 'kepribadian', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen'));
     }
 
     /**
@@ -224,6 +233,10 @@ class TrxKebutuhanController extends Controller
         $trxM->id_penambahan = $request->id_penambahan;
         $status_pengajuan = 1;
         $trxM->status_pengajuan = $status_pengajuan;
+        $trxM->findim_project = $request->findim_project;
+        $trxM->findim_divisi = $request->findim_divisi;
+        $trxM->findim_departemen = $request->findim_departemen;
+        $trxM->findim_subdepartemen = $request->findim_subdepartemen;
         $trxM->save();
         $this->insertLog($trxM->id, $status_pengajuan, $pengaju);
         // 

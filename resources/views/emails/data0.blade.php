@@ -10,7 +10,7 @@
     <tr>
         <td>
             <h4>Semangat Pagi</h4>
-            <h4>Terdapat Perubahan Data Karyawan</h4>
+            <h4>Terdapat Perubahan Data Karyawan oleh {{ $data['insert_by'] }}</h4>
             <table class="table" style="width:100%" border="1" cellspacing="0" cellpadding="2">
                 <thead>
                     <tr>

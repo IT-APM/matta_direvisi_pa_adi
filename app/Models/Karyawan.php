@@ -74,6 +74,22 @@ class Karyawan extends Model
         return $this->belongsTo('App\Models\Kawin', 'kode_kawin', 'id');
     }
 
+    public function _findim_project(){
+        return $this->belongsTo('App\Models\MtrFindimProject', 'findim_project', 'id');
+    }
+
+    public function _findim_divisi(){
+        return $this->belongsTo('App\Models\MtrFindimDivisi', 'findim_divisi', 'id');
+    }
+
+    public function _findim_departemen(){
+        return $this->belongsTo('App\Models\MtrFindimDepartemen', 'findim_departemen', 'id');
+    }
+
+    public function _findim_subdepartemen(){
+        return $this->belongsTo('App\Models\MtrFindimSubdepartemen', 'findim_subdepartemen', 'id');
+    }
+
     public function getCreatedAtAttribute()
     {
         return \Carbon\Carbon::parse($this->attributes['created_at']) ->format('d-m-Y H:i:s');

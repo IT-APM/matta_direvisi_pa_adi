@@ -65,8 +65,8 @@
                                         <th>Divisi</th>
                                         <th>Departemen</th>
                                         <th>Email Karyawan</th>
-                                        <th>Nama Atasan</th>
-                                        <th>Email Atasan</th>
+                                        <th>Nama Layer 1</th>
+                                        <th>Email Layer 1</th>
                                         <th>Jumlah Hari Kerja</th>
                                         <th>Jumlah Kehadiran</th>
                                         <th>Persentase Kehadiran</th>
