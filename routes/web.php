@@ -266,6 +266,7 @@ Route::resource('sakit', TrxSakitController::class);
 Route::resource('reimburse', TrxReimburseController::class);
 // Route::resource('reimbursedetail', TrxReimburseDetailController::class)->middleware('auth');
 Route::resource('plafon', ReimbursePlafonController::class)->middleware('can:hc');
+Route::post('plafon/upload_data', [ ReimbursePlafonController::class, 'upload_data'])->name('plafon.upload_data')->middleware('can:hc');
 Route::get('reimburse/editDetail/{id}', [TrxReimburseController::class, 'editDetail'])->name('reimburse.editDetail')->middleware('auth');
 Route::post('reimburse/updateDetail/{id}', [TrxReimburseController::class, 'updateDetail'])->name('reimburse.updateDetail')->middleware('auth');
 // 

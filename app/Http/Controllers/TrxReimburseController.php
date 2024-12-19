@@ -124,6 +124,9 @@ class TrxReimburseController extends Controller
      */
     public function create()
     {
+        if(Carbon::now()->toDateString() >= '2024-12-17' && \Carbon\Carbon::now()->toDateString() <= '2025-01-02'){
+            return redirect('reimburse')->with('msg', 'Tidak Tersedia');
+        }
         // karyawan masih di hardcode
         // Abi Suhendra Adi Guna
         // $nik_karyawan = '01031801682';
@@ -571,6 +574,8 @@ class TrxReimburseController extends Controller
         //
         // $periode = Carbon::now()->format('Y');
         $linkAction = route('reimburse.update', $id);
+        $where = ['id_trx' => $id];
+        $history = TrxReimburseLog::where($where)->orderBy('created_at', 'desc')->get();
         // 
         $where = ['id_trx' => $id];
         $nReview = TrxReimburseLog::where($where)->whereIn('id_status', [2, 3])->count();
@@ -600,7 +605,7 @@ class TrxReimburseController extends Controller
         switch ($view) {
             case 'approval':
                 if ($nReview == 0) {
-                    return view('emails.reimburse', compact('trxM', 'trxD', 'data', 'lampiran', 'linkAction'));
+                    return view('emails.reimburse', compact('trxM', 'trxD', 'data', 'lampiran', 'linkAction', 'history'));
                 } else {
                     return view('emails.reimburse_ok');
                 }

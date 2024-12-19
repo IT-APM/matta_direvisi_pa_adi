@@ -92,6 +92,32 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="card-header">
+                        <h5>History</h5>
+                    </div>
+                    <div class="card-body typography notification">
+                        <ul>
+                            <?php $__currentLoopData = $history; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_history): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li class="d-flex">
+                                <?php if($loop->first): ?>
+                                <div class="activity-dot-success"></div>
+                                <?php elseif($loop->last): ?>
+                                <div class="activity-dot-warning"></div>
+                                <?php else: ?>
+                                <div class="activity-dot-primary"></div>
+                                <?php endif; ?>
+                                <div class="ms-3">
+                                    <p class="d-flex justify-content-between mb-2"><span
+                                            class="date-content light-background"><?php echo e($_history->created_at); ?></span>
+                                    </p>
+                                    <h6><?php echo e($_history->_status->status); ?><span class="dot-notification"></span></h6>
+                                    <p class="f-light">Oleh <?php echo e($_history->_pic->nama); ?> /
+                                        <?php echo e($_history->nik_pic); ?></p>
+                                </div>
+                            </li>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <!--  -->

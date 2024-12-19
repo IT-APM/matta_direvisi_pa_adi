@@ -6,9 +6,40 @@ use Illuminate\Http\Request;
 use App\Models\ReimbursePlafon;
 use App\Models\TrxReimburseMaster;
 use App\Models\Karyawan;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReimbursePlafonController extends Controller
 {
+
+    public function upload_data(Request $request)
+    {
+        // dd($request->all());
+        if($request->hasFile('template')){
+            $request->validate([
+                'template'=>'required|file|mimes:xls,xlsx|max:2048',
+            ]);
+            $path = $request->file('template')->getPathname();
+            $trx = Excel::toArray([], $path);
+            $data = $trx[0];
+            // dimulai dari baris ke-2
+            for ($x = 1; $x < count($data); $x++) {
+                // dimulai dari kolom ke-2
+                $where = ['nik_karyawan'=>$data[$x][1], 'periode'=>$data[$x][2]];
+                ReimbursePlafon::where($where)->delete();
+                $trx = New ReimbursePlafon;
+                $trx->nik_karyawan = $data[$x][1];
+                $trx->periode = $data[$x][2];
+                $trx->kesehatan = $data[$x][3];
+                $trx->lensa = $data[$x][4];
+                $trx->frame = $data[$x][5];
+                $trx->kehamilan = $data[$x][6];
+                $trx->persalinan_normal = $data[$x][7];
+                $trx->persalinan_caesar = $data[$x][8];
+                $trx->save();
+            }
+            return redirect('plafon')->with('msg', 'Data is saved successfully.');
+        }
+    }
     /**
      * Display a listing of the resource.
      *

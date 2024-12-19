@@ -375,6 +375,8 @@ class TrxPelatihanController extends Controller
     {
         //
         $linkAction = route('pelatihan.update', $id);
+        $where = ['id_trx' => $id];
+        $history = TrxPelatihanLog::where($where)->orderBy('created_at', 'desc')->get();
         $trx = TrxPelatihan::find( $id );
         // ambil property para pihak
         $pengaju = json_decode($trx->pengaju_property, true);
@@ -441,7 +443,7 @@ class TrxPelatihanController extends Controller
                     // 3 = Reject by L1 Requestor
                     $approve = 2;
                     $reject = 3;
-                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction'));
+                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history'));
                 } 
                 // atasan_peserta - 2 = Approve by L1 Requestor
                 else if ($pic == 'atasan_peserta' && in_array($nik, explode(';', $trx->atasan_peserta)) && $nAtasanPeserta == 0 && $id_status == 2) {
@@ -449,7 +451,7 @@ class TrxPelatihanController extends Controller
                     // 6 = Reject by L1 Participants
                     $approve = 5;
                     $reject = 6;
-                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction'));
+                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history'));
                 } 
                 // reviewer1 - 5 = Approve by L1 Participants
                 else if ($pic == 'reviewer1' && $nik == $trx->reviewer1 && $nReviewer1 == 0 && $id_status == 5) {
@@ -457,7 +459,7 @@ class TrxPelatihanController extends Controller
                     // 8 = Reject by Reviewer 2
                     $approve = 10;
                     $reject = 8;
-                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction'));
+                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history'));
                 } 
                 // reviewer2 - 5 = Approve by L1 Participants
                 else if ($pic == 'reviewer2' && $nik == $trx->reviewer2 && $nReviewer2 == 0 && $id_status == 5) {
@@ -465,7 +467,7 @@ class TrxPelatihanController extends Controller
                     // 12 = Reject by Reviewer 3
                     $approve = 14;
                     $reject = 12;
-                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction'));
+                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history'));
                 } 
                 // selainnya
                 else {

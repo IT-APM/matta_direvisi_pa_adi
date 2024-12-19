@@ -32,18 +32,41 @@
             <div class="card">
                 <div class="card-body">
                     <?php if(Session::has('msg')): ?>
-                    <!-- <div class="alert alert-success"><?php echo e(Session::get('msg')); ?></div> -->
                     <div class="alert alert-success dark alert-dismissible fade show" role="alert">
                         <h6><?php echo e(session('msg')); ?></h6>
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <?php endif; ?>
                     <?php if($isPlafon): ?>
+                    <?php if(\Carbon\Carbon::now()->toDateString() >= '2024-12-16' && \Carbon\Carbon::now()->toDateString() <= '2025-01-02'): ?>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#exampleModalCenter1"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button>
+                    <?php else: ?>
                     <a href="<?php echo e(route('reimburse.create')); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | 
                     <?php endif; ?>
+                    <?php endif; ?>
                     <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                    
+                    <div class="modal fade" id="exampleModalCenter1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenter1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                          <div class="modal-content">
+                            <div class="modal-body"> 
+                              <div class="modal-toggle-wrapper">  
+                                <ul class="modal-img ">
+                                  <li class="text-center"><img src="<?php echo e(asset('assets/images/gif/danger.gif')); ?>" alt="error" width="200" height="200"></li>
+                                </ul>
+                                
+                                <div class="alert alert-danger">
+                                    <span>Dear Insan Alita,<br/>Sehubungan dengan tutup buku tahun 2024, kami informasikan bahwa pengajuan Medical Reimbursement akan ditutup sementara mulai tanggal 17 Desember 2024 - 2 Januari 2025 dan akan dibuka kembali tanggal 3 Januari 2025.<br/>Terima kasih atas perhatiannya.</span>
+                                </div>
+                                <button class="btn btn-danger d-flex m-auto" type="button" data-bs-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    
                     <div class="collapse" id="collapse_filter">
-                        <form class="mt-2" action="<?php echo e(route('reimburse.index')); ?>" method="get" enctype="multipart/form-data">
+                        <form class="mt-2 mb-2" action="<?php echo e(route('reimburse.index')); ?>" method="get" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-sm-3">
                                     <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_pengajuan(this)" /> Check All
@@ -75,7 +98,12 @@
                             </div>
                         </form>
                     </div>
-                    <br/><br/>
+                    <?php if(\Carbon\Carbon::now()->toDateString() >= '2024-12-16' && \Carbon\Carbon::now()->toDateString() <= '2025-01-02'): ?>
+                    <div class="mt-2 alert alert-danger">
+                        <span>Dear Insan Alita,<br/>Sehubungan dengan tutup buku tahun 2024, kami informasikan bahwa pengajuan Medical Reimbursement akan ditutup sementara mulai tanggal 17 Desember 2024 - 2 Januari 2025 dan akan dibuka kembali tanggal 3 Januari 2025.<br/>Terima kasih atas perhatiannya.</span>
+                    </div>
+                    <?php endif; ?>
+                    
                     <div class="table-responsive">
                         <table class="display" id="_datatable">
                             <thead>

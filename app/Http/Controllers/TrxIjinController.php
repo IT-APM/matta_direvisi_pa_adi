@@ -320,6 +320,8 @@ class TrxIjinController extends Controller
     {
         //
         $linkAction = route('izin.update', $id);
+        $where = ['id_trx' => $id];
+        $history = TrxIjinLog::where($where)->orderBy('created_at', 'desc')->get();
         $trx = TrxIjin::find( $id );
         // 
         $karyawan = json_decode($trx->karyawan_property, true);
@@ -349,7 +351,7 @@ class TrxIjinController extends Controller
                     // 3 = Reject by L1
                     $approve = 2;
                     $reject = 3;
-                    return view('emails.izin', compact('trx', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'linkAction'));
+                    return view('emails.izin', compact('trx', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'linkAction', 'history'));
                 } 
                 // layer2
                 else if ($pic == 'layer2' && $nik == $trx->layer2 && $nLayer2 == 0 && $id_status == 2) {
@@ -357,7 +359,7 @@ class TrxIjinController extends Controller
                     // 7 = Reject by L2
                     $approve = 6;
                     $reject = 7;
-                    return view('emails.izin', compact('trx', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'linkAction'));
+                    return view('emails.izin', compact('trx', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'linkAction', 'history'));
                 } 
                 // selainnya
                 else {

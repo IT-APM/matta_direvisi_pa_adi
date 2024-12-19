@@ -32,6 +32,17 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    <?php if(count($errors) > 0): ?>
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h6>Upload File is ERROR</h6>
+                        <ul>
+                            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li><?php echo e($error); ?></li>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </ul>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <?php endif; ?>
                     <?php if(Session::has('msg')): ?>
                     <!-- <div class="alert alert-success"><?php echo e(Session::get('msg')); ?></div> -->
                     <div class="alert alert-success dark alert-dismissible fade show" role="alert">
@@ -41,8 +52,20 @@
                     <?php endif; ?>
                     <a href="<?php echo e(route('plafon.create')); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a> | 
                     <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                    <form class="mt-2" action="<?php echo e(route('plafon.upload_data')); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                    <?php echo csrf_field(); ?>
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <input name="template" id="template" class="form-control" type="file" required="">
+                            <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                        </div>
+                    </div>
+                    </form>
                     <div class="collapse" id="collapse_filter">
-                        <form class="m-4" action="<?php echo e(route('plafon.index')); ?>" method="get" enctype="multipart/form-data">
+                        <form class="mt-2" action="<?php echo e(route('plafon.index')); ?>" method="get" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-sm-5">
                                     <label class="h6">Tahun</label>&nbsp;<input type="checkbox" onClick="toggle_tahun(this)" /> Check All
@@ -60,8 +83,8 @@
                             </div>
                         </form>
                     </div>
-                    <br/><br/>
-                    <div class="table-responsive">
+                    
+                    <div class="table-responsive mt-2">
                         <table class="display" id="_datatable">
                             <thead>
                                 <tr>
@@ -141,7 +164,8 @@
                                             <!-- <button type="submit" class="btn btn-xs btn-danger btn-flat show_confirm" data-toggle="tooltip" title='Delete'>Delete</button> -->
                                             <ul class="action">
                                                 <li class="edit"><a href="<?php echo e(route('plafon.edit', $data->id)); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
-                                                <li class="delete"><a href="#" data-toggle="tooltip" title='Delete'><i class="icon-trash show_confirm"></i></a></li>
+                                                
+                                                <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                             </ul>
                                         </form>
                                     </td>
@@ -183,6 +207,22 @@ $('#_datatable').DataTable( {
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+});
+$(document).on('click', '#btn-delete', function(event) {
+    var form = $(this).closest("form");
+    event.preventDefault();
+    swal({
+            title: "Are you sure to delete this?",
+            text: "If you delete this, it will be gone forever.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                form.submit();
+            }
+        });
 });
 $('.show_confirm').click(function(event) {
     var form = $(this).closest("form");

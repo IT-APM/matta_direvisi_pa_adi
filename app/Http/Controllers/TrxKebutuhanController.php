@@ -346,6 +346,8 @@ class TrxKebutuhanController extends Controller
     {
         //
         $linkAction = route('kebutuhan.update', $id);
+        $where = ['id_trx' => $id];
+        $history = TrxKebutuhanLog::where($where)->orderBy('created_at', 'desc')->get();
         $trxM = TrxKebutuhanMaster::find( $id );
         // 
         // $where = ['id_trx' => $id];
@@ -402,13 +404,13 @@ class TrxKebutuhanController extends Controller
                 if ($pic == 'layer1' && $nik == $trxM->layer1 && $nLayer1 == 0 && $id_status == 1) {
                     $approve = 2;
                     $reject = 5;
-                    return view('emails.kebutuhan', compact('trxM', 'arr_nik_karyawan', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'pelatihan', 'sertifikasi', 'keterampilan', 'kepribadian'));
+                    return view('emails.kebutuhan', compact('trxM', 'arr_nik_karyawan', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'pelatihan', 'sertifikasi', 'keterampilan', 'kepribadian', 'history'));
                 } 
                 // layer2
                 else if ($pic == 'layer2' && $nik == $trxM->layer2 && $nLayer2 == 0 && $id_status == 2) {
                     $approve = 9;
                     $reject = 7;
-                    return view('emails.kebutuhan', compact('trxM', 'arr_nik_karyawan', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'pelatihan', 'sertifikasi', 'keterampilan', 'kepribadian'));
+                    return view('emails.kebutuhan', compact('trxM', 'arr_nik_karyawan', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'pelatihan', 'sertifikasi', 'keterampilan', 'kepribadian', 'history'));
                 } 
                 // selainnya
                 else {

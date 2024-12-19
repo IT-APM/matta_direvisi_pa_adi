@@ -368,6 +368,8 @@ class TrxRekomendasiController extends Controller
     {
         //
         $linkAction = route('rekomendasi.update', $id);
+        $where = ['id_trx' => $id];
+        $history = TrxRekomendasiLog::where($where)->orderBy('created_at', 'desc')->get();
         $trxM = TrxRekomendasiMaster::find( $id );
         // 
         $where = ['id_trx' => $id];
@@ -406,25 +408,25 @@ class TrxRekomendasiController extends Controller
                 if ($pic == 'reviewer1' && $nik == $trxM->nik_reviewer1 && $nReviewer1 == 0 && $id_status == 1) {
                     $approve = 4;
                     $reject = 2;
-                    return view('emails.rekomendasi', compact('trxM', 'trxD', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'atasan', 'linkAction'));
+                    return view('emails.rekomendasi', compact('trxM', 'trxD', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'atasan', 'linkAction', 'history'));
                 } 
                 // reviewer2 - 6 = Next to Reviewer Approval-2
                 else if ($pic == 'reviewer2' && $nik == $trxM->nik_reviewer2 && $nReviewer2 == 0 && $id_status == 6) {
                     $approve = 9;
                     $reject = 7;
-                    return view('emails.rekomendasi', compact('trxM', 'trxD', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'atasan', 'linkAction'));
+                    return view('emails.rekomendasi', compact('trxM', 'trxD', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'atasan', 'linkAction', 'history'));
                 } 
                 // reviewer2 - 11 = Next to Reviewer Approval-2 & 3
                 else if ($pic == 'reviewer2' && $nik == $trxM->nik_reviewer2 && $nReviewer2_1 == 0 && $id_status == 11) {
                     $approve = 14;
                     $reject = 12;
-                    return view('emails.rekomendasi', compact('trxM', 'trxD', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'atasan', 'linkAction'));
+                    return view('emails.rekomendasi', compact('trxM', 'trxD', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'atasan', 'linkAction', 'history'));
                 } 
                 // reviewer3 - 11 = Next to Reviewer Approval-2 & 3
                 else if ($pic == 'reviewer3' && $nik == $trxM->nik_reviewer3 && $nReviewer3 == 0 && $id_status == 11) {
                     $approve = 17;
                     $reject = 15;
-                    return view('emails.rekomendasi', compact('trxM', 'trxD', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'atasan', 'linkAction'));
+                    return view('emails.rekomendasi', compact('trxM', 'trxD', 'nik', 'pic', 'approve', 'reject', 'karyawan', 'atasan', 'linkAction', 'history'));
                 } 
                 // selainnya
                 else {

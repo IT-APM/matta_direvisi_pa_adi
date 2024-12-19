@@ -469,6 +469,8 @@ class TrxSakitController extends Controller
     {
         //
         $linkAction = route('sakit.update', $id);
+        $where = ['id_trx' => $id];
+        $history = TrxSakitLog::where($where)->orderBy('created_at', 'desc')->get();
         // 
         $trxSakit = TrxSakit::find($id);
         $karyawan = json_decode($trxSakit->karyawan_property, true);
@@ -516,12 +518,12 @@ class TrxSakitController extends Controller
                     if($isTolak){
                         return view('emails.sakit_ok');
                     }
-                    return view('emails.sakit', compact('trxSakit', 'data', 'arrTanggal', 'arrPicProperty', 'linkAction', 'pic', 'nik'));
+                    return view('emails.sakit', compact('trxSakit', 'data', 'arrTanggal', 'arrPicProperty', 'linkAction', 'pic', 'nik', 'history'));
                 } else if ($pic == 'nik_atasan' && $nik == $trxSakit->nik_atasan && $nPic == 0) {
                     if($isTolak){
                         return view('emails.sakit_ok');
                     }
-                    return view('emails.sakit', compact('trxSakit', 'data', 'arrTanggal', 'arrPicProperty', 'linkAction', 'pic', 'nik'));
+                    return view('emails.sakit', compact('trxSakit', 'data', 'arrTanggal', 'arrPicProperty', 'linkAction', 'pic', 'nik', 'history'));
                 } else {
                     return view('emails.sakit_ok');
                 }

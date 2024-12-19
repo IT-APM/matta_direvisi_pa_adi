@@ -508,6 +508,8 @@ class TrxNonaktifController extends Controller
     {
         //
         $linkAction = route('nonaktif.update', $id);
+        $where = ['id_trx' => $id];
+        $history = TrxNonaktifLog::where($where)->orderBy('created_at', 'desc')->get();
         $trxM = TrxNonaktifMaster::find( $id );
         $where = ['nik' => $trxM->pengaju];
         $karyawan_properties = Karyawan::where($where)->first();
@@ -601,7 +603,7 @@ class TrxNonaktifController extends Controller
                     $reject = 6;
                     $where = ['id_trx' => $id, '_into_' => $pic, 'kepada' => $nik];
                     $trxD = TrxNonaktifDetail::where($where)->get();
-                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction'));
+                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'history'));
                 }
                 // ga
                 else if ($pic == 'ga' && $nGA) {
@@ -611,7 +613,7 @@ class TrxNonaktifController extends Controller
                     $reject = 10;
                     $where = ['id_trx' => $id, '_into_' => $pic, 'kepada' => $nik];
                     $trxD = TrxNonaktifDetail::where($where)->get();
-                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction'));
+                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'history'));
                 }
                 // it
                 else if ($pic == 'it' && $nIT) {
@@ -621,7 +623,7 @@ class TrxNonaktifController extends Controller
                     $reject = 14;
                     $where = ['id_trx' => $id, '_into_' => $pic, 'kepada' => $nik];
                     $trxD = TrxNonaktifDetail::where($where)->get();
-                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction'));
+                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'history'));
                 }
                 // hc
                 else if ($pic == 'hc' && $nHC) {
@@ -631,7 +633,7 @@ class TrxNonaktifController extends Controller
                     $reject = 22;
                     $where = ['id_trx' => $id, '_into_' => $pic, 'kepada' => $nik];
                     $trxD = TrxNonaktifDetail::where($where)->get();
-                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction'));
+                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'history'));
                 }
                 // ko
                 else if ($pic == 'ko' && $nKO) {
@@ -641,7 +643,7 @@ class TrxNonaktifController extends Controller
                     $reject = 18;
                     $where = ['id_trx' => $id, '_into_' => $pic, 'kepada' => $nik];
                     $trxD = TrxNonaktifDetail::where($where)->get();
-                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction'));
+                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'history'));
                 }
                 // atasan
                 // 25 = Submit to L1
@@ -652,7 +654,7 @@ class TrxNonaktifController extends Controller
                     $reject = 2;
                     $where = ['id_trx' => $id];
                     $trxD = TrxNonaktifDetail::where($where)->get();
-                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction'));
+                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'history'));
                 }
                 // selainnya
                 else {

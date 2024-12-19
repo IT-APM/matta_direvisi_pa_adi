@@ -156,6 +156,33 @@
                             </tbody>
                         </table> --}}
                     </div>
+                    <div class="card-header">
+                        <h5>History</h5>
+                    </div>
+                    <div class="card-body typography notification">
+                        <ul>
+                            @foreach ($history as $_history)
+                            <li class="d-flex">
+                                @if ($loop->first)
+                                <div class="activity-dot-success"></div>
+                                @elseif ($loop->last)
+                                <div class="activity-dot-warning"></div>
+                                @else
+                                <div class="activity-dot-primary"></div>
+                                @endif
+                                <div class="ms-3">
+                                    <p class="d-flex justify-content-between mb-2"><span
+                                            class="date-content light-background">{{ $_history->created_at }}</span>
+                                    </p>
+                                    <h6>{{ $_history->_status->status_pengajuan }}<span
+                                            class="dot-notification"></span></h6>
+                                    <p class="f-light">Oleh {{ $_history->_pic->nama }} /
+                                        {{ $_history->nik_pic }}</p>
+                                </div>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

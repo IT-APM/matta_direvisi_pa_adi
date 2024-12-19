@@ -636,6 +636,8 @@ class TrxCutiController extends Controller
     {
         //
         $linkAction = route('cuti.update', $id);
+        $where = ['id_trx' => $id];
+        $history = TrxCutiLog::where($where)->orderBy('created_at', 'desc')->get();
         // 
         $trxCuti = TrxCuti::find($id);
         $karyawan = json_decode($trxCuti->karyawan_property, true);
@@ -683,19 +685,19 @@ class TrxCutiController extends Controller
                     if($isTolak){
                         return view('emails.cuti_ok');
                     }
-                    return view('emails.cuti', compact('trxCuti', 'data', 'arrTanggal', 'arrPicProperty', 'linkAction', 'pic', 'nik'));
+                    return view('emails.cuti', compact('trxCuti', 'data', 'arrTanggal', 'arrPicProperty', 'linkAction', 'pic', 'nik', 'history'));
                 } else if ($pic == 'nik_atasan' && $nik == $trxCuti->nik_atasan && $nPic == 0) {
                     if($isTolak){
                         return view('emails.cuti_ok');
                     }
-                    return view('emails.cuti', compact('trxCuti', 'data', 'arrTanggal', 'arrPicProperty', 'linkAction', 'pic', 'nik'));
+                    return view('emails.cuti', compact('trxCuti', 'data', 'arrTanggal', 'arrPicProperty', 'linkAction', 'pic', 'nik', 'history'));
                 } else if ($pic == 'nik_hco' && $nik == MtrUtility::find(23)->informasi) {
                     $where = ['id_trx' => $id, 'nik_pic' => MtrUtility::find(23)->informasi, 'id_status' => 6];
                     $nPic = TrxCutiLog::where($where)->exists();
                     if($nPic){
                         return view('emails.cuti_ok');
                     }
-                    return view('emails.cuti', compact('trxCuti', 'data', 'arrTanggal', 'arrPicProperty', 'linkAction', 'pic', 'nik'));
+                    return view('emails.cuti', compact('trxCuti', 'data', 'arrTanggal', 'arrPicProperty', 'linkAction', 'pic', 'nik', 'history'));
                 } else {
                     return view('emails.cuti_ok');
                 }
