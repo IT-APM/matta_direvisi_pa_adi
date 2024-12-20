@@ -625,6 +625,8 @@ class TrxPelatihanController extends Controller
     {
         //
         $this->authorize('hc');
+        $where = ['id_trx' => $id];
+        $history = TrxPelatihanLog::where($where)->orderBy('created_at', 'desc')->get();
         $trx = TrxPelatihan::find( $id );
         // 
         $status_pengajuan = PelatihanStatus::whereIn('id', [11,$trx->status_pengajuan])->orderBy('id', 'asc')->get();
@@ -654,7 +656,7 @@ class TrxPelatihanController extends Controller
         if(!empty($trx->reviewer2)){
             $reviewer2 = json_decode($trx->reviewer2_property, true);
         }
-        return view( 'formulir.pelatihan.update', compact( 'trx', 'pengaju', 'atasan_pengaju', 'arrPeserta', 'arrAtasanPeserta', 'reviewer1', 'reviewer2', 'status_pengajuan' ) );
+        return view( 'formulir.pelatihan.update', compact( 'trx', 'pengaju', 'atasan_pengaju', 'arrPeserta', 'arrAtasanPeserta', 'reviewer1', 'reviewer2', 'status_pengajuan', 'history' ) );
     }
 
     /**
