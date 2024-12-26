@@ -49,7 +49,7 @@
                     </div>
                     <?php endif; ?>
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
-                        <li class="nav-item"><a class="nav-link <?php if($id == 0): ?> active <?php endif; ?>" id="pills-gapok-tab" data-bs-toggle="pill" href="#pills-gapok" role="tab" aria-controls="pills-gapok" aria-selected="false">Gaji Pokok</a></li>
+                        <li class="nav-item"><a class="nav-link <?php if($id == 0): ?> active <?php endif; ?>" id="pills-karyawan-tab" data-bs-toggle="pill" href="#pills-karyawan" role="tab" aria-controls="pills-karyawan" aria-selected="false">Karyawan</a></li>
                         <li class="nav-item"><a class="nav-link <?php if($id == 1): ?> active <?php endif; ?>" id="pills-tambah-tab" data-bs-toggle="pill" href="#pills-tambah" role="tab" aria-controls="pills-tambah" aria-selected="true">Penambahan</a></li>
                         <li class="nav-item"><a class="nav-link <?php if($id == 2): ?> active <?php endif; ?>" id="pills-kurang-tab" data-bs-toggle="pill" href="#pills-kurang" role="tab" aria-controls="pills-kurang" aria-selected="true">Pengurangan</a></li>
                         <li class="nav-item"><a class="nav-link <?php if($id == 3): ?> active <?php endif; ?>" id="pills-bpjstk-tab" data-bs-toggle="pill" href="#pills-bpjstk" role="tab" aria-controls="pills-bpjstk" aria-selected="true">BPJS TK</a></li>
@@ -58,21 +58,28 @@
                     </ul>
                     <div class="tab-content" id="pills-warningtabContent">
                         
-                        <div class="tab-pane fade <?php if($id == 0): ?> show active <?php endif; ?>" id="pills-gapok" role="tabpanel" aria-labelledby="pills-gapok-tab">
-                            <p class="mb-0 m-t-10">
-                                <form action="<?php echo e(route('payroll.upload_payroll')); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
-                                <?php echo csrf_field(); ?>
-                                <input type="hidden" id="jenis" name="jenis" value="mtr">
-                                <div class="row mb-2">
-                                    <div class="col-md-4">
-                                        <input name="template" id="template" class="form-control" type="file" required="">
-                                        <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
-                                    </div>
+                        <div class="tab-pane fade <?php if($id == 0): ?> show active <?php endif; ?>" id="pills-karyawan" role="tabpanel" aria-labelledby="pills-karyawan-tab">
+                            <p class="mb-0 mt-2">
+                                <div class="row g-3">
                                     <div class="col-md-2">
-                                        <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                        <a href="<?php echo e(route('payroll.master',[0, 'tipe'=>'karyawan'])); ?>" class="btn btn-primary mb-2" type="button"><i class="fa fa-plus"></i> Add new</a>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <form action="<?php echo e(route('payroll.upload_payroll')); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                        <?php echo csrf_field(); ?>
+                                        <input type="hidden" id="jenis" name="jenis" value="mtr">
+                                        <div class="row mb-2">
+                                            <div class="col-md-4">
+                                                <input name="template" id="template" class="form-control" type="file" required="">
+                                                <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                            </div>
+                                        </div>
+                                        </form>
                                     </div>
                                 </div>
-                                </form>
                                 <div class="table-responsive text-nowrap">
                                     <table class="display" id="_datatable1">
                                         <thead>
@@ -80,9 +87,7 @@
                                                 <th>No</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Bulan</th>
-                                                <th>Tahun</th>
-                                                <th>Gaji Pokok</th>
+                                                
                                                 <th>Pasangan</th>
                                                 <th>Anak</th>
                                                 <th>Tambahan</th>
@@ -92,6 +97,7 @@
                                                 <th>Rekening Atas Nama</th>
                                                 <th>No. Rekening</th>
                                                 <th>Nama Bank</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -101,9 +107,7 @@
                                                 <td><?php echo e(++$no); ?></td>
                                                 <td><?php echo e($data->_nik->nama); ?></td>
                                                 <td><?php echo e($data->nik); ?></td>
-                                                <td><?php echo e($data->bulan); ?></td>
-                                                <td><?php echo e($data->tahun); ?></td>
-                                                <td class="text-end"><?php echo e(number_format($data->gapok, 0)); ?></td>
+                                                
                                                 <td><?php echo e($data->pasangan); ?></td>
                                                 <td><?php echo e($data->anak); ?></td>
                                                 <td><?php echo e($data->tambahan); ?></td>
@@ -113,6 +117,16 @@
                                                 <td><?php echo e($data->nama_rek); ?></td>
                                                 <td><?php echo e($data->no_rek); ?></td>
                                                 <td><?php echo e($data->nama_bank); ?></td>
+                                                <td>
+                                                    <form action="<?php echo e(route('payroll.destroy',[0, 'tipe'=>'del_karyawan', 'id'=>$data->id])); ?>" method="POST">
+                                                        <?php echo csrf_field(); ?>
+                                                        <?php echo method_field('DELETE'); ?>
+                                                        <ul class="action">
+                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[0, 'tipe'=>'edit_karyawan', 'id_data'=>$data->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                            <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
+                                                        </ul>
+                                                    </form>
+                                                </td>
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
@@ -123,7 +137,7 @@
                         
                         <div class="tab-pane fade <?php if($id == 1): ?> show active <?php endif; ?>" id="pills-tambah" role="tabpanel" aria-labelledby="pills-tambah-tab">
                             <p class="mb-0 m-t-10">
-                                <a href="<?php echo e(route('payroll.master',[1, 'tipe'=>'add'])); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a>
+                                <a href="<?php echo e(route('payroll.master',[1, 'tipe'=>'add'])); ?>" class="btn btn-primary mb-2" type="button"><i class="fa fa-plus"></i> Add new</a>
                                 <div class="table-responsive text-nowrap">
                                     <table class="display" id="_datatable2">
                                         <thead>
@@ -161,7 +175,7 @@
                         
                         <div class="tab-pane fade <?php if($id == 2): ?> show active <?php endif; ?>" id="pills-kurang" role="tabpanel" aria-labelledby="pills-kurang-tab">
                             <p class="mb-0 m-t-10">
-                                <a href="<?php echo e(route('payroll.master',[2, 'tipe'=>'sub'])); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a>
+                                <a href="<?php echo e(route('payroll.master',[2, 'tipe'=>'sub'])); ?>" class="btn btn-primary mb-2" type="button"><i class="fa fa-plus"></i> Add new</a>
                                 <div class="table-responsive text-nowrap">
                                     <table class="display" id="_datatable3">
                                         <thead>
@@ -199,7 +213,7 @@
                         
                         <div class="tab-pane fade <?php if($id == 3): ?> show active <?php endif; ?>" id="pills-bpjstk" role="tabpanel" aria-labelledby="pills-bpjstk-tab">
                             <p class="mb-0 m-t-10">
-                                <a href="<?php echo e(route('payroll.master',[3, 'tipe'=>'bpjstk'])); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a>
+                                <a href="<?php echo e(route('payroll.master',[3, 'tipe'=>'bpjstk'])); ?>" class="btn btn-primary mb-2" type="button"><i class="fa fa-plus"></i> Add new</a>
                                 <div class="table-responsive text-nowrap">
                                     <table class="display" id="_datatable4">
                                         <thead>
@@ -237,7 +251,7 @@
                         
                         <div class="tab-pane fade <?php if($id == 4): ?> show active <?php endif; ?>" id="pills-bpjskes" role="tabpanel" aria-labelledby="pills-bpjskes-tab">
                             <p class="mb-0 m-t-10">
-                                <a href="<?php echo e(route('payroll.master',[4, 'tipe'=>'bpjsks'])); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a>
+                                <a href="<?php echo e(route('payroll.master',[4, 'tipe'=>'bpjsks'])); ?>" class="btn btn-primary mb-2" type="button"><i class="fa fa-plus"></i> Add new</a>
                                 <div class="table-responsive text-nowrap">
                                     <table class="display" id="_datatable5">
                                         <thead>
@@ -275,7 +289,7 @@
                         
                         <div class="tab-pane fade <?php if($id == 5): ?> show active <?php endif; ?>" id="pills-bpjsmax" role="tabpanel" aria-labelledby="pills-bpjsmax-tab">
                             <p class="mb-0 m-t-10">
-                                <a href="<?php echo e(route('payroll.master',[5, 'tipe'=>'bpjsmx'])); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a>
+                                <a href="<?php echo e(route('payroll.master',[5, 'tipe'=>'bpjsmx'])); ?>" class="btn btn-primary  mb-2" type="button"><i class="fa fa-plus"></i> Add new</a>
                                 <div class="table-responsive text-nowrap">
                                     <table class="display" id="_datatable6">
                                         <thead>
@@ -348,7 +362,7 @@ $(document).on('click', '#btn-delete', function(event) {
         });
 });
 // 
-// gapok
+// karyawan
 $('#_datatable1').DataTable( {
 	// dom: 'lBfrtip',
     dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +

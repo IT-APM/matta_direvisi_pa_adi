@@ -42,6 +42,7 @@
                     <ul class="nav nav-tabs nav-success" id="pills-warningtab" role="tablist">
                         <li class="nav-item"><a class="nav-link active" id="pills-non_outsource-tab" data-bs-toggle="pill" href="#pills-non_outsource" role="tab" aria-controls="pills-non_outsource" aria-selected="false">Reguler</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-outsource-tab" data-bs-toggle="pill" href="#pills-outsource" role="tab" aria-controls="pills-outsource" aria-selected="true">Outsourcing</a></li>
+                        <li class="nav-item"><a class="nav-link" id="pills-kt-tab" data-bs-toggle="pill" href="#pills-kt" role="tab" aria-controls="pills-kt" aria-selected="true">Karyawan Tetap</a></li>
                     </ul>
                     <div class="tab-content" id="pills-warningtabContent">
                         <div class="tab-pane fade show active" id="pills-non_outsource" role="tabpanel" aria-labelledby="pills-non_outsource-tab">
@@ -113,6 +114,7 @@
                             </div>
                             <!--  -->
                         </div>
+                        {{--  --}}
                         <div class="tab-pane fade" id="pills-outsource" role="tabpanel" aria-labelledby="pills-outsource-tab">
                             <!--  -->
                             <br/>
@@ -181,6 +183,75 @@
                                 </table>
                             </div>
                             <!--  -->
+                        </div>{{--  --}}
+                        <div class="tab-pane fade" id="pills-kt" role="tabpanel" aria-labelledby="pills-kt-tab">
+                            <!--  -->
+                            <br/>
+                            @if(count($trx_kt)>0)
+                            <form action="{{ route('penilaian_auto.store') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to execute this data?');">
+                            @csrf
+                            <input type="hidden" id="is_outsource" name="is_outsource" value="2">
+                            <button class="btn btn-success" type="submit"><i class="fa fa-plus-circle" aria-hidden="true"></i> Execute</button>
+                            </form>
+                            <br/>
+                            @endif
+                            <div class="table-responsive">
+                                <table class="display" id="_datatable_kt">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Karyawan</th>
+                                            <th>NIP</th>
+                                            <th>Penilai 1</th>
+                                            <th>Penilai 2</th>
+                                            <th>Penilai 3</th>
+                                            <th>Tipe</th>
+                                            <th>Status</th>
+                                            {{-- <th>Tanggal Berakhir</th> --}}
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($trx_kt as $data)
+                                        <tr>
+                                            <td>{{ ++$no_kt}}</td>
+                                            <td>{{ $data->_karyawan->nama }}</td>
+                                            <td>{{ $data->nik_karyawan }}</td>
+                                            <td>{{ $data->_penilai1->nama }}</td>
+                                            <td>@if (!empty($data->nik_penilai_2)) {{ $data->_penilai2->nama }} @endif</td>
+                                            <td>@if (!empty($data->nik_penilai_3)) {{ $data->_penilai3->nama }} @endif</td>
+                                            <td>{{ $data->_tipe->tipe_penilaian }}</td>
+                                            <td>Not {{ $data->_status->status_penilaian }}</td>
+                                            {{-- <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $data->end_date)->format('d-m-Y') }}</td> --}}
+                                            <td>
+                                                <form action="{{ route('penilaian_auto.destroy', $data->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <ul class="action">
+                                                        <li class="edit"><a href="{{ route('penilaian_auto.edit', $data->id) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                        <li class="delete"><a href="#" id="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash show_confirm"></i></a></li>
+                                                    </ul>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                    <!-- <tfoot>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Karyawan</th>
+                                            <th>Penilai 1</th>
+                                            <th>Penilai 2</th>
+                                            <th>Penilai 3</th>
+                                            <th>Tipe</th>
+                                            <th>Status</th>
+                                            <th>Tanggal Berakhir</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot> -->
+                                </table>
+                            </div>
+                            <!--  -->
                         </div>
                     </div>
                 </div>
@@ -214,6 +285,16 @@ $('#_datatable_non_outsource').DataTable( {
 } );
 // 
 $('#_datatable_outsource').DataTable( {
+	// dom: 'lBfrtip',
+    dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
+      "<'row'<'col-sm-12'rt>>" +
+      "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+	buttons: [
+		'copy', 'csv', 'excel', 'pdf', 'print'
+	],
+    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+} );
+$('#_datatable_kt').DataTable( {
 	// dom: 'lBfrtip',
     dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
       "<'row'<'col-sm-12'rt>>" +

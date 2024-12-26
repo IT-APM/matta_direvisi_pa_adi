@@ -48,19 +48,6 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <?php endif; ?>
-                    <form action="<?php echo e(route('payroll.upload_payroll')); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
-                    <?php echo csrf_field(); ?>
-                    <input type="hidden" id="jenis" name="jenis" value="trx">
-                    <div class="row mb-2">
-                        <div class="col-md-4">
-                            <input name="template" id="template" class="form-control" type="file" required="">
-                            <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
-                        </div>
-                    </div>
-                    </form>
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
                         <li class="nav-item"><a class="nav-link active" id="pills-semua-tab" data-bs-toggle="pill" href="#pills-semua" role="tab" aria-controls="pills-semua" aria-selected="true">Semua</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-potongan-tab" data-bs-toggle="pill" href="#pills-potongan" role="tab" aria-controls="pills-potongan" aria-selected="true">Potongan</a></li>
@@ -71,7 +58,27 @@
                     <div class="tab-content" id="pills-warningtabContent">
                         
                         <div class="tab-pane fade show active" id="pills-semua" role="tabpanel" aria-labelledby="pills-semua-tab">
-                            <p class="mb-0 m-t-10">
+                            <p class="mb-0 mt-2">
+                                <div class="row g-3">
+                                    <div class="col-md-2">
+                                        <a href="<?php echo e(route('payroll.master',[6, 'tipe'=>'trxpayroll'])); ?>" class="btn btn-primary mb-2" type="button"><i class="fa fa-plus"></i> Add new</a>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <form action="<?php echo e(route('payroll.upload_payroll')); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                        <?php echo csrf_field(); ?>
+                                        <input type="hidden" id="jenis" name="jenis" value="trx">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <input name="template" id="template" class="form-control" type="file" required="">
+                                                <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
                                 <div class="table-responsive text-nowrap">
                                     <table class="display" id="_datatable1">
                                         <thead>
@@ -101,6 +108,7 @@
                                                 <th><?php echo e($data->nama); ?></th>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 <th>Total Upah</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -136,6 +144,16 @@
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 
                                                 <td class="text-end"><?php echo e(number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0)); ?></td>
+                                                <td>
+                                                    <form action="<?php echo e(route('payroll.destroy',[6, 'tipe'=>'del_trxpayroll', 'id'=>$data->id])); ?>" method="POST">
+                                                        <?php echo csrf_field(); ?>
+                                                        <?php echo method_field('DELETE'); ?>
+                                                        <ul class="action">
+                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[6, 'tipe'=>'edit_trxpayroll', 'id_data'=>$data->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                            <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
+                                                        </ul>
+                                                    </form>
+                                                </td>
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>

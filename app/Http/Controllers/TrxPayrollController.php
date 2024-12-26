@@ -177,9 +177,40 @@ class TrxPayrollController extends Controller
     }
     public function upsert_master(Request $request)
     {
-        // dd($request->all(), $request->input('id_data'));
+        // dd($request->all());
+        // karyawan
+        if(in_array($request->_id, [0])){
+            if($request->tipe == 'edit_karyawan'){
+                $trx = MtrPayroll::find($request->input('id_data'));
+                // $trx->nik = $request->nik;
+                $trx->pasangan = $request->pasangan;
+                $trx->anak = $request->anak;
+                $trx->tambahan = $request->tambahan;
+                $trx->no_ktp = $request->no_ktp;
+                $trx->no_kpj = $request->no_kpj;
+                $trx->no_jkn = $request->no_jkn;
+                $trx->nama_rek = $request->nama_rek;
+                $trx->nama_bank = $request->nama_bank;
+                $trx->no_rek = $request->no_rek;
+                $trx->update();
+                return redirect('payroll/master/'.$request->_id)->with('msg', 'Data is saved successfully.');
+            }
+            $trx = New MtrPayroll;
+                $trx->nik = $request->nik;
+                $trx->pasangan = $request->pasangan;
+                $trx->anak = $request->anak;
+                $trx->tambahan = $request->tambahan;
+                $trx->no_ktp = $request->no_ktp;
+                $trx->no_kpj = $request->no_kpj;
+                $trx->no_jkn = $request->no_jkn;
+                $trx->nama_rek = $request->nama_rek;
+                $trx->nama_bank = $request->nama_bank;
+                $trx->no_rek = $request->no_rek;
+            $trx->save();
+            return redirect('payroll/master/'.$request->_id)->with('msg', 'Data is saved successfully.');
+        }
         // add dan sub
-        if(in_array($request->_id, [1, 2])){
+        elseif(in_array($request->_id, [1, 2])){
             if($request->tipe == 'edit'){
                 $trx = MtrPayrollAddsub::find($request->input('id_data'));
                 $trx->nama = $request->nama;
@@ -242,6 +273,44 @@ class TrxPayrollController extends Controller
                 $trx->save();
                 return redirect('payroll/master/'.$request->_id)->with('msg', 'Data is saved successfully.');
             }
+        }
+        // trxpayroll
+        // TrxPayrollAddsub
+        elseif(in_array($request->_id, [6])){
+            $data = $request->all();
+            if($request->tipe == 'edit_trxpayroll'){
+                $trx = TrxPayroll::find($request->input('id_data'));
+                $trx->gapok = str_replace(',', '', $request->gapok);
+                $trx->update();
+                foreach($data as $_id => $value){
+                    if(str_starts_with($_id, 'add_angka_') || str_starts_with($_id, 'sub_angka_')){
+                        $addsub = TrxPayrollAddsub::find(explode('_', $_id)[2]);
+                        $addsub->angka = str_replace(',', '', $value);
+                        $addsub->update();
+                    }
+                }
+                return redirect('payroll')->with('msg', 'Data is saved successfully.');
+            }
+            $trx = New TrxPayroll;
+            $trx->nik = $request->nik;
+            $trx->nik_property = $this->getNikProperty($request->nik);
+            $trx->bulan = $request->bulan;
+            $trx->tahun = $request->tahun;
+            $trx->gapok = str_replace(',', '', $request->gapok);
+            $trx->save();
+            foreach($data as $_id => $value){
+                if(str_starts_with($_id, 'add_angka_') || str_starts_with($_id, 'sub_angka_')){
+                    $addsub = New TrxPayrollAddsub;
+                    $addsub->nik = $request->nik;
+                    $addsub->bulan = $request->bulan;
+                    $addsub->tahun = $request->tahun;
+                    $addsub->id_addsub = explode('_', $_id)[2];
+                    $addsub->tipe = explode('_', $_id)[0];
+                    $addsub->angka = str_replace(',', '', $value);
+                    $addsub->save();
+                }
+            }
+            return redirect('payroll')->with('msg', 'Data is saved successfully.');
         }
     }
 
@@ -407,7 +476,7 @@ class TrxPayrollController extends Controller
     
     public function master($id, Request $request)
     {
-        // dd($id, $request->input('tipe'));
+        // dd($id, $request->all());
         $tipe = $request->input('tipe');
         $payroll = MtrPayroll::orderBy('id', 'asc')->get();
         $where = ['tipe'=>'add'];
@@ -417,15 +486,17 @@ class TrxPayrollController extends Controller
         $bpjstk = MtrPayrollBpjstk::orderBy('id', 'asc')->get();
         $bpjskes = MtrPayrollBpjskes::orderBy('id', 'asc')->get();
         $bpjsmax = MtrPayrollBpjsMax::orderBy('id', 'asc')->get();
-        if(in_array($tipe, ['add', 'sub', 'edit', 'bpjstk', 'bpjsks', 'bpjsmx', 'edit_bpjstk', 'edit_bpjsks', 'edit_bpjsmx'])){
+        if(in_array($tipe, ['add', 'sub', 'edit', 'bpjstk', 'bpjsks', 'bpjsmx', 'edit_bpjstk', 'edit_bpjsks', 'edit_bpjsmx', 'karyawan', 'edit_karyawan', 'trxpayroll', 'edit_trxpayroll'])){
             $status = 'new';
             if($tipe == 'edit'){
                 $status = 'edit';
                 $addsub = MtrPayrollAddsub::find($request->input('id_data'));
                 return view('payroll.upsert_addsub', compact('addsub','status','id','tipe'));
-            }elseif(in_array($tipe, ['add', 'sub'])){
+            }
+            elseif(in_array($tipe, ['add', 'sub'])){
                 return view('payroll.upsert_addsub', compact('status','id','tipe'));
-            }elseif(in_array($tipe, ['bpjstk', 'bpjsks', 'bpjsmx', 'edit_bpjstk', 'edit_bpjsks', 'edit_bpjsmx'])){$status = 'new';
+            }
+            elseif(in_array($tipe, ['bpjstk', 'bpjsks', 'bpjsmx', 'edit_bpjstk', 'edit_bpjsks', 'edit_bpjsmx'])){$status = 'new';
                 if(in_array($tipe, ['edit_bpjstk', 'edit_bpjsks', 'edit_bpjsmx'])){
                     $status = 'edit';
                     if(in_array($tipe, ['edit_bpjstk'])){
@@ -439,6 +510,33 @@ class TrxPayrollController extends Controller
                 }else{
                     return view('payroll.upsert_bpjs', compact('status','id','tipe'));
                 }
+            }
+            elseif(in_array($tipe, ['karyawan', 'edit_karyawan'])){
+                $karyawan = [];
+                $where = ['is_aktif' => 1];
+                $_karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+                if(in_array($tipe, ['edit_karyawan'])){
+                    $status = 'edit';
+                    $karyawan = MtrPayroll::find($request->input('id_data'));
+                }
+                return view('payroll.upsert_karyawan', compact('_karyawan', 'karyawan', 'status','id','tipe'));
+            }
+            // trxpayroll
+            elseif(in_array($tipe, ['trxpayroll', 'edit_trxpayroll'])){
+                $trxpayroll = [];
+                $add_trx = [];
+                $sub_trx = [];
+                $where = ['is_aktif' => 1];
+                $_karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+                if(in_array($tipe, ['edit_trxpayroll'])){
+                    $status = 'edit';
+                    $trxpayroll = TrxPayroll::find($request->input('id_data'));
+                    $where = ['tipe'=>'add', 'nik'=>$trxpayroll->nik, 'bulan'=>$trxpayroll->bulan, 'tahun'=>$trxpayroll->tahun];
+                    $add_trx = TrxPayrollAddsub::where($where)->orderBy('id', 'asc')->get();
+                    $where = ['tipe'=>'sub', 'nik'=>$trxpayroll->nik, 'bulan'=>$trxpayroll->bulan, 'tahun'=>$trxpayroll->tahun];
+                    $sub_trx = TrxPayrollAddsub::where($where)->orderBy('id', 'asc')->get();
+                }
+                return view('payroll.upsert_payroll', compact('_karyawan', 'trxpayroll', 'status','id','tipe', 'add', 'sub', 'add_trx', 'sub_trx'));
             }
         }else{
             return view('payroll.index_mtr', compact('payroll','add','sub','bpjstk','bpjskes','bpjsmax','id'));
@@ -535,6 +633,7 @@ class TrxPayrollController extends Controller
         // dd(Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->subMonth()->startOfMonth()->format('Y-m-d'));
         // dd(Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->subMonth()->endOfMonth()->format('Y-m-d'));
         $payroll = TrxPayroll::orderBy('id', 'asc')->get();
+        // dd($payroll);
         // $where = ['tipe'=>'add'];
         // $add = TrxPayrollAddsub::where($where)->orderBy('id', 'asc')->get();
         // $where = ['tipe'=>'sub'];
@@ -610,8 +709,13 @@ class TrxPayrollController extends Controller
     {
         // dd($request->all(), $id);
         try {
+            // karyawan
+            if(in_array($id, [0])){
+                $trx = MtrPayroll::find($request->id);
+                $trx->delete();
+            }
             // add dan sub
-            if(in_array($id, [1, 2])){
+            elseif(in_array($id, [1, 2])){
                 $trx = MtrPayrollAddsub::find($request->id);
                 $trx->delete();
             }
