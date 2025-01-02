@@ -163,25 +163,37 @@ class JadwalNoc2Controller extends Controller
         $endM = '08:00:00';
         for ($x = 0; $x < sizeof($arr); $x++) {
             $loop_shift = array();
-            // 1 = Shift 1-2
+            // 1 = Shift 1-2 ke-1
             if($arr[$x]['id_shift']==1){
-                $loop_shift = array('P','M','L','L','L');
+                $loop_shift = array('P','P','M','M','L','L','L','L');
             }
-            // 2 = Shift 2-3
+            // 2 = Shift 1-2 ke-2
             elseif($arr[$x]['id_shift']==2){
-                $loop_shift = array('M','L','L','L','P');
+                $loop_shift = array('P','M','M','L','L','L','L','P');
             }
-            // 3 = Libur ke-1
+            // 3 = Shift 2-3 ke-1
             elseif($arr[$x]['id_shift']==3){
-                $loop_shift = array('L','L','L','P','M');
+                $loop_shift = array('M','M','L','L','L','L','P','P');
             }
-            // 4 = Libur ke-2
+            // 4 = Shift 2-3 ke-2
             elseif($arr[$x]['id_shift']==4){
-                $loop_shift = array('L','L','P','M','L');
+                $loop_shift = array('M','L','L','L','L','P','P','M');
             }
-            // 5 = Libur ke-3
+            // 5 = Libur ke-1
             elseif($arr[$x]['id_shift']==5){
-                $loop_shift = array('L','P','M','L','L');
+                $loop_shift = array('L','L','L','L','P','P','M','M');
+            }
+            // 6 = Libur ke-2
+            elseif($arr[$x]['id_shift']==6){
+                $loop_shift = array('L','L','L','P','P','M','M','L');
+            }
+            // 7 = Libur ke-3
+            elseif($arr[$x]['id_shift']==7){
+                $loop_shift = array('L','L','P','P','M','M','L','L');
+            }
+            // 8 = Libur ke-4
+            elseif($arr[$x]['id_shift']==8){
+                $loop_shift = array('L','P','P','M','M','L','L','L');
             }
             $uk_nik = $arr[$x]['nik'];
             $this->deleteData($uk_nik, $request->tanggal_awal, $request->tanggal_akhir);
@@ -213,6 +225,70 @@ class JadwalNoc2Controller extends Controller
         }
         return redirect( 'jadwalnoc2' )->with( 'msg', 'Data is saved successfully.' );
     }
+    
+    // JadwalNoc2Controller
+    // public function generate(Request $request){
+    //     DB::update(DB::raw("UPDATE mtr_tbl_jadwal_noc2 SET tanggal_awal='".$request->tanggal_awal."',tanggal_akhir='".$request->tanggal_akhir."'"));
+    //     $arr = JadwalNoc2::orderBy( 'id_shift', 'asc' )->get();
+    //     $jumlah = 0;
+    //     $wg_id = 16;
+    //     $wn_id = 1;
+    //     $startP = '08:00:00';
+    //     $endP = '20:00:00';
+    //     $startM = '20:00:00';
+    //     $endM = '08:00:00';
+    //     for ($x = 0; $x < sizeof($arr); $x++) {
+    //         $loop_shift = array();
+    //         // 1 = Shift 1-2
+    //         if($arr[$x]['id_shift']==1){
+    //             $loop_shift = array('P','M','L','L','L');
+    //         }
+    //         // 2 = Shift 2-3
+    //         elseif($arr[$x]['id_shift']==2){
+    //             $loop_shift = array('M','L','L','L','P');
+    //         }
+    //         // 3 = Libur ke-1
+    //         elseif($arr[$x]['id_shift']==3){
+    //             $loop_shift = array('L','L','L','P','M');
+    //         }
+    //         // 4 = Libur ke-2
+    //         elseif($arr[$x]['id_shift']==4){
+    //             $loop_shift = array('L','L','P','M','L');
+    //         }
+    //         // 5 = Libur ke-3
+    //         elseif($arr[$x]['id_shift']==5){
+    //             $loop_shift = array('L','P','M','L','L');
+    //         }
+    //         $uk_nik = $arr[$x]['nik'];
+    //         $this->deleteData($uk_nik, $request->tanggal_awal, $request->tanggal_akhir);
+    //         $i = 0;
+    //         while (strtotime($arr[$x]['tanggal_awal']) <= strtotime($arr[$x]['tanggal_akhir'])) {
+    //             $cal_date = $arr[$x]['tanggal_awal'];
+    //             $wd_start_datetime = '';
+    //             $wd_finish_datetime = '';
+    //             if($loop_shift[$i]=='P'){
+    //                 $wd_start_datetime = $arr[$x]['tanggal_awal'].' '.$startP;
+    //                 $wd_finish_datetime = $arr[$x]['tanggal_awal'].' '.$endP;
+    //             }elseif($loop_shift[$i]=='M'){
+    //                 $wd_start_datetime = $arr[$x]['tanggal_awal'].' '.$startM;
+    //                 $wd_finish_datetime = date ("Y-m-d", strtotime("+1 days", strtotime($arr[$x]['tanggal_awal']))).' '.$endM;
+    //             }
+    //             $wd_bookout_closing = date ("Y-m-d H:i:s", strtotime("+3 hours", strtotime($wd_finish_datetime)));
+    //             $wd_bookin_prepare = date ("Y-m-d H:i:s", strtotime("-1 hours", strtotime($wd_start_datetime)));
+    //             if($loop_shift[$i]!='L'){
+    //                 $jumlah++;
+    //                 $this->insertData($wg_id, $wn_id, $cal_date, $uk_nik, $wd_start_datetime, $wd_finish_datetime, $wd_bookout_closing, $wd_bookin_prepare);
+    //             }
+    //             $arr[$x]['tanggal_awal'] = date ("Y-m-d", strtotime("+1 days", strtotime($arr[$x]['tanggal_awal'])));
+    //             if($i==sizeof($loop_shift)-1){
+    //                 $i = 0;
+    //             }else{
+    //                 $i++;
+    //             }
+    //         }
+    //     }
+    //     return redirect( 'jadwalnoc2' )->with( 'msg', 'Data is saved successfully.' );
+    // }
     
     public function deleteData($nik, $tanggal_awal, $tanggal_akhir){
         return DB::delete(DB::raw("DELETE FROM trx_tbl_working_day WHERE nik='".$nik."' AND working_date BETWEEN '".$tanggal_awal."' AND '".$tanggal_akhir."'"));
