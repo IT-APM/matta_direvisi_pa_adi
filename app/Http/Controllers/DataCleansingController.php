@@ -31,7 +31,7 @@ class DataCleansingController extends Controller
         //
         $filename = ['emails.penilaian0', 'emails.penilaian0_outsourcing'];
         $this->getToDoList($filename);
-        $this->getDataCuti();
+        // $this->getDataCuti();
         $this->KaryawanNonAktif();
         $this->CleansingDataAbsensi();
         $this->PenilaianAuto();
