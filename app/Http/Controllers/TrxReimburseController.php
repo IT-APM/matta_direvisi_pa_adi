@@ -284,7 +284,7 @@ class TrxReimburseController extends Controller
                 // bisa mengajukan kembali setelah 2 tahun dari tanggal pengajuan terakhir
                 if($cekData['cek']){
                     $error .= '<h5>Klaim Kacamata-Frame sudah pernah diajukan di tanggal '.Carbon::parse($cekData['tanggal'])->format('d-m-Y').'.
-                    <br/>Anda dapat mengajukan kembali dari tanggal '.Carbon::parse(date("Y-m-d", strtotime("+2 years", strtotime($cekData['tanggal']))))->format('d-m-Y').'.
+                    <br/>Anda dapat mengajukan kembali dari tanggal '.Carbon::parse(strtotime("+2 years", strtotime($cekData['tanggal'])))->format('d-m-Y').'.
                     <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
                     <br/>Terima kasih.</h5>';
                     return redirect()->back()->with('error', $error);
@@ -301,7 +301,7 @@ class TrxReimburseController extends Controller
                 // bisa mengajukan kembali setelah 1 tahun dari tanggal pengajuan terakhir
                 if($cekData['cek']){
                     $error .= '<h5>Klaim Kacamata-Lensa sudah pernah diajukan di tanggal '.Carbon::parse($cekData['tanggal'])->format('d-m-Y').'.
-                    <br/>Anda dapat mengajukan kembali dari tanggal '.Carbon::parse(date("Y-m-d", strtotime("+1 years", strtotime($cekData['tanggal']))))->format('d-m-Y').'.
+                    <br/>Anda dapat mengajukan kembali dari tanggal '.Carbon::parse(strtotime("+1 years", strtotime($cekData['tanggal'])))->format('d-m-Y').'.
                     <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
                     <br/>Terima kasih.</h5>';
                     return redirect()->back()->with('error', $error);
