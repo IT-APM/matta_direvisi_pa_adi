@@ -225,10 +225,10 @@ class TrxCutiController extends Controller
     }
 
     // ambil sisa cuti ketika input formulir
-    public static function getSisaFormCuti()
+    public static function getSisaFormCuti($nik, $periode)
     {
-        $periode = Carbon::now()->format('Y');
-        $nik = auth()->user()->nik;
+        // $periode = Carbon::now()->format('Y');
+        // $nik = auth()->user()->nik;
         $where = ['nik_karyawan' => $nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
         $trx = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
         $where = ['is_cuti' => 1];
@@ -292,18 +292,49 @@ class TrxCutiController extends Controller
     }
 
     // cek apakah jumlah cuti sudah lebih dari 12
-    public function isCutiTahunanOver($periode_cuti, $nik_karyawan, $jumlah_hari)
+    public function isCutiTahunanOver($tanggal_mulai, $nik_karyawan, $jumlah_hari)
     {
+        // dd(Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->year);
         $cek = false;
-        $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan, 'tipe_cuti' => 0];
-        $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
-        $where = ['is_cuti' => 1];
-        $cuti_bersama = Holiday::whereYear('tanggal', $periode_cuti)->where($where)->count();
-        $jumlah += $cuti_bersama;
-        if ($jumlah + $jumlah_hari < 13) {
-            $cek = true;
+        // jika di Bulan Januari maka gunakan sisa cuti tahun lalu jika sudah habis gunakan tahun ini
+        if(Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->between(Carbon::now()->year.'-01-01', Carbon::now()->year.'-01-31')){
+            // gunakan sisa cuti tahun lalu
+            $periode_cuti = Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->subYear()->year;
+            $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan, 'tipe_cuti' => 0];
+            $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
+            $where = ['is_cuti' => 1];
+            $cuti_bersama = Holiday::whereYear('tanggal', $periode_cuti)->where($where)->count();
+            $jumlah += $cuti_bersama;
+            if ($jumlah + $jumlah_hari < 13) {
+                $cek = true;
+            }
+            // jika sudah habis gunakan tahun ini
+            if($cek == false){
+                $periode_cuti = Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->year;
+                $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan, 'tipe_cuti' => 0];
+                $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
+                $where = ['is_cuti' => 1];
+                $cuti_bersama = Holiday::whereYear('tanggal', $periode_cuti)->where($where)->count();
+                $jumlah += $cuti_bersama;
+                if ($jumlah + $jumlah_hari < 13) {
+                    $cek = true;
+                }
+            }
         }
-        return ['status' => $cek, 'message' => 'Cuti Tahunan tidak melebihi BATAS'];
+        // jika selain Bulan Januari maka gunakan tahun ini
+        else{
+            $periode_cuti = Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->year;
+            $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan, 'tipe_cuti' => 0];
+            $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
+            $where = ['is_cuti' => 1];
+            $cuti_bersama = Holiday::whereYear('tanggal', $periode_cuti)->where($where)->count();
+            $jumlah += $cuti_bersama;
+            if ($jumlah + $jumlah_hari < 13) {
+                $cek = true;
+            }
+        }
+        // dd($cek);
+        return ['status' => $cek, 'message' => 'Cuti Tahunan tidak melebihi BATAS', 'periode_cuti' => $periode_cuti];
     }
 
     // ambil tanggal tanggal cuti reguler
@@ -416,9 +447,9 @@ class TrxCutiController extends Controller
         if ($tipe_cuti > 0) {
             $jumlah_hari = CutiTipe::find($tipe_cuti)->jumlah_hari;
         }
-        $periode_cuti = date('Y', strtotime($tanggal_mulai));
+        // $periode_cuti = date('Y', strtotime($tanggal_mulai));
+        $periode_cuti = Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->year;
         $is_reguler = Karyawan::where('nik', $nik_karyawan)->first()->_wg->is_reguler;
-        // echo 'is_reguler='.$is_reguler;die;
         // cek semua kemungkinan pengajuan cuti
         $arr = array();
         $data1 = $this->isWeekend($tanggal_mulai);
@@ -436,9 +467,13 @@ class TrxCutiController extends Controller
         if ($is_reguler == 0) {
             $data3 = ['status' => true, 'message' => 'Tanggal Mulai boleh di HARI LIBUR NASIONAL'];
         }
-        $data4 = $this->isCutiTahunanOver($periode_cuti, $nik_karyawan, $jumlah_hari);
+        $data4 = $this->isCutiTahunanOver($tanggal_mulai, $nik_karyawan, $jumlah_hari);
+        if($data4['status']){
+            $periode_cuti = $data4['periode_cuti'];
+        }
         // cek apakah cuti tanggungan perusahaan sudah pernah diambil atau belum
         if ($tipe_cuti > 0) {
+            $periode_cuti = Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->year;
             $data4 = $this->isPerusahaanOver($periode_cuti, $nik_karyawan, $tipe_cuti);
         }
         // 
@@ -468,13 +503,13 @@ class TrxCutiController extends Controller
         }
         $tanggal_akhir = $arr1[$jumlah_hari - 1];
         $tanggal_cuti = implode(";", $arr1);
-        // echo $tanggal_cuti;die;
         // 
         $data5 = $this->isCutiExisting($nik_karyawan, $tanggal_mulai, $tanggal_akhir, $periode_cuti);
         $data6 = $this->isSetahun($nik_karyawan, $tanggal_mulai, $tipe_cuti);
         array_push($arr, $data1, $data2, $data3, $data4, $data5, $data6);
         // dd($arr);
         $cek = $data1['status'] && $data2['status'] && $data3['status'] && $data4['status'] && $data5['status'] && $data6['status'];
+        // dd($cek, $periode_cuti);
         // finish
         // 
         $trx = new TrxCuti;
