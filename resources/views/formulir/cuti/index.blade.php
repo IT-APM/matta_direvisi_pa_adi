@@ -100,7 +100,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @inject('sisaCuti', 'App\Http\Controllers\TrxCutiController')
                                 @foreach ($trx as $data)
                                 <tr>
                                     <td>{{ ++$no }}</td>
@@ -121,26 +120,25 @@
                                     <td>{{ $data->_atasan->nama }}</td>
                                     <td>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d-m-Y') }}<br />s/d<br />{{ \Carbon\Carbon::parse($data->tanggal_akhir)->format('d-m-Y') }}</td>
                                     <td>{{ $data->_status->status_cuti }}</td>
-                                    <td>{{ $sisaCuti::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id) }}</td>
+                                    {{-- <td>{{ App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id) }}</td> --}}
+                                    <td>
+                                        {{-- jika di Bulan Januari maka tampilkan sisa cuti tahun lalu --}}
+                                        @if(\Carbon\Carbon::today()->between(\Carbon\Carbon::now()->year.'-01-01', \Carbon\Carbon::now()->year.'-01-03'))
+                                            @if(\Carbon\Carbon::now()->subYear()->year == $data->periode_cuti)
+                                                {{ \Carbon\Carbon::now()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, \Carbon\Carbon::now()->year, $data->id) }}
+                                                <br/>{{ $data->periode_cuti }}: {{ App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id) }}
+                                            @else
+                                                {{ $data->periode_cuti }}: {{ App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id) }}
+                                            @endif
+                                        {{-- jika selain Bulan Januari maka tampilkan seperti biasa --}}
+                                        @else
+                                            {{ $data->periode_cuti }}: {{ App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id) }}
+                                        @endif
+                                    </td>
                                     <td>{{ $data->created_at }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
-                            <!-- <tfoot>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Tipe</th>
-                                    <th>Periode</th>
-                                    <th>Karyawan</th>
-                                    <th>NIP</th>
-                                    <th>PIC Pengganti</th>
-                                    <th>Tanggal Mulai</th>
-                                    <th>Status</th>
-                                    <th>Sisa Cuti</th>
-                                    <th>Created at</th>
-                                    <th>Action</th>
-                                </tr>
-                            </tfoot> -->
                         </table>
                     </div>
                 </div>
