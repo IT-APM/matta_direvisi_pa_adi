@@ -53,9 +53,16 @@
                         @csrf
                         <div class="row g-3">
                             <div class="col-md-4">
-                                @inject('sisaCuti', 'App\Http\Controllers\TrxCutiController')
                                 <label class="form-label">Sisa Jumlah Hari Cuti Tahunan</label>
-                                <h4>{{ $sisaCuti::getSisaFormCuti() }} Hari</h4>
+                                {{-- <h4>{{ App\Http\Controllers\TrxCutiController::getSisaFormCuti() }} Hari</h4> --}}
+                                {{-- jika di Bulan Januari maka tampilkan sisa cuti tahun lalu --}}
+                                @if(\Carbon\Carbon::today()->between(\Carbon\Carbon::now()->year.'-01-01', \Carbon\Carbon::now()->year.'-01-31'))
+                                    <h4>{{ \Carbon\Carbon::now()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaFormCuti(auth()->user()->nik, \Carbon\Carbon::now()->year) }} hari
+                                    <br/>{{ \Carbon\Carbon::now()->subYear()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaFormCuti(auth()->user()->nik, \Carbon\Carbon::now()->subYear()->year) }} hari</h4>
+                                {{-- jika selain Bulan Januari maka tampilkan seperti biasa --}}
+                                @else
+                                    <h4>{{ \Carbon\Carbon::now()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaFormCuti(auth()->user()->nik, \Carbon\Carbon::now()->year) }} Hari</h4>
+                                @endif
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label" for="tipe_cuti">Tipe Cuti</label>
