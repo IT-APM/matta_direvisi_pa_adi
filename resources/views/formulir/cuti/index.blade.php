@@ -123,7 +123,7 @@
                                     {{-- <td>{{ App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id) }}</td> --}}
                                     <td>
                                         {{-- jika di Bulan Januari maka tampilkan sisa cuti tahun lalu --}}
-                                        @if(\Carbon\Carbon::today()->between(\Carbon\Carbon::now()->year.'-01-01', \Carbon\Carbon::now()->year.'-01-03'))
+                                        @if(\Carbon\Carbon::today()->between(\Carbon\Carbon::now()->year.'-01-01', \Carbon\Carbon::now()->year.'-01-31'))
                                             @if(\Carbon\Carbon::now()->subYear()->year == $data->periode_cuti)
                                                 {{ \Carbon\Carbon::now()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, \Carbon\Carbon::now()->year, $data->id) }}
                                                 <br/>{{ $data->periode_cuti }}: {{ App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id) }}
