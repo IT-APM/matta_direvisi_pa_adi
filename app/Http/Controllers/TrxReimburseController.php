@@ -171,11 +171,12 @@ class TrxReimburseController extends Controller
         }
         // 
         $hubungan = ReimburseHubungan::orderBy('id', 'asc')->get();
-        $layanan = ReimburseLayanan::orderBy('id', 'asc')->get();
+        $layanan = ReimburseLayanan::orderBy('layanan', 'asc')->get();
         $layanan_istri = ReimburseLayanan::whereIn('id', [1,4,5,6])->orderBy('id', 'asc')->get();
         $layanan_anak = ReimburseLayanan::whereIn('id', [1])->orderBy('id', 'asc')->get();
         $lampiran = ReimburseLampiran::orderBy('id', 'asc')->get();
-        return view('formulir.reimburse.insert', compact('karyawan', 'plafon', 'hubungan', 'layanan', 'lampiran', 'layanan_istri', 'layanan_anak'));
+        $max_date = Carbon::now()->toDateString();
+        return view('formulir.reimburse.insert', compact('karyawan', 'plafon', 'hubungan', 'layanan', 'lampiran', 'layanan_istri', 'layanan_anak', 'max_date'));
     }
 
     /**
