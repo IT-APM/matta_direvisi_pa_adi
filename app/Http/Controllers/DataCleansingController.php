@@ -18,6 +18,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use DB;
 use URL;
+// 
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\RequestException;
 
 class DataCleansingController extends Controller
 {
@@ -29,8 +32,11 @@ class DataCleansingController extends Controller
     public function index()
     {
         //
+        ini_set('max_execution_time', 600);
+        $this->CleansingToDoList();
         $filename = ['emails.penilaian0', 'emails.penilaian0_outsourcing'];
         $this->getToDoList($filename);
+        // tidak digunakan karena sudah diberikan ketika pengajuan cuti
         // $this->getDataCuti();
         $this->KaryawanNonAktif();
         $this->CleansingDataAbsensi();
@@ -50,6 +56,45 @@ class DataCleansingController extends Controller
         $date_to = date("Y-m-d");
         $trx = $this->InsertToAttendance($date_from, $date_to);
         return response()->json( [ 'success' => true ], 200 );
+    }
+
+    public function CleansingToDoList()
+    {
+        // dd($request->all());
+        $arr_ok = array();
+        $arr_nok = array();
+        $trx = ToDoList::all();
+        foreach($trx as $_trx){
+            try {
+                // $response = Http::get('http://localhost/matta/pelatihan/10049/edit');
+                $response = Http::get($_trx->link);
+                if ($response->successful()) {
+                    $lines = explode(PHP_EOL, $response->body());
+                    $sentence = '<meta name="status" content="true">';
+                    foreach ($lines as $line) {
+                        if($sentence == trim($line)){
+                            array_push($arr_ok, ['id' => $_trx->id, 'link' => $_trx->link]);
+                            ToDoList::find($_trx->id)->delete();
+                            break;
+                        }
+                    }
+                } else {
+                    array_push($arr_nok, ['id' => $_trx->id, 'link' => $_trx->link, 'error' => "Error: " . $response->status()]);
+                    continue;
+                    // dd($_trx->id." Error: " . $response->status());
+                }
+            } catch (RequestException $e) {
+                array_push($arr_nok, ['id' => $_trx->id, 'link' => $_trx->link, 'error' => "Request failed: " . $e->getMessage()]);
+                continue;
+                // dd($_trx->id." Request failed: " . $e->getMessage());
+            } catch (\Exception $e) {
+                array_push($arr_nok, ['id' => $_trx->id, 'link' => $_trx->link, 'error' => "An error occurred: " . $e->getMessage()]);
+                continue;
+                // dd($_trx->id." An error occurred: " . $e->getMessage());
+            }
+        }
+        Storage::put('data_cleansing/'.Carbon::now()->format('Ymd_His').'.todolist.txt', json_encode(['$arr_ok'=>$arr_ok, '$arr_nok'=>$arr_nok]));
+        // dd(['$arr_ok'=>$arr_ok, '$arr_nok'=>$arr_nok]);
     }
 
     public function getToDoList($filename)

@@ -3,6 +3,7 @@
 <?php $__env->startSection('css'); ?>
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/datatables.css')); ?>">
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/datatable-extension.css')); ?>">
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/select2.css')); ?>">
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('style'); ?>
@@ -59,15 +60,115 @@
                         
                         <div class="tab-pane fade show active" id="pills-semua" role="tabpanel" aria-labelledby="pills-semua-tab">
                             <p class="mb-0 m-t-10">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                                    </div>
+                                </div>
+                                <div class="collapse mt-2" id="collapse_filter">
+                                    <form action="<?php echo e(route('payroll.history', 0)); ?>" method="get" enctype="multipart/form-data" class="needs-validation" novalidate="">
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <label class="h6" for="nama">Bulan-Tahun</label>
+                                                <div>
+                                                    <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="<?php echo e($bulan_tahun_dari); ?>">
+                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
+                                                </div>
+                                                sampai
+                                                <div>
+                                                    <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="<?php echo e($bulan_tahun_sampai); ?>">
+                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
+                                                </div>
+                                                <div>
+                                                    <label class="h6 mt-2" for="nik">Karyawan</label>
+                                                    <select class="form-select js-example-basic-single col-sm-12" id="nik" name="nik" required="">
+                                                        <option selected="" disabled="" value="">Pilih...</option>
+                                                        <option value="0" <?php if(in_array('0', $_arr_nik)): ?> selected <?php endif; ?>>Semua Karyawan</option>
+                                                        <?php $__currentLoopData = $karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option value="<?php echo e($data->nik); ?>" <?php if(in_array($data->nik, $_arr_nik)): ?> selected <?php endif; ?>><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    </select>
+                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
+                                                </div>
+                                                <label class="h6 mt-2">Status</label>&nbsp;<input type="checkbox" onClick="status_karyawan(this)" />&nbsp;Check All
+                                                <label class="d-block" for="status_karyawan">
+                                                    <?php $__currentLoopData = $status_karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <input class="checkbox_animated" id="status_karyawan[]" name="status_karyawan[]" type="checkbox" value="<?php echo e($data->status_karyawan); ?>" <?php if(in_array($data->status_karyawan, $_arr_status_karyawan)): ?> checked <?php endif; ?>> <?php echo e($data->status_karyawan); ?><br/>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </label>
+                                                <label class="h6 mt-2">Level</label>&nbsp;<input type="checkbox" onClick="level(this)" />&nbsp;Check All
+                                                <label class="d-block" for="level">
+                                                    <?php $__currentLoopData = $level; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <input class="checkbox_animated" id="level[]" name="level[]" type="checkbox" value="<?php echo e($data->level); ?>" <?php if(in_array($data->level, $_arr_level)): ?> checked <?php endif; ?>> <?php echo e($data->level); ?><br/>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </label>
+                                                
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="h6">Findim</label>
+                                                <br/>
+                                                <label class="form-label">Divisi</label>&nbsp;<input type="checkbox" onClick="findim_divisi(this)" />&nbsp;Check All
+                                                <label class="d-block" for="findim_divisi">
+                                                    <?php $__currentLoopData = $findim_divisi; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <input class="checkbox_animated" id="findim_divisi[]" name="findim_divisi[]" type="checkbox" value="<?php echo e($data->divisi_id); ?>/<?php echo e($data->divisi_desc); ?>" <?php if(in_array($data->divisi_id.'/'.$data->divisi_desc, $_arr_findim_divisi)): ?> checked <?php endif; ?>> <?php echo e($data->divisi_id); ?>/<?php echo e($data->divisi_desc); ?><br/>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </label>
+                                                <label class="form-label">Departemen</label>&nbsp;<input type="checkbox" onClick="findim_departemen(this)" />&nbsp;Check All
+                                                <label class="d-block" for="findim_departemen">
+                                                    <?php $__currentLoopData = $findim_departemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <input class="checkbox_animated" id="findim_departemen[]" name="findim_departemen[]" type="checkbox" value="<?php echo e($data->departemen_id); ?>/<?php echo e($data->departemen_desc); ?>" <?php if(in_array($data->departemen_id.'/'.$data->departemen_desc, $_arr_findim_departemen)): ?> checked <?php endif; ?>> <?php echo e($data->departemen_id); ?>/<?php echo e($data->departemen_desc); ?><br/>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </label>
+                                                <label class="form-label">Sub Departemen</label>&nbsp;<input type="checkbox" onClick="findim_subdepartemen(this)" />&nbsp;Check All
+                                                <label class="d-block" for="findim_subdepartemen">
+                                                    <?php $__currentLoopData = $findim_subdepartemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <input class="checkbox_animated" id="findim_subdepartemen[]" name="findim_subdepartemen[]" type="checkbox" value="<?php echo e($data->subdepartemen_id); ?>/<?php echo e($data->subdepartemen_desc); ?>" <?php if(in_array($data->subdepartemen_id.'/'.$data->subdepartemen_desc, $_arr_findim_subdepartemen)): ?> checked <?php endif; ?>> <?php echo e($data->subdepartemen_id); ?>/<?php echo e($data->subdepartemen_desc); ?><br/>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </label>
+                                                <label class="form-label">Project</label>&nbsp;<input type="checkbox" onClick="findim_project(this)" />&nbsp;Check All
+                                                <label class="d-block" for="findim_project">
+                                                    <?php $__currentLoopData = $findim_project; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <input class="checkbox_animated" id="findim_project[]" name="findim_project[]" type="checkbox" value="<?php echo e($data->project_id); ?>/<?php echo e($data->project_desc); ?>" <?php if(in_array($data->project_id.'/'.$data->project_desc, $_arr_findim_project)): ?> checked <?php endif; ?>> <?php echo e($data->project_id); ?>/<?php echo e($data->project_desc); ?><br/>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="h6">Direktorat</label>&nbsp;<input type="checkbox" onClick="divisi(this)" />&nbsp;Check All
+                                                <label class="d-block" for="divisi">
+                                                    <?php $__currentLoopData = $divisi; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <input class="checkbox_animated" id="divisi[]" name="divisi[]" type="checkbox" value="<?php echo e($data->nama); ?>" <?php if(in_array($data->nama, $_arr_divisi)): ?> checked <?php endif; ?>> <?php echo e($data->nama); ?><br/>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </label>
+                                                <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="departemen(this)" />&nbsp;Check All
+                                                <label class="d-block" for="departemen">
+                                                    <?php $__currentLoopData = $departemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <input class="checkbox_animated" id="departemen[]" name="departemen[]" type="checkbox" value="<?php echo e($data->nama); ?>" <?php if(in_array($data->nama, $_arr_departemen)): ?> checked <?php endif; ?>> <?php echo e($data->nama); ?><br/>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </label>
+                                                <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="subdepartemen(this)" />&nbsp;Check All
+                                                <label class="d-block" for="subdepartemen">
+                                                    <?php $__currentLoopData = $subdepartemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <input class="checkbox_animated" id="subdepartemen[]" name="subdepartemen[]" type="checkbox" value="<?php echo e($data->nama); ?>" <?php if(in_array($data->nama, $_arr_subdepartemen)): ?> checked <?php endif; ?>> <?php echo e($data->nama); ?><br/>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col-sm-12">
+                                                <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                                 <div class="table-responsive text-nowrap">
                                     <table class="display" id="_datatable1">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Tahun</th>
+                                                <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Bulan</th>
-                                                <th>Tahun</th>
                                                 <th>Gaji Pokok</th>
                                                 <?php
                                                     $where = ['tipe'=>'add'];
@@ -104,10 +205,10 @@
                                             ?>
                                             <tr>
                                                 <td><?php echo e(++$no); ?></td>
+                                                <td><?php echo e($data->tahun); ?></td>
+                                                <td><?php echo e(str_pad($data->bulan, 2, '0', STR_PAD_LEFT)); ?></td>
                                                 <td><?php echo e($data->_nik->nama); ?></td>
                                                 <td><?php echo e($data->nik); ?></td>
-                                                <td><?php echo e($data->bulan); ?></td>
-                                                <td><?php echo e($data->tahun); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($data->gapok, 0)); ?></td>
                                                 
                                                 <?php $__currentLoopData = $add; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -138,10 +239,10 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Tahun</th>
+                                                <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Bulan</th>
-                                                <th>Tahun</th>
                                                 <th>Total Upah</th>
                                                 <?php
                                                     $where = ['tipe'=>'sub'];
@@ -185,10 +286,10 @@
                                             ?>
                                             <tr>
                                                 <td><?php echo e(++$no); ?></td>
+                                                <td><?php echo e($data->tahun); ?></td>
+                                                <td><?php echo e(str_pad($data->bulan, 2, '0', STR_PAD_LEFT)); ?></td>
                                                 <td><?php echo e($data->_nik->nama); ?></td>
                                                 <td><?php echo e($data->nik); ?></td>
-                                                <td><?php echo e($data->bulan); ?></td>
-                                                <td><?php echo e($data->tahun); ?></td>
                                                 
                                                 <td class="text-end"><?php echo e(number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0)); ?></td>
                                                 <?php $__currentLoopData = $sub; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -216,10 +317,10 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Tahun</th>
+                                                <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Bulan</th>
-                                                <th>Tahun</th>
                                                 <th>Upah Sekarang</th>
                                                 <th>Upah Maksimum</th>
                                                 <th>Upah Perhitungan</th>
@@ -242,10 +343,10 @@
                                             ?>
                                             <tr>
                                                 <td><?php echo e(++$no); ?></td>
+                                                <td><?php echo e($data->tahun); ?></td>
+                                                <td><?php echo e(str_pad($data->bulan, 2, '0', STR_PAD_LEFT)); ?></td>
                                                 <td><?php echo e($data->_nik->nama); ?></td>
                                                 <td><?php echo e($data->nik); ?></td>
-                                                <td><?php echo e($data->bulan); ?></td>
-                                                <td><?php echo e($data->tahun); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjstk[0]->upah, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjstk[0]->maksimal, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjstk[0]->angka, 0)); ?></td>
@@ -272,10 +373,10 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Tahun</th>
+                                                <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Bulan</th>
-                                                <th>Tahun</th>
                                                 <th>Upah Sekarang</th>
                                                 <th>Upah Maksimum</th>
                                                 <th>Upah Perhitungan</th>
@@ -298,10 +399,10 @@
                                             ?>
                                             <tr>
                                                 <td><?php echo e(++$no); ?></td>
+                                                <td><?php echo e($data->tahun); ?></td>
+                                                <td><?php echo e(str_pad($data->bulan, 2, '0', STR_PAD_LEFT)); ?></td>
                                                 <td><?php echo e($data->_nik->nama); ?></td>
                                                 <td><?php echo e($data->nik); ?></td>
-                                                <td><?php echo e($data->bulan); ?></td>
-                                                <td><?php echo e($data->tahun); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjskes[0]->upah, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjskes[0]->maksimal, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjskes[0]->angka, 0)); ?></td>
@@ -328,16 +429,22 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Tahun</th>
+                                                <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
+                                                <th>Findim Sub Departemen</th>
+                                                <th>Findim Departemen</th>
+                                                <th>Findim Divisi</th>
+                                                <th>Project</th>
                                                 <th>Direktorat</th>
                                                 <th>Divisi</th>
                                                 <th>Departemen</th>
                                                 <th>Status Karyawan</th>
+                                                <th>Status Aktif</th>
                                                 <th>Jabatan</th>
                                                 <th>Level</th>
-                                                <th>Bulan</th>
-                                                <th>Tahun</th>
+                                                <th>Grade</th>
                                                 <th>Gaji Pokok</th>
                                                 <?php
                                                     $where = ['tipe'=>'add'];
@@ -427,16 +534,22 @@
                                             ?>
                                             <tr>
                                                 <td><?php echo e(++$no); ?></td>
+                                                <td><?php echo e($data->tahun); ?></td>
+                                                <td><?php echo e(str_pad($data->bulan, 2, '0', STR_PAD_LEFT)); ?></td>
                                                 <td><?php echo e($data->_nik->nama); ?></td>
                                                 <td><?php echo e($data->nik); ?></td>
-                                                <td><?php echo e($nik_property['divisi']); ?></td>
-                                                <td><?php echo e($nik_property['dep']); ?></td>
-                                                <td><?php echo e($nik_property['sub_dep']); ?></td>
-                                                <td><?php echo e($nik_property['status_karyawan']); ?></td>
-                                                <td><?php echo e($nik_property['jabatan']); ?></td>
-                                                <td><?php echo e($nik_property['level']); ?></td>
-                                                <td><?php echo e($data->bulan); ?></td>
-                                                <td><?php echo e($data->tahun); ?></td>
+                                                <td><?php echo e($data->findim_subdepartemen); ?></td>
+                                                <td><?php echo e($data->findim_departemen); ?></td>
+                                                <td><?php echo e($data->findim_divisi); ?></td>
+                                                <td><?php echo e($data->findim_project); ?></td>
+                                                <td><?php echo e($data->divisi); ?></td>
+                                                <td><?php echo e($data->departemen); ?></td>
+                                                <td><?php echo e($data->subdepartemen); ?></td>
+                                                <td><?php echo e($data->status_karyawan); ?></td>
+                                                <td><?php echo e($data->status_aktif); ?></td>
+                                                <td><?php echo e($data->jabatan); ?></td>
+                                                <td><?php echo e($data->level); ?></td>
+                                                <td><?php echo e($data->grade); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($data->gapok, 0)); ?></td>
                                                 
                                                 <?php $__currentLoopData = $add; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -505,6 +618,9 @@
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/vfs_fonts.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.html5.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.print.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/select2/select2.full.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/select2/select2-custom.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/form-validation-custom.js')); ?>"></script>
 <script type="text/javascript">
 // semua
 $('#_datatable1').DataTable( {
@@ -561,6 +677,66 @@ $('#_datatable5').DataTable( {
 	],
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
 } );
+function findim_subdepartemen(source) {
+    checkboxes = document.getElementsByName('findim_subdepartemen[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function findim_departemen(source) {
+    checkboxes = document.getElementsByName('findim_departemen[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function findim_divisi(source) {
+    checkboxes = document.getElementsByName('findim_divisi[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function findim_project(source) {
+    checkboxes = document.getElementsByName('findim_project[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function divisi(source) {
+    checkboxes = document.getElementsByName('divisi[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function departemen(source) {
+    checkboxes = document.getElementsByName('departemen[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function subdepartemen(source) {
+    checkboxes = document.getElementsByName('subdepartemen[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function status_karyawan(source) {
+    checkboxes = document.getElementsByName('status_karyawan[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function jabatan(source) {
+    checkboxes = document.getElementsByName('jabatan[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function level(source) {
+    checkboxes = document.getElementsByName('level[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
 </script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.simple.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\matta\resources\views/payroll/history.blade.php ENDPATH**/ ?>

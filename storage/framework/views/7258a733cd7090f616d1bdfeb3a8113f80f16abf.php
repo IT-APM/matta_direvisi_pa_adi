@@ -80,6 +80,13 @@
                             <h6>Applications</h6>
                         </div>
                     </li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('feeds.view')); ?>">
+                            <svg class="stroke-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-knowledgebase')); ?>"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-knowledgebase')); ?>"></use>
+                            </svg><span>Feeds</span></a></li>
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="#">
                             <svg class="stroke-icon">
                                 <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-form')); ?>"></use>
@@ -108,13 +115,6 @@
                             <?php endif; ?>
                         </ul>
                     </li>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('feeds.view')); ?>">
-                            <svg class="stroke-icon">
-                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-knowledgebase')); ?>"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-knowledgebase')); ?>"></use>
-                            </svg><span>Feeds</span></a></li>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('iphone')): ?>
                         <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('covid.index')); ?>">
                                 <svg class="stroke-icon">
@@ -149,13 +149,6 @@
                             <h6>Recruitment</h6>
                         </div>
                     </li>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('recruitment.index')); ?>">
-                        <svg class="stroke-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-form')); ?>"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-form')); ?>"> </use>
-                        </svg><span>List of Recuitment</span></a></li>
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('recruitment.applicant_list', 0)); ?>">
                         <svg class="stroke-icon">
                             <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-form')); ?>"></use>
@@ -163,6 +156,13 @@
                         <svg class="fill-icon">
                             <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-form')); ?>"> </use>
                         </svg><span>List of Applicant</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('recruitment.index')); ?>">
+                        <svg class="stroke-icon">
+                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-form')); ?>"></use>
+                        </svg>
+                        <svg class="fill-icon">
+                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-form')); ?>"> </use>
+                        </svg><span>List of Recuitment</span></a></li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                         <li class="sidebar-main-title">
@@ -170,6 +170,13 @@
                                 <h6>Payroll</h6>
                             </div>
                         </li>
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('payroll.history', 0)); ?>">
+                                <svg class="stroke-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
+                                </svg><span>Payroll History</span></a></li>
                         <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('payroll.master', 0)); ?>">
                                 <svg class="stroke-icon">
                                     <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
@@ -184,13 +191,6 @@
                                 <svg class="fill-icon">
                                     <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
                                 </svg><span>Payroll Transaction</span></a></li>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('payroll.history', 0)); ?>">
-                                <svg class="stroke-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
-                                </svg><span>Payroll History</span></a></li>
                     <?php endif; ?>
                     <li class="sidebar-main-title">
                         <div>
@@ -212,20 +212,6 @@
                                 <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
                             </svg><span>Attendance Recap</span></a></li>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('reminder_sp.index')); ?>">
-                                <svg class="stroke-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
-                                </svg><span>Reminder Warning Letter</span></a></li>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('noattendance.index')); ?>">
-                                <svg class="stroke-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
-                                </svg><span>No Attendance</span></a></li>
                         <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('health.index')); ?>">
                                 <svg class="stroke-icon">
                                     <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-form')); ?>"></use>
@@ -233,12 +219,38 @@
                                 <svg class="fill-icon">
                                     <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-form')); ?>"></use>
                                 </svg><span>Health Reporting</span></a></li>
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('noattendance.index')); ?>">
+                                <svg class="stroke-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
+                                </svg><span>No Attendance</span></a></li>
+                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('reminder_sp.index')); ?>">
+                                <svg class="stroke-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
+                                </svg><span>Reminder Warning Letter</span></a></li>
                     <?php endif; ?>
                     <li class="sidebar-main-title">
                         <div>
                             <h6>Overtime</h6>
                         </div>
                     </li>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('spv')): ?>
+                        <li class="sidebar-list">
+                            <a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('approval-index')); ?>">
+                                <svg class="stroke-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-to-do')); ?>"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-to-do')); ?>"></use>
+                                </svg><span>Approval</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('staf')): ?>
                         <li class="sidebar-list">
                             <a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('overtime.index')); ?>">
@@ -252,16 +264,6 @@
                         </li>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('spv')): ?>
-                        <li class="sidebar-list">
-                            <a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('approval-index')); ?>">
-                                <svg class="stroke-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-to-do')); ?>"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-to-do')); ?>"></use>
-                                </svg><span>Approval</span>
-                            </a>
-                        </li>
                         <li class="sidebar-list">
                             <a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('reporting-index')); ?>">
                                 <svg class="stroke-icon">
@@ -304,23 +306,24 @@
                                     <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-project')); ?>"></use>
                                 </svg><span>Data Master</span></a>
                             <ul class="sidebar-submenu">
-                                <li><a href="<?php echo e(route('karyawan.index')); ?>">Employee</a></li>
+                                <li><a href="<?php echo e(route('banner.index')); ?>">Banner</a></li>
                                 <li><a href="<?php echo e(route('perusahaan.index')); ?>">Company</a></li>
+                                <li><a href="<?php echo e(route('subdepartemen.index')); ?>">Department</a></li>
                                 <li><a href="<?php echo e(route('divisi.index')); ?>">Directorate</a></li>
                                 <li><a href="<?php echo e(route('departemen.index')); ?>">Division</a></li>
-                                <li><a href="<?php echo e(route('subdepartemen.index')); ?>">Department</a></li>
-                                <li><a href="<?php echo e(route('findim_project.index')); ?>">FinDim Project</a></li>
-                                <li><a href="<?php echo e(route('findim_divisi.index')); ?>">FinDim Division</a></li>
-                                <li><a href="<?php echo e(route('findim_departemen.index')); ?>">FinDim Department</a></li>
-                                <li><a href="<?php echo e(route('findim_subdepartemen.index')); ?>">FinDim Sub Department</a></li>
-                                <li><a href="<?php echo e(route('plafon.index')); ?>">Health Reimbursement<br />Limits</a></li>
-                                <li><a href="<?php echo e(route('jabatan.index')); ?>">Job Position</a></li>
+                                <li><a href="<?php echo e(route('karyawan.index')); ?>">Employee</a></li>
                                 <li><a href="<?php echo e(route('feeds.index')); ?>">Feeds</a></li>
-                                <li><a href="<?php echo e(route('holiday.index')); ?>">National Holiday</a></li>
-                                <li><a href="<?php echo e(route('iphoneuser.index')); ?>">iPhone Users</a></li>
+                                <li><a href="<?php echo e(route('findim_departemen.index')); ?>">FinDim Department</a></li>
+                                <li><a href="<?php echo e(route('findim_divisi.index')); ?>">FinDim Division</a></li>
+                                <li><a href="<?php echo e(route('findim_project.index')); ?>">FinDim Project</a></li>
+                                <li><a href="<?php echo e(route('findim_subdepartemen.index')); ?>">FinDim Sub Department</a></li>
                                 <li><a href="<?php echo e(route('hcouser.index')); ?>">HCO Team</a></li>
+                                <li><a href="<?php echo e(route('plafon.index')); ?>">Health Reimbursement<br />Limits</a></li>
+                                <li><a href="<?php echo e(route('iphoneuser.index')); ?>">iPhone Users</a></li>
+                                <li><a href="<?php echo e(route('jabatan.index')); ?>">Job Position</a></li>
+                                <li><a href="<?php echo e(route('join.index')); ?>">Join Status</a></li>
+                                <li><a href="<?php echo e(route('holiday.index')); ?>">National Holiday</a></li>
                                 <li><a href="<?php echo e(route('utilitas.index')); ?>">Utility</a></li>
-                                <li><a href="<?php echo e(route('banner.index')); ?>">Banner</a></li>
                             </ul>
                         </li>
                         <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="#">
@@ -336,13 +339,13 @@
                                 <li><a href="<?php echo e(route('jadwalcls3.index')); ?>">CLS Project 3</a></li>
                                 <li><a href="<?php echo e(route('jadwalnoc.index')); ?>">NOC Alita Fiber Hub</a></li>
                                 <li><a href="<?php echo e(route('jadwalnoc2.index')); ?>">NOC Alita Fiber Hub 2</a></li>
-                                <li><a href="<?php echo e(route('jadwalsec.index')); ?>">Security</a></li>
                                 <li><a href="<?php echo e(route('jadwalqats.index')); ?>">QA Technical Support</a></li>
-                                <li><a href="<?php echo e(route('jadwalqatsmember.index')); ?>">QA Technical Support<br />Member</a></li>
                                 <li><a href="<?php echo e(route('jadwalqatsleader.index')); ?>">QA Technical Support<br />Leader</a></li>
                                 <li><a href="<?php echo e(route('jadwalqatsleader2.index')); ?>">QA Technical Support<br />Leader 2</a></li>
-                                <li><a href="<?php echo e(route('jadwalrandom.index')); ?>">Random</a></li>
+                                <li><a href="<?php echo e(route('jadwalqatsmember.index')); ?>">QA Technical Support<br />Member</a></li>
                                 <li><a href="<?php echo e(route('jadwalservicedesk.index')); ?>">QA Technical Support<br />Service Desk</a></li>
+                                <li><a href="<?php echo e(route('jadwalrandom.index')); ?>">Random</a></li>
+                                <li><a href="<?php echo e(route('jadwalsec.index')); ?>">Security</a></li>
                             </ul>
                         </li>
                         <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="#">
@@ -353,11 +356,11 @@
                                     <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-project')); ?>"></use>
                                 </svg><span>Travel Expense</span></a>
                             <ul class="sidebar-submenu">
-                                <li><a href="<?php echo e(route('mtrdatabpd.index')); ?>">NIP vs Admin</a></li>
-                                <li><a href="<?php echo e(route('mtrdatacoordinatorbpd.index')); ?>">Coordinator</a></li>
                                 <li><a href="<?php echo e(route('mtrdatabodbpd.index')); ?>">BOD Line Approval</a></li>
-                                <li><a href="<?php echo e(route('mtrdataprojectadmin.index')); ?>">Project vs Admin</a></li>
                                 <li><a href="<?php echo e(route('mtrdatacoabpd.index')); ?>">COA</a></li>
+                                <li><a href="<?php echo e(route('mtrdatacoordinatorbpd.index')); ?>">Coordinator</a></li>
+                                <li><a href="<?php echo e(route('mtrdatabpd.index')); ?>">NIP vs Admin</a></li>
+                                <li><a href="<?php echo e(route('mtrdataprojectadmin.index')); ?>">Project vs Admin</a></li>
                             </ul>
                         </li>
                     <?php endif; ?>

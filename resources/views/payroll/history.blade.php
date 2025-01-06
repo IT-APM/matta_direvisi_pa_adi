@@ -5,6 +5,7 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatable-extension.css') }}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
 @endsection
 
 @section('style')
@@ -61,15 +62,120 @@
                         {{-- Semua --}}
                         <div class="tab-pane fade show active" id="pills-semua" role="tabpanel" aria-labelledby="pills-semua-tab">
                             <p class="mb-0 m-t-10">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                                    </div>
+                                </div>
+                                <div class="collapse mt-2" id="collapse_filter">
+                                    <form action="{{ route('payroll.history', 0) }}" method="get" enctype="multipart/form-data" class="needs-validation" novalidate="">
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <label class="h6" for="nama">Bulan-Tahun</label>
+                                                <div>
+                                                    <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_dari }}">
+                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
+                                                </div>
+                                                sampai
+                                                <div>
+                                                    <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_sampai }}">
+                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
+                                                </div>
+                                                <div>
+                                                    <label class="h6 mt-2" for="nik">Karyawan</label>
+                                                    <select class="form-select js-example-basic-single col-sm-12" id="nik" name="nik" required="">
+                                                        <option selected="" disabled="" value="">Pilih...</option>
+                                                        <option value="0" @if(in_array('0', $_arr_nik)) selected @endif>Semua Karyawan</option>
+                                                        @foreach ($karyawan as $data)
+                                                        <option value="{{ $data->nik }}" @if(in_array($data->nik, $_arr_nik)) selected @endif>{{ $data->nama }} - {{ $data->nik }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
+                                                </div>
+                                                <label class="h6 mt-2">Status</label>&nbsp;<input type="checkbox" onClick="status_karyawan(this)" />&nbsp;Check All
+                                                <label class="d-block" for="status_karyawan">
+                                                    @foreach ($status_karyawan as $data)
+                                                    <input class="checkbox_animated" id="status_karyawan[]" name="status_karyawan[]" type="checkbox" value="{{ $data->status_karyawan }}" @if(in_array($data->status_karyawan, $_arr_status_karyawan)) checked @endif> {{ $data->status_karyawan }}<br/>
+                                                    @endforeach
+                                                </label>
+                                                <label class="h6 mt-2">Level</label>&nbsp;<input type="checkbox" onClick="level(this)" />&nbsp;Check All
+                                                <label class="d-block" for="level">
+                                                    @foreach ($level as $data)
+                                                    <input class="checkbox_animated" id="level[]" name="level[]" type="checkbox" value="{{ $data->level }}" @if(in_array($data->level, $_arr_level)) checked @endif> {{ $data->level }}<br/>
+                                                    @endforeach
+                                                </label>
+                                                {{-- <label class="h6 mt-2">Jabatan</label>&nbsp;<input type="checkbox" onClick="jabatan(this)" />&nbsp;Check All
+                                                <label class="d-block" for="jabatan">
+                                                    @foreach ($jabatan as $data)
+                                                    <input class="checkbox_animated" id="jabatan[]" name="jabatan[]" type="checkbox" value="{{ $data->jabatan }}" @if(in_array($data->jabatan, $_arr_jabatan)) checked @endif> {{ $data->jabatan }}<br/>
+                                                    @endforeach
+                                                </label> --}}
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="h6">Findim</label>
+                                                <br/>
+                                                <label class="form-label">Divisi</label>&nbsp;<input type="checkbox" onClick="findim_divisi(this)" />&nbsp;Check All
+                                                <label class="d-block" for="findim_divisi">
+                                                    @foreach ($findim_divisi as $data)
+                                                    <input class="checkbox_animated" id="findim_divisi[]" name="findim_divisi[]" type="checkbox" value="{{ $data->divisi_id }}/{{ $data->divisi_desc }}" @if(in_array($data->divisi_id.'/'.$data->divisi_desc, $_arr_findim_divisi)) checked @endif> {{ $data->divisi_id }}/{{ $data->divisi_desc }}<br/>
+                                                    @endforeach
+                                                </label>
+                                                <label class="form-label">Departemen</label>&nbsp;<input type="checkbox" onClick="findim_departemen(this)" />&nbsp;Check All
+                                                <label class="d-block" for="findim_departemen">
+                                                    @foreach ($findim_departemen as $data)
+                                                    <input class="checkbox_animated" id="findim_departemen[]" name="findim_departemen[]" type="checkbox" value="{{ $data->departemen_id }}/{{ $data->departemen_desc }}" @if(in_array($data->departemen_id.'/'.$data->departemen_desc, $_arr_findim_departemen)) checked @endif> {{ $data->departemen_id }}/{{ $data->departemen_desc }}<br/>
+                                                    @endforeach
+                                                </label>
+                                                <label class="form-label">Sub Departemen</label>&nbsp;<input type="checkbox" onClick="findim_subdepartemen(this)" />&nbsp;Check All
+                                                <label class="d-block" for="findim_subdepartemen">
+                                                    @foreach ($findim_subdepartemen as $data)
+                                                    <input class="checkbox_animated" id="findim_subdepartemen[]" name="findim_subdepartemen[]" type="checkbox" value="{{ $data->subdepartemen_id }}/{{ $data->subdepartemen_desc }}" @if(in_array($data->subdepartemen_id.'/'.$data->subdepartemen_desc, $_arr_findim_subdepartemen)) checked @endif> {{ $data->subdepartemen_id }}/{{ $data->subdepartemen_desc }}<br/>
+                                                    @endforeach
+                                                </label>
+                                                <label class="form-label">Project</label>&nbsp;<input type="checkbox" onClick="findim_project(this)" />&nbsp;Check All
+                                                <label class="d-block" for="findim_project">
+                                                    @foreach ($findim_project as $data)
+                                                    <input class="checkbox_animated" id="findim_project[]" name="findim_project[]" type="checkbox" value="{{ $data->project_id }}/{{ $data->project_desc }}" @if(in_array($data->project_id.'/'.$data->project_desc, $_arr_findim_project)) checked @endif> {{ $data->project_id }}/{{ $data->project_desc }}<br/>
+                                                    @endforeach
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="h6">Direktorat</label>&nbsp;<input type="checkbox" onClick="divisi(this)" />&nbsp;Check All
+                                                <label class="d-block" for="divisi">
+                                                    @foreach ($divisi as $data)
+                                                    <input class="checkbox_animated" id="divisi[]" name="divisi[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_divisi)) checked @endif> {{ $data->nama }}<br/>
+                                                    @endforeach
+                                                </label>
+                                                <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="departemen(this)" />&nbsp;Check All
+                                                <label class="d-block" for="departemen">
+                                                    @foreach ($departemen as $data)
+                                                    <input class="checkbox_animated" id="departemen[]" name="departemen[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_departemen)) checked @endif> {{ $data->nama }}<br/>
+                                                    @endforeach
+                                                </label>
+                                                <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="subdepartemen(this)" />&nbsp;Check All
+                                                <label class="d-block" for="subdepartemen">
+                                                    @foreach ($subdepartemen as $data)
+                                                    <input class="checkbox_animated" id="subdepartemen[]" name="subdepartemen[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_subdepartemen)) checked @endif> {{ $data->nama }}<br/>
+                                                    @endforeach
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col-sm-12">
+                                                <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                                 <div class="table-responsive text-nowrap">
                                     <table class="display" id="_datatable1">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Tahun</th>
+                                                <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Bulan</th>
-                                                <th>Tahun</th>
                                                 <th>Gaji Pokok</th>
                                                 @php
                                                     $where = ['tipe'=>'add'];
@@ -106,10 +212,10 @@
                                             @endphp
                                             <tr>
                                                 <td>{{ ++$no }}</td>
+                                                <td>{{ $data->tahun }}</td>
+                                                <td>{{ str_pad($data->bulan, 2, '0', STR_PAD_LEFT) }}</td>
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
-                                                <td>{{ $data->bulan }}</td>
-                                                <td>{{ $data->tahun }}</td>
                                                 <td class="text-end">{{ number_format($data->gapok, 0) }}</td>
                                                 {{--  --}}
                                                 @foreach ($add as $_data)
@@ -140,10 +246,10 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Tahun</th>
+                                                <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Bulan</th>
-                                                <th>Tahun</th>
                                                 <th>Total Upah</th>
                                                 @php
                                                     $where = ['tipe'=>'sub'];
@@ -187,10 +293,10 @@
                                             @endphp
                                             <tr>
                                                 <td>{{ ++$no }}</td>
+                                                <td>{{ $data->tahun }}</td>
+                                                <td>{{ str_pad($data->bulan, 2, '0', STR_PAD_LEFT) }}</td>
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
-                                                <td>{{ $data->bulan }}</td>
-                                                <td>{{ $data->tahun }}</td>
                                                 {{-- total upah --}}
                                                 <td class="text-end">{{ number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0) }}</td>
                                                 @foreach ($sub as $_data)
@@ -218,10 +324,10 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Tahun</th>
+                                                <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Bulan</th>
-                                                <th>Tahun</th>
                                                 <th>Upah Sekarang</th>
                                                 <th>Upah Maksimum</th>
                                                 <th>Upah Perhitungan</th>
@@ -244,10 +350,10 @@
                                             @endphp
                                             <tr>
                                                 <td>{{ ++$no }}</td>
+                                                <td>{{ $data->tahun }}</td>
+                                                <td>{{ str_pad($data->bulan, 2, '0', STR_PAD_LEFT) }}</td>
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
-                                                <td>{{ $data->bulan }}</td>
-                                                <td>{{ $data->tahun }}</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->upah, 0) }}</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->maksimal, 0) }}</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->angka, 0) }}</td>
@@ -274,10 +380,10 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Tahun</th>
+                                                <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Bulan</th>
-                                                <th>Tahun</th>
                                                 <th>Upah Sekarang</th>
                                                 <th>Upah Maksimum</th>
                                                 <th>Upah Perhitungan</th>
@@ -300,10 +406,10 @@
                                             @endphp
                                             <tr>
                                                 <td>{{ ++$no }}</td>
+                                                <td>{{ $data->tahun }}</td>
+                                                <td>{{ str_pad($data->bulan, 2, '0', STR_PAD_LEFT) }}</td>
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
-                                                <td>{{ $data->bulan }}</td>
-                                                <td>{{ $data->tahun }}</td>
                                                 <td class="text-end">{{ number_format($bpjskes[0]->upah, 0) }}</td>
                                                 <td class="text-end">{{ number_format($bpjskes[0]->maksimal, 0) }}</td>
                                                 <td class="text-end">{{ number_format($bpjskes[0]->angka, 0) }}</td>
@@ -330,16 +436,22 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Tahun</th>
+                                                <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
+                                                <th>Findim Sub Departemen</th>
+                                                <th>Findim Departemen</th>
+                                                <th>Findim Divisi</th>
+                                                <th>Project</th>
                                                 <th>Direktorat</th>
                                                 <th>Divisi</th>
                                                 <th>Departemen</th>
                                                 <th>Status Karyawan</th>
+                                                <th>Status Aktif</th>
                                                 <th>Jabatan</th>
                                                 <th>Level</th>
-                                                <th>Bulan</th>
-                                                <th>Tahun</th>
+                                                <th>Grade</th>
                                                 <th>Gaji Pokok</th>
                                                 @php
                                                     $where = ['tipe'=>'add'];
@@ -429,16 +541,22 @@
                                             @endphp
                                             <tr>
                                                 <td>{{ ++$no }}</td>
+                                                <td>{{ $data->tahun }}</td>
+                                                <td>{{ str_pad($data->bulan, 2, '0', STR_PAD_LEFT) }}</td>
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
-                                                <td>{{ $nik_property['divisi'] }}</td>
-                                                <td>{{ $nik_property['dep'] }}</td>
-                                                <td>{{ $nik_property['sub_dep'] }}</td>
-                                                <td>{{ $nik_property['status_karyawan'] }}</td>
-                                                <td>{{ $nik_property['jabatan'] }}</td>
-                                                <td>{{ $nik_property['level'] }}</td>
-                                                <td>{{ $data->bulan }}</td>
-                                                <td>{{ $data->tahun }}</td>
+                                                <td>{{ $data->findim_subdepartemen }}</td>
+                                                <td>{{ $data->findim_departemen }}</td>
+                                                <td>{{ $data->findim_divisi }}</td>
+                                                <td>{{ $data->findim_project }}</td>
+                                                <td>{{ $data->divisi }}</td>
+                                                <td>{{ $data->departemen }}</td>
+                                                <td>{{ $data->subdepartemen }}</td>
+                                                <td>{{ $data->status_karyawan }}</td>
+                                                <td>{{ $data->status_aktif }}</td>
+                                                <td>{{ $data->jabatan }}</td>
+                                                <td>{{ $data->level }}</td>
+                                                <td>{{ $data->grade }}</td>
                                                 <td class="text-end">{{ number_format($data->gapok, 0) }}</td>
                                                 {{--  --}}
                                                 @foreach ($add as $_data)
@@ -507,6 +625,9 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/vfs_fonts.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
+<script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
+<script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
+<script src="{{ asset('assets/js/form-validation-custom.js') }}"></script>
 <script type="text/javascript">
 // semua
 $('#_datatable1').DataTable( {
@@ -563,5 +684,65 @@ $('#_datatable5').DataTable( {
 	],
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
 } );
+function findim_subdepartemen(source) {
+    checkboxes = document.getElementsByName('findim_subdepartemen[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function findim_departemen(source) {
+    checkboxes = document.getElementsByName('findim_departemen[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function findim_divisi(source) {
+    checkboxes = document.getElementsByName('findim_divisi[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function findim_project(source) {
+    checkboxes = document.getElementsByName('findim_project[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function divisi(source) {
+    checkboxes = document.getElementsByName('divisi[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function departemen(source) {
+    checkboxes = document.getElementsByName('departemen[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function subdepartemen(source) {
+    checkboxes = document.getElementsByName('subdepartemen[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function status_karyawan(source) {
+    checkboxes = document.getElementsByName('status_karyawan[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function jabatan(source) {
+    checkboxes = document.getElementsByName('jabatan[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function level(source) {
+    checkboxes = document.getElementsByName('level[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
 </script>
 @endsection

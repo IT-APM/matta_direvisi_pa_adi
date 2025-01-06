@@ -1,0 +1,120 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\MtrJoin;
+use Illuminate\Support\Facades\Log;
+
+class MtrJoinController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+        $no = 0;
+        $trx = MtrJoin::orderByRaw( 'is_join desc, nama asc' )->get();
+        return view( 'master.join.index', compact( 'trx', 'no' ) );
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+        $status = 'create';
+        return view( 'master.join.upsert', compact( 'status' ) );
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+        $trx = New MtrJoin;
+        $trx->nama = $request->nama;
+        if($request->is_join == 'on'){
+            $trx->is_join = 1;
+        }else{
+            $trx->is_join = 0;
+        }
+        $trx->save();
+        return redirect( 'join' )->with( 'msg', 'Data is saved successfully.' );
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+        $status = 'edit';
+        $trx = MtrJoin::find( $id );
+        return view( 'master.join.upsert', compact( 'trx', 'status' ) );
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+        $trx = MtrJoin::find( $id );
+        $trx->nama = $request->nama;
+        if($request->is_join == 'on'){
+            $trx->is_join = 1;
+        }else{
+            $trx->is_join = 0;
+        }
+        $trx->update();
+        return redirect( 'join' )->with( 'msg', 'Data is saved successfully.' );
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+        $trx = MtrJoin::find( $id );
+        try {
+            $trx->delete();
+            return redirect( 'join' )->with( 'msg', 'Data is deleted successfully.' );
+         } catch (\Exception $e) {
+            Log::error($e->errorInfo);
+            return redirect()->route('error_db');
+         }
+    }
+}

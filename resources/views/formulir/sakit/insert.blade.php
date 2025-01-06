@@ -49,9 +49,16 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-6">
+                            <label class="form-label" for="pengaju">Pengaju</label>
+                            <input class="form-control" name="pengaju" id="pengaju" type="text" required="" readonly="" value="{{ $pengaju }}">
+                        </div>
+                    </div>
                     <form action="{{ route('sakit.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @csrf
-                        <div class="row g-3">
+                        <input type="hidden" id="nik_karyawan" name="nik_karyawan" value="{{ $nik_karyawan }}">
+                        <div class="row g-3 mb-2">
                             <div class="col-md-6">
                                 <label class="form-label" for="tanggal_mulai">Tanggal Mulai</label>
                                 <input class="form-control" name="tanggal_mulai" id="tanggal_mulai" type="date" required="">
@@ -61,8 +68,7 @@
                                 <input class="form-control" name="tanggal_akhir" id="tanggal_akhir" type="date" required="">
                             </div>
                         </div>
-                        <br />
-                        <div class="row g-3">
+                        <div class="row g-3 mb-2">
                             <div class="col-md-6">
                                 <label class="form-label" for="pic_pengganti">PIC Pengganti</label>
                                 <select class="js-example-basic-multiple col-sm-12" id="pic_pengganti[]" name="pic_pengganti[]" required="" multiple="multiple">
@@ -78,8 +84,7 @@
                                 <input class="form-control m-input digits" type="tel" name="telepon" id="telepon" required="">
                             </div>
                         </div>
-                        <br />
-                        <div class="row g-3">
+                        <div class="row g-3 mb-2">
                             <div class="col-md-6">
                                 <label class="form-label" for="alasan">Alasan</label>
                                 <textarea class="form-control" id="alasan" name="alasan" rows="4" required=""></textarea>
@@ -89,8 +94,7 @@
                                 <textarea class="form-control" id="alamat" name="alamat" rows="4" required=""></textarea>
                             </div>
                         </div>
-                        <br />
-                        <div class="row g-3">
+                        <div class="row g-3 mb-2">
                             <div class="col-md-6">
                                 <label class="form-label" for="keterangan">Keterangan</label>
                                 <textarea class="form-control" id="keterangan" name="keterangan" rows="4"></textarea>
@@ -100,7 +104,6 @@
                                 <input name="lampiran" id="lampiran" class="form-control" type="file" required="">
                             </div>
                         </div>
-                        <br />
                         <button class="btn btn-success" type="submit">Submit</button> | <a href="{{ URL::previous() }}" class="btn btn-warning" type="button">Back</a>
                     </form>
                 </div>

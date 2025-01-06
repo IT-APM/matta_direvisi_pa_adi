@@ -28,6 +28,7 @@ use App\Models\TrxRecruitmentNegosiasi;
 use App\Models\TrxRecruitmentNegosiasiLog;
 use App\Models\MtrUtility;
 use App\Models\Karyawan;
+use App\Models\MtrJoin;
 use Spatie\Browsershot\Browsershot;
 use App\Mail\MattaRebornMail;
 use Illuminate\Support\Facades\Mail;
@@ -165,6 +166,10 @@ class TrxRecruitmentController extends Controller
         $benefit = MtrRecruitmentBenefit::orderBy('benefit', 'asc')->get();
         $catat_pegawai = MtrRecruitmentCatatPegawai::orderBy('pencatatan', 'asc')->get();
         $status_pegawai = MtrRecruitmentStatusPegawai::orderBy('status', 'asc')->get();
+        $where = ['is_join' => 1];
+        $status_join = MtrJoin::where($where)->orderBy('nama', 'asc')->get();
+        $where = ['is_join' => 0];
+        $status_not_join = MtrJoin::where($where)->orderBy('nama', 'asc')->get();
         // 4=Psychotest Send
         // 6=Interview User and HCO Send
         // 8=Interview User Send
@@ -241,7 +246,7 @@ class TrxRecruitmentController extends Controller
         $karyawan_user_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
         $where = ['is_aktif' => 1, 'kode_sub_departemen' => 263];
         $karyawan_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
-        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume'));
+        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume', 'status_join', 'status_not_join'));
         
     }
 
@@ -865,6 +870,8 @@ class TrxRecruitmentController extends Controller
             $data = [$nama.'/'.$nik, 1, $request->catatan, $namafile];
             $this->insertNegotiationLog($nego, $data);
             // 
+            // $_trx->id_join = $request->id_join;
+            $_trx->id_join = implode(',', $request->input('id_join', []));
             $_trx->id_status = $id_status;
             $_trx->update();
             $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);

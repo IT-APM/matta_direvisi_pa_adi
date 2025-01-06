@@ -801,6 +801,20 @@
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
+                                        <label class="form-label" for="id_join">Status</label>
+                                        <select class="js-example-basic-multiple col-sm-12" id="id_join[]" name="id_join[]" required="" multiple="multiple">
+                                        
+                                            
+                                            <?php $__currentLoopData = $status_join; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($data->id); ?>"><?php echo e($data->nama); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
                                         <label class="form-label" for="catatan">Catatan HCO</label>
                                         <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
                                     </div>
@@ -827,6 +841,20 @@
                             <input type="hidden" id="id" name="id" value="<?php echo e(Crypt::encrypt($trx->id)); ?>">
                             <input type="hidden" id="id_status" name="id_status" value="25">
                             <input type="hidden" id="back_url" name="back_url" value="<?php echo e(URL::full()); ?>">
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="id_join">Status</label>
+                                        <select class="js-example-basic-multiple col-sm-12" id="id_join[]" name="id_join[]" required="" multiple="multiple">
+                                        
+                                            
+                                            <?php $__currentLoopData = $status_not_join; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($data->id); ?>"><?php echo e($data->nama); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">

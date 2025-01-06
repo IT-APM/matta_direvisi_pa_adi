@@ -11,6 +11,7 @@ use App\Http\Controllers\KaryawanPelatihanController;
 use App\Http\Controllers\KaryawanSertifikasiController;
 use App\Http\Controllers\KaryawanAnakController;
 use App\Http\Controllers\PerusahaanController;
+use App\Http\Controllers\MtrJoinController;
 use App\Http\Controllers\DivisiController;
 use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\SubDepartemenController;
@@ -193,6 +194,7 @@ Route::resource('perusahaan', PerusahaanController::class)->middleware('can:hc')
 Route::resource('divisi', DivisiController::class)->middleware('can:hc');
 Route::resource('departemen', DepartemenController::class)->middleware('can:hc');
 Route::resource('subdepartemen', SubDepartemenController::class)->middleware('can:hc');
+Route::resource('join', MtrJoinController::class)->middleware('can:hc');
 // 
 Route::resource('jabatan', JabatanController::class)->middleware('can:hc');
 Route::resource('holiday', HolidayController::class)->middleware('can:hc');
@@ -280,6 +282,7 @@ Route::post('nonaktif/save_edit/{id}', [TrxNonaktifController::class, 'save_edit
 Route::resource('nonaktif_auto', TrxNonaktifAutoController::class)->middleware('can:hc');
 // 
 Route::resource('izin', TrxIjinController::class);
+Route::get('izin/recap/{id}', [TrxIjinController::class, 'recap'])->name('izin.recap')->middleware('can:hc');
 // 
 Route::resource('kebutuhan', TrxKebutuhanController::class);
 Route::resource('kebutuhan_detail', TrxKebutuhanDetailController::class)->middleware('can:hc');

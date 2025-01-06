@@ -37,7 +37,7 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <?php endif; ?>
-                    <a href="<?php echo e(route('izin.create')); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                    <a href="<?php echo e(route('izin.create')); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?> | <a href="<?php echo e(route('izin.recap', 0)); ?>" class="btn btn-success" type="button"><i class="fa fa-list" aria-hidden="true"></i> Recap</a> <?php endif; ?>
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="<?php echo e(route('izin.index')); ?>" method="get" enctype="multipart/form-data">
                             <div class="row">
@@ -80,8 +80,7 @@
                             </div>
                         </form>
                     </div>
-                    <br/><br/>
-                    <div class="table-responsive">
+                    <div class="table-responsive mt-2">
                         <table class="display" id="_datatable">
                             <thead>
                                 <tr>

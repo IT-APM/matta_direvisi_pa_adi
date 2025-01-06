@@ -4,6 +4,7 @@
 <?php $__env->startSection('css'); ?>
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/datatables.css')); ?>">
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/datatable-extension.css')); ?>">
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/select2.css')); ?>">
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('style'); ?>
@@ -40,15 +41,27 @@
                     </div>
                     <?php endif; ?>
                     <a href="<?php echo e(route('cuti.create')); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
-                    <div class="collapse" id="collapse_filter">
-                        <form class="mt-2" action="<?php echo e(route('cuti.index')); ?>" method="get" enctype="multipart/form-data">
+                    <div class="collapse mt-2" id="collapse_filter">
+                        <form action="<?php echo e(route('cuti.index')); ?>" method="get" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-sm-4">
-                                    <label class="h6" for="nama">Karyawan</label>
-                                    <input name="nama" id="nama" class="form-control" type="text" value="<?php echo e($nama); ?>">
+                                    <label class="h6" for="nik_karyawan">Karyawan</label>
+                                    <select class="form-select js-example-basic-single col-sm-12" id="nik_karyawan" name="nik_karyawan">
+                                        
+                                        <option value="" <?php if("" == $_nik_karyawan): ?> selected <?php endif; ?>>Semua Karyawan</option>
+                                        <?php $__currentLoopData = $nik_karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($data->nik); ?>" <?php if($data->nik == $_nik_karyawan): ?> selected <?php endif; ?>><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
                                     <?php if(auth()->user()->userrole == 'hc'): ?>
-                                    <label class="h6 mt-2" for="atasan">Layer 1</label>
-                                    <input name="atasan" id="atasan" class="form-control" type="text" value="<?php echo e($atasan); ?>">
+                                    <label class="h6 mt-2" for="nik_atasan">Layer 1</label>
+                                    <select class="form-select js-example-basic-single col-sm-12" id="nik_atasan" name="nik_atasan">
+                                        
+                                        <option value="" <?php if("" == $_nik_atasan): ?> selected <?php endif; ?>>Semua Layer 1</option>
+                                        <?php $__currentLoopData = $nik_atasan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($data->nik); ?>" <?php if($data->nik == $_nik_atasan): ?> selected <?php endif; ?>><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
                                     <?php endif; ?>
                                     
                                     <label class="h6 mt-2">Tanggal Cuti</label>
@@ -79,7 +92,7 @@
                             </div>
                         </form>
                     </div>
-                    <br/><br/>
+                    
                     <div class="table-responsive">
                         <table class="display" id="_datatable">
                             <thead>
@@ -100,7 +113,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $sisaCuti = app('App\Http\Controllers\TrxCutiController'); ?>
                                 <?php $__currentLoopData = $trx; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
                                     <td><?php echo e(++$no); ?></td>
@@ -121,26 +133,29 @@
                                     <td><?php echo e($data->_atasan->nama); ?></td>
                                     <td><?php echo e(\Carbon\Carbon::parse($data->tanggal_mulai)->format('d-m-Y')); ?><br />s/d<br /><?php echo e(\Carbon\Carbon::parse($data->tanggal_akhir)->format('d-m-Y')); ?></td>
                                     <td><?php echo e($data->_status->status_cuti); ?></td>
-                                    <td><?php echo e($sisaCuti::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id)); ?></td>
+                                    
+                                    <td>
+                                        
+                                        <?php if(\Carbon\Carbon::today()->between(\Carbon\Carbon::now()->year.'-01-01', \Carbon\Carbon::now()->year.'-01-31')): ?>
+                                            <?php if(\Carbon\Carbon::now()->subYear()->year == $data->periode_cuti): ?>
+                                                <?php echo e(\Carbon\Carbon::now()->year); ?>: <?php echo e(App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, \Carbon\Carbon::now()->year, $data->id)); ?>
+
+                                                <br/><?php echo e($data->periode_cuti); ?>: <?php echo e(App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id)); ?>
+
+                                            <?php else: ?>
+                                                <?php echo e($data->periode_cuti); ?>: <?php echo e(App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id)); ?>
+
+                                            <?php endif; ?>
+                                        
+                                        <?php else: ?>
+                                            <?php echo e($data->periode_cuti); ?>: <?php echo e(App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id)); ?>
+
+                                        <?php endif; ?>
+                                    </td>
                                     <td><?php echo e($data->created_at); ?></td>
                                 </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
-                            <!-- <tfoot>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Tipe</th>
-                                    <th>Periode</th>
-                                    <th>Karyawan</th>
-                                    <th>NIP</th>
-                                    <th>PIC Pengganti</th>
-                                    <th>Tanggal Mulai</th>
-                                    <th>Status</th>
-                                    <th>Sisa Cuti</th>
-                                    <th>Created at</th>
-                                    <th>Action</th>
-                                </tr>
-                            </tfoot> -->
                         </table>
                     </div>
                 </div>
@@ -159,6 +174,8 @@
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/vfs_fonts.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.html5.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.print.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/select2/select2.full.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/select2/select2-custom.js')); ?>"></script>
 <script type="text/javascript">
 function toggle_status_cuti(source) {
     checkboxes = document.getElementsByName('status_cuti[]');

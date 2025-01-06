@@ -33,17 +33,17 @@ class OpenDataController extends Controller
     }
 
     public function getDivisi($id) {
-        $data = Divisi::whereIn('kode_perusahaan', explode(',', $id))->get();
+        $data = Divisi::whereIn('kode_perusahaan', explode(',', $id))->orderBy('nama', 'asc')->get();
         return json_decode($data, true);
     }
 
     public function getDepartemen($id) {
-        $data = Departemen::whereIn('kode_divisi', explode(',', $id))->get();
+        $data = Departemen::whereIn('kode_divisi', explode(',', $id))->orderBy('nama', 'asc')->get();
         return json_decode($data, true);
     }
 
     public function getSubDepartemen($id) {
-        $data = SubDepartemen::whereIn('kode_departemen', explode(',', $id))->get();
+        $data = SubDepartemen::whereIn('kode_departemen', explode(',', $id))->orderBy('nama', 'asc')->get();
         return json_decode($data, true);
     }
 

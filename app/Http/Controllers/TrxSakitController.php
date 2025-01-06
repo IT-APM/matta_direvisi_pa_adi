@@ -37,6 +37,8 @@ class TrxSakitController extends Controller
     public function index(Request $request)
     {
         // 
+        $where = ['is_aktif' => 1];
+        $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $no = 0;
         $trx = TrxSakit::orderBy('id', 'desc')->get();
         if(auth()->user()->userrole == 'nhc'){
@@ -119,7 +121,7 @@ class TrxSakitController extends Controller
             $arr_status_sakit = array();
         }
         // end filter
-        return view( 'formulir.sakit.index', compact( 'trx', 'no', 'status_sakit', 'arr_status_sakit', 'date_from', 'date_to', 'nama'));
+        return view( 'formulir.sakit.index', compact('trx', 'no', 'status_sakit', 'arr_status_sakit', 'date_from', 'date_to', 'nama', 'karyawan'));
     }
 
     // fungsi untuk cek apakah masuk window
@@ -232,14 +234,18 @@ class TrxSakitController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
         //passing parameter ke formulir page
         $where = ['is_aktif' => 1];
-        $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', [auth()->user()->nik])->orderBy('nama', 'asc')->get();
+        $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $status = 'create';
-        return view('formulir.sakit.insert', compact('karyawan', 'status'));
+        $nik_karyawan = $request->nik_karyawan;
+        $where = ['nik' => $nik_karyawan];
+        $pengaju = Karyawan::select('nik', 'nama')->where($where)->first();
+        $pengaju = $pengaju->nama.' - '.$pengaju->nik;
+        return view('formulir.sakit.insert', compact('karyawan', 'status', 'nik_karyawan', 'pengaju'));
     }
 
     /**
@@ -252,8 +258,8 @@ class TrxSakitController extends Controller
     {
         // dd($request->all());
         // start
-        // $nik_karyawan = $request->nik_karyawan;
-        $nik_karyawan = auth()->user()->nik;
+        $nik_karyawan = $request->nik_karyawan;
+        // $nik_karyawan = auth()->user()->nik;
         $waktu = date('Y-m-d');
         $tanggal_mulai = $request->tanggal_mulai;
         $tanggal_akhir = $request->tanggal_akhir;

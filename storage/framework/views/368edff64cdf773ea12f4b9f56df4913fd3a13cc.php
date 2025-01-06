@@ -38,11 +38,11 @@
                                 enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        <label class="h6">Date From</label>
+                                        <label class="h6">Tanggal Dari</label>
                                         <br /><input class="form-control" name="date_from" id="date_from" type="date" required="" value="<?php echo e($date_from); ?>">
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="h6">Date To</label>
+                                        <label class="h6">Tanggal Sampai</label>
                                         <br /><input class="form-control" name="date_to" id="date_to" type="date" required="" value="<?php echo e($date_to); ?>">
                                     </div>
                                     

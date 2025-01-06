@@ -4,6 +4,7 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatable-extension.css') }}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
 @endsection
 
 @section('style')
@@ -39,7 +40,19 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    <a href="{{ route('sakit.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                    @can('hc')
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <select class="form-select js-example-basic-single col-sm-12" id="nik_karyawan" name="nik_karyawan">
+                                <option value="0">Pilih Karyawan...</option>
+                                @foreach ($karyawan as $data)
+                                <option value="{{ $data->nik }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    @endcan
+                    <button class="btn btn-primary" type="button" onclick="PilihKaryawan()"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="{{ route('sakit.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
@@ -68,7 +81,7 @@
                             </div>
                         </form>
                     </div>
-                    <br/><br/>
+                    {{-- <br/><br/> --}}
                     <div class="table-responsive">
                         <table class="display" id="_datatable">
                             <thead>
@@ -141,7 +154,19 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/vfs_fonts.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
+<script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
+<script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 <script type="text/javascript">
+function PilihKaryawan() {
+    var nik_karyawan = "{{ auth()->user()->nik }}";
+    @can('hc')
+    if($('#nik_karyawan').val() != '0'){
+        nik_karyawan = $('#nik_karyawan').val();
+    }
+    @endcan
+    location.href = "{{ route('sakit.create') }}"+"?nik_karyawan="+nik_karyawan;
+}
+// 
 function toggle_status_sakit(source) {
     checkboxes = document.getElementsByName('status_sakit[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {

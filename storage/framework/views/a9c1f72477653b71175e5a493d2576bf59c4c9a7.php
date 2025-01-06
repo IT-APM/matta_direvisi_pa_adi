@@ -52,9 +52,16 @@
                         <?php echo csrf_field(); ?>
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <?php $sisaCuti = app('App\Http\Controllers\TrxCutiController'); ?>
                                 <label class="form-label">Sisa Jumlah Hari Cuti Tahunan</label>
-                                <h4><?php echo e($sisaCuti::getSisaFormCuti()); ?> Hari</h4>
+                                
+                                
+                                <?php if(\Carbon\Carbon::today()->between(\Carbon\Carbon::now()->year.'-01-01', \Carbon\Carbon::now()->year.'-01-31')): ?>
+                                    <h4><?php echo e(\Carbon\Carbon::now()->year); ?>: <?php echo e(App\Http\Controllers\TrxCutiController::getSisaFormCuti(auth()->user()->nik, \Carbon\Carbon::now()->year)); ?> hari
+                                    <br/><?php echo e(\Carbon\Carbon::now()->subYear()->year); ?>: <?php echo e(App\Http\Controllers\TrxCutiController::getSisaFormCuti(auth()->user()->nik, \Carbon\Carbon::now()->subYear()->year)); ?> hari</h4>
+                                
+                                <?php else: ?>
+                                    <h4><?php echo e(\Carbon\Carbon::now()->year); ?>: <?php echo e(App\Http\Controllers\TrxCutiController::getSisaFormCuti(auth()->user()->nik, \Carbon\Carbon::now()->year)); ?> Hari</h4>
+                                <?php endif; ?>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label" for="tipe_cuti">Tipe Cuti</label>

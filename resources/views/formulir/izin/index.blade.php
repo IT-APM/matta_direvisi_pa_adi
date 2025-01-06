@@ -39,7 +39,7 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    <a href="{{ route('izin.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                    <a href="{{ route('izin.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> @can('hc') | <a href="{{ route('izin.recap', 0) }}" class="btn btn-success" type="button"><i class="fa fa-list" aria-hidden="true"></i> Recap</a> @endcan
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="{{ route('izin.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
@@ -82,8 +82,7 @@
                             </div>
                         </form>
                     </div>
-                    <br/><br/>
-                    <div class="table-responsive">
+                    <div class="table-responsive mt-2">
                         <table class="display" id="_datatable">
                             <thead>
                                 <tr>

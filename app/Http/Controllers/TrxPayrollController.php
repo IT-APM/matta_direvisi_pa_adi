@@ -31,6 +31,16 @@ use App\Models\TrxPayrollBpjstk;
 use App\Models\TrxPayrollBpjstkLog;
 use App\Models\TrxPayrollBpjskes;
 use App\Models\TrxPayrollBpjskesLog;
+use App\Models\MtrFindimSubdepartemen;
+use App\Models\MtrFindimDepartemen;
+use App\Models\MtrFindimDivisi;
+use App\Models\MtrFindimProject;
+use App\Models\Divisi;
+use App\Models\Departemen;
+use App\Models\SubDepartemen;
+use App\Models\KaryawanStatus;
+use App\Models\Jabatan;
+use App\Models\Level;
 class TrxPayrollController extends Controller
 {
     
@@ -38,33 +48,132 @@ class TrxPayrollController extends Controller
     {
         // dd($id, $request->all());
         $payroll = TrxPayrollLog::orderBy('id', 'asc')->get();
-        return view('payroll.history', compact('payroll'));
+        // 
+        $arr_nik = [];
+        $arr_findim_subdepartemen = [];
+        $arr_findim_departemen = [];
+        $arr_findim_divisi = [];
+        $arr_findim_project = [];
+        $arr_divisi = [];
+        $arr_departemen = [];
+        $arr_subdepartemen = [];
+        $arr_status_karyawan = [];
+        $arr_jabatan = [];
+        $arr_level = [];
+        foreach(($payroll->toArray()) as $data){
+            array_push($arr_nik, $data['nik']);
+            array_push($arr_findim_subdepartemen, explode('/', $data['findim_subdepartemen'])[0]);
+            array_push($arr_findim_departemen, explode('/', $data['findim_departemen'])[0]);
+            array_push($arr_findim_divisi, explode('/', $data['findim_divisi'])[0]);
+            array_push($arr_findim_project, explode('/', $data['findim_project'])[0]);
+            array_push($arr_divisi, $data['divisi']);
+            array_push($arr_departemen, $data['departemen']);
+            array_push($arr_subdepartemen, $data['subdepartemen']);
+            array_push($arr_status_karyawan, $data['status_karyawan']);
+            array_push($arr_jabatan, $data['jabatan']);
+            array_push($arr_level, $data['level']);
+        }
+        // 
+        $karyawan = Karyawan::select('nama','nik')->whereIn('nik', $arr_nik)->orderBy('nama', 'asc')->get();
+        $findim_subdepartemen = MtrFindimSubdepartemen::whereIn('subdepartemen_id', $arr_findim_subdepartemen)->orderBy('subdepartemen_id', 'asc')->get();
+        $findim_departemen = MtrFindimDepartemen::whereIn('departemen_id', $arr_findim_departemen)->orderBy('departemen_id', 'asc')->get();
+        $findim_divisi = MtrFindimDivisi::whereIn('divisi_id', $arr_findim_divisi)->orderBy('divisi_id', 'asc')->get();
+        $findim_project = MtrFindimProject::whereIn('project_id', $arr_findim_project)->orderBy('project_id', 'asc')->get();
+        $divisi = Divisi::whereIn('nama', $arr_divisi)->orderBy('nama', 'asc')->groupBy('nama')->get();
+        $departemen = Departemen::whereIn('nama', $arr_departemen)->orderBy('nama', 'asc')->groupBy('nama')->get();
+        $subdepartemen = SubDepartemen::whereIn('nama', $arr_subdepartemen)->orderBy('nama', 'asc')->groupBy('nama')->get();
+        $status_karyawan = KaryawanStatus::whereIn('status_karyawan', $arr_status_karyawan)->orderBy('status_karyawan', 'asc')->groupBy('status_karyawan')->get();
+        $jabatan = Jabatan::whereIn('jabatan', $arr_jabatan)->orderBy('jabatan', 'asc')->groupBy('jabatan')->get();
+        $level = Level::whereIn('level', $arr_level)->orderBy('id', 'asc')->groupBy('level')->get();
+        // filter parameter
+        $bulan_tahun_dari = '';
+        $bulan_tahun_sampai = '';
+        $_arr_nik = [];
+        $_arr_findim_subdepartemen = [];
+        $_arr_findim_departemen = [];
+        $_arr_findim_divisi = [];
+        $_arr_findim_project = [];
+        $_arr_divisi = [];
+        $_arr_departemen = [];
+        $_arr_subdepartemen = [];
+        $_arr_status_karyawan = [];
+        $_arr_jabatan = [];
+        $_arr_level = [];
+        // start filter
+        if($request->filter == true){
+            $bulan_tahun_dari = $request->bulan_tahun_dari;
+            $bulan_tahun_sampai = $request->bulan_tahun_sampai;
+            $_arr_nik = [$request->nik];
+            $_arr_findim_subdepartemen = $request->input('findim_subdepartemen', []);
+            $_arr_findim_departemen = $request->input('findim_departemen', []);
+            $_arr_findim_divisi = $request->input('findim_divisi', []);
+            $_arr_findim_project = $request->input('findim_project', []);
+            $_arr_divisi = $request->input('divisi', []);
+            $_arr_departemen = $request->input('departemen', []);
+            $_arr_subdepartemen = $request->input('subdepartemen', []);
+            $_arr_status_karyawan = $request->input('status_karyawan', []);
+            $_arr_jabatan = $request->input('jabatan', []);
+            $_arr_level = $request->input('level', []);
+            $payroll = TrxPayrollLog::whereIn('nik', $_arr_nik)
+            ->whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
+            ->whereIn('findim_departemen', $_arr_findim_departemen)
+            ->whereIn('findim_divisi', $_arr_findim_divisi)
+            ->whereIn('findim_project', $_arr_findim_project)
+            ->whereIn('divisi', $_arr_divisi)
+            ->whereIn('departemen', $_arr_departemen)
+            ->whereIn('subdepartemen', $_arr_subdepartemen)
+            ->whereIn('status_karyawan', $_arr_status_karyawan)
+            // ->whereIn('jabatan', $_arr_jabatan)
+            ->whereIn('level', $_arr_level)
+            ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+            ->orderBy('id', 'asc')->get();
+            if(in_array('0', $_arr_nik)){
+                $payroll = TrxPayrollLog::whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
+                ->whereIn('findim_departemen', $_arr_findim_departemen)
+                ->whereIn('findim_divisi', $_arr_findim_divisi)
+                ->whereIn('findim_project', $_arr_findim_project)
+                ->whereIn('divisi', $_arr_divisi)
+                ->whereIn('departemen', $_arr_departemen)
+                ->whereIn('subdepartemen', $_arr_subdepartemen)
+                ->whereIn('status_karyawan', $_arr_status_karyawan)
+                // ->whereIn('jabatan', $_arr_jabatan)
+                ->whereIn('level', $_arr_level)
+                ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                ->orderBy('id', 'asc')->get();
+            }
+        }
+        // end filter
+        return view('payroll.history', compact('payroll', 'karyawan', 'bulan_tahun_dari', 'bulan_tahun_sampai', 'findim_subdepartemen', 'findim_departemen', 'findim_divisi', 'findim_project', 'divisi', 'departemen', 'subdepartemen', 'status_karyawan', 'jabatan', 'level', '_arr_nik', '_arr_findim_subdepartemen', '_arr_findim_departemen', '_arr_findim_divisi', '_arr_findim_project', '_arr_divisi', '_arr_departemen', '_arr_subdepartemen', '_arr_status_karyawan', '_arr_jabatan', '_arr_level'));
+        // return view('payroll.history', compact('payroll'));
     }
+
+    // http://localhost/matta/payroll/bkp/0
+    // https://matta-reborn.alita.id/matta/payroll/bkp/0
     public function bkp($id)
     {
-        // bkp MtrPayroll
-        $trx = MtrPayroll::all();
-        foreach($trx as $_trx){
-            MtrPayrollLog::insert(array(
-                'nik' => $_trx->nik,
-                'nik' => $_trx->nik,
-                'bulan' => $_trx->bulan,
-                'tahun' => $_trx->tahun,
-                'gapok' => $_trx->gapok,
-                'status' => $_trx->status,
-                'pasangan' => $_trx->pasangan,
-                'anak' => $_trx->anak,
-                'tambahan' => $_trx->tambahan,
-                'no_ktp' => $_trx->no_ktp,
-                'no_kpj' => $_trx->no_kpj,
-                'no_jkn' => $_trx->no_jkn,
-                'nama_rek' => $_trx->nama_rek,
-                'nama_bank' => $_trx->nama_bank,
-                'no_rek' => $_trx->no_rek,
-                'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
-                'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
-            ));
-        }
+        // // bkp MtrPayroll
+        // $trx = MtrPayroll::all();
+        // foreach($trx as $_trx){
+        //     MtrPayrollLog::insert(array(
+        //         'nik' => $_trx->nik,
+        //         'nik' => $_trx->nik,
+        //         'bulan' => $_trx->bulan,
+        //         'tahun' => $_trx->tahun,
+        //         'gapok' => $_trx->gapok,
+        //         'status' => $_trx->status,
+        //         'pasangan' => $_trx->pasangan,
+        //         'anak' => $_trx->anak,
+        //         'tambahan' => $_trx->tambahan,
+        //         'no_ktp' => $_trx->no_ktp,
+        //         'no_kpj' => $_trx->no_kpj,
+        //         'no_jkn' => $_trx->no_jkn,
+        //         'nama_rek' => $_trx->nama_rek,
+        //         'nama_bank' => $_trx->nama_bank,
+        //         'no_rek' => $_trx->no_rek,
+        //         'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
+        //         'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+        //     ));
+        // }
         // bkp TrxPayroll
         $trx = TrxPayroll::all();
         foreach($trx as $_trx){
@@ -107,6 +216,18 @@ class TrxPayrollController extends Controller
                 'updated_by' => $_trx->updated_by,
                 'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
                 'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+                'findim_subdepartemen' => $_trx->findim_subdepartemen,
+                'findim_departemen' => $_trx->findim_departemen,
+                'findim_divisi' => $_trx->findim_divisi,
+                'findim_project' => $_trx->findim_project,
+                'divisi' => $_trx->divisi,
+                'departemen' => $_trx->departemen,
+                'subdepartemen' => $_trx->subdepartemen,
+                'status_karyawan' => $_trx->status_karyawan,
+                'status_aktif' => $_trx->status_aktif,
+                'jabatan' => $_trx->jabatan,
+                'level' => $_trx->level,
+                'grade' => $_trx->grade,
             ));
         }
         // bkp TrxPayrollAddsub
@@ -168,7 +289,7 @@ class TrxPayrollController extends Controller
             ));
         }
         // menjadi bulan dan tahun berjalan
-        MtrPayroll::whereNotNull('id')->update(['bulan' => Carbon::now()->month, 'tahun' => Carbon::now()->year]);
+        // MtrPayroll::whereNotNull('id')->update(['bulan' => Carbon::now()->month, 'tahun' => Carbon::now()->year]);
         TrxPayroll::truncate();
         TrxPayrollAddsub::truncate();
         TrxPayrollBpjstk::truncate();
@@ -341,6 +462,8 @@ class TrxPayrollController extends Controller
                 // dimulai dari baris ke-3
                 // data payroll
                 for ($x = 2; $x < count($data0); $x++) {
+                    $where = ['nik' => $data0[$x][$_101]];
+                    $karyawan = Karyawan::where($where)->first();
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
                     TrxPayroll::where($where)->delete();
                     $trx = New TrxPayroll;
@@ -349,6 +472,17 @@ class TrxPayrollController extends Controller
                     $trx->bulan = $data0[$x][$_102];
                     $trx->tahun = $data0[$x][$_103];
                     $trx->gapok = $data0[$x][$_104];
+                    $trx->findim_subdepartemen = $karyawan->_findim_subdepartemen->subdepartemen_id.'/'.$karyawan->_findim_subdepartemen->subdepartemen_desc;
+                    $trx->findim_departemen = $karyawan->_findim_departemen->departemen_id.'/'.$karyawan->_findim_departemen->departemen_desc;
+                    $trx->findim_divisi = $karyawan->_findim_divisi->divisi_id.'/'.$karyawan->_findim_divisi->divisi_desc;
+                    $trx->findim_project = $karyawan->_findim_project->project_id.'/'.$karyawan->_findim_project->project_desc;
+                    $trx->divisi = $karyawan->_divisi->nama;
+                    $trx->departemen = $karyawan->_departemen->nama;
+                    $trx->subdepartemen = $karyawan->_subdepartemen->nama;
+                    $trx->status_karyawan = $karyawan->_status->status_karyawan;
+                    $trx->status_aktif = 'Aktif';
+                    $trx->jabatan = $karyawan->_jabatan->jabatan;
+                    $trx->level = $karyawan->_level->level;
                     $trx->created_by = auth()->user()->nik;
                     $trx->updated_by = auth()->user()->nik;
                     $trx->save();
@@ -626,22 +760,110 @@ class TrxPayrollController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        // dd($request->all());
         // $month = '11';
         // $year = '2024';
         // dd(Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->subMonth()->startOfMonth()->format('Y-m-d'));
         // dd(Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->subMonth()->endOfMonth()->format('Y-m-d'));
         $payroll = TrxPayroll::orderBy('id', 'asc')->get();
-        // dd($payroll);
-        // $where = ['tipe'=>'add'];
-        // $add = TrxPayrollAddsub::where($where)->orderBy('id', 'asc')->get();
-        // $where = ['tipe'=>'sub'];
-        // $sub = TrxPayrollAddsub::where($where)->orderBy('id', 'asc')->get();
-        // $bpjstk = TrxPayrollBpjstk::orderBy('id', 'asc')->get();
-        // $bpjskes = TrxPayrollBpjskes::orderBy('id', 'asc')->get();
-        // return view('payroll.index', compact('payroll','add','sub','bpjstk','bpjskes'));
-        return view('payroll.index', compact('payroll'));
+        // 
+        $arr_nik = [];
+        $arr_findim_subdepartemen = [];
+        $arr_findim_departemen = [];
+        $arr_findim_divisi = [];
+        $arr_findim_project = [];
+        $arr_divisi = [];
+        $arr_departemen = [];
+        $arr_subdepartemen = [];
+        $arr_status_karyawan = [];
+        $arr_jabatan = [];
+        $arr_level = [];
+        foreach(($payroll->toArray()) as $data){
+            array_push($arr_nik, $data['nik']);
+            array_push($arr_findim_subdepartemen, explode('/', $data['findim_subdepartemen'])[0]);
+            array_push($arr_findim_departemen, explode('/', $data['findim_departemen'])[0]);
+            array_push($arr_findim_divisi, explode('/', $data['findim_divisi'])[0]);
+            array_push($arr_findim_project, explode('/', $data['findim_project'])[0]);
+            array_push($arr_divisi, $data['divisi']);
+            array_push($arr_departemen, $data['departemen']);
+            array_push($arr_subdepartemen, $data['subdepartemen']);
+            array_push($arr_status_karyawan, $data['status_karyawan']);
+            array_push($arr_jabatan, $data['jabatan']);
+            array_push($arr_level, $data['level']);
+        }
+        // 
+        $karyawan = Karyawan::select('nama','nik')->whereIn('nik', $arr_nik)->orderBy('nama', 'asc')->get();
+        $findim_subdepartemen = MtrFindimSubdepartemen::whereIn('subdepartemen_id', $arr_findim_subdepartemen)->orderBy('subdepartemen_id', 'asc')->get();
+        $findim_departemen = MtrFindimDepartemen::whereIn('departemen_id', $arr_findim_departemen)->orderBy('departemen_id', 'asc')->get();
+        $findim_divisi = MtrFindimDivisi::whereIn('divisi_id', $arr_findim_divisi)->orderBy('divisi_id', 'asc')->get();
+        $findim_project = MtrFindimProject::whereIn('project_id', $arr_findim_project)->orderBy('project_id', 'asc')->get();
+        $divisi = Divisi::whereIn('nama', $arr_divisi)->orderBy('nama', 'asc')->groupBy('nama')->get();
+        $departemen = Departemen::whereIn('nama', $arr_departemen)->orderBy('nama', 'asc')->groupBy('nama')->get();
+        $subdepartemen = SubDepartemen::whereIn('nama', $arr_subdepartemen)->orderBy('nama', 'asc')->groupBy('nama')->get();
+        $status_karyawan = KaryawanStatus::whereIn('status_karyawan', $arr_status_karyawan)->orderBy('status_karyawan', 'asc')->groupBy('status_karyawan')->get();
+        $jabatan = Jabatan::whereIn('jabatan', $arr_jabatan)->orderBy('jabatan', 'asc')->groupBy('jabatan')->get();
+        $level = Level::whereIn('level', $arr_level)->orderBy('id', 'asc')->groupBy('level')->get();
+        // filter parameter
+        $bulan_tahun_dari = '';
+        $bulan_tahun_sampai = '';
+        $_arr_nik = [];
+        $_arr_findim_subdepartemen = [];
+        $_arr_findim_departemen = [];
+        $_arr_findim_divisi = [];
+        $_arr_findim_project = [];
+        $_arr_divisi = [];
+        $_arr_departemen = [];
+        $_arr_subdepartemen = [];
+        $_arr_status_karyawan = [];
+        $_arr_jabatan = [];
+        $_arr_level = [];
+        // start filter
+        if($request->filter == true){
+            $bulan_tahun_dari = $request->bulan_tahun_dari;
+            $bulan_tahun_sampai = $request->bulan_tahun_sampai;
+            $_arr_nik = [$request->nik];
+            $_arr_findim_subdepartemen = $request->input('findim_subdepartemen', []);
+            $_arr_findim_departemen = $request->input('findim_departemen', []);
+            $_arr_findim_divisi = $request->input('findim_divisi', []);
+            $_arr_findim_project = $request->input('findim_project', []);
+            $_arr_divisi = $request->input('divisi', []);
+            $_arr_departemen = $request->input('departemen', []);
+            $_arr_subdepartemen = $request->input('subdepartemen', []);
+            $_arr_status_karyawan = $request->input('status_karyawan', []);
+            $_arr_jabatan = $request->input('jabatan', []);
+            $_arr_level = $request->input('level', []);
+            $payroll = TrxPayroll::whereIn('nik', $_arr_nik)
+            ->whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
+            ->whereIn('findim_departemen', $_arr_findim_departemen)
+            ->whereIn('findim_divisi', $_arr_findim_divisi)
+            ->whereIn('findim_project', $_arr_findim_project)
+            ->whereIn('divisi', $_arr_divisi)
+            ->whereIn('departemen', $_arr_departemen)
+            ->whereIn('subdepartemen', $_arr_subdepartemen)
+            ->whereIn('status_karyawan', $_arr_status_karyawan)
+            // ->whereIn('jabatan', $_arr_jabatan)
+            ->whereIn('level', $_arr_level)
+            ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+            ->orderBy('id', 'asc')->get();
+            if(in_array('0', $_arr_nik)){
+                $payroll = TrxPayroll::whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
+                ->whereIn('findim_departemen', $_arr_findim_departemen)
+                ->whereIn('findim_divisi', $_arr_findim_divisi)
+                ->whereIn('findim_project', $_arr_findim_project)
+                ->whereIn('divisi', $_arr_divisi)
+                ->whereIn('departemen', $_arr_departemen)
+                ->whereIn('subdepartemen', $_arr_subdepartemen)
+                ->whereIn('status_karyawan', $_arr_status_karyawan)
+                // ->whereIn('jabatan', $_arr_jabatan)
+                ->whereIn('level', $_arr_level)
+                ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                ->orderBy('id', 'asc')->get();
+            }
+        }
+        // end filter
+        return view('payroll.index', compact('payroll', 'karyawan', 'bulan_tahun_dari', 'bulan_tahun_sampai', 'findim_subdepartemen', 'findim_departemen', 'findim_divisi', 'findim_project', 'divisi', 'departemen', 'subdepartemen', 'status_karyawan', 'jabatan', 'level', '_arr_nik', '_arr_findim_subdepartemen', '_arr_findim_departemen', '_arr_findim_divisi', '_arr_findim_project', '_arr_divisi', '_arr_departemen', '_arr_subdepartemen', '_arr_status_karyawan', '_arr_jabatan', '_arr_level'));
     }
 
     /**
@@ -673,7 +895,18 @@ class TrxPayrollController extends Controller
      */
     public function show($id)
     {
-        //
+        // dd($id);
+        $payroll = TrxPayroll::find($id);
+        $filename = $payroll->nik.' Slip Gaji '.$payroll->tahun.' '.str_pad($payroll->bulan, 2, '0', STR_PAD_LEFT).'.pdf';
+        $view = \View::make('payroll.pdf', compact('payroll'));
+        $html = $view->render();
+        $pdf = new TCPDF;
+        $pdf::SetTitle($filename);
+        $pdf::SetFont('times', '', 10, '', true);
+        $pdf::AddPage('L', 'A4');
+        $pdf::writeHTML($html, true, false, true, false, '');
+        $pdf::Output(public_path($filename), 'I');
+        return response()->download(public_path($filename));
     }
 
     /**
@@ -734,6 +967,17 @@ class TrxPayrollController extends Controller
                 $trx = MtrPayrollBpjsMax::find($request->id);
                 $trx->delete();
             }
+            // payroll
+            elseif(in_array($id, [6])){
+                $trx = TrxPayroll::find($request->id);
+                $nik = $trx->nik;
+                $trx->delete();
+                $where = ['nik' => $nik];
+                TrxPayrollAddsub::where($where)->delete();
+                TrxPayrollBpjstk::where($where)->delete();
+                TrxPayrollBpjskes::where($where)->delete();
+                return redirect( 'payroll' )->with( 'msg', 'Data is deleted successfully.' );
+            }
             return redirect( 'payroll/master/'.$id )->with( 'msg', 'Data is deleted successfully.' );
          } catch (\Exception $e) {
             // Log::error($e->errorInfo);
@@ -744,14 +988,27 @@ class TrxPayrollController extends Controller
     public function getNikProperty($nik)
     {
         $where = ['nik'=>$nik];
-        $data = Karyawan::select('mtr_tbl_karyawan.nik', 'mtr_tbl_karyawan.nama', 'mtr_tbl_karyawan.email', 'mtr_tbl_karyawan.telepon1', 'mtr_tbl_perusahaan.nama as perusahaan', 'mtr_tbl_divisi.nama as divisi', 'mtr_tbl_departemen.nama as dep', 'mtr_tbl_sub_departemen.nama as sub_dep', 'mtr_tbl_level.level as level', 'mtr_tbl_jabatan.jabatan as jabatan', 'mtr_tbl_level.id as id_level', 'mtr_tbl_status_karyawan.status_karyawan as status_karyawan')
-            ->leftJoin('mtr_tbl_perusahaan', 'mtr_tbl_perusahaan.id', '=', 'mtr_tbl_karyawan.kode_perusahaan')
-            ->leftJoin('mtr_tbl_divisi', 'mtr_tbl_divisi.id', '=', 'mtr_tbl_karyawan.kode_divisi')
-            ->leftJoin('mtr_tbl_departemen', 'mtr_tbl_departemen.id', '=', 'mtr_tbl_karyawan.kode_departemen')
-            ->leftJoin('mtr_tbl_sub_departemen', 'mtr_tbl_sub_departemen.id', '=', 'mtr_tbl_karyawan.kode_sub_departemen')
-            ->leftJoin('mtr_tbl_level', 'mtr_tbl_level.id', '=', 'mtr_tbl_karyawan.kode_level')
-            ->leftJoin('mtr_tbl_jabatan', 'mtr_tbl_jabatan.id', '=', 'mtr_tbl_karyawan.kode_jabatan')
-            ->leftJoin('mtr_tbl_status_karyawan', 'mtr_tbl_status_karyawan.id', '=', 'mtr_tbl_karyawan.kode_status')
+        // $data = Karyawan::select('mtr_tbl_karyawan.nik', 'mtr_tbl_karyawan.nama', 'mtr_tbl_karyawan.email', 'mtr_tbl_karyawan.telepon1', 'mtr_tbl_perusahaan.nama as perusahaan', 'mtr_tbl_divisi.nama as divisi', 'mtr_tbl_departemen.nama as dep', 'mtr_tbl_sub_departemen.nama as sub_dep', 'mtr_tbl_level.level as level', 'mtr_tbl_jabatan.jabatan as jabatan', 'mtr_tbl_level.id as id_level', 'mtr_tbl_status_karyawan.status_karyawan as status_karyawan')
+        //     ->leftJoin('mtr_tbl_perusahaan', 'mtr_tbl_perusahaan.id', '=', 'mtr_tbl_karyawan.kode_perusahaan')
+        //     ->leftJoin('mtr_tbl_divisi', 'mtr_tbl_divisi.id', '=', 'mtr_tbl_karyawan.kode_divisi')
+        //     ->leftJoin('mtr_tbl_departemen', 'mtr_tbl_departemen.id', '=', 'mtr_tbl_karyawan.kode_departemen')
+        //     ->leftJoin('mtr_tbl_sub_departemen', 'mtr_tbl_sub_departemen.id', '=', 'mtr_tbl_karyawan.kode_sub_departemen')
+        //     ->leftJoin('mtr_tbl_level', 'mtr_tbl_level.id', '=', 'mtr_tbl_karyawan.kode_level')
+        //     ->leftJoin('mtr_tbl_jabatan', 'mtr_tbl_jabatan.id', '=', 'mtr_tbl_karyawan.kode_jabatan')
+        //     ->leftJoin('mtr_tbl_status_karyawan', 'mtr_tbl_status_karyawan.id', '=', 'mtr_tbl_karyawan.kode_status')
+        //     ->where($where)->first();
+        $data = DB::table('mtr_tbl_karyawan as a')->select('a.nik', 'a.nama', 'a.email', 'a.telepon1', 'b.nama as perusahaan', 'c.nama as divisi', 'd.nama as dep', 'e.nama as sub_dep', 'f.level as level', 'g.jabatan as jabatan', 'f.id as id_level', 'h.status_karyawan as status_karyawan', DB::Raw("CONCAT(i.subdepartemen_id, '/', i.subdepartemen_desc) as findim_subdepartemen"), DB::Raw("CONCAT(j.departemen_id, '/', j.departemen_desc) as findim_departemen"), DB::Raw("CONCAT(k.divisi_id, '/', k.divisi_desc) as findim_divisi"), DB::Raw("CONCAT(l.project_id, '/', l.project_desc) as findim_project"))
+            ->leftJoin('mtr_tbl_perusahaan as b', 'b.id', '=', 'a.kode_perusahaan')
+            ->leftJoin('mtr_tbl_divisi as c', 'c.id', '=', 'a.kode_divisi')
+            ->leftJoin('mtr_tbl_departemen as d', 'd.id', '=', 'a.kode_departemen')
+            ->leftJoin('mtr_tbl_sub_departemen as e', 'e.id', '=', 'a.kode_sub_departemen')
+            ->leftJoin('mtr_tbl_level as f', 'f.id', '=', 'a.kode_level')
+            ->leftJoin('mtr_tbl_jabatan as g', 'g.id', '=', 'a.kode_jabatan')
+            ->leftJoin('mtr_tbl_status_karyawan as h', 'h.id', '=', 'a.kode_status')
+            ->leftJoin('mtr_tbl_findim_subdepartemen as i', 'i.id', '=', 'a.findim_subdepartemen')
+            ->leftJoin('mtr_tbl_findim_departemen as j', 'j.id', '=', 'a.findim_departemen')
+            ->leftJoin('mtr_tbl_findim_divisi as k', 'k.id', '=', 'a.findim_divisi')
+            ->leftJoin('mtr_tbl_findim_project as l', 'l.id', '=', 'a.findim_project')
             ->where($where)->first();
         return json_encode($data);
     }

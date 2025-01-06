@@ -119,7 +119,8 @@
                                                     
                                                     <?php if(in_array(20, $log)): ?><a href="<?php echo e(route('recruitment.upload_dokumen_get', [Crypt::encrypt([$data->id, 'view'])])); ?>" target="_blank" data-toggle="tooltip" title="File Upload"><i class="fa fa-file-text-o"></i></a><?php endif; ?>
                                                 </td>
-                                                <td><?php echo e($data->_status->status); ?></td>
+                                                
+                                                <td><?php echo e($data->_status->status); ?> <?php if(!empty($data->id_join)): ?><br/>(<?php echo e(implode(',', App\Models\MtrJoin::whereIn('id', explode(',', $data->id_join))->orderBy('nama', 'asc')->pluck('nama')->toArray())); ?>) <?php endif; ?></td>
                                                 <td><?php echo e($data->created_at); ?></td>
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

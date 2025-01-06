@@ -812,6 +812,20 @@
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
+                                        <label class="form-label" for="id_join">Status</label>
+                                        <select class="js-example-basic-multiple col-sm-12" id="id_join[]" name="id_join[]" required="" multiple="multiple">
+                                        {{-- <select class="form-select col-sm-12" id="id_join" name="id_join" required=""> --}}
+                                            {{-- <option selected="" disabled="" value="">Pilih...</option> --}}
+                                            @foreach ($status_join as $data)
+                                            <option value="{{ $data->id }}">{{ $data->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
                                         <label class="form-label" for="catatan">Catatan HCO</label>
                                         <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
                                     </div>
@@ -831,13 +845,27 @@
                             </div>
                         </form>
                     </div>
-                    {{-- 25=Join --}}
+                    {{-- 25=Not Join --}}
                     <div id="row_25">
                         <form action="{{ route('recruitment.interview_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                             @csrf
                             <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($trx->id) }}">
                             <input type="hidden" id="id_status" name="id_status" value="25">
                             <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="id_join">Status</label>
+                                        <select class="js-example-basic-multiple col-sm-12" id="id_join[]" name="id_join[]" required="" multiple="multiple">
+                                        {{-- <select class="form-select col-sm-12" id="id_join" name="id_join" required=""> --}}
+                                            {{-- <option selected="" disabled="" value="">Pilih...</option> --}}
+                                            @foreach ($status_not_join as $data)
+                                            <option value="{{ $data->id }}">{{ $data->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">

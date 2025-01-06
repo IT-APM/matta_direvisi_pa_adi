@@ -4,6 +4,7 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatable-extension.css') }}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
 @endsection
 
 @section('style')
@@ -40,15 +41,27 @@
                     </div>
                     @endif
                     <a href="{{ route('cuti.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
-                    <div class="collapse" id="collapse_filter">
-                        <form class="mt-2" action="{{ route('cuti.index') }}" method="get" enctype="multipart/form-data">
+                    <div class="collapse mt-2" id="collapse_filter">
+                        <form action="{{ route('cuti.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-sm-4">
-                                    <label class="h6" for="nama">Karyawan</label>
-                                    <input name="nama" id="nama" class="form-control" type="text" value="{{ $nama }}">
+                                    <label class="h6" for="nik_karyawan">Karyawan</label>
+                                    <select class="form-select js-example-basic-single col-sm-12" id="nik_karyawan" name="nik_karyawan">
+                                        {{-- <option selected="" disabled="" value="">Pilih...</option> --}}
+                                        <option value="" @if("" == $_nik_karyawan) selected @endif>Semua Karyawan</option>
+                                        @foreach ($nik_karyawan as $data)
+                                        <option value="{{ $data->nik }}" @if($data->nik == $_nik_karyawan) selected @endif>{{ $data->nama }} - {{ $data->nik }}</option>
+                                        @endforeach
+                                    </select>
                                     @if(auth()->user()->userrole == 'hc')
-                                    <label class="h6 mt-2" for="atasan">Layer 1</label>
-                                    <input name="atasan" id="atasan" class="form-control" type="text" value="{{ $atasan }}">
+                                    <label class="h6 mt-2" for="nik_atasan">Layer 1</label>
+                                    <select class="form-select js-example-basic-single col-sm-12" id="nik_atasan" name="nik_atasan">
+                                        {{-- <option selected="" disabled="" value="">Pilih...</option> --}}
+                                        <option value="" @if("" == $_nik_atasan) selected @endif>Semua Layer 1</option>
+                                        @foreach ($nik_atasan as $data)
+                                        <option value="{{ $data->nik }}" @if($data->nik == $_nik_atasan) selected @endif>{{ $data->nama }} - {{ $data->nik }}</option>
+                                        @endforeach
+                                    </select>
                                     @endif
                                     {{-- <br/> --}}
                                     <label class="h6 mt-2">Tanggal Cuti</label>
@@ -79,7 +92,7 @@
                             </div>
                         </form>
                     </div>
-                    <br/><br/>
+                    {{-- <br/><br/> --}}
                     <div class="table-responsive">
                         <table class="display" id="_datatable">
                             <thead>
@@ -157,6 +170,8 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/vfs_fonts.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
+<script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
+<script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 <script type="text/javascript">
 function toggle_status_cuti(source) {
     checkboxes = document.getElementsByName('status_cuti[]');

@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Karyawan;
 use App\Models\Jabatan;
 use App\Models\Level;
+use App\Models\Perusahaan;
+use App\Models\Divisi;
+use App\Models\Departemen;
+use App\Models\SubDepartemen;
 // 
 use App\Models\IjinTipe;
 use App\Models\IjinStatus;
@@ -30,6 +34,65 @@ class TrxIjinController extends Controller
     public function __construct()
     {
         $this->middleware('auth', ['except' => ['show','update']]);
+    }
+    
+    public function recap(Request $request)
+    {
+        $perusahaan = Perusahaan::orderBy('nama', 'asc')->get();
+        $divisi = [];
+        $departemen = [];
+        $sub_departemen = [];
+        //
+        $arr_perusahaan = [];
+        $arr_divisi = [];
+        $arr_departemen = [];
+        $arr_sub_departemen = [];
+        // $limit = 25000;
+        $trx = [];
+        $arr_is_aktif = [['id' => 1, 'is_aktif' => 'Aktif'], ['id' => 0, 'is_aktif' => 'Non Aktif']];
+        $is_aktif = $arr_is_aktif;
+        $date_from = '';
+        $date_to = '';
+        // start filter
+        if ($request->filter == true) {
+            $date_from = $request->date_from;
+            $date_to = $request->date_to;
+            $_perusahaan = $request->input('kode_perusahaan', []);
+            $_divisi = $request->input('kode_divisi', []);
+            $_departemen = $request->input('kode_departemen', []);
+            $_sub_departemen = $request->input('kode_sub_departemen', []);
+            $_is_aktif = $request->input('is_aktif', []);
+            if (count($_perusahaan) > 0) {
+                $arr_perusahaan = $_perusahaan;
+            }
+            if (count($_divisi) > 0) {
+                $arr_divisi = $_divisi;
+            }
+            if (count($_departemen) > 0) {
+                $arr_departemen = $_departemen;
+            }
+            if (count($_sub_departemen) > 0) {
+                $arr_sub_departemen = $_sub_departemen;
+            }
+            if (count($_is_aktif) > 0) {
+                $arr_is_aktif = $_is_aktif;
+            } else {
+                $arr_is_aktif = [];
+            }
+            $divisi = Divisi::whereIn('kode_perusahaan', $arr_perusahaan)->get();
+            $departemen = Departemen::whereIn('kode_divisi', $arr_divisi)->get();
+            $sub_departemen = SubDepartemen::whereIn('kode_departemen', $arr_departemen)->get();
+            $karyawan = Karyawan::whereIn('kode_sub_departemen', $arr_sub_departemen)->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get();
+            $_karyawan = [];
+            foreach($karyawan as $data){
+                array_push($_karyawan, $data->nik);
+            }
+            // dd($karyawan);
+            // $trx = DB::select("SELECT COUNT(karyawan) AS jumlah,karyawan,tipe FROM trx_tbl_ijin WHERE tanggal BETWEEN '".$date_from."' AND '".$date_to."' AND karyawan IN ('01021403097','CV2023681') GROUP BY karyawan,tipe");
+            $trx = TrxIjin::select('karyawan','karyawan_property','tipe', DB::raw('COUNT(karyawan) AS jumlah'))->whereIn('karyawan', $_karyawan)->groupBy('karyawan', 'tipe')->whereBetween('tanggal', [$date_from, $date_to])->get();
+        }
+        // end filter
+        return view( 'formulir.izin.recap.index', compact('trx', 'date_from', 'date_to', 'arr_is_aktif', 'is_aktif', 'perusahaan', 'divisi', 'departemen', 'sub_departemen', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_sub_departemen'));
     }
     /**
      * Display a listing of the resource.
