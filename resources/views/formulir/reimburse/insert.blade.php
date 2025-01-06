@@ -4,6 +4,7 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/sweetalert2.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/date-picker.css')}}">
 @endsection
 
 @section('style')
@@ -127,13 +128,15 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="tanggal[]" id="tanggal[]" type="date" required="">
+                                                    <input class="form-control" name="tanggal[]" id="tanggal[]" type="date" required="" max="{{ $max_date }}">
                                                 </td>
                                                 <td>
                                                     <input min=1 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="jumlah_klaim[]" id="jumlah_klaim[]" class="form-control numbers" required="">
                                                 </td>
                                             </tr>
-                                            <tr id="reimburse_detail1"></tr>
+                                            @for($x = 1; $x < 10; $x++)
+                                            <tr id="reimburse_detail{{ $x }}"></tr>
+                                            @endfor
                                         </tbody>
                                     </table>
                                 </div>
@@ -146,7 +149,7 @@
                                 <button id='delete_row' class="pull-right btn btn-danger"><i class="fa fa-minus"></i> Delete Row</button>
                             </div>
                         </div>
-                        <br/>Catatan khusus baris pertama:<br/>
+                        <br/>Catatan:<br/>
                         1. Jika kolom Hubungan Dengan Karyawan dipilih Karyawan maka kolom Nama Pasien akan otomatis terisi nama karyawan.
                         <br/>2. Jika kolom Layanan dipilih Kehamilan, Persalinan-Normal atau Persalinan-Caesar maka kolom Nominal Klaim akan otomatis terisi plafon.
                     </div>
@@ -224,6 +227,8 @@
 <script src="{{asset('assets/js/sweet-alert/app.js')}}"></script>
 <script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
 <script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
+<script src="{{asset('assets/js/datepicker/date-picker/datepicker.js')}}"></script>
+<script src="{{asset('assets/js/datepicker/date-picker/datepicker.en.js')}}"></script>
 <!--  -->
 <!-- source: https://blog.quickadminpanel.com/master-detail-form-in-laravel-jquery-create-order-with-products/ -->
 <script type="text/javascript">
@@ -287,115 +292,85 @@ $(document).ready(function() {
         }
     });
     // $("select[id^=hubungan]").change(function() {
-    $('select[id="hubungan[]"]').change(function() {
-        var selectedValue = $(this).val();
-        // alert(selectedValue);
-        if (selectedValue == 1) {
-            // $("input[id^=nama_pasien]").val('{{ $karyawan->nama }}');
-            $('input[id="nama_pasien[]"]').first().val('{{ $karyawan->nama }}');
-        }
-    });
-    var nama0 = '#reimburse_detail0';
-    $(nama0).on('change', 'select[id="layanan[]"]', function () {
-        var selectedValue = $(this).val();
-        if (selectedValue == 4) {
-            $(nama0 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->kehamilan }}');
-            $(nama0 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else if (selectedValue == 5) {
-            $(nama0 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_normal }}');
-            $(nama0 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else if (selectedValue == 6) {
-            $(nama0 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_caesar }}');
-            $(nama0 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else{
-            $(nama0 + ' input[id="jumlah_klaim[]"]').attr('readonly', false);
-            $(nama0 + ' input[id="jumlah_klaim[]"]').val();
-        }
-    });
-    var nama1 = '#reimburse_detail1';
-    $(nama1).on('change', 'select[id="layanan[]"]', function () {
-        var selectedValue = $(this).val();
-        if (selectedValue == 4) {
-            $(nama1 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->kehamilan }}');
-            $(nama1 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else if (selectedValue == 5) {
-            $(nama1 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_normal }}');
-            $(nama1 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else if (selectedValue == 6) {
-            $(nama1 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_caesar }}');
-            $(nama1 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else{
-            $(nama1 + ' input[id="jumlah_klaim[]"]').attr('readonly', false);
-            $(nama1 + ' input[id="jumlah_klaim[]"]').val();
-        }
-    });
-    var nama2 = '#reimburse_detail2';
-    $(nama2).on('change', 'select[id="layanan[]"]', function () {
-        var selectedValue = $(this).val();
-        if (selectedValue == 4) {
-            $(nama2 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->kehamilan }}');
-            $(nama2 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else if (selectedValue == 5) {
-            $(nama2 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_normal }}');
-            $(nama2 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else if (selectedValue == 6) {
-            $(nama2 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_caesar }}');
-            $(nama2 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else{
-            $(nama2 + ' input[id="jumlah_klaim[]"]').attr('readonly', false);
-            $(nama2 + ' input[id="jumlah_klaim[]"]').val();
-        }
-    });
-    var nama3 = '#reimburse_detail3';
-    $(nama3).on('change', 'select[id="layanan[]"]', function () {
-        var selectedValue = $(this).val();
-        if (selectedValue == 4) {
-            $(nama3 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->kehamilan }}');
-            $(nama3 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else if (selectedValue == 5) {
-            $(nama3 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_normal }}');
-            $(nama3 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else if (selectedValue == 6) {
-            $(nama3 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_caesar }}');
-            $(nama3 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else{
-            $(nama3 + ' input[id="jumlah_klaim[]"]').attr('readonly', false);
-            $(nama3 + ' input[id="jumlah_klaim[]"]').val();
-        }
-    });
-    var nama4 = '#reimburse_detail4';
-    $(nama4).on('change', 'select[id="layanan[]"]', function () {
-        var selectedValue = $(this).val();
-        if (selectedValue == 4) {
-            $(nama4 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->kehamilan }}');
-            $(nama4 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else if (selectedValue == 5) {
-            $(nama4 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_normal }}');
-            $(nama4 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else if (selectedValue == 6) {
-            $(nama4 + ' input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_caesar }}');
-            $(nama4 + ' input[id="jumlah_klaim[]"]').attr('readonly', true);
-        }else{
-            $(nama4 + ' input[id="jumlah_klaim[]"]').attr('readonly', false);
-            $(nama4 + ' input[id="jumlah_klaim[]"]').val();
-        }
-    });
-    // $('select[id="layanan[]"]').change(function() {
+    // $('select[id="hubungan[]"]').change(function() {
     //     var selectedValue = $(this).val();
     //     // alert(selectedValue);
-    //     if (selectedValue == 4) {
-    //         $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->kehamilan }}');
-    //         $('input[id="jumlah_klaim[]"]').first().attr('readonly', true);
-    //     }else if (selectedValue == 5) {
-    //         $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->persalinan_normal }}');
-    //         $('input[id="jumlah_klaim[]"]').first().attr('readonly', false);
-    //     }else if (selectedValue == 6) {
-    //         $('input[id="jumlah_klaim[]"]').first().val('{{ $plafon->persalinan_caesar }}');
-    //     }else{
-    //         $('input[id="jumlah_klaim[]"]').first().attr('readonly', false);
-    //         $('input[id="jumlah_klaim[]"]').first().val();
+    //     if (selectedValue == 1) {
+    //         // $("input[id^=nama_pasien]").val('{{ $karyawan->nama }}');
+    //         $('input[id="nama_pasien[]"]').first().val('{{ $karyawan->nama }}');
     //     }
     // });
+    @for($x = 0; $x < 10; $x++)
+    // check jika layanan dipilih
+    $('#reimburse_detail{{ $x }}').on('change', 'select[id="layanan[]"]', function () {
+        var selectedValue = $(this).val();
+        // alert('{{ $x }}='+selectedValue);
+        // 4=Kehamilan
+        if (selectedValue == 4) {
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').val('{{ $plafon->kehamilan }}');
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }
+        // 5=Persalinan-Normal
+        else if (selectedValue == 5) {
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_normal }}');
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }
+        // 6=Persalinan-Caesar
+        else if (selectedValue == 6) {
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').val('{{ $plafon->persalinan_caesar }}');
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').attr('readonly', true);
+        }
+        // 
+        else{
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').attr('readonly', false);
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').val('');
+        }
+    });
+    // check jika hubungan dipilih
+    $('#reimburse_detail{{ $x }}').on('change', 'select[id="hubungan[]"]', function () {
+        var selectedValue = $(this).val();
+        // alert('{{ $x }}='+selectedValue);
+        // 1=Karyawan
+        if (selectedValue == 1) {
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').attr('readonly', false);
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').val('');
+            // 
+            $('#reimburse_detail{{ $x }} input[id="nama_pasien[]"]').val('{{ $karyawan->nama }}');
+            $('#reimburse_detail{{ $x }} select[id="layanan[]"]').find('option').not(':first').remove();
+            @foreach ($layanan as $data)
+            $('#reimburse_detail{{ $x }} select[id="layanan[]"]').append('<option value="{{ $data->id }}">{{ $data->layanan }}</option>');
+            @endforeach
+        }
+        // 3=Istri dari Karyawan
+        else if (selectedValue == 3) {
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').attr('readonly', false);
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').val('');
+            // 
+            $('#reimburse_detail{{ $x }} input[id="nama_pasien[]"]').val('');
+            $('#reimburse_detail{{ $x }} select[id="layanan[]"]').find('option').not(':first').remove();
+            @foreach ($layanan_istri as $data)
+            $('#reimburse_detail{{ $x }} select[id="layanan[]"]').append('<option value="{{ $data->id }}">{{ $data->layanan }}</option>');
+            @endforeach
+        }
+        // 4=Anak ke-1
+        // 5=Anak ke-2
+        // 6=Anak ke-3
+        else if (selectedValue == 4 || selectedValue == 5 || selectedValue == 6) {
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').attr('readonly', false);
+            $('#reimburse_detail{{ $x }} input[id="jumlah_klaim[]"]').val('');
+            // 
+            $('#reimburse_detail{{ $x }} input[id="nama_pasien[]"]').val('');
+            $('#reimburse_detail{{ $x }} select[id="layanan[]"]').find('option').not(':first').remove();
+            @foreach ($layanan_anak as $data)
+            $('#reimburse_detail{{ $x }} select[id="layanan[]"]').append('<option value="{{ $data->id }}">{{ $data->layanan }}</option>');
+            @endforeach
+        }
+        // 
+        else{
+            // 
+        }
+    });
+    @endfor
 });
 </script>
 @endsection
