@@ -31,9 +31,8 @@ class DataCleansingController extends Controller
      */
     public function index()
     {
-        //
-        ini_set('max_execution_time', 600);
-        $this->CleansingToDoList();
+        // dijalankan sendiri karena lama
+        // $this->CleansingToDoList();
         $filename = ['emails.penilaian0', 'emails.penilaian0_outsourcing'];
         $this->getToDoList($filename);
         // tidak digunakan karena sudah diberikan ketika pengajuan cuti
@@ -60,7 +59,8 @@ class DataCleansingController extends Controller
 
     public function CleansingToDoList()
     {
-        // dd($request->all());
+        // dd('ok');
+        ini_set('max_execution_time', 600);
         $arr_ok = array();
         $arr_nok = array();
         $trx = ToDoList::all();
@@ -94,7 +94,7 @@ class DataCleansingController extends Controller
             }
         }
         Storage::put('data_cleansing/'.Carbon::now()->format('Ymd_His').'.todolist.txt', json_encode(['$arr_ok'=>$arr_ok, '$arr_nok'=>$arr_nok]));
-        // dd(['$arr_ok'=>$arr_ok, '$arr_nok'=>$arr_nok]);
+        dd(['$arr_ok'=>$arr_ok, '$arr_nok'=>$arr_nok]);
     }
 
     public function getToDoList($filename)
