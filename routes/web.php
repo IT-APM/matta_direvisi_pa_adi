@@ -156,6 +156,7 @@ Route::resource('jadwalrandom', JadwalRandomController::class)->middleware('can:
 Route::get('generate_random', [JadwalRandomController::class, 'generate'])->name('generate_random')->middleware('can:hc');
 // 
 Route::resource('dc', DataCleansingController::class);
+Route::get('dc/todolist/{id}', [DataCleansingController::class, 'CleansingToDoList']);
 // 
 Route::resource('notif', NotificationController::class);
 Route::get('notif_cico_reg', [NotificationController::class, 'notif_cico_reg'])->name('notif_cico_reg');
