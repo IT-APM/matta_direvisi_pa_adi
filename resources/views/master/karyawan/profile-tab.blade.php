@@ -388,11 +388,9 @@
                                             <label class="form-label" for="findim_project">Project</label>
                                             <select class="form-select js-example-basic-single col-sm-12" id="findim_project" name="findim_project" required="">
                                                 <option selected="" disabled="" value="">Pilih...</option>
-                                                @if ($status=='edit' ) 
                                                 @foreach ($findim_project as $data)
-                                                <option value="{{ $data->id }}" @if($data->id == $karyawan->findim_project) selected @endif >{{ $data->project_id }} - {{ $data->project_desc }}</option>
+                                                <option value="{{ $data->id }}" @if ($status=='edit' ) @if($data->id == $karyawan->findim_project) selected @endif @endif>{{ $data->project_id }} - {{ $data->project_desc }}</option>
                                                 @endforeach
-                                                @endif
                                             </select>
                                             <div class="invalid-feedback txt-danger">Project is required.</div>
                                         </div>
@@ -400,11 +398,9 @@
                                             <label class="form-label" for="findim_divisi">Divisi</label>
                                             <select class="form-select js-example-basic-single col-sm-12" id="findim_divisi" name="findim_divisi" required="">
                                                 <option selected="" disabled="" value="">Pilih...</option>
-                                                @if ($status=='edit' ) 
                                                 @foreach ($findim_divisi as $data)
-                                                <option value="{{ $data->id }}" @if($data->id == $karyawan->findim_divisi) selected @endif >{{ $data->divisi_id }} - {{ $data->divisi_desc }}</option>
+                                                <option value="{{ $data->id }}" @if ($status=='edit' ) @if($data->id == $karyawan->findim_divisi) selected @endif @endif>{{ $data->divisi_id }} - {{ $data->divisi_desc }}</option>
                                                 @endforeach
-                                                @endif
                                             </select>
                                             <div class="invalid-feedback txt-danger">Divisi is required.</div>
                                         </div>
@@ -414,11 +410,9 @@
                                             <label class="form-label" for="findim_departemen">Departemen</label>
                                             <select class="form-select js-example-basic-single col-sm-12" id="findim_departemen" name="findim_departemen" required="">
                                                 <option selected="" disabled="" value="">Pilih...</option>
-                                                @if ($status=='edit' ) 
                                                 @foreach ($findim_departemen as $data)
-                                                <option value="{{ $data->id }}" @if($data->id == $karyawan->findim_departemen) selected @endif >{{ $data->departemen_id }} - {{ $data->departemen_desc }}</option>
+                                                <option value="{{ $data->id }}" @if ($status=='edit' ) @if($data->id == $karyawan->findim_departemen) selected @endif @endif>{{ $data->departemen_id }} - {{ $data->departemen_desc }}</option>
                                                 @endforeach
-                                                @endif
                                             </select>
                                             <div class="invalid-feedback txt-danger">Departemen is required.</div>
                                         </div>
@@ -426,11 +420,9 @@
                                             <label class="form-label" for="findim_subdepartemen">Sub Departemen</label>
                                             <select class="form-select js-example-basic-single col-sm-12" id="findim_subdepartemen" name="findim_subdepartemen" required="">
                                                 <option selected="" disabled="" value="">Pilih...</option>
-                                                @if ($status=='edit' ) 
                                                 @foreach ($findim_subdepartemen as $data)
-                                                <option value="{{ $data->id }}" @if($data->id == $karyawan->findim_subdepartemen) selected @endif >{{ $data->subdepartemen_id }} - {{ $data->subdepartemen_desc }}</option>
+                                                <option value="{{ $data->id }}" @if ($status=='edit' ) @if($data->id == $karyawan->findim_subdepartemen) selected @endif @endif>{{ $data->subdepartemen_id }} - {{ $data->subdepartemen_desc }}</option>
                                                 @endforeach
-                                                @endif
                                             </select>
                                             <div class="invalid-feedback txt-danger">Sub Departemen is required.</div>
                                         </div>
