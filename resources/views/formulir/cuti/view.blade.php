@@ -145,7 +145,7 @@
                     <div class="card">
                         <div class="card-body typography">
                             <h5>Catatan</h5>
-                            <form id="myform" name="myform" method="post" enctype="multipart/form-data" action="{{ route('cuti.update', $trxCuti->id) }}" target="_self" onsubmit="return confirm('Are you sure want to submit this data?');">
+                            <form id="myform" name="myform" method="post" enctype="multipart/form-data" action="{{ route('cuti.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxCuti->id)) }}" target="_self" onsubmit="return confirm('Are you sure want to submit this data?');">
                                 @method('PATCH')
                                 @csrf
                                 <input type="hidden" id="nik" name="nik" value="{{ auth()->user()->nik }}">

@@ -184,10 +184,10 @@
                                     <td><?php if(!empty($value->tanggal)): ?> <?php echo e(\Carbon\Carbon::parse($value->tanggal)->format('d-m-Y')); ?> <?php endif; ?></td>
                                     <td>Rp. <?php echo e(number_format($value->jumlah_klaim, 2)); ?></td>
                                     <td>
-                                        <form action="<?php echo e(route('reimburse.updateDetail', $value->id)); ?>" method="POST">
+                                        <form action="<?php echo e(route('reimburse.updateDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id))); ?>" method="POST">
                                             <?php echo csrf_field(); ?>
                                             <?php echo method_field('POST'); ?>
-                                            <input type="hidden" id="trxMId" name="trxMId" value="<?php echo e($value->id_reimburse); ?>" >
+                                            <input type="hidden" id="trxMId" name="trxMId" value="<?php echo e((new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id_reimburse)); ?>" >
                                             <input type="hidden" id="_id_layanan" name="_id_layanan" value="<?php echo e($value->id_layanan); ?>" >
                                             <input type="hidden" id="id_hubungan" name="id_hubungan" value="<?php echo e($value->id_hubungan); ?>" >
                                             <input type="hidden" id="nama_pasien" name="nama_pasien" value="<?php echo e($value->nama_pasien); ?>" >
@@ -195,7 +195,7 @@
                                             <input type="hidden" id="jumlah_klaim" name="jumlah_klaim" value="0" >
                                             <input type="hidden" id="delete" name="delete" value="1" >
                                             <ul class="action">
-                                                <li class="edit"><a href="<?php echo e(route('reimburse.editDetail', $value->id)); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                <li class="edit"><a href="<?php echo e(route('reimburse.editDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id))); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                 <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                             </ul>
                                         </form>

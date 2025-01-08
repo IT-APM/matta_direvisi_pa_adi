@@ -6,7 +6,7 @@
     aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <form action="{{ route('nonaktif.save_edit', [$trxD->id, 'back_url' => $back_url]) }}"
+            <form action="{{ route('nonaktif.save_edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($trxD->id), 'back_url' => $back_url]) }}"
                 method="POST" enctype="multipart/form-data"
                 onsubmit="return confirm('Are you sure want to submit this data?');">
                 @csrf

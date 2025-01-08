@@ -893,17 +893,21 @@ class TrxPayrollController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        // dd($id);
+        // dd($request->all(), $id);
         $payroll = TrxPayroll::find($id);
-        $filename = $payroll->nik.' Slip Gaji '.$payroll->tahun.' '.str_pad($payroll->bulan, 2, '0', STR_PAD_LEFT).'.pdf';
         $view = \View::make('payroll.pdf', compact('payroll'));
+        if($request->view == 'pdf_h'){
+            $payroll = TrxPayrollLog::find($id);
+            $view = \View::make('payroll.pdf_h', compact('payroll'));
+        }
+        $filename = $payroll->nik.' Slip Gaji '.$payroll->tahun.' '.str_pad($payroll->bulan, 2, '0', STR_PAD_LEFT).'.pdf';
         $html = $view->render();
         $pdf = new TCPDF;
         $pdf::SetTitle($filename);
-        $pdf::SetFont('times', '', 10, '', true);
-        $pdf::AddPage('L', 'A4');
+        $pdf::SetFont('times', '', 9, '', true);
+        $pdf::AddPage('P', 'A4');
         $pdf::writeHTML($html, true, false, true, false, '');
         $pdf::Output(public_path($filename), 'I');
         return response()->download(public_path($filename));

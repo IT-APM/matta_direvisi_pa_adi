@@ -68,11 +68,11 @@
                                         <?php if($data->filename == 'emails.bpd0'): ?>
                                         <a href="<?php echo e(route('bpd.show', [Crypt::encrypt($data->id_trx), 'view'=>'history'])); ?>" data-toggle="tooltip" title="History" target="_blank"><i class="icon-eye" style="color:red"></i></a>
                                         <?php elseif($data->filename == 'emails.penilaian0_outsourcing'): ?>
-                                        <a href="<?php echo e(route('penilaian.show', [$data->id_trx, 'view' => 'pdf'])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="<?php echo e(route('penilaian.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         <?php elseif($data->filename == 'emails.izin0'): ?>
-                                        <a href="<?php echo e(route('izin.show', [$data->id_trx, 'view' => 'pdf'])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="<?php echo e(route('izin.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         <?php elseif($data->filename == 'emails.pelatihan0'): ?>
-                                        <a href="<?php echo e(route('pelatihan.show', [$data->id_trx, 'view' => 'pdf'])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="<?php echo e(route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

@@ -10,7 +10,7 @@ class ToDoList extends Model
     use HasFactory;
     protected $table='trx_tbl_todolist';
 
-    public function _pic(){
+    public function _nik(){
         return $this->belongsTo('App\Models\Karyawan', 'nik', 'nik');
     }
 

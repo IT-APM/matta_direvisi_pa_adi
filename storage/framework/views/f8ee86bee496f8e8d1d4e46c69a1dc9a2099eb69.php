@@ -83,13 +83,13 @@
                                             <td><?php if(!empty($data->nik_penilai_3)): ?> <?php echo e($data->_penilai3->nama); ?> <?php endif; ?></td>
                                             <td><?php echo e($data->_tipe->tipe_penilaian); ?></td>
                                             <td>Not <?php echo e($data->_status->status_penilaian); ?></td>
-                                            <td><?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $data->end_date)->format('d-m-Y')); ?></td>
+                                            <td><?php if(!empty($data->end_date)): ?><?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $data->end_date)->format('d-m-Y')); ?><?php endif; ?></td>
                                             <td>
-                                                <form action="<?php echo e(route('penilaian_auto.destroy', $data->id)); ?>" method="POST">
+                                                <form action="<?php echo e(route('penilaian_auto.destroy', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id))); ?>" method="POST">
                                                     <?php echo csrf_field(); ?>
                                                     <?php echo method_field('DELETE'); ?>
                                                     <ul class="action">
-                                                        <li class="edit"><a href="<?php echo e(route('penilaian_auto.edit', $data->id)); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                        <li class="edit"><a href="<?php echo e(route('penilaian_auto.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id))); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                         <li class="delete"><a href="#" id="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash show_confirm"></i></a></li>
                                                     </ul>
                                                 </form>
@@ -97,19 +97,6 @@
                                         </tr>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </tbody>
-                                    <!-- <tfoot>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Karyawan</th>
-                                            <th>Penilai 1</th>
-                                            <th>Penilai 2</th>
-                                            <th>Penilai 3</th>
-                                            <th>Tipe</th>
-                                            <th>Status</th>
-                                            <th>Tanggal Berakhir</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot> -->
                                 </table>
                             </div>
                             <!--  -->
@@ -155,11 +142,11 @@
                                             <td>Not <?php echo e($data->_status->status_penilaian); ?></td>
                                             <td><?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $data->end_date)->format('d-m-Y')); ?></td>
                                             <td>
-                                                <form action="<?php echo e(route('penilaian_auto.destroy', $data->id)); ?>" method="POST">
+                                                <form action="<?php echo e(route('penilaian_auto.destroy', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id))); ?>" method="POST">
                                                     <?php echo csrf_field(); ?>
                                                     <?php echo method_field('DELETE'); ?>
                                                     <ul class="action">
-                                                        <li class="edit"><a href="<?php echo e(route('penilaian_auto.edit', $data->id)); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                        <li class="edit"><a href="<?php echo e(route('penilaian_auto.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id))); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                         <li class="delete"><a href="#" id="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash show_confirm"></i></a></li>
                                                     </ul>
                                                 </form>
@@ -167,19 +154,6 @@
                                         </tr>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </tbody>
-                                    <!-- <tfoot>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Karyawan</th>
-                                            <th>Penilai 1</th>
-                                            <th>Penilai 2</th>
-                                            <th>Penilai 3</th>
-                                            <th>Tipe</th>
-                                            <th>Status</th>
-                                            <th>Tanggal Berakhir</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot> -->
                                 </table>
                             </div>
                             <!--  -->
@@ -224,11 +198,11 @@
                                             <td>Not <?php echo e($data->_status->status_penilaian); ?></td>
                                             
                                             <td>
-                                                <form action="<?php echo e(route('penilaian_auto.destroy', $data->id)); ?>" method="POST">
+                                                <form action="<?php echo e(route('penilaian_auto.destroy', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id))); ?>" method="POST">
                                                     <?php echo csrf_field(); ?>
                                                     <?php echo method_field('DELETE'); ?>
                                                     <ul class="action">
-                                                        <li class="edit"><a href="<?php echo e(route('penilaian_auto.edit', $data->id)); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                        <li class="edit"><a href="<?php echo e(route('penilaian_auto.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id))); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                         <li class="delete"><a href="#" id="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash show_confirm"></i></a></li>
                                                     </ul>
                                                 </form>
@@ -236,19 +210,6 @@
                                         </tr>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </tbody>
-                                    <!-- <tfoot>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Karyawan</th>
-                                            <th>Penilai 1</th>
-                                            <th>Penilai 2</th>
-                                            <th>Penilai 3</th>
-                                            <th>Tipe</th>
-                                            <th>Status</th>
-                                            <th>Tanggal Berakhir</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot> -->
                                 </table>
                             </div>
                             <!--  -->

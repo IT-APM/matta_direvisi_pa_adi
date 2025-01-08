@@ -61,9 +61,16 @@ class TrxPenilaianSkorController extends Controller
      */
     public function show(Request $request, $id)
     {
-        //
+        // dd($request->all(), $id);
         $linkAction = route('penilaianskor.update', $id);
         $id_trx = $id;
+        // 
+        $id_trx = (new OpenDataController)->decryptWithKey($id_trx);
+        $nik = (new OpenDataController)->decryptWithKey($request->nik);
+        $id_status = (new OpenDataController)->decryptWithKey($request->id_status);
+        $pic = (new OpenDataController)->decryptWithKey($request->pic);
+        // dd($id_trx, $nik, $id_status, $pic);
+        // 
         $penilaian = TrxPenilaian::find( $id_trx );
         $id_tipe = $penilaian->id_tipe;
         // 
@@ -168,7 +175,7 @@ class TrxPenilaianSkorController extends Controller
         //     $isRequired .= "p".$y.": { required: true },";
         // };
         $kes_rek = '';
-        if($request->pic != 'nik_karyawan'){
+        if($pic != 'nik_karyawan'){
             $kes_rek = '<tr>
             <td><hr/>Kesimpulan dan Rekomendasi<br/>
             <textarea class="form-control" name="kes_rek" id="kes_rek" rows="3" ></textarea>
@@ -176,7 +183,7 @@ class TrxPenilaianSkorController extends Controller
         }
         // 
         $isian_kes_rek = '';
-        if($request->pic == 'nik_penilai_2' || $request->pic == 'nik_penilai_3'){
+        if($pic == 'nik_penilai_2' || $pic == 'nik_penilai_3'){
             $isian_kes_rek .= '<tr><td><b>Kesimpulan dan Rekomendasi oleh '.$atasan['nama'].':<br/>'.$penilaian->kes_rek_1.'</b></td></tr>';
             $isian_kes_rek .= '<tr><td><b>';
             $txt_perpanjang = '';
@@ -226,16 +233,16 @@ class TrxPenilaianSkorController extends Controller
         }
         // $isian_kes_rek .= '<hr/>';
         // 
-        $pic = $request->pic;
+        // $pic = $request->pic;
         // 6 = Penilaian Outsourcing
         if($id_tipe == 6){
-            if($request->nik==$penilaian[$request->pic]){
-                if($request->id_status==$penilaian['id_status']){
+            if($nik==$penilaian[$pic]){
+                if($id_status==$penilaian['id_status']){
                     return view( 'emails.penilaian_outsourcing', compact( 'jumlah_soal_outsourcing', 'jumlah_nilai_outsourcing', 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
                 }else{
-                    if($request->pic == 'nik_penilai_2' && $nPenilai2==0){
+                    if($pic == 'nik_penilai_2' && $nPenilai2==0){
                         return view( 'emails.penilaian_outsourcing', compact( 'jumlah_soal_outsourcing', 'jumlah_nilai_outsourcing', 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
-                    }elseif($request->pic=='nik_penilai_3' && $nPenilai3==0){
+                    }elseif($pic=='nik_penilai_3' && $nPenilai3==0){
                         return view( 'emails.penilaian_outsourcing', compact( 'jumlah_soal_outsourcing', 'jumlah_nilai_outsourcing', 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
                     }else{
                         return view( 'emails.penilaian_ok' );
@@ -245,13 +252,13 @@ class TrxPenilaianSkorController extends Controller
                 return view( 'emails.penilaian_ok' );
             }
         }else{
-            if($request->nik==$penilaian[$request->pic]){
-                if($request->id_status==$penilaian['id_status']){
+            if($nik==$penilaian[$pic]){
+                if($id_status==$penilaian['id_status']){
                     return view( 'emails.penilaian', compact( 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
                 }else{
-                    if($request->pic == 'nik_penilai_2' && $nPenilai2==0){
+                    if($pic == 'nik_penilai_2' && $nPenilai2==0){
                         return view( 'emails.penilaian', compact( 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
-                    }elseif($request->pic=='nik_penilai_3' && $nPenilai3==0){
+                    }elseif($pic=='nik_penilai_3' && $nPenilai3==0){
                         return view( 'emails.penilaian', compact( 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
                     }else{
                         return view( 'emails.penilaian_ok' );
@@ -284,6 +291,7 @@ class TrxPenilaianSkorController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $id = (new OpenDataController)->decryptWithKey($id);
         // dd($request->all(), $id);
         $trx = TrxPenilaian::find( $id );
         $id_tipe = $trx->id_tipe;
@@ -323,7 +331,7 @@ class TrxPenilaianSkorController extends Controller
             $karyawan = json_decode($trx->karyawan_property, true);
             $atasan = json_decode($trx->penilai1_property, true);
             $mailData['title'] = 'Formulir Penilaian Karyawan';
-            $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_1, 'id_status' => 2, 'pic' => 'nik_penilai_1']) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($trx->nik_penilai_1), 'id_status' => (new OpenDataController)->encryptWithKey(2), 'pic' => (new OpenDataController)->encryptWithKey('nik_penilai_1')]) ];
             // print_r($mailData['data']);die;
             if($trx->id_tipe == 2 || $trx->id_tipe == 4){
                 $mailData['title'] .= '- Reguler';
@@ -396,7 +404,7 @@ class TrxPenilaianSkorController extends Controller
                 // jika penilai 2 ada maka dilanjut ke penilai 2
                 if(!empty($trx->nik_penilai_2)){
                     $penilai2 = json_decode($trx->penilai2_property, true);
-                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => 5, 'pic' => 'nik_penilai_2']) ];
+                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($trx->nik_penilai_2), 'id_status' => (new OpenDataController)->encryptWithKey(5), 'pic' => (new OpenDataController)->encryptWithKey('nik_penilai_2')]) ];
                     $mailData['to'] = $penilai2['email'];
                     $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => 5, 'pic' => 'nik_penilai_2'];
                     $this->insertToDoList($todolist, $mailData);
@@ -434,7 +442,7 @@ class TrxPenilaianSkorController extends Controller
                 // jika penilai 2 ada maka dilanjut ke penilai 2
                 if(!empty($trx->nik_penilai_2)){
                     $penilai2 = json_decode($trx->penilai2_property, true);
-                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => 5, 'pic' => 'nik_penilai_2']) ];
+                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($trx->nik_penilai_2), 'id_status' => (new OpenDataController)->encryptWithKey(5), 'pic' => (new OpenDataController)->encryptWithKey('nik_penilai_2')]) ];
                     $mailData['to'] = $penilai2['email'];
                     $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => 5, 'pic' => 'nik_penilai_2'];
                     $this->insertToDoList($todolist, $mailData);
@@ -474,7 +482,7 @@ class TrxPenilaianSkorController extends Controller
                 // 
                 if(!empty($trx->nik_penilai_3)){
                     $penilai3 = json_decode($trx->penilai3_property, true);
-                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 6, 'pic' => 'nik_penilai_3']) ];
+                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($trx->nik_penilai_3), 'id_status' => (new OpenDataController)->encryptWithKey(6), 'pic' => (new OpenDataController)->encryptWithKey('nik_penilai_3')]) ];
                     // template email ada link agar bisa diklik dan diinput pic
                     $mailData['filename'] = 'emails.penilaian0';
                     $mailData['to'] = $penilai3['email'];
@@ -504,7 +512,7 @@ class TrxPenilaianSkorController extends Controller
             $atasan = json_decode($trx->penilai1_property, true);
             $mailData['title'] = 'Formulir Penilaian Karyawan';
             // $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'] ];
-            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaian.edit', [$trx->id]) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaian.edit', [(new OpenDataController)->encryptWithKey($trx->id)]) ];
             $mailData['title'] .= ' - Outsourcing';
             // template email tidak ada link done to hco
             $mailData['filename'] = 'emails.penilaian0_outsourcing';
@@ -528,7 +536,7 @@ class TrxPenilaianSkorController extends Controller
                 // 
                 if(!empty($trx->nik_penilai_3)){
                     $penilai3 = json_decode($trx->penilai3_property, true);
-                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 15, 'pic' => 'nik_penilai_3']) ];
+                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($trx->nik_penilai_3), 'id_status' => (new OpenDataController)->encryptWithKey(15), 'pic' => (new OpenDataController)->encryptWithKey('nik_penilai_3')]) ];
                     $mailData['to'] = $penilai3['email'];
                     $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 15, 'pic' => 'nik_penilai_3'];
                     $this->insertToDoList($todolist, $mailData);

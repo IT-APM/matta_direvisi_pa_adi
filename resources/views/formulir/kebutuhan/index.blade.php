@@ -104,11 +104,11 @@
                                     <td>{{ ++$no }}</td>
                                     <td>{{ $data->id }}</td>
                                     <td>
-                                        <a href="{{ route('kebutuhan.show', [$data->id, 'view' => 'detail']) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                        &nbsp;<a href="{{ route('kebutuhan.show', [$data->id, 'view' => 'pdf']) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="{{ route('kebutuhan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
+                                        &nbsp;<a href="{{ route('kebutuhan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         @can('hc')
-                                        <br /><a href="{{ route('kebutuhan.edit', [$data->id]) }}" data-toggle="tooltip" title='Update'><i class="icon-pencil-alt"></i></a>
-                                        &nbsp;<a href="{{ route('kebutuhan.show', [$data->id, 'view' => 'doc']) }}" data-toggle="tooltip" title="Document"><i class="fa fa-file-text-o"></i></a>
+                                        <br /><a href="{{ route('kebutuhan.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Update'><i class="icon-pencil-alt"></i></a>
+                                        &nbsp;<a href="{{ route('kebutuhan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('doc')]) }}" data-toggle="tooltip" title="Document"><i class="fa fa-file-text-o"></i></a>
                                         @endcan
 
                                     </td>

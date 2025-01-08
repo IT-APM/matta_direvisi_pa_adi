@@ -68,11 +68,11 @@
                                         @if($data->filename == 'emails.bpd0')
                                         <a href="{{ route('bpd.show', [Crypt::encrypt($data->id_trx), 'view'=>'history']) }}" data-toggle="tooltip" title="History" target="_blank"><i class="icon-eye" style="color:red"></i></a>
                                         @elseif($data->filename == 'emails.penilaian0_outsourcing')
-                                        <a href="{{ route('penilaian.show', [$data->id_trx, 'view' => 'pdf']) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="{{ route('penilaian.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         @elseif($data->filename == 'emails.izin0')
-                                        <a href="{{ route('izin.show', [$data->id_trx, 'view' => 'pdf']) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="{{ route('izin.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         @elseif($data->filename == 'emails.pelatihan0')
-                                        <a href="{{ route('pelatihan.show', [$data->id_trx, 'view' => 'pdf']) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="{{ route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         @endif
                                     </td>
                                 </tr>

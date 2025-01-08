@@ -85,10 +85,10 @@
                                     <td>{{ ++$no }}</td>
                                     <td>{{ $data->id }}</td>
                                     <td>
-                                        <a href="{{ route('pelatihan.show', [$data->id, 'view' => 'detail']) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                        &nbsp;<a href="{{ route('pelatihan.show', [$data->id, 'view' => 'pdf']) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="{{ route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
+                                        &nbsp;<a href="{{ route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         @can('hc')
-                                        &nbsp;<a href="{{ route('pelatihan.edit', [$data->id]) }}" data-toggle="tooltip" title='Update'><i class="icon-pencil-alt"></i></a>
+                                        &nbsp;<a href="{{ route('pelatihan.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Update'><i class="icon-pencil-alt"></i></a>
                                         @endcan
                                     </td>
                                     <td>{{ $data->_pengaju->nama }}</td>

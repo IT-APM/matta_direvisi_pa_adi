@@ -30,10 +30,10 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                        <form action="{{ route('reimburse.updateDetail', $trxD->id) }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
+                        <form action="{{ route('reimburse.updateDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxD->id)) }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @method('POST')
                         @csrf
-                            <input type="hidden" id="trxMId" name="trxMId" value="{{ $trxD->id_reimburse }}" >
+                            <input type="hidden" id="trxMId" name="trxMId" value="{{ (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxD->id_reimburse) }}" >
                             <input type="hidden" id="_id_layanan" name="_id_layanan" value="{{ $trxD->id_layanan }}" >
                             <div class="row m-t-10">
                                 <div class="col-md-4">
@@ -72,7 +72,7 @@
                                 </div>
                             </div>
                             <br />
-                            <button class="btn btn-success" type="submit">Submit</button> | <a href="{{ route('reimburse.edit', $trxD->id_reimburse) }}" class="btn btn-warning" type="button">Cancel</a>
+                            <button class="btn btn-success" type="submit">Submit</button> | <a href="{{ route('reimburse.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxD->id_reimburse)) }}" class="btn btn-warning" type="button">Cancel</a>
                         </form>
                 </div>
             </div>

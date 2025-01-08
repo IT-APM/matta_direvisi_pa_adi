@@ -169,163 +169,163 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('script'); ?>
-    <script src="<?php echo e(asset('assets/js/datatable/datatables/jquery.dataTables.min.js')); ?>"></script>
-    <script src="<?php echo e(asset('assets/js/datatable/datatables/datatable.custom.js')); ?>"></script>
-    <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/dataTables.buttons.min.js')); ?>"></script>
-    <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/jszip.min.js')); ?>"></script>
-    <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/pdfmake.min.js')); ?>"></script>
-    <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/vfs_fonts.js')); ?>"></script>
-    <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.html5.min.js')); ?>"></script>
-    <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.print.min.js')); ?>"></script>
-    <script type="text/javascript">
-        // 
-        function get_kode_perusahaan() {
-            getDivisi();
-        }
-        // 
-        function get_kode_divisi() {
-            getDepartemen();
-        }
-        // 
-        function get_kode_departemen() {
-            getSubDepartemen();
-        }
-        // 
-        function toggle_perusahaan(source) {
-            checkboxes = document.getElementsByName('kode_perusahaan[]');
-            for (var i = 0, n = checkboxes.length; i < n; i++) {
-                checkboxes[i].checked = source.checked;
+<script src="<?php echo e(asset('assets/js/datatable/datatables/jquery.dataTables.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/datatable/datatables/datatable.custom.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/datatable/datatable-extension/dataTables.buttons.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/datatable/datatable-extension/jszip.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/datatable/datatable-extension/pdfmake.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/datatable/datatable-extension/vfs_fonts.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.html5.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.print.min.js')); ?>"></script>
+<script type="text/javascript">
+// 
+function get_kode_perusahaan() {
+    getDivisi();
+}
+// 
+function get_kode_divisi() {
+    getDepartemen();
+}
+// 
+function get_kode_departemen() {
+    getSubDepartemen();
+}
+// 
+function toggle_perusahaan(source) {
+    checkboxes = document.getElementsByName('kode_perusahaan[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+    getDivisi();
+}
+// 
+function toggle_divisi(source) {
+    checkboxes = document.getElementsByName('kode_divisi[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+    getDepartemen();
+}
+// 
+function toggle_kode_departemen(source) {
+    checkboxes = document.getElementsByName('kode_departemen[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+    getSubDepartemen();
+}
+// 
+function toggle_kode_sub_departemen(source) {
+    checkboxes = document.getElementsByName('kode_sub_departemen[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+// 
+function getDivisi() {
+    var _kode_perusahaan = [];
+    $('input[id="kode_perusahaan[]"]:checked').each(function() {
+        _kode_perusahaan.push($(this).val());
+    });
+    $('#div_kode_divisi').empty();
+    $('#div_kode_departemen').empty();
+    $('#div_kode_sub_departemen').empty();
+    // AJAX request 
+    $.ajax({
+        url: "<?php echo e(route('getDivisi')); ?>" + "/" + _kode_perusahaan,
+        type: 'get',
+        dataType: 'json',
+        success: function(response) {
+            var len = 0;
+            if (response != null) {
+                len = response.length;
             }
-            getDivisi();
-        }
-        // 
-        function toggle_divisi(source) {
-            checkboxes = document.getElementsByName('kode_divisi[]');
-            for (var i = 0, n = checkboxes.length; i < n; i++) {
-                checkboxes[i].checked = source.checked;
-            }
-            getDepartemen();
-        }
-        // 
-        function toggle_kode_departemen(source) {
-            checkboxes = document.getElementsByName('kode_departemen[]');
-            for (var i = 0, n = checkboxes.length; i < n; i++) {
-                checkboxes[i].checked = source.checked;
-            }
-            getSubDepartemen();
-        }
-        // 
-        function toggle_kode_sub_departemen(source) {
-            checkboxes = document.getElementsByName('kode_sub_departemen[]');
-            for (var i = 0, n = checkboxes.length; i < n; i++) {
-                checkboxes[i].checked = source.checked;
-            }
-        }
-        // 
-        function getDivisi() {
-            var _kode_perusahaan = [];
-            $('input[id="kode_perusahaan[]"]:checked').each(function() {
-                _kode_perusahaan.push($(this).val());
-            });
-            $('#div_kode_divisi').empty();
-            $('#div_kode_departemen').empty();
-            $('#div_kode_sub_departemen').empty();
-            // AJAX request 
-            $.ajax({
-                url: "<?php echo e(route('getDivisi')); ?>" + "/" + _kode_perusahaan,
-                type: 'get',
-                dataType: 'json',
-                success: function(response) {
-                    var len = 0;
-                    if (response != null) {
-                        len = response.length;
-                    }
-                    if (len > 0) {
-                        for (var i = 0; i < len; i++) {
-                            var id = response[i]['id'];
-                            var nama = response[i]['nama'];
-                            var option = "<input class='checkbox_animated' id='kode_divisi[]' name='kode_divisi[]' type='checkbox' onClick='get_kode_divisi()' value='" + id + "'> " + nama + "<br/>";
-                            $("#div_kode_divisi").append(option);
-                        }
-                    }
+            if (len > 0) {
+                for (var i = 0; i < len; i++) {
+                    var id = response[i]['id'];
+                    var nama = response[i]['nama'];
+                    var option = "<input class='checkbox_animated' id='kode_divisi[]' name='kode_divisi[]' type='checkbox' onClick='get_kode_divisi()' value='" + id + "'> " + nama + "<br/>";
+                    $("#div_kode_divisi").append(option);
                 }
-            });
-        }
-        // 
-        function getDepartemen() {
-            var _kode_divisi = [];
-            $('input[id="kode_divisi[]"]:checked').each(function() {
-                _kode_divisi.push($(this).val());
-            });
-            $('#div_kode_departemen').empty();
-            $('#div_kode_sub_departemen').empty();
-            $.ajax({
-                url: "<?php echo e(route('getDepartemen')); ?>" + "/" + _kode_divisi,
-                type: 'get',
-                dataType: 'json',
-                success: function(response) {
-                    var len = 0;
-                    if (response != null) {
-                        len = response.length;
-                    }
-                    if (len > 0) {
-                        for (var i = 0; i < len; i++) {
-                            var id = response[i]['id'];
-                            var nama = response[i]['nama'];
-                            var option = "<input class='checkbox_animated' id='kode_departemen[]' name='kode_departemen[]' type='checkbox' onClick='get_kode_departemen()' value='" + id + "'> " + nama + "<br/>";
-                            $("#div_kode_departemen").append(option);
-                        }
-                    }
-                }
-            });
-        }
-        // 
-        function getSubDepartemen() {
-            var _kode_departemen = [];
-            $('input[id="kode_departemen[]"]:checked').each(function() {
-                _kode_departemen.push($(this).val());
-            });
-            $('#div_kode_sub_departemen').empty();
-            $.ajax({
-                url: "<?php echo e(route('getSubDepartemen')); ?>" + "/" + _kode_departemen,
-                type: 'get',
-                dataType: 'json',
-                success: function(response) {
-                    var len = 0;
-                    if (response != null) {
-                        len = response.length;
-                    }
-                    if (len > 0) {
-                        for (var i = 0; i < len; i++) {
-                            var id = response[i]['id'];
-                            var nama = response[i]['nama'];
-                            var option = "<input class='checkbox_animated' id='kode_sub_departemen[]' name='kode_sub_departemen[]' type='checkbox' value='" + id + "'> " + nama + "<br/>";
-                            $("#div_kode_sub_departemen").append(option);
-                        }
-                    }
-                }
-            });
-        }
-        // 
-        function toggle_is_aktif(source) {
-            checkboxes = document.getElementsByName('is_aktif[]');
-            for (var i = 0, n = checkboxes.length; i < n; i++) {
-                checkboxes[i].checked = source.checked;
             }
         }
-        // 
-        $('#_datatable').DataTable({
-            // dom: 'lBfrtip',
-            dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" + "<'row'<'col-sm-12'rt>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-            buttons: [
-                'copy', 'csv', 'excel', 'pdf', 'print'
-            ],
-            "lengthMenu": [
-                [50, 100, 200, 500, -1],
-                [50, 100, 200, 500, "All"]
-            ]
-        });
-    </script>
+    });
+}
+// 
+function getDepartemen() {
+    var _kode_divisi = [];
+    $('input[id="kode_divisi[]"]:checked').each(function() {
+        _kode_divisi.push($(this).val());
+    });
+    $('#div_kode_departemen').empty();
+    $('#div_kode_sub_departemen').empty();
+    $.ajax({
+        url: "<?php echo e(route('getDepartemen')); ?>" + "/" + _kode_divisi,
+        type: 'get',
+        dataType: 'json',
+        success: function(response) {
+            var len = 0;
+            if (response != null) {
+                len = response.length;
+            }
+            if (len > 0) {
+                for (var i = 0; i < len; i++) {
+                    var id = response[i]['id'];
+                    var nama = response[i]['nama'];
+                    var option = "<input class='checkbox_animated' id='kode_departemen[]' name='kode_departemen[]' type='checkbox' onClick='get_kode_departemen()' value='" + id + "'> " + nama + "<br/>";
+                    $("#div_kode_departemen").append(option);
+                }
+            }
+        }
+    });
+}
+// 
+function getSubDepartemen() {
+    var _kode_departemen = [];
+    $('input[id="kode_departemen[]"]:checked').each(function() {
+        _kode_departemen.push($(this).val());
+    });
+    $('#div_kode_sub_departemen').empty();
+    $.ajax({
+        url: "<?php echo e(route('getSubDepartemen')); ?>" + "/" + _kode_departemen,
+        type: 'get',
+        dataType: 'json',
+        success: function(response) {
+            var len = 0;
+            if (response != null) {
+                len = response.length;
+            }
+            if (len > 0) {
+                for (var i = 0; i < len; i++) {
+                    var id = response[i]['id'];
+                    var nama = response[i]['nama'];
+                    var option = "<input class='checkbox_animated' id='kode_sub_departemen[]' name='kode_sub_departemen[]' type='checkbox' value='" + id + "'> " + nama + "<br/>";
+                    $("#div_kode_sub_departemen").append(option);
+                }
+            }
+        }
+    });
+}
+// 
+function toggle_is_aktif(source) {
+    checkboxes = document.getElementsByName('is_aktif[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+// 
+$('#_datatable').DataTable({
+    // dom: 'lBfrtip',
+    dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" + "<'row'<'col-sm-12'rt>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+    buttons: [
+        'copy', 'csv', 'excel', 'pdf', 'print'
+    ],
+    "lengthMenu": [
+        [50, 100, 200, 500, -1],
+        [50, 100, 200, 500, "All"]
+    ]
+});
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.simple.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\matta\resources\views/attendance/recap/index.blade.php ENDPATH**/ ?>

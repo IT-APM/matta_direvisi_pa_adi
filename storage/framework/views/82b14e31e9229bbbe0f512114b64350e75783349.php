@@ -189,6 +189,7 @@
                                                 <th><?php echo e($data->nama); ?></th>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 <th>Total Upah</th>
+                                                <th>Slip Gaji</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -224,6 +225,7 @@
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 
                                                 <td class="text-end"><?php echo e(number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0)); ?></td>
+                                                <td><a href="<?php echo e(route('payroll.show', [$data->id, 'view' => 'pdf_h'])); ?>" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>

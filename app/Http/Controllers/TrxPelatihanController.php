@@ -214,7 +214,7 @@ class TrxPelatihanController extends Controller
         $_atasan_pengaju_ = json_decode($_atasan_pengaju, true);
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Formulir Pengajuan Pelatihan';
-        $mailData['data'] = ['nama'=>$_pengaju_['nama'].'/'.$_pengaju_['nik'], 'jabatan'=>$_pengaju_['jabatan'], 'unit_kerja'=>$_pengaju_['divisi'].'/'.$_pengaju_['dep'].'/'.$_pengaju_['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $_atasan_pengaju_['nik'], 'id_status' => $status_pengajuan, 'pic' => 'atasan_pengaju']), 'trx'=>$trx ];
+        $mailData['data'] = ['nama'=>$_pengaju_['nama'].'/'.$_pengaju_['nik'], 'jabatan'=>$_pengaju_['jabatan'], 'unit_kerja'=>$_pengaju_['divisi'].'/'.$_pengaju_['dep'].'/'.$_pengaju_['sub_dep'], 'link'=> route('pelatihan.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_atasan_pengaju_['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_pengajuan), 'pic' => (new OpenDataController)->encryptWithKey('atasan_pengaju')]), 'trx'=>$trx ];
         $mailData['filename'] = 'emails.pelatihan0';
         $mailData['to'] = $_atasan_pengaju_['email'];
         $todolist = ['id_trx' => $trx->id, 'nik' => $_atasan_pengaju_['nik'], 'id_status' => $status_pengajuan, 'pic' => 'atasan_pengaju'];
@@ -355,7 +355,7 @@ class TrxPelatihanController extends Controller
             $pengaju = json_decode($trx->pengaju_property, true);
             $mailData['title'] = 'Formulir Pengajuan Pelatihan';
             $mailData['filename'] = 'emails.pelatihan0';
-            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.edit', [$id]), 'trx'=>$trx];
+            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.edit', [(new OpenDataController)->encryptWithKey($id)]), 'trx'=>$trx];
             $hco = explode('/', MtrUtility::find(29)->informasi);
             $mailData['to'] = $hco[1];
             $todolist = ['id_trx' => $trx->id, 'nik' => $hco[0], 'id_status' => $trx->status_pengajuan, 'pic' => 'hco'];
@@ -375,6 +375,7 @@ class TrxPelatihanController extends Controller
     {
         //
         $linkAction = route('pelatihan.update', $id);
+        $id = (new OpenDataController)->decryptWithKey($id);
         $where = ['id_trx' => $id];
         $history = TrxPelatihanLog::where($where)->orderBy('created_at', 'desc')->get();
         $trx = TrxPelatihan::find( $id );
@@ -420,6 +421,16 @@ class TrxPelatihanController extends Controller
         $pic = $request->pic;
         $nik = $request->nik;
         $id_status = $request->id_status;
+        $view = (new OpenDataController)->decryptWithKey($view);
+        if(!empty($pic)){
+            $pic = (new OpenDataController)->decryptWithKey($pic);
+        }
+        if(!empty($nik)){
+            $nik = (new OpenDataController)->decryptWithKey($nik);
+        }
+        if(!empty($id_status)){
+            $id_status = (new OpenDataController)->decryptWithKey($id_status);
+        }
         $where = ['id_trx' => $id, 'nik_pic' => $nik];
         // 2 = Approve by L1 Requestor
         // 3 = Reject by L1 Requestor
@@ -625,6 +636,7 @@ class TrxPelatihanController extends Controller
     {
         //
         $this->authorize('hc');
+        $id = (new OpenDataController)->decryptWithKey($id);
         $where = ['id_trx' => $id];
         $history = TrxPelatihanLog::where($where)->orderBy('created_at', 'desc')->get();
         $trx = TrxPelatihan::find( $id );
@@ -672,6 +684,7 @@ class TrxPelatihanController extends Controller
         // masih di hardcode pic hco -> Khatrin Rismasany
         // $hco = '01031908799';
         // $hco = auth()->user()->nik;
+        $id = (new OpenDataController)->decryptWithKey($id);
 		$hco = explode('/', MtrUtility::find(29)->informasi);
         $trx = TrxPelatihan::find( $id );
         $pengaju = json_decode($trx->pengaju_property, true);
@@ -698,7 +711,7 @@ class TrxPelatihanController extends Controller
             $mailData['filename'] = 'emails.pelatihan0';
             foreach ($atasan_peserta as $value) {
                 $_atasan_peserta = json_decode($value, true);
-                $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $_atasan_peserta['nik'], 'id_status' => $status_pengajuan, 'pic' => 'atasan_peserta']), 'trx'=>$trx ];
+                $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_atasan_peserta['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_pengajuan), 'pic' => (new OpenDataController)->encryptWithKey('atasan_peserta')]), 'trx'=>$trx ];
                 $mailData['to'] = $_atasan_peserta['email'];
                 $todolist = ['id_trx' => $trx->id, 'nik' => $_atasan_peserta['nik'], 'id_status' => $status_pengajuan, 'pic' => 'atasan_peserta'];
                 $this->insertToDoList($todolist, $mailData);
@@ -806,7 +819,7 @@ class TrxPelatihanController extends Controller
                         // parameter yang dipassing ke sendemail
                         $mailData['title'] = 'Formulir Pengajuan Pelatihan';
                         $mailData['filename'] = 'emails.pelatihan0';
-                        $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $reviewer1['nik'], 'id_status' => $status_pengajuan, 'pic' => 'reviewer1']), 'trx'=>$trx ];
+                        $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($reviewer1['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_pengajuan), 'pic' => (new OpenDataController)->encryptWithKey('reviewer1')]), 'trx'=>$trx ];
                         $mailData['to'] = $reviewer1['email'];
                         $todolist = ['id_trx' => $trx->id, 'nik' => $reviewer1['nik'], 'id_status' => $status_pengajuan, 'pic' => 'reviewer1'];
                         $this->insertToDoList($todolist, $mailData);
@@ -821,7 +834,7 @@ class TrxPelatihanController extends Controller
                         // parameter yang dipassing ke sendemail
                         $mailData['title'] = 'Formulir Pengajuan Pelatihan';
                         $mailData['filename'] = 'emails.pelatihan0';
-                        $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [$trx->id, 'view' => 'approval', 'nik' => $reviewer2['nik'], 'id_status' => $status_pengajuan, 'pic' => 'reviewer2']), 'trx'=>$trx ];
+                        $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($reviewer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_pengajuan), 'pic' => (new OpenDataController)->encryptWithKey('reviewer2')]), 'trx'=>$trx ];
                         $mailData['to'] = $reviewer2['email'];
                         $todolist = ['id_trx' => $trx->id, 'nik' => $reviewer2['nik'], 'id_status' => $status_pengajuan, 'pic' => 'reviewer2'];
                         $this->insertToDoList($todolist, $mailData);

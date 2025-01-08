@@ -39,18 +39,13 @@
                                 <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif
-                        <a href="{{ route('nonaktif.create') }}" class="btn btn-primary" type="button"><i
-                                class="fa fa-plus" aria-hidden="true"></i> Add new</a> |
+                        <a href="{{ route('nonaktif.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> |
                         @can('hc')
-                            <a href="{{ route('nonaktif_auto.index') }}" class="btn btn-success" type="button"><i
-                                    class="fa fa-plus-circle" aria-hidden="true"></i> Auto</a> |
+                            <a href="{{ route('nonaktif_auto.index') }}" class="btn btn-success" type="button"><i class="fa fa-plus-circle" aria-hidden="true"></i> Auto</a> |
                         @endcan
-                        <button class="btn btn-warning" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i
-                                class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                        <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                         <div class="collapse" id="collapse_filter">
-                            <form class="mt-2" action="{{ route('nonaktif.index') }}" method="get"
-                                enctype="multipart/form-data">
+                            <form class="mt-2" action="{{ route('nonaktif.index') }}" method="get" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <label class="h6" for="nama">Karyawan</label>
@@ -65,9 +60,7 @@
                                             onClick="toggle_perusahaan(this)" /> Check All
                                         <label class="d-block" for="perusahaan"></label>
                                         @foreach ($perusahaan as $data)
-                                            <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]"
-                                                type="checkbox" value="{{ $data->id }}"
-                                                @if (in_array($data->id, $arr_perusahaan)) checked @endif>
+                                            <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>
                                             {{ $data->nama }}<br />
                                         @endforeach
                                     </div>
@@ -142,11 +135,11 @@
                                             <td>{{ ++$no }}</td>
                                             <td>{{ $data->id }}</td>
                                             <td>
-                                                <a href="{{ route('nonaktif.show', [$data->id, 'view' => 'detail']) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                                <a href="{{ route('nonaktif.show', [$data->id, 'view' => 'pdf']) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                                <a href="{{ route('nonaktif.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
+                                                <a href="{{ route('nonaktif.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                                 @can('hc')
                                                 @if(auth()->user()->nik == App\Models\MtrUtility::find(15)->informasi)
-                                                <form action="{{ route('nonaktif.destroy', $data->id) }}" method="POST">
+                                                <form action="{{ route('nonaktif.destroy', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <ul class="action">

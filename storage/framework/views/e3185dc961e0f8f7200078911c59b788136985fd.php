@@ -40,6 +40,17 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <?php endif; ?>
+                    <?php if(count($errors) > 0): ?>
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h6>Upload image is ERROR</h6>
+                        <ul>
+                            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li><?php echo e($error); ?></li>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </ul>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
                     <div class="row mb-2">
                         <div class="col-md-4">
@@ -104,8 +115,8 @@
                                     <td><?php echo e(++$no); ?></td>
                                     <td><?php echo e($data->id); ?></td>
                                     <td>
-                                        <a href="<?php echo e(route('sakit.show', [$data->id, 'view' => 'detail'])); ?>" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                        &nbsp;<a href="<?php echo e(route('sakit.show', [$data->id, 'view' => 'pdf'])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="<?php echo e(route('sakit.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')])); ?>" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
+                                        &nbsp;<a href="<?php echo e(route('sakit.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                     </td>
                                     <td><?php echo e($data->periode_sakit); ?></td>
                                     <td><?php echo e($data->_karyawan->nama); ?></td>

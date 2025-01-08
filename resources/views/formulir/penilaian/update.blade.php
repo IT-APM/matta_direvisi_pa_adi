@@ -120,7 +120,7 @@
                     <h5>Para Pihak</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('penilaian.update', $penilaian->id) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form action="{{ route('penilaian.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($penilaian->id)) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @method('PATCH')
                         @csrf
                         <div class="row g-3">

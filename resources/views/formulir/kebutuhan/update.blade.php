@@ -27,7 +27,7 @@
                     <h5>Para Pihak</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('kebutuhan.update', $trxM->id) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form action="{{ route('kebutuhan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxM->id)) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @method('PATCH')
                         @csrf
                         <div class="row g-3">

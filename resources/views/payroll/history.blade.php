@@ -196,6 +196,7 @@
                                                 <th>{{ $data->nama }}</th>
                                                 @endforeach
                                                 <th>Total Upah</th>
+                                                <th>Slip Gaji</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -231,6 +232,7 @@
                                                 @endforeach
                                                 {{-- total upah --}}
                                                 <td class="text-end">{{ number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0) }}</td>
+                                                <td><a href="{{ route('payroll.show', [$data->id, 'view' => 'pdf_h']) }}" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>
                                             </tr>
                                             @endforeach
                                         </tbody>

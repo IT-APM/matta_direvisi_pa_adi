@@ -40,6 +40,9 @@
                             <li><a href="<?php echo e(route('dashboard.index')); ?>">Dashboard</a></li>
                             <?php endif; ?>
                             <li><a href="<?php echo e(route('todolist.index')); ?>">To Do List</a></li>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+                            <li><a href="<?php echo e(route('todolist.recap', 0)); ?>">To Do List Recap</a></li>
+                            <?php endif; ?>
                             <!-- <li><a href="<?php echo e(route('dashboard-02')); ?>">Dashboard 1</a></li>
                             <li><a href="<?php echo e(route('dashboard-03')); ?>">Dashboard 2</a></li>
                             <li><a href="<?php echo e(route('dashboard-04')); ?>">Crypto</a></li>

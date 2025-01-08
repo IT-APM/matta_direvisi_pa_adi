@@ -26,7 +26,7 @@
                     <h5>Para Pihak</h5>
                 </div>
                 <div class="card-body">
-                    <form action="<?php echo e(route('kebutuhan.update', $trxM->id)); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form action="<?php echo e(route('kebutuhan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxM->id))); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                         <?php echo method_field('PATCH'); ?>
                         <?php echo csrf_field(); ?>
                         <div class="row g-3">

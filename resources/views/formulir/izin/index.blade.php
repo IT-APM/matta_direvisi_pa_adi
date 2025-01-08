@@ -115,8 +115,8 @@
                                     <td>{{ ++$no }}</td>
                                     <td>{{ $data->id }}</td>
                                     <td>
-                                        <a href="{{ route('izin.show', [$data->id, 'view' => 'detail']) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                        &nbsp;<a href="{{ route('izin.show', [$data->id, 'view' => 'pdf']) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="{{ route('izin.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
+                                        &nbsp;<a href="{{ route('izin.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                     </td>
                                     <td>{{ $karyawan_property['nama'] }}</td>
                                     <td>{{ $karyawan_property['nik'] }}</td>

@@ -40,6 +40,17 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
+                    @if (count($errors) > 0)
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h6>Upload image is ERROR</h6>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
                     @can('hc')
                     <div class="row mb-2">
                         <div class="col-md-4">
@@ -104,8 +115,8 @@
                                     <td>{{ ++$no }}</td>
                                     <td>{{ $data->id }}</td>
                                     <td>
-                                        <a href="{{ route('sakit.show', [$data->id, 'view' => 'detail']) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                        &nbsp;<a href="{{ route('sakit.show', [$data->id, 'view' => 'pdf']) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="{{ route('sakit.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
+                                        &nbsp;<a href="{{ route('sakit.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                     </td>
                                     <td>{{ $data->periode_sakit }}</td>
                                     <td>{{ $data->_karyawan->nama }}</td>

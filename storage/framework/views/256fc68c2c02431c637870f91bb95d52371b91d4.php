@@ -125,10 +125,10 @@
                                     <td><?php echo e(++$no); ?></td>
                                     <td><?php echo e($data->id); ?></td>
                                     <td>
-                                        <?php if($data->status_pengajuan == 1): ?><a href="<?php echo e(route('reimburse.edit', $data->id)); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a><?php endif; ?>
-                                        &nbsp;<a href="<?php echo e(route('reimburse.show', [$data->id, 'view' => 'detail'])); ?>" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>&nbsp;<a href="<?php echo e(route('reimburse.show', [$data->id, 'view' => 'pdf', 'isHC' => true])); ?>" data-toggle="tooltip" title="PDF HC" target="_blank"><i class="fa fa-file-pdf-o" style="color:orange"></i></a><?php endif; ?>
-                                        &nbsp;<a href="<?php echo e(route('reimburse.show', [$data->id, 'view' => 'pdf', 'isHC' => false])); ?>" data-toggle="tooltip" title="PDF NHC" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <?php if($data->status_pengajuan == 1): ?><a href="<?php echo e(route('reimburse.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id))); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a><?php endif; ?>
+                                        &nbsp;<a href="<?php echo e(route('reimburse.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')])); ?>" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
+                                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>&nbsp;<a href="<?php echo e(route('reimburse.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf'), 'isHC' => true])); ?>" data-toggle="tooltip" title="PDF HC" target="_blank"><i class="fa fa-file-pdf-o" style="color:orange"></i></a><?php endif; ?>
+                                        &nbsp;<a href="<?php echo e(route('reimburse.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf'), 'isHC' => false])); ?>" data-toggle="tooltip" title="PDF NHC" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                     </td>
                                     <td><?php echo e($data->_nik->nama); ?></td>
                                     <td><?php echo e($data->_nik->nik); ?></td>

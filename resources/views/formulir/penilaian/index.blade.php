@@ -41,28 +41,19 @@
                             </div>
                         @endif
                         @can('hc')
-                            <a href="{{ route('penilaian.create') }}" class="btn btn-primary" type="button"><i
-                                    class="fa fa-plus" aria-hidden="true"></i> Add new</a> |
-                            <a href="{{ route('penilaian_auto.index') }}" class="btn btn-success" type="button"><i
-                                    class="fa fa-plus-circle" aria-hidden="true"></i> Auto</a> |
-                            <a href="{{ route('penilaian_reminder.index') }}" class="btn btn-info" type="button"><i
-                                    class="fa fa-repeat" aria-hidden="true"></i> Reminder</a> |
+                            <a href="{{ route('penilaian.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> |
+                            <a href="{{ route('penilaian_auto.index') }}" class="btn btn-success" type="button"><i class="fa fa-plus-circle" aria-hidden="true"></i> Auto</a> |
+                            <a href="{{ route('penilaian_reminder.index') }}" class="btn btn-info" type="button"><i class="fa fa-repeat" aria-hidden="true"></i> Reminder</a> |
                         @endcan
-                        <button class="btn btn-warning" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i
-                                class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                        <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                         <div class="collapse" id="collapse_filter">
-                            <form class="mt-2" action="{{ route('penilaian.index') }}" method="get"
-                                enctype="multipart/form-data">
+                            <form class="mt-2" action="{{ route('penilaian.index') }}" method="get" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox"
-                                            onClick="toggle_id_status(this)" /> Check All
+                                        <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_id_status(this)" /> Check All
                                         <label class="d-block" for="id_status">
                                             @foreach ($id_status as $data)
-                                                <input class="checkbox_animated" id="id_status[]" name="id_status[]"
-                                                    type="checkbox" value="{{ $data->id }}"
-                                                    @if (in_array($data->id, $arr_id_status)) checked @endif>
+                                                <input class="checkbox_animated" id="id_status[]" name="id_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_id_status)) checked @endif>
                                                 {{ $data->status_penilaian }}<br />
                                             @endforeach
                                         </label>
@@ -70,34 +61,25 @@
                                             <label class="h6">Status Pengajuan Lengkap</label>
                                             <label class="d-block" for="id_status_lengkap">
                                                 @foreach ($id_status_lengkap as $data)
-                                                    <input class="checkbox_animated" id="id_status_lengkap[]"
-                                                        name="id_status_lengkap[]" type="checkbox" value="{{ $data }}"
-                                                        @if (in_array($data, $arr_id_status_lengkap)) checked @endif> Done By Reviewer 2 &
-                                                    3<br />
+                                                    <input class="checkbox_animated" id="id_status_lengkap[]" name="id_status_lengkap[]" type="checkbox" value="{{ $data }}" @if (in_array($data, $arr_id_status_lengkap)) checked @endif> Done By Reviewer 2 & 3<br />
                                                 @endforeach
                                             </label>
                                         @endcan
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="h6">Status Perpanjangan</label>&nbsp;<input type="checkbox"
-                                            onClick="toggle_is_perpanjang(this)" /> Check All
+                                        <label class="h6">Status Perpanjangan</label>&nbsp;<input type="checkbox" onClick="toggle_is_perpanjang(this)" /> Check All
                                         <label class="d-block" for="is_perpanjang">
                                             @foreach ($is_perpanjang as $data)
-                                                <input class="checkbox_animated" id="is_perpanjang[]" name="is_perpanjang[]"
-                                                    type="checkbox" value="{{ $data->id }}"
-                                                    @if (in_array($data->id, $arr_is_perpanjang)) checked @endif>
+                                                <input class="checkbox_animated" id="is_perpanjang[]" name="is_perpanjang[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_is_perpanjang)) checked @endif>
                                                 {{ $data->informasi }}<br />
                                             @endforeach
                                         </label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox"
-                                            onClick="toggle_perusahaan(this)" /> Check All
+                                        <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
                                         <label class="d-block" for="perusahaan">
                                             @foreach ($perusahaan as $data)
-                                                <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]"
-                                                    type="checkbox" value="{{ $data->id }}"
-                                                    @if (in_array($data->id, $arr_perusahaan)) checked @endif>
+                                                <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>
                                                 {{ $data->nama }}<br />
                                             @endforeach
                                         </label>
@@ -153,29 +135,16 @@
                                             <td>{{ ++$no }}</td>
                                             <td>{{ $data->id }}</td>
                                             <td>
-                                                <a href="{{ route('penilaian.show', [$data->id, 'view' => 'detail']) }}"
-                                                    data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                                &nbsp;<a
-                                                    href="{{ route('penilaian.show', [$data->id, 'view' => 'pdf']) }}"
-                                                    data-toggle="tooltip" title="PDF" target="_blank"><i
-                                                        class="fa fa-file-pdf-o"></i></a>
-                                                <br /><a
-                                                    href="{{ route('penilaian.show', [$data->id, 'view' => 'result']) }}"
-                                                    data-toggle="tooltip" title="Result" target="_blank"><i
-                                                        class="fa fa-file-text-o"></i></a>
+                                                <a href="{{ route('penilaian.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
+                                                &nbsp;<a href="{{ route('penilaian.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                                <br /><a href="{{ route('penilaian.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('result')]) }}" data-toggle="tooltip" title="Result" target="_blank"><i class="fa fa-file-text-o"></i></a>
                                                 {{-- @if($data->nik_penilai_1 == auth()->user()->nik || $data->nik_penilai_2 == auth()->user()->nik || $data->nik_penilai_3 == auth()->user()->nik)
-                                                &nbsp;<a href="{{ route('revisi_penilaian', [$data->id]) }}"
-                                                    data-toggle="tooltip" title='Revision'><i class="icon-pencil-alt"
-                                                        style="color:red"></i></a>
+                                                &nbsp;<a href="{{ route('revisi_penilaian', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Revision'><i class="icon-pencil-alt" style="color:red"></i></a>
                                                 @endif --}}
                                                 @can('hc')
-                                                    &nbsp;<a href="{{ route('penilaian.edit', [$data->id]) }}"
-                                                        data-toggle="tooltip" title='Update'><i
-                                                            class="icon-pencil-alt"></i></a>
+                                                    &nbsp;<a href="{{ route('penilaian.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Update'><i class="icon-pencil-alt"></i></a>
                                                     {{-- @if ($data->id_status == 4 || $data->id_status == 8) --}}
-                                                    <br /><a href="{{ route('revisi_penilaian', [$data->id]) }}"
-                                                        data-toggle="tooltip" title='Revision'><i class="icon-pencil-alt"
-                                                            style="color:red"></i></a>
+                                                    <br /><a href="{{ route('revisi_penilaian', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Revision'><i class="icon-pencil-alt" style="color:red"></i></a>
                                                     {{-- @endif --}}
                                                 @endcan
                                             </td>

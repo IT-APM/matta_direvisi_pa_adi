@@ -175,7 +175,7 @@
                             </select>
                         </div>
                     </div>
-                    <form action="<?php echo e(route('pelatihan.update', $trx->id)); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form action="<?php echo e(route('pelatihan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id))); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                     <?php echo method_field('PATCH'); ?>
                     <?php echo csrf_field(); ?>
                         <button class="btn btn-success mt-2" type="submit">Update</button> | <a href="<?php echo e(route('pelatihan.index')); ?>" class="btn btn-warning" type="button">Back</a>

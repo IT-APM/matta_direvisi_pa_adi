@@ -254,7 +254,7 @@ class TrxKebutuhanController extends Controller
         // 
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Formulir Kebutuhan Karyawan';
-        $mailData['data'] = ['nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('kebutuhan.show', [$trxM->id, 'view' => 'approval', 'nik' => $_layer1['nik'], 'id_status' => $status_pengajuan, 'pic' => 'layer1']) ];
+        $mailData['data'] = ['nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('kebutuhan.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_layer1['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_pengajuan), 'pic' => (new OpenDataController)->encryptWithKey('layer1')]) ];
         $mailData['filename'] = 'emails.kebutuhan0';
         $mailData['to'] = $_layer1['email'];
         $todolist = ['id_trx' => $trxM->id, 'nik' => $_layer1['nik'], 'id_status' => $status_pengajuan, 'pic' => 'layer1'];
@@ -346,6 +346,7 @@ class TrxKebutuhanController extends Controller
     {
         //
         $linkAction = route('kebutuhan.update', $id);
+        $id = (new OpenDataController)->decryptWithKey($id);
         $where = ['id_trx' => $id];
         $history = TrxKebutuhanLog::where($where)->orderBy('created_at', 'desc')->get();
         $trxM = TrxKebutuhanMaster::find( $id );
@@ -391,6 +392,16 @@ class TrxKebutuhanController extends Controller
         $pic = $request->pic;
         $nik = $request->nik;
         $id_status = $request->id_status;
+        $view = (new OpenDataController)->decryptWithKey($view);
+        if(!empty($pic)){
+            $pic = (new OpenDataController)->decryptWithKey($pic);
+        }
+        if(!empty($nik)){
+            $nik = (new OpenDataController)->decryptWithKey($nik);
+        }
+        if(!empty($id_status)){
+            $id_status = (new OpenDataController)->decryptWithKey($id_status);
+        }
         $where = ['id_trx' => $id, 'nik_pic' => $nik];
         // 2 = Approved by L1
         // 5 = Rejected by L1
@@ -530,6 +541,7 @@ class TrxKebutuhanController extends Controller
     {
         //
         $this->authorize('hc');
+        $id = (new OpenDataController)->decryptWithKey($id);
         $trxM = TrxKebutuhanMaster::find( $id );
         // 
         $status_pengajuan = KebutuhanStatus::whereIn('id', [3,10,28,$trxM->status_pengajuan])->orderBy('id', 'asc')->get();
@@ -559,6 +571,7 @@ class TrxKebutuhanController extends Controller
         // $hco = auth()->user()->nik;
 		// MtrUtility::find(11)->informasi
 		// $hco = 01031808735 = Sofyan Farid Ma'Arif
+        $id = (new OpenDataController)->decryptWithKey($id);
 		$hco = MtrUtility::find(20)->informasi;
         $trxM = TrxKebutuhanMaster::find( $id );
         $pengaju = json_decode($trxM->pengaju_property, true);
@@ -589,7 +602,7 @@ class TrxKebutuhanController extends Controller
             }
             // 2 = Approved by L1
             else if($status_pengajuan == 2){
-                $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('kebutuhan.show', [$trxM->id, 'view' => 'approval', 'nik' => $layer2['nik'], 'id_status' => $status_pengajuan, 'pic' => 'layer2']) ];
+                $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('kebutuhan.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($layer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_pengajuan), 'pic' => (new OpenDataController)->encryptWithKey('layer2')]) ];
                 $mailData['filename'] = 'emails.kebutuhan0';
                 $mailData['to'] = $layer2['email'];
                 $todolist = ['id_trx' => $trxM->id, 'nik' => $layer2['nik'], 'id_status' => $status_pengajuan, 'pic' => 'layer2'];

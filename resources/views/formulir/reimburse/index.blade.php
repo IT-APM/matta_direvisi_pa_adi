@@ -127,10 +127,10 @@
                                     <td>{{ ++$no }}</td>
                                     <td>{{ $data->id }}</td>
                                     <td>
-                                        @if($data->status_pengajuan == 1)<a href="{{ route('reimburse.edit', $data->id) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>@endif
-                                        &nbsp;<a href="{{ route('reimburse.show', [$data->id, 'view' => 'detail']) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                        @can('hc')&nbsp;<a href="{{ route('reimburse.show', [$data->id, 'view' => 'pdf', 'isHC' => true]) }}" data-toggle="tooltip" title="PDF HC" target="_blank"><i class="fa fa-file-pdf-o" style="color:orange"></i></a>@endcan
-                                        &nbsp;<a href="{{ route('reimburse.show', [$data->id, 'view' => 'pdf', 'isHC' => false]) }}" data-toggle="tooltip" title="PDF NHC" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        @if($data->status_pengajuan == 1)<a href="{{ route('reimburse.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>@endif
+                                        &nbsp;<a href="{{ route('reimburse.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
+                                        @can('hc')&nbsp;<a href="{{ route('reimburse.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf'), 'isHC' => true]) }}" data-toggle="tooltip" title="PDF HC" target="_blank"><i class="fa fa-file-pdf-o" style="color:orange"></i></a>@endcan
+                                        &nbsp;<a href="{{ route('reimburse.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf'), 'isHC' => false]) }}" data-toggle="tooltip" title="PDF NHC" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                     </td>
                                     <td>{{ $data->_nik->nama }}</td>
                                     <td>{{ $data->_nik->nik }}</td>

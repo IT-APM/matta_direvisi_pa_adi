@@ -186,10 +186,10 @@
                                     <td>@if(!empty($value->tanggal)) {{ \Carbon\Carbon::parse($value->tanggal)->format('d-m-Y') }} @endif</td>
                                     <td>Rp. {{ number_format($value->jumlah_klaim, 2) }}</td>
                                     <td>
-                                        <form action="{{ route('reimburse.updateDetail', $value->id) }}" method="POST">
+                                        <form action="{{ route('reimburse.updateDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id)) }}" method="POST">
                                             @csrf
                                             @method('POST')
-                                            <input type="hidden" id="trxMId" name="trxMId" value="{{ $value->id_reimburse }}" >
+                                            <input type="hidden" id="trxMId" name="trxMId" value="{{ (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id_reimburse) }}" >
                                             <input type="hidden" id="_id_layanan" name="_id_layanan" value="{{ $value->id_layanan }}" >
                                             <input type="hidden" id="id_hubungan" name="id_hubungan" value="{{ $value->id_hubungan }}" >
                                             <input type="hidden" id="nama_pasien" name="nama_pasien" value="{{ $value->nama_pasien }}" >
@@ -197,7 +197,7 @@
                                             <input type="hidden" id="jumlah_klaim" name="jumlah_klaim" value="0" >
                                             <input type="hidden" id="delete" name="delete" value="1" >
                                             <ul class="action">
-                                                <li class="edit"><a href="{{ route('reimburse.editDetail', $value->id) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                <li class="edit"><a href="{{ route('reimburse.editDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id)) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                 <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                             </ul>
                                         </form>

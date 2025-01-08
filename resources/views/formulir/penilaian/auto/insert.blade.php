@@ -24,7 +24,7 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('penilaian_auto.update', $trx->id) }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to update this data?');">
+                    <form action="{{ route('penilaian_auto.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id)) }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to update this data?');">
                     @method('PATCH')
                         @csrf
                         <div class="row g-3">

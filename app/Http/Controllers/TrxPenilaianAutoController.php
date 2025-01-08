@@ -21,7 +21,6 @@ class TrxPenilaianAutoController extends Controller
      */
     public function index()
     {
-        // dd('ok');
         // karyawan tetap
         $where = ['is_aktif'=>1, 'kode_status'=>1];
         $kt = Karyawan::select('nik')->where($where)->get();
@@ -32,6 +31,7 @@ class TrxPenilaianAutoController extends Controller
         $trx_kt = TrxPenilaianAuto::whereIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'id', 'asc' )->get();
         $trx_non_outsource = TrxPenilaianAuto::whereNotIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
         $trx_outsource = TrxPenilaianAuto::whereNotIn('nik_karyawan', $kt)->whereIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+        // dd($trx_outsource);
         return view( 'formulir.penilaian.auto.index', compact( 'trx_non_outsource', 'trx_outsource', 'no_non_outsource', 'no_outsource', 'trx_kt', 'no_kt'));
     }
 
@@ -53,13 +53,16 @@ class TrxPenilaianAutoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
         $data = array();
         if($request->is_outsource == 1){
             $data = TrxPenilaianAuto::whereIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
-        }else{
+            // dd($data);
+        }else if($request->is_outsource == 0){
             $data = TrxPenilaianAuto::whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+            // dd($data);
         }
+        // dd($data);
         foreach ($data as $_data){
             $trx = New TrxPenilaian;
             $trx->nik_karyawan = $_data->nik_karyawan;
@@ -77,7 +80,7 @@ class TrxPenilaianAutoController extends Controller
             $trx->id_tipe = $_data->id_tipe;
             $trx->id_status = $_data->id_status;
             $trx->save();
-            $this->destroy($_data->id);
+            $this->destroy((new OpenDataController)->encryptWithKey($_data->id));
             // maker masih di hardcode 01031908799 => khatrin hco
             (new TrxPenilaianController)->insertLog($trx->id, $_data->id_status, auth()->user()->nik);
             // 
@@ -132,7 +135,7 @@ class TrxPenilaianAutoController extends Controller
                 $nik = $atasan['nik'];
                 $pic = 'nik_penilai_1';
             }
-            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $nik, 'id_status' => $_data->id_status, 'pic' => $pic]) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($nik), 'id_status' => (new OpenDataController)->encryptWithKey($_data->id_status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
             $todolist = ['id_trx' => $trx->id, 'nik' => $nik, 'id_status' => $_data->id_status, 'pic' => $pic];
             (new TrxPenilaianController)->insertToDoList($todolist, $mailData);
             (new TrxPenilaianController)->sendEmail($mailData);
@@ -160,6 +163,7 @@ class TrxPenilaianAutoController extends Controller
     public function edit($id)
     {
         //
+        $id = (new OpenDataController)->decryptWithKey($id);
         $trx = TrxPenilaianAuto::find( $id );
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
@@ -178,6 +182,7 @@ class TrxPenilaianAutoController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $id = (new OpenDataController)->decryptWithKey($id);
         $trx = TrxPenilaianAuto::find( $id );
         $trx->nik_karyawan = $request->nik_karyawan;
         $trx->nik_penilai_1 = $request->penilai_1;
@@ -197,6 +202,7 @@ class TrxPenilaianAutoController extends Controller
     public function destroy($id)
     {
         //
+        $id = (new OpenDataController)->decryptWithKey($id);
         $trx = TrxPenilaianAuto::find( $id );
         $trx->delete();
         return redirect( 'penilaian_auto' )->with( 'msg', 'Data is deleted successfully.' );

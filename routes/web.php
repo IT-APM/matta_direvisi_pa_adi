@@ -129,6 +129,7 @@ Route::get('getSubDepartemen/{id}', [OpenDataController::class, 'getSubDeparteme
 Route::get('getDivisi', [OpenDataController::class, 'getDivisi'])->name('getDivisi');
 Route::get('getDepartemen', [OpenDataController::class, 'getDepartemen'])->name('getDepartemen');
 Route::get('getSubDepartemen', [OpenDataController::class, 'getSubDepartemen'])->name('getSubDepartemen');
+Route::get('encrypt_link', [OpenDataController::class, 'encrypt_link'])->name('encrypt_link');
 // 
 Route::resource('jadwalcls', JadwalClsController::class)->middleware('can:hc');
 Route::get('generate_cls', [JadwalClsController::class, 'generate'])->name('generate_cls')->middleware('can:hc');
@@ -174,6 +175,7 @@ Route::post('logoutapp', [LoginController::class, 'logout'])->name('logoutapp');
 // Route::resource('loginctrl', LoginController::class);
 // 
 Route::resource('todolist', TrxToDoListController::class)->middleware('auth');
+Route::get('todolist/recap/{id}', [TrxToDoListController::class, 'recap'])->name('todolist.recap')->middleware('can:hc');
 // 
 Route::resource('karyawan', KaryawanController::class);
 Route::resource('karyawanpendidikan', KaryawanPendidikanController::class)->middleware('auth');

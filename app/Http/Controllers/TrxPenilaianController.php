@@ -273,7 +273,7 @@ class TrxPenilaianController extends Controller
             $pic = 'nik_penilai_1';
             $id_status = 16;
         }
-        $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $nik, 'id_status' => $id_status, 'pic' => $pic]) ];
+        $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($nik), 'id_status' => (new OpenDataController)->encryptWithKey($id_status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
         $todolist = ['id_trx' => $trx->id, 'nik' => $nik, 'id_status' => $id_status, 'pic' => $pic];
         $this->insertToDoList($todolist, $mailData);
         $this->sendEmail($mailData);
@@ -394,6 +394,7 @@ class TrxPenilaianController extends Controller
     public function show(Request $request, $id)
     {
         //
+        $id = (new OpenDataController)->decryptWithKey($id);
         $penilaian = TrxPenilaian::find( $id );
         // ambil property para pihak
         $karyawan = json_decode($penilaian->karyawan_property, true);
@@ -402,6 +403,7 @@ class TrxPenilaianController extends Controller
         $penilai3 = json_decode($penilaian->penilai3_property, true);
         // 
         $view = $request->view;
+        $view = (new OpenDataController)->decryptWithKey($view);
         switch ($view) {
             case 'detail':
                 // 
@@ -730,8 +732,9 @@ class TrxPenilaianController extends Controller
      */
     public function edit($id)
     {
-        //
         $this->authorize('hc');
+        $id = (new OpenDataController)->decryptWithKey($id);
+        // dd($id);
         $where = [ 'id_trx' => $id ];
         $history = TrxPenilaianLog::where($where)->orderBy('created_at','desc')->get();
         $penilaian = TrxPenilaian::find( $id );
@@ -854,6 +857,7 @@ class TrxPenilaianController extends Controller
     {
         //
         // dd($request->all(), $id);
+        $id = (new OpenDataController)->decryptWithKey($id);
         $id_status = $request->id_status;
         $id_tipe = $request->id_tipe;
         if($id_status==14 || $id_status==15){
@@ -922,14 +926,14 @@ class TrxPenilaianController extends Controller
             $mailData['filename'] = 'emails.penilaian0_outsourcing';
         }
         if($request->has('penilai_2')){
-            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => $id_status, 'pic' => 'nik_penilai_2']) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($trx->nik_penilai_2), 'id_status' => (new OpenDataController)->encryptWithKey($id_status), 'pic' => (new OpenDataController)->encryptWithKey('nik_penilai_2')]) ];
             $mailData['to'] = $penilai2['email'];
             $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => $id_status, 'pic' => 'nik_penilai_2'];
             $this->insertToDoList($todolist, $mailData);
             $this->sendEmail($mailData);
         }
         if($request->has('penilai_3')){
-            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => $id_status, 'pic' => 'nik_penilai_3']) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($trx->nik_penilai_3), 'id_status' => (new OpenDataController)->encryptWithKey($id_status), 'pic' => (new OpenDataController)->encryptWithKey('nik_penilai_3')]) ];
             $mailData['to'] = $penilai3['email'];
             $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => $id_status, 'pic' => 'nik_penilai_3'];
             $this->insertToDoList($todolist, $mailData);
@@ -942,6 +946,7 @@ class TrxPenilaianController extends Controller
     {
         // dd($request->all(), $id);
         $pic = $request->pic;
+        $id = (new OpenDataController)->decryptWithKey($id);
         $penilaian = TrxPenilaian::find( $id );
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();

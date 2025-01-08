@@ -274,7 +274,7 @@ class TrxRekomendasiController extends Controller
         $_reviewer1 = json_decode($reviewer1_property, true);
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Formulir Rekomendasi Karyawan';
-        $mailData['data'] = ['nama'=>$_karyawan['nama'].'/'.$_karyawan['nik'], 'jabatan'=>$_karyawan['jabatan'], 'unit_kerja'=>$_karyawan['divisi'].'/'.$_karyawan['dep'].'/'.$_karyawan['sub_dep'], 'atasan'=>$_atasan['nama'], 'link'=> route('rekomendasi.show', [$trxM->id, 'view' => 'approval', 'nik' => $_reviewer1['nik'], 'id_status' => $status_rekomendasi, 'pic' => 'reviewer1']) ];
+        $mailData['data'] = ['nama'=>$_karyawan['nama'].'/'.$_karyawan['nik'], 'jabatan'=>$_karyawan['jabatan'], 'unit_kerja'=>$_karyawan['divisi'].'/'.$_karyawan['dep'].'/'.$_karyawan['sub_dep'], 'atasan'=>$_atasan['nama'], 'link'=> route('rekomendasi.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_reviewer1['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_rekomendasi), 'pic' => (new OpenDataController)->encryptWithKey('reviewer1')]) ];
         $mailData['filename'] = 'emails.rekomendasi0';
         $mailData['to'] = $_reviewer1['email'];
         $todolist = ['id_trx' => $trxM->id, 'nik' => $_reviewer1['nik'], 'id_status' => $status_rekomendasi, 'pic' => 'reviewer1'];
@@ -366,8 +366,9 @@ class TrxRekomendasiController extends Controller
      */
     public function show(Request $request, $id)
     {
-        //
+        // dd($request->all(), $id);
         $linkAction = route('rekomendasi.update', $id);
+        $id = (new OpenDataController)->decryptWithKey($id);
         $where = ['id_trx' => $id];
         $history = TrxRekomendasiLog::where($where)->orderBy('created_at', 'desc')->get();
         $trxM = TrxRekomendasiMaster::find( $id );
@@ -392,10 +393,22 @@ class TrxRekomendasiController extends Controller
         array_push($karyawan, ['tanggal_bergabung'=>$tanggal_bergabung]);
         // return response()->json( [ 'karyawan' => $karyawan ] );
         // 
-        $view = $request->view;
+        // $view = $request->view;
         $pic = $request->pic;
         $nik = $request->nik;
         $id_status = $request->id_status;
+        // 
+        $view = (new OpenDataController)->decryptWithKey($request->view);
+        if(!empty($pic)){
+            $pic = (new OpenDataController)->decryptWithKey($request->pic);
+        }
+        if(!empty($nik)){
+            $nik = (new OpenDataController)->decryptWithKey($request->nik);
+        }
+        if(!empty($nik)){
+            $id_status = (new OpenDataController)->decryptWithKey($request->id_status);
+        }
+        // 
         $where = ['id_trx' => $id, 'nik_pic' => $nik];
         $nReviewer1 = TrxRekomendasiLog::where($where)->whereIn('id_status', [2, 4])->count();
         $nReviewer2 = TrxRekomendasiLog::where($where)->whereIn('id_status', [7, 9])->count();
@@ -529,6 +542,7 @@ class TrxRekomendasiController extends Controller
     {
         //
         $this->authorize('hc');
+        $id = (new OpenDataController)->decryptWithKey($id);
         $trxM = TrxRekomendasiMaster::find( $id );
         // 
         $status = RekomendasiStatus::whereIn('id', [5,6,10,11,18,$trxM->status_rekomendasi])->orderBy('id', 'asc')->get();
@@ -564,12 +578,12 @@ class TrxRekomendasiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
         // $status_pengajuan = $request->status_pengajuan;
         // return response()->json( [ 'id' => $id, 'data' => $request->all() ] );
         // masih di hardcode pic hco -> Khatrin Rismasany
         // $hco = '01031908799';
         // $hco = auth()->user()->nik;
+        $id = (new OpenDataController)->decryptWithKey($id);
 		$hco = MtrUtility::find(17)->informasi;
         $trxM = TrxRekomendasiMaster::find( $id );
         $karyawan = json_decode($trxM->karyawan_property, true);
@@ -578,9 +592,15 @@ class TrxRekomendasiController extends Controller
         $pic = $request->pic;
         $nik = $request->nik;
         $status_rekomendasi = $request->status_rekomendasi;
+        // 
+        // $pic = (new OpenDataController)->decryptWithKey($request->pic);
+        // $nik = (new OpenDataController)->decryptWithKey($request->nik);
+        // $status_rekomendasi = (new OpenDataController)->decryptWithKey($request->status_rekomendasi);
+        // 
         $catatan = $request->catatan;
         // 2 = Rejected by Approval-1
         // 4 = Approved by Approval-1
+        // dd($request->all(), $id);
         if (($status_rekomendasi == 4 || $status_rekomendasi == 2) && $pic == 'reviewer1' && $nik == $trxM->nik_reviewer1) {
             $trxM->status_rekomendasi = $status_rekomendasi;
             $trxM->catatan_reviewer1 = $catatan;
@@ -627,7 +647,7 @@ class TrxRekomendasiController extends Controller
             // parameter yang dipassing ke sendemail
             // start
             $mailData['title'] = 'Formulir Rekomendasi Karyawan';
-            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('rekomendasi.show', [$trxM->id, 'view' => 'approval', 'nik' => $reviewer2['nik'], 'id_status' => $status_rekomendasi, 'pic' => 'reviewer2']) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('rekomendasi.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($reviewer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_rekomendasi), 'pic' => (new OpenDataController)->encryptWithKey('reviewer2')]) ];
             $mailData['filename'] = 'emails.rekomendasi0';
             $mailData['to'] = $reviewer2['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $reviewer2['nik'], 'id_status' => $status_rekomendasi, 'pic' => 'reviewer2'];
@@ -659,7 +679,7 @@ class TrxRekomendasiController extends Controller
             // parameter yang dipassing ke sendemail
             // start
             $mailData['title'] = 'Formulir Rekomendasi Karyawan';
-            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('rekomendasi.show', [$trxM->id, 'view' => 'approval', 'nik' => $reviewer2['nik'], 'id_status' => $status_rekomendasi, 'pic' => 'reviewer2']) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('rekomendasi.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($reviewer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_rekomendasi), 'pic' => (new OpenDataController)->encryptWithKey('reviewer2')]) ];
             $mailData['filename'] = 'emails.rekomendasi0';
             $mailData['to'] = $reviewer2['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $reviewer2['nik'], 'id_status' => $status_rekomendasi, 'pic' => 'reviewer2'];
@@ -669,7 +689,7 @@ class TrxRekomendasiController extends Controller
             // parameter yang dipassing ke sendemail
             // start
             $mailData['title'] = 'Formulir Rekomendasi Karyawan';
-            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('rekomendasi.show', [$trxM->id, 'view' => 'approval', 'nik' => $reviewer3['nik'], 'id_status' => $status_rekomendasi, 'pic' => 'reviewer3']) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('rekomendasi.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($reviewer3['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_rekomendasi), 'pic' => (new OpenDataController)->encryptWithKey('reviewer3')]) ];
             $mailData['filename'] = 'emails.rekomendasi0';
             $mailData['to'] = $reviewer3['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $reviewer3['nik'], 'id_status' => $status_rekomendasi, 'pic' => 'reviewer3'];

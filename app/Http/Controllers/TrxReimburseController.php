@@ -395,7 +395,7 @@ class TrxReimburseController extends Controller
         $karyawan = json_decode($trxM->karyawan_property, true);
         $mailData['title'] = 'Formulir Reimbursement';
         $mailData['filename'] = 'emails.reimburse0';
-        $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [$trxM->id, 'view' => 'approval'])];
+        $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval')])];
         // ambil email pic hco untuk reimburse
         $nik_pic = MtrUtility::find(12)->informasi;
         $where = ['nik' => $nik_pic];
@@ -575,6 +575,7 @@ class TrxReimburseController extends Controller
         //
         // $periode = Carbon::now()->format('Y');
         $linkAction = route('reimburse.update', $id);
+        $id = (new OpenDataController)->decryptWithKey($id);
         $where = ['id_trx' => $id];
         $history = TrxReimburseLog::where($where)->orderBy('created_at', 'desc')->get();
         // 
@@ -601,8 +602,9 @@ class TrxReimburseController extends Controller
         // 
         $data = ['ke' => $ke, 'nik' => $karyawan['nik'], 'nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep']];
         // 
-        $view = $request->view;
+        // $view = $request->view;
         $isHC = $request->isHC;
+        $view = (new OpenDataController)->decryptWithKey($request->view);
         switch ($view) {
             case 'approval':
                 if ($nReview == 0) {
@@ -689,6 +691,7 @@ class TrxReimburseController extends Controller
     public function edit($id)
     {
         //
+        $id = (new OpenDataController)->decryptWithKey($id);
         $no = 0;
         $trxM = TrxReimburseMaster::find($id);
         $karyawan = json_decode($trxM->karyawan_property, true);
@@ -718,6 +721,7 @@ class TrxReimburseController extends Controller
     public function editDetail($id)
     {
         //
+        $id = (new OpenDataController)->decryptWithKey($id);
         $status = 'edit';
         $trxD = TrxReimburseDetail::find( $id );
         $hubungan = ReimburseHubungan::orderBy('id', 'asc')->get();
@@ -728,7 +732,9 @@ class TrxReimburseController extends Controller
     public function updateDetail(Request $request, $id)
     {
         // dd($request->all(), $id);
-        $trxM = TrxReimburseMaster::find($request->trxMId);
+        $id = (new OpenDataController)->decryptWithKey($id);
+        $trxMId = (new OpenDataController)->decryptWithKey($request->trxMId);
+        $trxM = TrxReimburseMaster::find($trxMId);
         $trxD = TrxReimburseDetail::find($id);
         // 
         $nik_karyawan = $trxM->nik_karyawan;
@@ -838,9 +844,9 @@ class TrxReimburseController extends Controller
             $trxD->delete();
         }
         // 
-        $this->insertLog($request->trxMId, 5, auth()->user()->nik, 'updateDetail');
+        $this->insertLog($trxMId, 5, auth()->user()->nik, 'updateDetail');
         // return response()->json( [ 'request' => $request->all(), 'id' => $id ], 200 );
-        return redirect()->route('reimburse.edit', $request->trxMId)->with( 'msg', 'Data is saved successfully.' );
+        return redirect()->route('reimburse.edit', (new OpenDataController)->encryptWithKey($trxMId))->with( 'msg', 'Data is saved successfully.' );
     }
 
     /**
@@ -853,6 +859,7 @@ class TrxReimburseController extends Controller
     public function update(Request $request, $id)
     {
         // dd($request->all(), $id);
+        $id = (new OpenDataController)->decryptWithKey($id);
         $trx = TrxReimburseMaster::find($id);
         $status_pengajuan = $request->status_pengajuan;
         $catatan = $request->catatan;
@@ -867,7 +874,7 @@ class TrxReimburseController extends Controller
             $mailData['title'] = 'Formulir Reimbursement';
             $mailData['filename'] = 'emails.reimburse_done';
             $mailData['to'] = $karyawan['email'];
-            $mailData['data'] = ['status' => 'disetujui', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [$trx->id, 'view' => 'pdf'])];
+            $mailData['data'] = ['status' => 'disetujui', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
             $this->sendEmail($mailData);
             // finish
         }
@@ -878,7 +885,7 @@ class TrxReimburseController extends Controller
             $mailData['title'] = 'Formulir Reimbursement';
             $mailData['filename'] = 'emails.reimburse_done';
             $mailData['to'] = $karyawan['email'];
-            $mailData['data'] = ['status' => 'ditolak', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [$trx->id, 'view' => 'pdf'])];
+            $mailData['data'] = ['status' => 'ditolak', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
             $this->sendEmail($mailData);
             // finish
         }
@@ -893,6 +900,6 @@ class TrxReimburseController extends Controller
      */
     public function destroy($id)
     {
-        dd($id);
+        // dd($id);
     }
 }

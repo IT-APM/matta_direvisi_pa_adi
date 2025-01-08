@@ -16,9 +16,112 @@ use App\Models\BpdProyekUangSakuKelompok;
 use App\Models\BpdNonProyekBiayaDalamNegeri;
 use App\Models\BpdNonProyekBiayaLuarNegeri;
 use DB;
+use Illuminate\Support\Str;
+use App\Models\ToDoList;
 // 
 class OpenDataController extends Controller
 {
+
+    public function encrypt_link()
+    {
+        // 
+        // $where = ['id' => 48115];
+        // $trx = ToDoList::where($where)->get();
+        // $trx = ToDoList::whereNotIn('filename', ['emails.bpd0', 'emails.lembur0'])->whereNotIn('id', [41937, 47514, 47891])->get();
+        // $trx = ToDoList::whereIn('id', [41937, 47514, 47891])->get();
+        $trx = ToDoList::whereNotIn('filename', ['emails.bpd0', 'emails.lembur0'])->get();
+        $arr_trx = [];
+        // dd($trx);
+        foreach($trx as $data){
+            $_arr_trx = [];
+            // $url = 'http://localhost/matta/reimburse/11296?view=approval';
+            // $url = 'https://matta-reborn.alita.id/matta/reimburse/11317?view=approval&nik=12345';
+            $url = $data->link;
+            // dd($url);
+            $parsedUrl = parse_url($url);
+            // jika ada parameter
+            if(!empty($parsedUrl['query'])){
+                parse_str($parsedUrl['query'], $queryParams);
+                $request = Request::create($parsedUrl['path'], 'GET', $queryParams);
+                $scheme = $parsedUrl['scheme'];
+                $host = $parsedUrl['host'];
+                $path = $parsedUrl['path'];
+                $query = $parsedUrl['query'];
+                $_path = explode('/', $path);
+                $_enc = $this->encryptWithKey($_path[count($_path)-1]);
+                $_path[count($_path)-1] = $_enc;
+                $_path = implode('/', $_path);
+                $query = $request->all();
+                $arr_query = [];
+                foreach($query as $key => $value){
+                    if ($value !== end($query)) {
+                        array_push($arr_query, $key, '=', $this->encryptWithKey($value), '&');
+                    }else{
+                        array_push($arr_query, $key, '=', $this->encryptWithKey($value));
+                    }
+                }
+                array_push($_arr_trx, $scheme, '://', $host, $_path, '?', implode('', $arr_query));
+                $new_link = implode('', $_arr_trx);
+                array_push($arr_trx, $new_link);
+                $_trx = ToDoList::find($data->id);
+                $_trx->link = $new_link;
+                $_trx->update();
+            }
+            // jika tidak ada parameter
+            else{
+                $request = Request::create($parsedUrl['path']);
+                $scheme = $parsedUrl['scheme'];
+                $host = $parsedUrl['host'];
+                $path = $parsedUrl['path'];
+                $_path = explode('/', $path);
+                $_enc = $this->encryptWithKey($_path[count($_path)-2]);
+                $_path[count($_path)-2] = $_enc;
+                $_path = implode('/', $_path);
+                array_push($_arr_trx, $scheme, '://', $host, $_path);
+                $new_link = implode('', $_arr_trx);
+                array_push($arr_trx, $new_link);
+                $_trx = ToDoList::find($data->id);
+                $_trx->link = $new_link;
+                $_trx->update();
+            }
+        }
+        dd($arr_trx);
+    }
+
+    public function encryptWithKey($data)
+    {
+        try {
+            $key = env('LINK_KEY');
+            $method = 'AES-256-CBC';
+            // Generate an IV (Initialization Vector) that matches the block size for AES
+            $iv = Str::random(16); // AES-256-CBC uses a 16-byte IV
+            // Encrypt the data with the key
+            $encryptedData = openssl_encrypt($data, $method, $key, 0, $iv);
+            // Combine the encrypted data with the IV and base64 encode the result
+            return base64_encode($encryptedData . '::' . $iv);
+        } catch (\Exception $e) {
+            // Handle the exception, for example log it or display a message
+            dd('Caught exception: ' . $e->getMessage());
+        }
+    }
+
+    public function decryptWithKey($encodedData)
+    {
+        try {
+            $key = env('LINK_KEY');
+            $method = 'AES-256-CBC';
+            // Decode the base64 encoded data
+            $decodedData = base64_decode($encodedData);
+            // Split the data into the encrypted message and the IV
+            list($encryptedData, $iv) = explode('::', $decodedData);
+            // Decrypt the data with the key
+            return openssl_decrypt($encryptedData, $method, $key, 0, $iv);
+        } catch (\Exception $e) {
+            // Handle the exception, for example log it or display a message
+            dd('Caught exception: ' . $e->getMessage());
+        }
+    }
+
     public function getKaryawanPerusahaan($id){
         $data = DB::select("SELECT COUNT(a.nik) AS jumlah, b.nama_singkat AS nama FROM mtr_tbl_karyawan AS a LEFT JOIN mtr_tbl_perusahaan AS b ON a.kode_perusahaan=b.id WHERE a.is_aktif=1 AND a.nik NOT IN ('IT.BM','Hco.all') GROUP BY a.kode_perusahaan");
         $perusahaan = array();

@@ -83,13 +83,13 @@
                                             <td>@if (!empty($data->nik_penilai_3)) {{ $data->_penilai3->nama }} @endif</td>
                                             <td>{{ $data->_tipe->tipe_penilaian }}</td>
                                             <td>Not {{ $data->_status->status_penilaian }}</td>
-                                            <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $data->end_date)->format('d-m-Y') }}</td>
+                                            <td>@if(!empty($data->end_date)){{ Carbon\Carbon::createFromFormat('Y-m-d', $data->end_date)->format('d-m-Y') }}@endif</td>
                                             <td>
-                                                <form action="{{ route('penilaian_auto.destroy', $data->id) }}" method="POST">
+                                                <form action="{{ route('penilaian_auto.destroy', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <ul class="action">
-                                                        <li class="edit"><a href="{{ route('penilaian_auto.edit', $data->id) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                        <li class="edit"><a href="{{ route('penilaian_auto.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                         <li class="delete"><a href="#" id="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash show_confirm"></i></a></li>
                                                     </ul>
                                                 </form>
@@ -97,19 +97,6 @@
                                         </tr>
                                         @endforeach
                                     </tbody>
-                                    <!-- <tfoot>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Karyawan</th>
-                                            <th>Penilai 1</th>
-                                            <th>Penilai 2</th>
-                                            <th>Penilai 3</th>
-                                            <th>Tipe</th>
-                                            <th>Status</th>
-                                            <th>Tanggal Berakhir</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot> -->
                                 </table>
                             </div>
                             <!--  -->
@@ -155,11 +142,11 @@
                                             <td>Not {{ $data->_status->status_penilaian }}</td>
                                             <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $data->end_date)->format('d-m-Y') }}</td>
                                             <td>
-                                                <form action="{{ route('penilaian_auto.destroy', $data->id) }}" method="POST">
+                                                <form action="{{ route('penilaian_auto.destroy', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <ul class="action">
-                                                        <li class="edit"><a href="{{ route('penilaian_auto.edit', $data->id) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                        <li class="edit"><a href="{{ route('penilaian_auto.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                         <li class="delete"><a href="#" id="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash show_confirm"></i></a></li>
                                                     </ul>
                                                 </form>
@@ -167,19 +154,6 @@
                                         </tr>
                                         @endforeach
                                     </tbody>
-                                    <!-- <tfoot>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Karyawan</th>
-                                            <th>Penilai 1</th>
-                                            <th>Penilai 2</th>
-                                            <th>Penilai 3</th>
-                                            <th>Tipe</th>
-                                            <th>Status</th>
-                                            <th>Tanggal Berakhir</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot> -->
                                 </table>
                             </div>
                             <!--  -->
@@ -224,11 +198,11 @@
                                             <td>Not {{ $data->_status->status_penilaian }}</td>
                                             {{-- <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $data->end_date)->format('d-m-Y') }}</td> --}}
                                             <td>
-                                                <form action="{{ route('penilaian_auto.destroy', $data->id) }}" method="POST">
+                                                <form action="{{ route('penilaian_auto.destroy', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <ul class="action">
-                                                        <li class="edit"><a href="{{ route('penilaian_auto.edit', $data->id) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                        <li class="edit"><a href="{{ route('penilaian_auto.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                         <li class="delete"><a href="#" id="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash show_confirm"></i></a></li>
                                                     </ul>
                                                 </form>
@@ -236,19 +210,6 @@
                                         </tr>
                                         @endforeach
                                     </tbody>
-                                    <!-- <tfoot>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Karyawan</th>
-                                            <th>Penilai 1</th>
-                                            <th>Penilai 2</th>
-                                            <th>Penilai 3</th>
-                                            <th>Tipe</th>
-                                            <th>Status</th>
-                                            <th>Tanggal Berakhir</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot> -->
                                 </table>
                             </div>
                             <!--  -->

@@ -42,9 +42,7 @@
                                                         {{ $penilaian->_perpanjang->informasi }} @if ($penilaian->is_perpanjang == 1) {{ $penilaian->bulan }} Bulan @endif
                                                     </h6>
                                                 </td>
-                                                <!-- <td><a href="{{ route('penilaian.edit', $penilaian->id) }}"
-                                                                        class="btn btn-primary" type="button">Update</a>
-                                                                </td> -->
+                                                {{-- <td><a href="{{ route('penilaian.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($penilaian->id)) }}" class="btn btn-primary" type="button">Update</a></td> --}}
                                             </tr>
                                             <tr>
                                                 <td><img class="img-thumbnail" src="{{ asset('assets/images/matta/karyawan/'.$penilaian->nik_karyawan.'/'.$penilaian->nik_karyawan.'.jpg') }}" alt="user"></td>

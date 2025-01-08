@@ -40,6 +40,9 @@
                             <li><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
                             @endcan
                             <li><a href="{{ route('todolist.index') }}">To Do List</a></li>
+                            @can('hc')
+                            <li><a href="{{ route('todolist.recap', 0) }}">To Do List Recap</a></li>
+                            @endcan
                             <!-- <li><a href="{{ route('dashboard-02') }}">Dashboard 1</a></li>
                             <li><a href="{{ route('dashboard-03') }}">Dashboard 2</a></li>
                             <li><a href="{{ route('dashboard-04') }}">Crypto</a></li>

@@ -104,10 +104,10 @@
                                     <td>{{ ++$no }}</td>
                                     <td>{{ $data->id }}</td>
                                     <td>
-                                        <a href="{{ route('rekomendasi.show', [$data->id, 'view' => 'detail']) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                        &nbsp;<a href="{{ route('rekomendasi.show', [$data->id, 'view' => 'pdf']) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <a href="{{ route('rekomendasi.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
+                                        &nbsp;<a href="{{ route('rekomendasi.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         @can('hc')
-                                        &nbsp;<a href="{{ route('rekomendasi.edit', [$data->id]) }}" data-toggle="tooltip" title='Update'><i class="icon-pencil-alt"></i></a>
+                                        &nbsp;<a href="{{ route('rekomendasi.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Update'><i class="icon-pencil-alt"></i></a>
                                         @endcan
 
                                     </td>
@@ -128,22 +128,6 @@
                                 </tr>
                                 @endforeach
                             </tbody>
-                            <!-- <tfoot>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Karyawan</th>
-                                    <th>NIP Karyawan</th>
-                                    <th>Nama Pengaju</th>
-                                    <th>NIP Pengaju</th>
-                                    <th>Approval 1</th>
-                                    <th>Approval 2</th>
-                                    <th>Approval 3</th>
-                                    <th>Terhitung Tanggal</th>
-                                    <th>Status</th>
-                                    <th>Created at</th>
-                                    <th>Action</th>
-                                </tr>
-                            </tfoot> -->
                         </table>
                     </div>
                 </div>

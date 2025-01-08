@@ -25,7 +25,7 @@
             <div class="card">
                 <div class="card-body">
                     @if ($status == 'edit')
-                    <form action="{{ route('cuti.update', $cuti->id) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form action="{{ route('cuti.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($cuti->id)) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @method('PATCH')
                         @else
                         <form action="{{ route('cuti.store') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">

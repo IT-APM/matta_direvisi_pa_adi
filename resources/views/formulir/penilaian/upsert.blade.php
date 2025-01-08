@@ -25,7 +25,7 @@
             <div class="card">
                 <div class="card-body">
                     @if ($status == 'edit')
-                    <form action="{{ route('penilaian.update', $penilaian->id) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form action="{{ route('penilaian.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($penilaian->id)) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @method('PATCH')
                         @else
                         <form action="{{ route('penilaian.store') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
