@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\MtrRecruitmentResume;
 use App\Models\TrxRecruitmentResume;
 use App\Models\TrxKebutuhanMaster;
+use App\Models\TrxKebutuhanLog;
 use App\Models\TrxRecruitment;
 use App\Models\MtrRecruitmentStatus;
 use App\Models\MtrRecruitmentSoal;
@@ -48,8 +49,17 @@ class TrxRecruitmentController extends Controller
      */
     public function index()
     {
-        $where = ['status_pengajuan' => 10];
-        $trx = TrxKebutuhanMaster::where($where)->orderBy('id', 'desc')->get();
+        $id_trx = [];
+        $trx = TrxKebutuhanMaster::orderBy('id', 'desc')->get();
+        foreach($trx as $data){
+            // 9=Approved by L2 to HC
+            $where = ['id_trx' => $data->id, 'id_status' => 9];
+            if(TrxKebutuhanLog::where($where)->exists()){
+                array_push($id_trx, $data->id);
+            }
+        }
+        // terposting adalah pengajuan yang statusnya 9=Approved by L2 to HC
+        $trx = TrxKebutuhanMaster::whereIn('id', $id_trx)->orderBy('id', 'desc')->get();
         return view('recruitment.index', compact('trx'));
     }
 
