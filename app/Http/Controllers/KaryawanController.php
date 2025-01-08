@@ -220,7 +220,15 @@ class KaryawanController extends Controller
         $alamat_kantor = [['key'=>'HQ', 'value'=>'HQ'], ['key'=>'Region', 'value'=>'Region']];
         $level = Level::all();
         $jabatan = Jabatan::orderBy( 'jabatan', 'asc' )->get();
-        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor' ) );
+        // $findim_project = MtrFindimProject::orderBy( 'project_id', 'asc' )->get();
+        // $findim_divisi = MtrFindimDivisi::orderBy( 'divisi_id', 'asc' )->get();
+        // $findim_departemen = MtrFindimDepartemen::orderBy( 'departemen_id', 'asc' )->get();
+        // $findim_subdepartemen = MtrFindimSubdepartemen::orderBy( 'subdepartemen_id', 'asc' )->get();
+        $findim_project = MtrFindimProject::all();
+        $findim_divisi = MtrFindimDivisi::all();
+        $findim_departemen = MtrFindimDepartemen::all();
+        $findim_subdepartemen = MtrFindimSubdepartemen::all();
+        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen' ) );
     }
 
     public function ImageUploadStore(Request $request)
@@ -360,6 +368,10 @@ class KaryawanController extends Controller
         $agama = Agama::all();
         $warga = Warga::all();
         $kawin = Kawin::all();
+        // $findim_project = MtrFindimProject::orderBy( 'project_id', 'asc' )->get();
+        // $findim_divisi = MtrFindimDivisi::orderBy( 'divisi_id', 'asc' )->get();
+        // $findim_departemen = MtrFindimDepartemen::orderBy( 'departemen_id', 'asc' )->get();
+        // $findim_subdepartemen = MtrFindimSubdepartemen::orderBy( 'subdepartemen_id', 'asc' )->get();
         $findim_project = MtrFindimProject::all();
         $findim_divisi = MtrFindimDivisi::all();
         $findim_departemen = MtrFindimDepartemen::all();
