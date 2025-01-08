@@ -291,10 +291,22 @@ class TrxCutiController extends Controller
     // cek apakah jumlah cuti sudah lebih dari 12
     public function isCutiTahunanOver($tanggal_mulai, $nik_karyawan, $jumlah_hari)
     {
-        // dd(Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->year);
+        // date: 2025-01-08 00:00:00.0 Asia/Jakarta (+07:00)
+        // dd(Carbon::today());
+        // date: 2025-01-08 15:00:57.714397 Asia/Jakarta (+07:00)
+        // dd(Carbon::now());
+        // 2025-01-01
+        // dd(Carbon::now()->year.'-01-01');
+        // date: 2025-01-31 00:00:00.0 Asia/Jakarta (+07:00)
+        // dd(Carbon::parse($tanggal_mulai));
         $cek = false;
         // jika di Bulan Januari maka gunakan sisa cuti tahun lalu jika sudah habis gunakan tahun ini
-        if(Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->between(Carbon::now()->year.'-01-01', Carbon::now()->year.'-01-31')){
+        // jika menggunakan ini maka tanggal 31 Januari tidak termasuk disebabkan adanya satuan jam menit dan detik
+        // contoh: date: 2025-01-31 14:58:27.0 Asia/Jakarta (+07:00)
+        // if(Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->between(Carbon::now()->year.'-01-01', Carbon::now()->year.'-01-31')){
+        // jika menggunakan ini maka tanggal 31 Januari termasuk karena waktunya adalah 00
+        // contoh: date: 2025-01-31 00:00:00.0 Asia/Jakarta (+07:00)
+        if(Carbon::parse($tanggal_mulai)->between(Carbon::now()->year.'-01-01', Carbon::now()->year.'-01-31')){
             // gunakan sisa cuti tahun lalu
             $periode_cuti = Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->subYear()->year;
             $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan, 'tipe_cuti' => 0];
