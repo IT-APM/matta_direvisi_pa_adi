@@ -810,7 +810,7 @@ class TrxRecruitmentController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Undangan Interview '.$metode;
             $mailData['filename'] = 'emails.recruitment2';
-            $mailData['data'] = ['trx' => $_trx, 'metode' => $metode, 'href' => MtrUtility::find(31)->informasi, 'posisi' => $posisi];
+            $mailData['data'] = ['trx' => $_trx, 'check_in' => $request->check_in, 'check_out' => $request->check_out, 'metode' => $metode, 'href' => MtrUtility::find(31)->informasi, 'posisi' => $posisi];
             $mailData['to'] = $_trx->email;
             // $mailData['cc'] = Karyawan::whereIn('nik', $request->interviewer)->pluck('email')->toArray();
             $this->sendEmail($mailData);
@@ -818,7 +818,7 @@ class TrxRecruitmentController extends Controller
             foreach($interviewer as $_interviewer){
                 $mailData['filename'] = 'emails.recruitment2a';
                 $mailData['to'] = $_interviewer->email;
-                $mailData['data'] = ['trx' => $_trx, 'metode' => $metode, 'href' => MtrUtility::find(31)->informasi, 'posisi' => $posisi, 'interviewer' => $_interviewer];
+                $mailData['data'] = ['trx' => $_trx, 'check_in' => $request->check_in, 'check_out' => $request->check_out, 'metode' => $metode, 'href' => MtrUtility::find(31)->informasi, 'posisi' => $posisi, 'interviewer' => $_interviewer];
                 $this->sendEmail($mailData);
             }
             // return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
