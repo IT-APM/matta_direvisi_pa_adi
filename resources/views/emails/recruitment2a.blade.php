@@ -14,12 +14,12 @@
 		<tr>
 			<td width="150">Hari/Tanggal</td>
 			<td width="5">:</td>
-			<td>{{ App\Http\Controllers\TrxRecruitmentController::getTanggalIndonesia(\Carbon\Carbon::parse($data['trx']->check_in)->toDateString()) }}</td>
+			<td>{{ App\Http\Controllers\TrxRecruitmentController::getTanggalIndonesia(\Carbon\Carbon::parse($data['check_in'])->toDateString()) }}</td>
 		</tr>
 		<tr>
 			<td>Waktu</td>
 			<td>:</td>
-			<td>{{ \Carbon\Carbon::parse($data['trx']->check_in)->format('H:i') }} WIB s/d {{ \Carbon\Carbon::parse($data['trx']->check_out)->format('H:i') }} WIB</td>
+			<td>{{ \Carbon\Carbon::parse($data['check_in'])->format('H:i') }} WIB s/d {{ \Carbon\Carbon::parse($data['check_out'])->format('H:i') }} WIB</td>
 		</tr>
 		<tr>
 			<td>Agenda</td>
