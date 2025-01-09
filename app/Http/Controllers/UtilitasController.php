@@ -78,9 +78,11 @@ class UtilitasController extends Controller
         $utilitas = MtrUtility::find(1);
         $utilitas->informasi = $request->_1;
         $utilitas->update();
+        // id=11 sama dengan id=1
         $utilitas = MtrUtility::find(11);
         $utilitas->informasi = $request->_1;
         $utilitas->update();
+        // 
         $utilitas = MtrUtility::find(5);
         $utilitas->informasi = $request->_5;
         $utilitas->update();
@@ -147,7 +149,9 @@ class UtilitasController extends Controller
         $utilitas = MtrUtility::find(31);
         $utilitas->informasi = $request->_31;
         $utilitas->update();
-        // return response()->json( [ 'request' => $request->all() ], 200);
+        $utilitas = MtrUtility::find(33);
+        $utilitas->informasi = $request->_33;
+        $utilitas->update();
         return redirect('utilitas')->with('msg', 'Data is saved successfully.');
     }
     
