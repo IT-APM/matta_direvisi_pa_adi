@@ -168,6 +168,13 @@
                             </div>
                         </div>
                         <div class="row mt-2">
+                            <div class="col-md-3">
+                                @php $no=32; @endphp
+                                <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
+                                <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
                             <div class="col-md-12">
                                 <button class="btn btn-success" type="submit">Save</button> | <a href="{{ route('utilitas.index') }}" class="btn btn-warning" type="button">Cancel</a>
                             </div>
