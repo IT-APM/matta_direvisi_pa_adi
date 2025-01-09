@@ -110,8 +110,8 @@
                                                 <td>{{ $data->nama }}</td>
                                                 {{-- <td>{{ $data->email }}</td> --}}
                                                 <td><a href="{{ asset('assets/recruitment/upload/'.$data->cv) }}" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></td>
-                                                <td>{{ $data->check_in }}</td>
-                                                <td>{{ $data->check_out }}</td>
+                                                <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }}@endif</td>
+                                                <td>@if(!empty($data->check_out)){{ \Carbon\Carbon::parse($data->check_out) ->format('d-m-Y H:i:s') }}@endif</td>
                                                 <td>
                                                     {{-- 16=Interpretation --}}
                                                     @if(in_array(16, $log))<a href="{{ route('recruitment.get_interpretation', [Crypt::encrypt([$data->id, 'view'])]) }}" target="_blank" data-toggle="tooltip" title="Interpretation"><i class="fa fa-file-text-o"></i></a>@endif
@@ -176,8 +176,8 @@
                                                     @endforeach
                                                 </td>
                                                 <td>{{ $data->metode }}</td>
-                                                <td>{{ $data->check_in }}</td>
-                                                <td>{{ $data->check_out }}</td>
+                                                <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }}@endif</td>
+                                                <td>@if(!empty($data->check_out)){{ \Carbon\Carbon::parse($data->check_out) ->format('d-m-Y H:i:s') }}@endif</td>
                                                 <td>@if(!empty($data->file_interview))<a href="{{ asset('assets/recruitment/upload/'.$data->file_interview) }}" target="_blank" data-toggle="tooltip" title="File Interview"><i class="fa fa-file-text-o"></i></a>@endif</td>
                                                 <td>{{ $data->_status->status }}</td>
                                                 <td>{{ $data->created_at }}</td>
