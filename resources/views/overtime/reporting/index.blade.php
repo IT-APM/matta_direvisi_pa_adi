@@ -178,14 +178,14 @@
                                             <td>@if(!empty($data->ot_start_at_rev)) {{ \Carbon\Carbon::parse($data->ot_start_at_rev)->format('d-m-Y H:i:s') }} @endif</td>
                                             <td>@if(!empty($data->ot_end_at_rev)) {{ \Carbon\Carbon::parse($data->ot_end_at_rev)->format('d-m-Y H:i:s') }} @endif</td>
                                             <td>@if(!empty($data->ot_length_rev)) {{ $data->ot_length_rev }} @endif</td>
-                                            <td>@if($_data['status_karyawan']=='Freelance') @if($_isHoliday||$_isWeekend) {{ number_format($_arr[1]['informasi']) }} @else {{ number_format($_arr[0]['informasi']) }} @endif @else {{ number_format($_data['gaji_pokok']) }} @endif</td>
-                                            <td>{{ number_format($data->ot_length_rp) }}</td>
-                                            <td>{{ number_format(round($data->ot_length_rp, -3)) }}</td>
+                                            <td class="text-end">@if($_data['status_karyawan']=='Freelance') @if($_isHoliday||$_isWeekend) {{ number_format($_arr[1]['informasi']) }} @else {{ number_format($_arr[0]['informasi']) }} @endif @else {{ number_format($_data['gaji_pokok']) }} @endif</td>
+                                            <td class="text-end">{{ number_format($data->ot_length_rp) }}</td>
+                                            <td class="text-end">{{ number_format(round($data->ot_length_rp, -3)) }}</td>
                                             <!-- <td>@if(!empty($data->ot_length_adj)) {{ \Carbon\CarbonInterval::seconds($data->ot_length_adj)->cascade()->forHumans() }} @endif</td> -->
                                             <td>@if(!empty($data->ot_length_adj)) {{ gmdate('H:i:s', $data->ot_length_adj) }} @endif</td>
                                             <!-- <td>@if(!empty($data->ot_length_adj)) <a href="{{ route('adj_ot', [$data->id]) }}" data-toggle="tooltip" title='Adjustment'>{{ number_format($data->ot_length_adj) }} <i class="icon-pencil-alt"></i></a> @endif</td> -->
-                                            <td>{{ number_format($data->ot_length_rp_adj) }}</td>
-                                            <td>{{ number_format(round($data->ot_length_rp_adj, -3)) }}</td>
+                                            <td class="text-end">{{ number_format($data->ot_length_rp_adj) }}</td>
+                                            <td class="text-end">{{ number_format(round($data->ot_length_rp_adj, -3)) }}</td>
                                             <td>{{ $_data['status_karyawan'] }}</td>
                                             <td>{{ $_data['wg_name'] }}</td>
                                             <td>{!! $_day !!}</td>
@@ -197,6 +197,7 @@
                             </div>
                         </div>
                         {{-- recapdata --}}
+                        @php $max = App\Models\MtrUtility::find(33)->informasi @endphp
                         <div class="tab-pane fade" id="recapdata" role="tabpanel" aria-labelledby="recapdata-tab">
                             <div class="table-responsive mt-2">
                                 <table class="display" id="recap_datatable">
@@ -211,15 +212,14 @@
                                             <th>Maker NIP</th>
                                             <th>Approve Name</th>
                                             <th>Rp Adj (Round)</th>
+                                            <th>Rp Max Value</th>
                                             <th>Employee Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @php $no = 0; @endphp
                                         @foreach ($otrecap as $data)
-                                        @php
-                                            $_data = json_decode($data->ot_maker_property, true);
-                                        @endphp
+                                        @php $_data = json_decode($data->ot_maker_property, true) @endphp
                                         <tr>
                                             <td>{{ ++$no }}</td>
                                             <td>{{ $_data['perusahaan'] }}</td>
@@ -229,7 +229,8 @@
                                             <td>{{ $data->_ot_maker_by->nama }}</td>
                                             <td>{{ $data->ot_maker_by }}</td>
                                             <td>{{ $data->_ot_approver_by->nama }}</td>
-                                            <td>{{ number_format(round($data->ot_length_rp_adj, -3)) }}</td>
+                                            <td class="text-end">{{ number_format(round($data->ot_length_rp_adj, -3)) }}</td>
+                                            <td class="text-end">@if($max > round($data->ot_length_rp_adj, -3)){{ number_format(round($data->ot_length_rp_adj, -3)) }}@else {{ number_format($max) }} @endif</td>
                                             <td>{{ $_data['status_karyawan'] }}</td>
                                         </tr>
                                         @endforeach
