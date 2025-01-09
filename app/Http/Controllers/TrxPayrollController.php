@@ -299,10 +299,14 @@ class TrxPayrollController extends Controller
     public function upsert_master(Request $request)
     {
         // dd($request->all());
+        $id_data = $request->input('id_data');
+        if(!empty($id_data)){
+            $id_data = (new OpenDataController)->decryptWithKey($id_data);
+        }
         // karyawan
         if(in_array($request->_id, [0])){
             if($request->tipe == 'edit_karyawan'){
-                $trx = MtrPayroll::find($request->input('id_data'));
+                $trx = MtrPayroll::find($id_data);
                 // $trx->nik = $request->nik;
                 $trx->pasangan = $request->pasangan;
                 $trx->anak = $request->anak;
@@ -333,7 +337,7 @@ class TrxPayrollController extends Controller
         // add dan sub
         elseif(in_array($request->_id, [1, 2])){
             if($request->tipe == 'edit'){
-                $trx = MtrPayrollAddsub::find($request->input('id_data'));
+                $trx = MtrPayrollAddsub::find($id_data);
                 $trx->nama = $request->nama;
                 if($request->bulanan == 'on'){
                     $trx->bulanan = 1;
@@ -362,15 +366,15 @@ class TrxPayrollController extends Controller
         elseif(in_array($request->_id, [3, 4, 5])){
             if(in_array($request->tipe, ['edit_bpjstk', 'edit_bpjsks', 'edit_bpjsmx'])){
                 if(in_array($request->tipe, ['edit_bpjstk'])){
-                    $trx = MtrPayrollBpjstk::find($request->input('id_data'));
+                    $trx = MtrPayrollBpjstk::find($id_data);
                     $trx->nama = $request->nama;
                     $trx->persen = $request->persen;
                 }elseif(in_array($request->tipe, ['edit_bpjsks'])){
-                    $trx = MtrPayrollBpjskes::find($request->input('id_data'));
+                    $trx = MtrPayrollBpjskes::find($id_data);
                     $trx->nama = $request->nama;
                     $trx->persen = $request->persen;
                 }elseif(in_array($request->tipe, ['edit_bpjsmx'])){
-                    $trx = MtrPayrollBpjsMax::find($request->input('id_data'));
+                    $trx = MtrPayrollBpjsMax::find($id_data);
                     $trx->nama = $request->nama;
                     $trx->angka = str_replace(',', '', $request->angka);
                 }
@@ -400,7 +404,7 @@ class TrxPayrollController extends Controller
         elseif(in_array($request->_id, [6])){
             $data = $request->all();
             if($request->tipe == 'edit_trxpayroll'){
-                $trx = TrxPayroll::find($request->input('id_data'));
+                $trx = TrxPayroll::find($id_data);
                 $trx->gapok = str_replace(',', '', $request->gapok);
                 $trx->update();
                 foreach($data as $_id => $value){
@@ -611,6 +615,10 @@ class TrxPayrollController extends Controller
     public function master($id, Request $request)
     {
         // dd($id, $request->all());
+        $id_data = $request->input('id_data');
+        if(!empty($id_data)){
+            $id_data = (new OpenDataController)->decryptWithKey($id_data);
+        }
         $tipe = $request->input('tipe');
         $payroll = MtrPayroll::orderBy('id', 'asc')->get();
         $where = ['tipe'=>'add'];
@@ -624,7 +632,7 @@ class TrxPayrollController extends Controller
             $status = 'new';
             if($tipe == 'edit'){
                 $status = 'edit';
-                $addsub = MtrPayrollAddsub::find($request->input('id_data'));
+                $addsub = MtrPayrollAddsub::find($id_data);
                 return view('payroll.upsert_addsub', compact('addsub','status','id','tipe'));
             }
             elseif(in_array($tipe, ['add', 'sub'])){
@@ -634,11 +642,11 @@ class TrxPayrollController extends Controller
                 if(in_array($tipe, ['edit_bpjstk', 'edit_bpjsks', 'edit_bpjsmx'])){
                     $status = 'edit';
                     if(in_array($tipe, ['edit_bpjstk'])){
-                        $bpjs = MtrPayrollBpjstk::find($request->input('id_data'));
+                        $bpjs = MtrPayrollBpjstk::find($id_data);
                     }elseif(in_array($tipe, ['edit_bpjsks'])){
-                        $bpjs = MtrPayrollBpjskes::find($request->input('id_data'));
+                        $bpjs = MtrPayrollBpjskes::find($id_data);
                     }elseif(in_array($tipe, ['edit_bpjsmx'])){
-                        $bpjs = MtrPayrollBpjsMax::find($request->input('id_data'));
+                        $bpjs = MtrPayrollBpjsMax::find($id_data);
                     }
                     return view('payroll.upsert_bpjs', compact('bpjs','status','id','tipe'));
                 }else{
@@ -651,7 +659,7 @@ class TrxPayrollController extends Controller
                 $_karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
                 if(in_array($tipe, ['edit_karyawan'])){
                     $status = 'edit';
-                    $karyawan = MtrPayroll::find($request->input('id_data'));
+                    $karyawan = MtrPayroll::find($id_data);
                 }
                 return view('payroll.upsert_karyawan', compact('_karyawan', 'karyawan', 'status','id','tipe'));
             }
@@ -664,7 +672,7 @@ class TrxPayrollController extends Controller
                 $_karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
                 if(in_array($tipe, ['edit_trxpayroll'])){
                     $status = 'edit';
-                    $trxpayroll = TrxPayroll::find($request->input('id_data'));
+                    $trxpayroll = TrxPayroll::find($id_data);
                     $where = ['tipe'=>'add', 'nik'=>$trxpayroll->nik, 'bulan'=>$trxpayroll->bulan, 'tahun'=>$trxpayroll->tahun];
                     $add_trx = TrxPayrollAddsub::where($where)->orderBy('id', 'asc')->get();
                     $where = ['tipe'=>'sub', 'nik'=>$trxpayroll->nik, 'bulan'=>$trxpayroll->bulan, 'tahun'=>$trxpayroll->tahun];
@@ -896,11 +904,15 @@ class TrxPayrollController extends Controller
     public function show(Request $request, $id)
     {
         // dd($request->all(), $id);
-        $payroll = TrxPayroll::find($id);
-        $view = \View::make('payroll.pdf', compact('payroll'));
+        $id = (new OpenDataController)->decryptWithKey($id);
+        $payroll = null;
+        $view = null;
         if($request->view == 'pdf_h'){
             $payroll = TrxPayrollLog::find($id);
             $view = \View::make('payroll.pdf_h', compact('payroll'));
+        }else if($request->view == 'pdf'){
+            $payroll = TrxPayroll::find($id);
+            $view = \View::make('payroll.pdf', compact('payroll'));
         }
         $filename = $payroll->nik.' Slip Gaji '.$payroll->tahun.' '.str_pad($payroll->bulan, 2, '0', STR_PAD_LEFT).'.pdf';
         $html = $view->render();
@@ -945,35 +957,40 @@ class TrxPayrollController extends Controller
     public function destroy(Request $request, $id)
     {
         // dd($request->all(), $id);
+        $_id = $request->id;
+        if(!empty($_id)){
+            $_id = (new OpenDataController)->decryptWithKey($_id);
+        }
+        // dd($_id, $id);
         try {
             // karyawan
             if(in_array($id, [0])){
-                $trx = MtrPayroll::find($request->id);
+                $trx = MtrPayroll::find($_id);
                 $trx->delete();
             }
             // add dan sub
             elseif(in_array($id, [1, 2])){
-                $trx = MtrPayrollAddsub::find($request->id);
+                $trx = MtrPayrollAddsub::find($_id);
                 $trx->delete();
             }
             // bpjstk
             elseif(in_array($id, [3])){
-                $trx = MtrPayrollBpjstk::find($request->id);
+                $trx = MtrPayrollBpjstk::find($_id);
                 $trx->delete();
             }
             // bpjsks
             elseif(in_array($id, [4])){
-                $trx = MtrPayrollBpjskes::find($request->id);
+                $trx = MtrPayrollBpjskes::find($_id);
                 $trx->delete();
             }
             // bpjsmx
             elseif(in_array($id, [5])){
-                $trx = MtrPayrollBpjsMax::find($request->id);
+                $trx = MtrPayrollBpjsMax::find($_id);
                 $trx->delete();
             }
             // payroll
             elseif(in_array($id, [6])){
-                $trx = TrxPayroll::find($request->id);
+                $trx = TrxPayroll::find($_id);
                 $nik = $trx->nik;
                 $trx->delete();
                 $where = ['nik' => $nik];

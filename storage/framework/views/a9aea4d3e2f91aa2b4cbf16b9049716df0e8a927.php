@@ -388,11 +388,9 @@
                                             <label class="form-label" for="findim_project">Project</label>
                                             <select class="form-select js-example-basic-single col-sm-12" id="findim_project" name="findim_project" required="">
                                                 <option selected="" disabled="" value="">Pilih...</option>
-                                                <?php if($status=='edit' ): ?> 
                                                 <?php $__currentLoopData = $findim_project; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($data->id); ?>" <?php if($data->id == $karyawan->findim_project): ?> selected <?php endif; ?> ><?php echo e($data->project_id); ?> - <?php echo e($data->project_desc); ?></option>
+                                                <option value="<?php echo e($data->id); ?>" <?php if($status=='edit' ): ?> <?php if($data->id == $karyawan->findim_project): ?> selected <?php endif; ?> <?php endif; ?>><?php echo e($data->project_id); ?> - <?php echo e($data->project_desc); ?></option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                <?php endif; ?>
                                             </select>
                                             <div class="invalid-feedback txt-danger">Project is required.</div>
                                         </div>
@@ -400,11 +398,9 @@
                                             <label class="form-label" for="findim_divisi">Divisi</label>
                                             <select class="form-select js-example-basic-single col-sm-12" id="findim_divisi" name="findim_divisi" required="">
                                                 <option selected="" disabled="" value="">Pilih...</option>
-                                                <?php if($status=='edit' ): ?> 
                                                 <?php $__currentLoopData = $findim_divisi; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($data->id); ?>" <?php if($data->id == $karyawan->findim_divisi): ?> selected <?php endif; ?> ><?php echo e($data->divisi_id); ?> - <?php echo e($data->divisi_desc); ?></option>
+                                                <option value="<?php echo e($data->id); ?>" <?php if($status=='edit' ): ?> <?php if($data->id == $karyawan->findim_divisi): ?> selected <?php endif; ?> <?php endif; ?>><?php echo e($data->divisi_id); ?> - <?php echo e($data->divisi_desc); ?></option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                <?php endif; ?>
                                             </select>
                                             <div class="invalid-feedback txt-danger">Divisi is required.</div>
                                         </div>
@@ -414,11 +410,9 @@
                                             <label class="form-label" for="findim_departemen">Departemen</label>
                                             <select class="form-select js-example-basic-single col-sm-12" id="findim_departemen" name="findim_departemen" required="">
                                                 <option selected="" disabled="" value="">Pilih...</option>
-                                                <?php if($status=='edit' ): ?> 
                                                 <?php $__currentLoopData = $findim_departemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($data->id); ?>" <?php if($data->id == $karyawan->findim_departemen): ?> selected <?php endif; ?> ><?php echo e($data->departemen_id); ?> - <?php echo e($data->departemen_desc); ?></option>
+                                                <option value="<?php echo e($data->id); ?>" <?php if($status=='edit' ): ?> <?php if($data->id == $karyawan->findim_departemen): ?> selected <?php endif; ?> <?php endif; ?>><?php echo e($data->departemen_id); ?> - <?php echo e($data->departemen_desc); ?></option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                <?php endif; ?>
                                             </select>
                                             <div class="invalid-feedback txt-danger">Departemen is required.</div>
                                         </div>
@@ -426,11 +420,9 @@
                                             <label class="form-label" for="findim_subdepartemen">Sub Departemen</label>
                                             <select class="form-select js-example-basic-single col-sm-12" id="findim_subdepartemen" name="findim_subdepartemen" required="">
                                                 <option selected="" disabled="" value="">Pilih...</option>
-                                                <?php if($status=='edit' ): ?> 
                                                 <?php $__currentLoopData = $findim_subdepartemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($data->id); ?>" <?php if($data->id == $karyawan->findim_subdepartemen): ?> selected <?php endif; ?> ><?php echo e($data->subdepartemen_id); ?> - <?php echo e($data->subdepartemen_desc); ?></option>
+                                                <option value="<?php echo e($data->id); ?>" <?php if($status=='edit' ): ?> <?php if($data->id == $karyawan->findim_subdepartemen): ?> selected <?php endif; ?> <?php endif; ?>><?php echo e($data->subdepartemen_id); ?> - <?php echo e($data->subdepartemen_desc); ?></option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                <?php endif; ?>
                                             </select>
                                             <div class="invalid-feedback txt-danger">Sub Departemen is required.</div>
                                         </div>

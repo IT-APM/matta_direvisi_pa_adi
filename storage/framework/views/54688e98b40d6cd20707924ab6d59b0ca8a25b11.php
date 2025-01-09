@@ -63,7 +63,7 @@
                                     <td><?php echo e($data->id); ?></td>
                                     <td>
                                         <a href="<?php echo e(route('recruitment.show', [Crypt::encrypt(array($data->id, 1))])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
-                                        &nbsp;<a href="<?php echo e(route('kebutuhan.show', [$data->id, 'view' => 'pdf'])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        &nbsp;<a href="<?php echo e(route('kebutuhan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         <?php if(!empty($recruitment)): ?><br/><a href="<?php echo e(route('recruitment.apply', [Crypt::encrypt(array($recruitment->id, 'apply'))])); ?>" data-toggle="tooltip" title="Apply" target="_blank"><i class="icon-eye"></i></a><?php endif; ?>
                                     </td>
                                     <td><?php echo e($data->_pengaju->nama); ?> / <?php echo e($data->_pengaju->nik); ?></td>

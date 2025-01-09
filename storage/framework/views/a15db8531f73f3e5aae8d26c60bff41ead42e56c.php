@@ -25,7 +25,7 @@
             <div class="card">
                 <div class="card-body">
                     <?php if($status == 'edit'): ?>
-                    <form class="needs-validation" novalidate="" action="<?php echo e(route('payroll.upsert_master', ['id_data'=>$trxpayroll->id, 'tipe'=>$tipe])); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form class="needs-validation" novalidate="" action="<?php echo e(route('payroll.upsert_master', ['id_data'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($trxpayroll->id), 'tipe'=>$tipe])); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                     <?php else: ?>
                     <form class="needs-validation" novalidate="" action="<?php echo e(route('payroll.upsert_master', ['tipe'=>$tipe])); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                     <?php endif; ?>

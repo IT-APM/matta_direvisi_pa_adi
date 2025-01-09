@@ -25,7 +25,7 @@
             <div class="card">
                 <div class="card-body">
                     @if ($status == 'edit')
-                    <form action="{{ route('payroll.upsert_master', ['id_data'=>$bpjs->id, 'tipe'=>$tipe]) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form action="{{ route('payroll.upsert_master', ['id_data'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($bpjs->id), 'tipe'=>$tipe]) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                     @else
                     <form action="{{ route('payroll.upsert_master', ['tipe'=>$tipe]) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                     @endif

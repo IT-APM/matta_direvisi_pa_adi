@@ -118,11 +118,11 @@
                                                 <td><?php echo e($data->no_rek); ?></td>
                                                 <td><?php echo e($data->nama_bank); ?></td>
                                                 <td>
-                                                    <form action="<?php echo e(route('payroll.destroy',[0, 'tipe'=>'del_karyawan', 'id'=>$data->id])); ?>" method="POST">
+                                                    <form action="<?php echo e(route('payroll.destroy',[0, 'tipe'=>'del_karyawan', 'id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" method="POST">
                                                         <?php echo csrf_field(); ?>
                                                         <?php echo method_field('DELETE'); ?>
                                                         <ul class="action">
-                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[0, 'tipe'=>'edit_karyawan', 'id_data'=>$data->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[0, 'tipe'=>'edit_karyawan', 'id_data'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                             <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                                         </ul>
                                                     </form>
@@ -156,11 +156,11 @@
                                                 <td><?php echo e($data->nama); ?></td>
                                                 <td><?php if($data->bulanan == 1): ?> Iya <?php else: ?> Tidak <?php endif; ?></td>
                                                 <td>
-                                                    <form action="<?php echo e(route('payroll.destroy',[1, 'tipe'=>'del', 'id'=>$data->id])); ?>" method="POST">
+                                                    <form action="<?php echo e(route('payroll.destroy',[1, 'tipe'=>'del', 'id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" method="POST">
                                                         <?php echo csrf_field(); ?>
                                                         <?php echo method_field('DELETE'); ?>
                                                         <ul class="action">
-                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[1, 'tipe'=>'edit', 'id_data'=>$data->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[1, 'tipe'=>'edit', 'id_data'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                             <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                                         </ul>
                                                     </form>
@@ -194,11 +194,11 @@
                                                 <td><?php echo e($data->nama); ?></td>
                                                 <td><?php if($data->bulanan == 1): ?> Iya <?php else: ?> Tidak <?php endif; ?></td>
                                                 <td>
-                                                    <form action="<?php echo e(route('payroll.destroy',[2, 'tipe'=>'del', 'id'=>$data->id])); ?>" method="POST">
+                                                    <form action="<?php echo e(route('payroll.destroy',[2, 'tipe'=>'del', 'id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" method="POST">
                                                         <?php echo csrf_field(); ?>
                                                         <?php echo method_field('DELETE'); ?>
                                                         <ul class="action">
-                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[2, 'tipe'=>'edit', 'id_data'=>$data->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[2, 'tipe'=>'edit', 'id_data'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                             <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                                         </ul>
                                                     </form>
@@ -232,11 +232,11 @@
                                                 <td><?php echo e($data->nama); ?></td>
                                                 <td><?php echo e(number_format($data->persen, 2)); ?> %</td>
                                                 <td>
-                                                    <form action="<?php echo e(route('payroll.destroy',[3, 'tipe'=>'del_bpjstk', 'id'=>$data->id])); ?>" method="POST">
+                                                    <form action="<?php echo e(route('payroll.destroy',[3, 'tipe'=>'del_bpjstk', 'id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" method="POST">
                                                         <?php echo csrf_field(); ?>
                                                         <?php echo method_field('DELETE'); ?>
                                                         <ul class="action">
-                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[3, 'tipe'=>'edit_bpjstk', 'id_data'=>$data->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[3, 'tipe'=>'edit_bpjstk', 'id_data'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                             <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                                         </ul>
                                                     </form>
@@ -270,11 +270,11 @@
                                                 <td><?php echo e($data->nama); ?></td>
                                                 <td><?php echo e(number_format($data->persen, 2)); ?> %</td>
                                                 <td>
-                                                    <form action="<?php echo e(route('payroll.destroy',[4, 'tipe'=>'del_bpjsks', 'id'=>$data->id])); ?>" method="POST">
+                                                    <form action="<?php echo e(route('payroll.destroy',[4, 'tipe'=>'del_bpjsks', 'id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" method="POST">
                                                         <?php echo csrf_field(); ?>
                                                         <?php echo method_field('DELETE'); ?>
                                                         <ul class="action">
-                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[4, 'tipe'=>'edit_bpjsks', 'id_data'=>$data->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[4, 'tipe'=>'edit_bpjsks', 'id_data'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                             <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                                         </ul>
                                                     </form>
@@ -308,11 +308,11 @@
                                                 <td><?php echo e($data->nama); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($data->angka, 0)); ?></td>
                                                 <td>
-                                                    <form action="<?php echo e(route('payroll.destroy',[5, 'tipe'=>'del_bpjsmx', 'id'=>$data->id])); ?>" method="POST">
+                                                    <form action="<?php echo e(route('payroll.destroy',[5, 'tipe'=>'del_bpjsmx', 'id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" method="POST">
                                                         <?php echo csrf_field(); ?>
                                                         <?php echo method_field('DELETE'); ?>
                                                         <ul class="action">
-                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[5, 'tipe'=>'edit_bpjsmx', 'id_data'=>$data->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                            <li class="edit"><a href="<?php echo e(route('payroll.master',[5, 'tipe'=>'edit_bpjsmx', 'id_data'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                             <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                                         </ul>
                                                     </form>

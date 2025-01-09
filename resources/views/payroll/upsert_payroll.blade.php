@@ -26,7 +26,7 @@
             <div class="card">
                 <div class="card-body">
                     @if ($status == 'edit')
-                    <form class="needs-validation" novalidate="" action="{{ route('payroll.upsert_master', ['id_data'=>$trxpayroll->id, 'tipe'=>$tipe]) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form class="needs-validation" novalidate="" action="{{ route('payroll.upsert_master', ['id_data'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($trxpayroll->id), 'tipe'=>$tipe]) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                     @else
                     <form class="needs-validation" novalidate="" action="{{ route('payroll.upsert_master', ['tipe'=>$tipe]) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                     @endif

@@ -250,13 +250,13 @@
                                                 {{-- total upah --}}
                                                 <td class="text-end">{{ number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0) }}</td>
                                                 <td>
-                                                    <form action="{{ route('payroll.destroy',[6, 'tipe'=>'del_trxpayroll', 'id'=>$data->id]) }}" method="POST">
+                                                    <form action="{{ route('payroll.destroy',[6, 'tipe'=>'del_trxpayroll', 'id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
                                                         <ul class="action">
-                                                            <li class="edit"><a href="{{ route('payroll.master',[6, 'tipe'=>'edit_trxpayroll', 'id_data'=>$data->id]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                            <li class="edit"><a href="{{ route('payroll.master',[6, 'tipe'=>'edit_trxpayroll', 'id_data'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                             <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
-                                                            <li>&nbsp;<a href="{{ route('payroll.show', [$data->id, 'view' => 'pdf']) }}" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a></li>
+                                                            <li>&nbsp;<a href="{{ route('payroll.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => 'pdf']) }}" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a></li>
                                                         </ul>
                                                     </form>
                                                 </td>

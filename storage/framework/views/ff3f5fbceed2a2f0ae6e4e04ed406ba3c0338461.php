@@ -24,7 +24,7 @@
             <div class="card">
                 <div class="card-body">
                     <?php if($status == 'edit'): ?>
-                    <form action="<?php echo e(route('payroll.upsert_master', ['id_data'=>$addsub->id, 'tipe'=>'edit'])); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form action="<?php echo e(route('payroll.upsert_master', ['id_data'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($addsub->id), 'tipe'=>'edit'])); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                     <?php else: ?>
                     <form action="<?php echo e(route('payroll.upsert_master', ['tipe'=>$tipe])); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                     <?php endif; ?>
