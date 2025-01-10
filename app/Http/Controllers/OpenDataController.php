@@ -7,6 +7,7 @@ use App\Models\Divisi;
 use App\Models\Departemen;
 use App\Models\SubDepartemen;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 // 
 use App\Models\TrxBpdDetailBiaya;
 use App\Models\TrxBpdDetailInfo;
@@ -18,18 +19,35 @@ use App\Models\BpdNonProyekBiayaLuarNegeri;
 use DB;
 use Illuminate\Support\Str;
 use App\Models\ToDoList;
+use App\Models\MtrUtility;
 // 
 class OpenDataController extends Controller
 {
 
     public function encrypt_link()
     {
-        // 
+        dd('ok');
+        // $url = 'https://matta-reborn.alita.id/matta/nonaktif/TWVIZmNxajV5bHZuWElsSkdoNGpndz09OjpuRVgyUnJYZnJkYjUwTmtX?view=Rk1nT3hJemlHdzhlcXlMc1JvaUV1dz09OjpUWVJLdTBrMmlDcWhXV0JZ&nik=RnpINlczNmFvSXpJMWFiUDlZcm1WUT09Ojo5VWhpdFpaaU42RUoycllv&id_status=bFEwc1hXYlhma0liOC9FbUJCWlI0QT09OjpOaEgwOUt2d0JDWlc2SjVF&pic=OEMrd0o5OSt4MFZoSnJRbGpGMHJYUT09OjoyRVZVUE1kWUNucXNLalAy';
+        // $trx = ToDoList::where('created_at','>','2025-01-08 05:00:00')->get();
+        // // dd(count($trx));
+        // $arr = [];
+        // foreach($trx as $data){
+        //     $_arr = [];
+        //     $response = Http::get($data->link);
+        //     if ($response->successful()) {
+        //         // return "Success: The URL returned a 200 status code.";
+        //     } else {
+        //         array_push($_arr, ['error'=>$response->status(), 'id'=>$data->id, 'link'=>$data->link]);
+        //         // return "Failed: The URL returned a " . $response->status() . " status code.";
+        //     }
+        //     array_push($arr, $_arr);
+        // }
+        // dd($arr);
         // $where = ['id' => 48115];
         // $trx = ToDoList::where($where)->get();
         // $trx = ToDoList::whereNotIn('filename', ['emails.bpd0', 'emails.lembur0'])->whereNotIn('id', [41937, 47514, 47891])->get();
-        // $trx = ToDoList::whereIn('id', [41937, 47514, 47891])->get();
-        $trx = ToDoList::whereNotIn('filename', ['emails.bpd0', 'emails.lembur0'])->get();
+        $trx = ToDoList::whereIn('id', [48376, 48377])->get();
+        // $trx = ToDoList::whereNotIn('filename', ['emails.bpd0', 'emails.lembur0'])->get();
         $arr_trx = [];
         // dd($trx);
         foreach($trx as $data){
@@ -39,7 +57,8 @@ class OpenDataController extends Controller
             $url = $data->link;
             // dd($url);
             $parsedUrl = parse_url($url);
-            // jika ada parameter
+            // reverse engineering
+            // start
             if(!empty($parsedUrl['query'])){
                 parse_str($parsedUrl['query'], $queryParams);
                 $request = Request::create($parsedUrl['path'], 'GET', $queryParams);
@@ -48,42 +67,72 @@ class OpenDataController extends Controller
                 $path = $parsedUrl['path'];
                 $query = $parsedUrl['query'];
                 $_path = explode('/', $path);
-                $_enc = $this->encryptWithKey($_path[count($_path)-1]);
+                $_enc = $this->encryptWithKey($data->id_trx);
                 $_path[count($_path)-1] = $_enc;
                 $_path = implode('/', $_path);
                 $query = $request->all();
                 $arr_query = [];
-                foreach($query as $key => $value){
-                    if ($value !== end($query)) {
-                        array_push($arr_query, $key, '=', $this->encryptWithKey($value), '&');
-                    }else{
-                        array_push($arr_query, $key, '=', $this->encryptWithKey($value));
-                    }
-                }
+                array_push($arr_query, 'view', '=', $this->encryptWithKey('approval'), '&');
+                array_push($arr_query, 'nik', '=', $this->encryptWithKey($data->nik), '&');
+                array_push($arr_query, 'id_status', '=', $this->encryptWithKey($data->id_status), '&');
+                array_push($arr_query, 'pic', '=', $this->encryptWithKey($data->pic));
                 array_push($_arr_trx, $scheme, '://', $host, $_path, '?', implode('', $arr_query));
                 $new_link = implode('', $_arr_trx);
                 array_push($arr_trx, $new_link);
+                // dd($new_link);
                 $_trx = ToDoList::find($data->id);
                 $_trx->link = $new_link;
                 $_trx->update();
             }
-            // jika tidak ada parameter
-            else{
-                $request = Request::create($parsedUrl['path']);
-                $scheme = $parsedUrl['scheme'];
-                $host = $parsedUrl['host'];
-                $path = $parsedUrl['path'];
-                $_path = explode('/', $path);
-                $_enc = $this->encryptWithKey($_path[count($_path)-2]);
-                $_path[count($_path)-2] = $_enc;
-                $_path = implode('/', $_path);
-                array_push($_arr_trx, $scheme, '://', $host, $_path);
-                $new_link = implode('', $_arr_trx);
-                array_push($arr_trx, $new_link);
-                $_trx = ToDoList::find($data->id);
-                $_trx->link = $new_link;
-                $_trx->update();
-            }
+            // end
+            // mengubah non menjadi encrypted
+            // start
+            // jika ada parameter
+            // if(!empty($parsedUrl['query'])){
+            //     parse_str($parsedUrl['query'], $queryParams);
+            //     $request = Request::create($parsedUrl['path'], 'GET', $queryParams);
+            //     $scheme = $parsedUrl['scheme'];
+            //     $host = $parsedUrl['host'];
+            //     $path = $parsedUrl['path'];
+            //     $query = $parsedUrl['query'];
+            //     $_path = explode('/', $path);
+            //     $_enc = $this->encryptWithKey($_path[count($_path)-1]);
+            //     $_path[count($_path)-1] = $_enc;
+            //     $_path = implode('/', $_path);
+            //     $query = $request->all();
+            //     $arr_query = [];
+            //     foreach($query as $key => $value){
+            //         if ($value !== end($query)) {
+            //             array_push($arr_query, $key, '=', $this->encryptWithKey($value), '&');
+            //         }else{
+            //             array_push($arr_query, $key, '=', $this->encryptWithKey($value));
+            //         }
+            //     }
+            //     array_push($_arr_trx, $scheme, '://', $host, $_path, '?', implode('', $arr_query));
+            //     $new_link = implode('', $_arr_trx);
+            //     array_push($arr_trx, $new_link);
+            //     $_trx = ToDoList::find($data->id);
+            //     $_trx->link = $new_link;
+            //     $_trx->update();
+            // }
+            // // jika tidak ada parameter
+            // else{
+            //     $request = Request::create($parsedUrl['path']);
+            //     $scheme = $parsedUrl['scheme'];
+            //     $host = $parsedUrl['host'];
+            //     $path = $parsedUrl['path'];
+            //     $_path = explode('/', $path);
+            //     $_enc = $this->encryptWithKey($_path[count($_path)-2]);
+            //     $_path[count($_path)-2] = $_enc;
+            //     $_path = implode('/', $_path);
+            //     array_push($_arr_trx, $scheme, '://', $host, $_path);
+            //     $new_link = implode('', $_arr_trx);
+            //     array_push($arr_trx, $new_link);
+            //     $_trx = ToDoList::find($data->id);
+            //     $_trx->link = $new_link;
+            //     $_trx->update();
+            // }
+            // end
         }
         dd($arr_trx);
     }
@@ -91,15 +140,21 @@ class OpenDataController extends Controller
     public function encryptWithKey($data)
     {
         try {
-            $key = env('LINK_KEY');
+            // $key = env('LINK_KEY');
+            $key = MtrUtility::find(34)->informasi;
             $method = 'AES-256-CBC';
             // Generate an IV (Initialization Vector) that matches the block size for AES
             $iv = Str::random(16); // AES-256-CBC uses a 16-byte IV
             // Encrypt the data with the key
             $encryptedData = openssl_encrypt($data, $method, $key, 0, $iv);
+            // check jika belum benar maka ulangi kembali sampai benar
+            while (!$this->decryptWithKey(base64_encode($encryptedData . '::' . $iv))) {
+                sleep(1);
+            }
             // Combine the encrypted data with the IV and base64 encode the result
             return base64_encode($encryptedData . '::' . $iv);
         } catch (\Exception $e) {
+            return redirect()->route('error-500');
             // Handle the exception, for example log it or display a message
             dd('Caught exception: ' . $e->getMessage());
         }
@@ -108,7 +163,8 @@ class OpenDataController extends Controller
     public function decryptWithKey($encodedData)
     {
         try {
-            $key = env('LINK_KEY');
+            // $key = env('LINK_KEY');
+            $key = MtrUtility::find(34)->informasi;
             $method = 'AES-256-CBC';
             // Decode the base64 encoded data
             $decodedData = base64_decode($encodedData);
@@ -117,6 +173,7 @@ class OpenDataController extends Controller
             // Decrypt the data with the key
             return openssl_decrypt($encryptedData, $method, $key, 0, $iv);
         } catch (\Exception $e) {
+            return redirect()->route('error-500');
             // Handle the exception, for example log it or display a message
             dd('Caught exception: ' . $e->getMessage());
         }
