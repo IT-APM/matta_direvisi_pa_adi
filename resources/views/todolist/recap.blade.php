@@ -96,8 +96,8 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Karyawan</th>
                                     <th>NIP Karyawan</th>
+                                    <th>Karyawan</th>
                                     <th>Perusahaan</th>
                                     <th>Direktorat</th>
                                     <th>Divisi</th>
@@ -111,8 +111,8 @@
                                 @foreach ($trx as $data)
                                 <tr>
                                     <td>{{ ++$no }}</td>
-                                    <td>{{ $data->_nik->nama }}</td>
                                     <td>{{ $data->nik }}</td>
+                                    <td>{{ $data->_nik->nama }}</td>
                                     <td>{{ $data->_nik->_perusahaan->nama }}</td>
                                     <td>{{ $data->_nik->_divisi->nama }}</td>
                                     <td>{{ $data->_nik->_departemen->nama }}</td>
