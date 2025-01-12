@@ -26,7 +26,7 @@ class OpenDataController extends Controller
 
     public function encrypt_link()
     {
-        dd('ok');
+        dd($this->encryptWithKey(123456));
         // $url = 'https://matta-reborn.alita.id/matta/nonaktif/TWVIZmNxajV5bHZuWElsSkdoNGpndz09OjpuRVgyUnJYZnJkYjUwTmtX?view=Rk1nT3hJemlHdzhlcXlMc1JvaUV1dz09OjpUWVJLdTBrMmlDcWhXV0JZ&nik=RnpINlczNmFvSXpJMWFiUDlZcm1WUT09Ojo5VWhpdFpaaU42RUoycllv&id_status=bFEwc1hXYlhma0liOC9FbUJCWlI0QT09OjpOaEgwOUt2d0JDWlc2SjVF&pic=OEMrd0o5OSt4MFZoSnJRbGpGMHJYUT09OjoyRVZVUE1kWUNucXNLalAy';
         // $trx = ToDoList::where('created_at','>','2025-01-08 05:00:00')->get();
         // // dd(count($trx));
@@ -147,12 +147,18 @@ class OpenDataController extends Controller
             $iv = Str::random(16); // AES-256-CBC uses a 16-byte IV
             // Encrypt the data with the key
             $encryptedData = openssl_encrypt($data, $method, $key, 0, $iv);
+            $str = base64_encode($encryptedData . '::' . $iv);
             // check jika belum benar maka ulangi kembali sampai benar
-            while (!$this->decryptWithKey(base64_encode($encryptedData . '::' . $iv))) {
-                sleep(1);
+            if($this->decryptWithKey($str) == $data){
+                return $str;
+            }else{
+                return $this->encryptWithKey($data);
             }
-            // Combine the encrypted data with the IV and base64 encode the result
-            return base64_encode($encryptedData . '::' . $iv);
+            // while (!$this->decryptWithKey(base64_encode($encryptedData . '::' . $iv))) {
+            //     sleep(1);
+            // }
+            // // Combine the encrypted data with the IV and base64 encode the result
+            // return base64_encode($encryptedData . '::' . $iv);
         } catch (\Exception $e) {
             return redirect()->route('error-500');
             // Handle the exception, for example log it or display a message
