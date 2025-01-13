@@ -166,6 +166,9 @@
                         </div>
                         <!-- end -->
                     </div>
+                    <form action="{{ route('pelatihan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id)) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    @method('PATCH')
+                    @csrf
                     <div class="row">
                         <div class="col-sm-6">
                             <label class="form-label" for="status_pengajuan">Status Pengajuan</label>
@@ -177,9 +180,6 @@
                             </select>
                         </div>
                     </div>
-                    <form action="{{ route('pelatihan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id)) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
-                    @method('PATCH')
-                    @csrf
                         <button class="btn btn-success mt-2" type="submit">Update</button> | <a href="{{ route('pelatihan.index') }}" class="btn btn-warning" type="button">Back</a>
                     </form>
                 {{-- </div>
