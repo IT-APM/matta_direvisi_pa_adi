@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Attachment;
+use App\Models\TrxEmailLog;
 
 // source = https://mailtrap.io/blog/send-email-in-laravel/
 
@@ -23,7 +24,13 @@ class MattaRebornMail extends Mailable
      */
     public function __construct(private $mailData)
     {
-        //
+        // dd($mailData);
+        $trx = new TrxEmailLog;
+        $trx->title = $mailData['title'];
+        $trx->filename = $mailData['filename'];
+        $trx->data = json_encode($mailData['data']);
+        $trx->to = $mailData['to'];
+        $trx->save();
     }
 
     /**
