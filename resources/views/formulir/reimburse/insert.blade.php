@@ -26,6 +26,9 @@
         <div class="col-sm-12 col-xl-12">
             <div class="card">
                 <div class="card-header">
+                    <h5>Pengaju: {{ $pengaju }}</h5>
+                </div>
+                <div class="card-header">
                     <h5>Plafon</h5>
                 </div>
                 <div class="card-body typography">
@@ -78,6 +81,7 @@
                 </div>
                 <form action="{{ route('reimburse.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                     @csrf
+                    <input type="hidden" id="nik_karyawan" name="nik_karyawan" value="{{ $nik_karyawan }}">
                     <!--  -->
                     <div class="card-header">
                         <h5>Isian Reimbursement</h5>
