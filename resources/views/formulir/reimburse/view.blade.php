@@ -107,6 +107,7 @@
                                 <td>Tahun</td>
                                 <td>{{ $trxM->periode }}</td>
                             </tr>
+                            @if($trxM->plafon>0)
                             <tr>
                                 <td>Plafon</td>
                                 <td>Ada</td>
@@ -123,17 +124,20 @@
                                 <td>Sisa Plafon</td>
                                 <td>Rp. {{ number_format($trxM->sisa_plafon_1, 2) }}</td>
                             </tr>
+                            @endif
                             <tr>
                                 <td>Nominal Klaim Pada Pengajuan ini</td>
                                 <td>Rp. {{ number_format($trxM->klaim_kesehatan, 2) }} (Kesehatan)
                                     <br />Rp. {{ number_format($trxM->klaim_non_kesehatan, 2) }} (Non Kesehatan)
                                 </td>
                             </tr>
+                            @if($trxM->plafon>0)
                             <tr>
                                 <td>Saldo</td>
                                 <td>Rp. {{ number_format($trxM->sisa_plafon_2, 2) }} (Sisa Plafon - Klaim Kesehatan)
                                 </td>
                             </tr>
+                            @endif
                             <tr>
                                 <td>Lampiran</td>
                                 <td>
