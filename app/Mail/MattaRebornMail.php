@@ -29,7 +29,7 @@ class MattaRebornMail extends Mailable
         $trx->title = $mailData['title'];
         $trx->filename = $mailData['filename'];
         $trx->data = json_encode($mailData['data']);
-        $trx->to = $mailData['to'];
+        $trx->to = json_encode($mailData['to']);
         $trx->save();
     }
 
