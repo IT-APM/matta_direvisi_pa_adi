@@ -82,11 +82,14 @@
                         <td>Tahun</td>
                         <td>: {{ $trxM->periode }}</td>
                     </tr>
+                    @if($trxM->plafon>0)
                     <tr>
                         <td>Plafon</td>
                         <td>: Ada</td>
                     </tr>
+                    @endif
                     @if($isHC == true)
+                    @if($trxM->plafon>0)
                     <tr>
                         <td>Jumlah Plafon</td>
                         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -130,6 +133,7 @@
                         <td>: Rp. {{ number_format(0, 2) }} (Klaim Non Kesehatan)</td>
                     </tr>
                     @endif
+                    @endif
                     <tr>
                         <td>Nominal Klaim Pada Pengajuan ini</td>
                         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -141,10 +145,12 @@
                         </td>
                     </tr>
                     @if($isHC == true)
+                    @if($trxM->plafon>0)
                     <tr>
                         <td>Saldo</td>
                         <td>: Rp. {{ number_format(0, 2) }} (Plafon Non Kesehatan)</td>
                     </tr>
+                    @endif
                     @endif
                     <tr>
                         <td>Lampiran Pengajuan</td>
