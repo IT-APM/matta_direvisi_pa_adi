@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use DB;
 use Elibyy\TCPDF\Facades\TCPDF;
+use Illuminate\Support\Facades\Crypt;
 // 
 
 class TrxReimburseController extends Controller
@@ -41,7 +42,10 @@ class TrxReimburseController extends Controller
      */
     public function index(Request $request)
     {
+        $nik_karyawan = ReimbursePlafon::pluck('nik_karyawan')->toArray();
         // ambil semua data reimburse
+        $where = ['is_aktif' => 1];
+        $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $no = 0;
         // $trx = TrxReimburseMaster::orderBy('id', 'desc')->limit(100)->get();
         $trx = TrxReimburseMaster::orderBy('id', 'desc')->get();
@@ -49,7 +53,7 @@ class TrxReimburseController extends Controller
         if(auth()->user()->userrole == 'nhc'){
             $where = ['nik_karyawan' => auth()->user()->nik];
             // $trx = TrxReimburseMaster::where($where)->orderBy('id', 'desc')->limit(100)->get();
-            $trx = TrxReimburseMaster::where($where)->orderBy('id', 'desc')->get();
+            $trx = TrxReimburseMaster::where($where)->whereIn('nik_karyawan', $nik_karyawan)->orderBy('id', 'desc')->get();
             // 
             // ambil plafon karyawan tersebut
             $periode = Carbon::now()->format('Y');
@@ -113,7 +117,7 @@ class TrxReimburseController extends Controller
             $arr_nik_karyawan = array();
         }
         // end filter
-        return view( 'formulir.reimburse.index', compact( 'trx', 'no', 'isPlafon', 'status_pengajuan', 'tahun', 'nik_karyawan', 'arr_status_pengajuan', 'arr_tahun', 'arr_nik_karyawan'));
+        return view( 'formulir.reimburse.index', compact( 'trx', 'no', 'isPlafon', 'status_pengajuan', 'tahun', 'nik_karyawan', 'arr_status_pengajuan', 'arr_tahun', 'arr_nik_karyawan', 'karyawan'));
         // return view('formulir.reimburse.index', compact('trx', 'no', 'isPlafon'));
     }
 
@@ -122,7 +126,7 @@ class TrxReimburseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         if(Carbon::now()->toDateString() >= '2024-12-17' && \Carbon\Carbon::now()->toDateString() <= '2025-01-02'){
             return redirect('reimburse')->with('msg', 'Tidak Tersedia');
@@ -130,7 +134,11 @@ class TrxReimburseController extends Controller
         // karyawan masih di hardcode
         // Abi Suhendra Adi Guna
         // $nik_karyawan = '01031801682';
-        $nik_karyawan = auth()->user()->nik;
+        // $nik_karyawan = auth()->user()->nik;
+        $nik_karyawan = Crypt::decrypt($request->nik_karyawan);
+        $where = ['nik' => $nik_karyawan];
+        $pengaju = Karyawan::select('nik', 'nama')->where($where)->first();
+        $pengaju = $pengaju->nama.' / '.$pengaju->nik;
         $periode = Carbon::now()->format('Y');
         // 
         $where = ['nik' => $nik_karyawan];
@@ -138,6 +146,10 @@ class TrxReimburseController extends Controller
         // ambil plafon karyawan tersebut
         $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
         $plafon = ReimbursePlafon::where($where)->orderBy('id', 'desc')->first();
+        // jika tidak ada maka ambil default 0
+        if(empty($plafon)){
+            $plafon = ReimbursePlafon::find(1000);
+        }
         // jumlahkan semua plafon kesehatan yang status tidak Ditolak di periode dan nik tersebut
         $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
         $plafon_diambil = TrxReimburseMaster::where($where)->whereNotIn('status_pengajuan', [3])->sum('klaim_kesehatan');
@@ -172,11 +184,20 @@ class TrxReimburseController extends Controller
         // 
         $hubungan = ReimburseHubungan::orderBy('id', 'asc')->get();
         $layanan = ReimburseLayanan::orderBy('layanan', 'asc')->get();
-        $layanan_istri = ReimburseLayanan::whereIn('id', [1,4,5,6])->orderBy('id', 'asc')->get();
-        $layanan_anak = ReimburseLayanan::whereIn('id', [1])->orderBy('id', 'asc')->get();
-        $lampiran = ReimburseLampiran::orderBy('id', 'asc')->get();
+        if(auth()->user()->userrole == 'nhc'){
+            $layanan = ReimburseLayanan::whereIn('id', [1,2,3,4,5,6])->orderBy('layanan', 'asc')->get();
+        }
+        $layanan_istri = ReimburseLayanan::whereIn('id', [1,4,5,6])->orderBy('layanan', 'asc')->get();
+        $layanan_anak = ReimburseLayanan::whereIn('id', [1])->orderBy('layanan', 'asc')->get();
+        $lampiran = ReimburseLampiran::orderBy('lampiran', 'asc')->get();
         $max_date = Carbon::now()->toDateString();
-        return view('formulir.reimburse.insert', compact('karyawan', 'plafon', 'hubungan', 'layanan', 'lampiran', 'layanan_istri', 'layanan_anak', 'max_date'));
+        // jika tidak ada maka ambil default 0
+        if($plafon->id == 1000){
+            $layanan = ReimburseLayanan::whereIn('id', [7])->orderBy('layanan', 'asc')->get();
+            $layanan_istri = $layanan;
+            $layanan_anak = $layanan;
+        }
+        return view('formulir.reimburse.insert', compact('karyawan', 'plafon', 'hubungan', 'layanan', 'lampiran', 'layanan_istri', 'layanan_anak', 'max_date', 'pengaju', 'nik_karyawan'));
     }
 
     /**
@@ -191,7 +212,8 @@ class TrxReimburseController extends Controller
         // return redirect()->back()->with('error','hello');
         // karyawan masih di hardcode
         // $nik_karyawan = '01031801682';
-        $nik_karyawan = auth()->user()->nik;
+        // $nik_karyawan = auth()->user()->nik;
+        $nik_karyawan = $request->nik_karyawan;
         $periode = Carbon::now()->format('Y');
         // agregate semua input array
         $hubungan = $request->input('hubungan', []);
@@ -253,6 +275,10 @@ class TrxReimburseController extends Controller
         // ambil plafon
         $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
         $plafon = ReimbursePlafon::where($where)->orderBy('id', 'desc')->first();
+        // jika tidak ada maka ambil default 0
+        if(empty($plafon)){
+            $plafon = ReimbursePlafon::find(1000);
+        }
         // ambil semua klaim_kesehatan yang status tidak Ditolak di periode dan nik tersebut
         $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
         $plafon_diambil = TrxReimburseMaster::where($where)->whereNotIn('status_pengajuan', [3])->sum('klaim_kesehatan');
@@ -875,7 +901,9 @@ class TrxReimburseController extends Controller
             $mailData['filename'] = 'emails.reimburse_done';
             $mailData['to'] = $karyawan['email'];
             $mailData['data'] = ['status' => 'disetujui', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
-            $this->sendEmail($mailData);
+            if($trx->plafon > 0){
+                $this->sendEmail($mailData);
+            }
             // finish
         }
         else if($request->status_pengajuan == 3){
@@ -886,7 +914,9 @@ class TrxReimburseController extends Controller
             $mailData['filename'] = 'emails.reimburse_done';
             $mailData['to'] = $karyawan['email'];
             $mailData['data'] = ['status' => 'ditolak', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
-            $this->sendEmail($mailData);
+            if($trx->plafon > 0){
+                $this->sendEmail($mailData);
+            }
             // finish
         }
         return view('emails.reimburse_ok');
