@@ -1459,6 +1459,15 @@ class TrxRecruitmentController extends Controller
         // dd($request->all());
         $id = Crypt::decrypt($request->id);
         $id_recruitment = $id[0];
+        // cek apakah sudah pernah melamar untuk info loker yang sama dengan email yang sama
+        $where = ['id_recruitment'=>$id_recruitment, 'email'=>$request->email];
+        if(TrxRecruitmentIdentitas::where($where)->exists()){
+            $error = '<p>Yth. '.$request->nama.',<br/>Dengan hormat,</p>
+            <p>Lamaran kerja Bapak/Ibu/Saudara/i sebelumnya telah kami terima dan tidak dapat mengajukan kembali untuk info lowongan yang sama.</p>
+            <p>Terima kasih,</p>
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            return redirect()->back()->with('error', $error);
+        }
         $trx = TrxRecruitment::find($id_recruitment);
         $id_kebutuhan = $trx->id_kebutuhan;
         $trx = TrxKebutuhanMaster::find($id_kebutuhan);

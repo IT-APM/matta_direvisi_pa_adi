@@ -138,21 +138,6 @@
                                 </tr>
                                 @endforeach
                             </tbody>
-                            <!-- <tfoot>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Karyawan</th>
-                                    <th>NIP Karyawan</th>
-                                    <th>Atasan</th>
-                                    <th>NIP Atasan</th>
-                                    <th>Alasan</th>
-                                    <th>Tanggal</th>
-                                    <th>Tipe</th>
-                                    <th>Status</th>
-                                    <th>Created at</th>
-                                    <th>Action</th>
-                                </tr>
-                            </tfoot> -->
                         </table>
                     </div>
                 </div>

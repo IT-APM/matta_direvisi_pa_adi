@@ -96,6 +96,8 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Action</th>
+                                    <th>Jumlah</th>
                                     <th>NIP Karyawan</th>
                                     <th>Karyawan</th>
                                     <th>Perusahaan</th>
@@ -103,7 +105,6 @@
                                     <th>Divisi</th>
                                     <th>Departemen</th>
                                     <th>Formulir</th>
-                                    <th>Jumlah</th>
                                 </tr>
                             </thead>
                             @php $no = 0; @endphp
@@ -111,6 +112,8 @@
                                 @foreach ($trx as $data)
                                 <tr>
                                     <td>{{ ++$no }}</td>
+                                    <td><a target="_blank" href="{{ route('todolist.recap.detail', [0, 'nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->nik), 'title'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->title)]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a></td>
+                                    <td>{{ $data->jumlah }}</td>
                                     <td>{{ $data->nik }}</td>
                                     <td>{{ $data->_nik->nama }}</td>
                                     <td>{{ $data->_nik->_perusahaan->nama }}</td>
@@ -118,7 +121,6 @@
                                     <td>{{ $data->_nik->_departemen->nama }}</td>
                                     <td>{{ $data->_nik->_subdepartemen->nama }}</td>
                                     <td>{{ $data->title }}</td>
-                                    <td>{{ $data->jumlah }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

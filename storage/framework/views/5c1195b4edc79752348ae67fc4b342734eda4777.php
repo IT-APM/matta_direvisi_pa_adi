@@ -58,13 +58,13 @@
                         <td><?php echo e($value->_id_hubungan->hubungan); ?></td>
                         <td><?php echo e($value->_id_layanan->layanan); ?></td>
                         <td><?php echo e(date("d-m-Y", strtotime($value->tanggal))); ?></td>
-                        <td align="right">Rp. <?php echo e(number_format($value->jumlah_klaim, 2)); ?></td>
+                        <td align="right">Rp. <?php echo e(number_format($value->jumlah_klaim, 0)); ?></td>
                     </tr>
                     <?php endif; ?>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     <tr>
                         <td colspan="4" align="right">Total Klaim</td>
-                        <td align="right">Rp. <?php echo e(number_format($trxM->klaim_non_kesehatan, 2)); ?></td>
+                        <td align="right">Rp. <?php echo e(number_format($trxM->klaim_non_kesehatan, 0)); ?></td>
                     </tr>
                 </table>
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
@@ -82,11 +82,14 @@
                         <td>Tahun</td>
                         <td>: <?php echo e($trxM->periode); ?></td>
                     </tr>
+                    <?php if($trxM->plafon>0): ?>
                     <tr>
                         <td>Plafon</td>
                         <td>: Ada</td>
                     </tr>
+                    <?php endif; ?>
                     <?php if($isHC == true): ?>
+                    <?php if($trxM->plafon>0): ?>
                     <tr>
                         <td>Jumlah Plafon</td>
                         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -94,31 +97,31 @@
                                 <?php if($value->id_layanan == 2): ?>
                                 <tr>
                                     <td width="25%">: <?php echo e($value->_id_layanan->layanan); ?></td>
-                                    <td width="75%">: Rp. <?php echo e(number_format($plafon->frame, 2)); ?></td>
+                                    <td width="75%">: Rp. <?php echo e(number_format($plafon->frame, 0)); ?></td>
                                 </tr>
                                 <?php endif; ?>
                                 <?php if($value->id_layanan == 3): ?>
                                 <tr>
                                     <td width="25%">: <?php echo e($value->_id_layanan->layanan); ?></td>
-                                    <td width="75%">: Rp. <?php echo e(number_format($plafon->lensa, 2)); ?></td>
+                                    <td width="75%">: Rp. <?php echo e(number_format($plafon->lensa, 0)); ?></td>
                                 </tr>
                                 <?php endif; ?>
                                 <?php if($value->id_layanan == 4): ?>
                                 <tr>
                                     <td width="25%">: <?php echo e($value->_id_layanan->layanan); ?></td>
-                                    <td width="75%">: Rp. <?php echo e(number_format($plafon->kehamilan, 2)); ?></td>
+                                    <td width="75%">: Rp. <?php echo e(number_format($plafon->kehamilan, 0)); ?></td>
                                 </tr>
                                 <?php endif; ?>
                                 <?php if($value->id_layanan == 5): ?>
                                 <tr>
                                     <td width="25%">: <?php echo e($value->_id_layanan->layanan); ?></td>
-                                    <td width="75%">: Rp. <?php echo e(number_format($plafon->persalinan_normal, 2)); ?></td>
+                                    <td width="75%">: Rp. <?php echo e(number_format($plafon->persalinan_normal, 0)); ?></td>
                                 </tr>
                                 <?php endif; ?>
                                 <?php if($value->id_layanan == 6): ?>
                                 <tr>
                                     <td width="25%">: <?php echo e($value->_id_layanan->layanan); ?></td>
-                                    <td width="75%">: Rp. <?php echo e(number_format($plafon->persalinan_caesar, 2)); ?></td>
+                                    <td width="75%">: Rp. <?php echo e(number_format($plafon->persalinan_caesar, 0)); ?></td>
                                 </tr>
                                 <?php endif; ?>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -127,24 +130,27 @@
                     </tr>
                     <tr>
                         <td>Plafon Telah Diambil</td>
-                        <td>: Rp. <?php echo e(number_format(0, 2)); ?> (Klaim Non Kesehatan)</td>
+                        <td>: Rp. <?php echo e(number_format(0, 0)); ?> (Klaim Non Kesehatan)</td>
                     </tr>
+                    <?php endif; ?>
                     <?php endif; ?>
                     <tr>
                         <td>Nominal Klaim Pada Pengajuan ini</td>
                         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td width="25%">: Non Kesehatan</td>
-                                    <td width="75%">: Rp. <?php echo e(number_format($trxM->klaim_non_kesehatan, 2)); ?></td>
+                                    <td width="75%">: Rp. <?php echo e(number_format($trxM->klaim_non_kesehatan, 0)); ?></td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                     <?php if($isHC == true): ?>
+                    <?php if($trxM->plafon>0): ?>
                     <tr>
                         <td>Saldo</td>
-                        <td>: Rp. <?php echo e(number_format(0, 2)); ?> (Plafon Non Kesehatan)</td>
+                        <td>: Rp. <?php echo e(number_format(0, 0)); ?> (Plafon Non Kesehatan)</td>
                     </tr>
+                    <?php endif; ?>
                     <?php endif; ?>
                     <tr>
                         <td>Lampiran Pengajuan</td>

@@ -75,6 +75,7 @@
                                 <td>Tahun</td>
                                 <td><?php echo e($trxM->periode); ?></td>
                             </tr>
+                            <?php if($trxM->plafon>0): ?>
                             <tr>
                                 <td>Plafon</td>
                                 <td>Ada</td>
@@ -91,17 +92,20 @@
                                 <td>Sisa Plafon</td>
                                 <td>Rp. <?php echo e(number_format($trxM->sisa_plafon_1, 2)); ?></td>
                             </tr>
+                            <?php endif; ?>
                             <tr>
                                 <td>Nominal Klaim Pada Pengajuan ini</td>
                                 <td>Rp. <?php echo e(number_format($trxM->klaim_kesehatan, 2)); ?> (Kesehatan)
                                     <br />Rp. <?php echo e(number_format($trxM->klaim_non_kesehatan, 2)); ?> (Non Kesehatan)
                                 </td>
                             </tr>
+                            <?php if($trxM->plafon>0): ?>
                             <tr>
                                 <td>Saldo</td>
                                 <td>Rp. <?php echo e(number_format($trxM->sisa_plafon_2, 2)); ?> (Sisa Plafon - Klaim Kesehatan)
                                 </td>
                             </tr>
+                            <?php endif; ?>
                             <tr>
                                 <td>Lampiran</td>
                                 <td>

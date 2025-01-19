@@ -108,8 +108,8 @@
                                                 <td><?php echo e($data->nama); ?></td>
                                                 
                                                 <td><a href="<?php echo e(asset('assets/recruitment/upload/'.$data->cv)); ?>" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></td>
-                                                <td><?php echo e($data->check_in); ?></td>
-                                                <td><?php echo e($data->check_out); ?></td>
+                                                <td><?php if(!empty($data->check_in)): ?><?php echo e(\Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s')); ?><?php endif; ?></td>
+                                                <td><?php if(!empty($data->check_out)): ?><?php echo e(\Carbon\Carbon::parse($data->check_out) ->format('d-m-Y H:i:s')); ?><?php endif; ?></td>
                                                 <td>
                                                     
                                                     <?php if(in_array(16, $log)): ?><a href="<?php echo e(route('recruitment.get_interpretation', [Crypt::encrypt([$data->id, 'view'])])); ?>" target="_blank" data-toggle="tooltip" title="Interpretation"><i class="fa fa-file-text-o"></i></a><?php endif; ?>
@@ -174,8 +174,8 @@
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </td>
                                                 <td><?php echo e($data->metode); ?></td>
-                                                <td><?php echo e($data->check_in); ?></td>
-                                                <td><?php echo e($data->check_out); ?></td>
+                                                <td><?php if(!empty($data->check_in)): ?><?php echo e(\Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s')); ?><?php endif; ?></td>
+                                                <td><?php if(!empty($data->check_out)): ?><?php echo e(\Carbon\Carbon::parse($data->check_out) ->format('d-m-Y H:i:s')); ?><?php endif; ?></td>
                                                 <td><?php if(!empty($data->file_interview)): ?><a href="<?php echo e(asset('assets/recruitment/upload/'.$data->file_interview)); ?>" target="_blank" data-toggle="tooltip" title="File Interview"><i class="fa fa-file-text-o"></i></a><?php endif; ?></td>
                                                 <td><?php echo e($data->_status->status); ?></td>
                                                 <td><?php echo e($data->created_at); ?></td>

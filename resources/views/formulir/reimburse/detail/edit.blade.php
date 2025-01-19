@@ -113,27 +113,27 @@
                             </tr>
                             <tr>
                                 <td>Jumlah Plafon</td>
-                                <td>Rp. {{ number_format($trxM->plafon, 2) }}</td>
+                                <td>Rp. {{ number_format($trxM->plafon, 0) }}</td>
                             </tr>
                             <tr>
                                 <td>Plafon Telah Diambil</td>
-                                <td>Rp. {{ number_format($trxM->plafon_diambil, 2) }}</td>
+                                <td>Rp. {{ number_format($trxM->plafon_diambil, 0) }}</td>
                             </tr>
                             <tr>
                                 <td>Sisa Plafon</td>
-                                <td>Rp. {{ number_format($trxM->sisa_plafon_1, 2) }}</td>
+                                <td>Rp. {{ number_format($trxM->sisa_plafon_1, 0) }}</td>
                             </tr>
                             @endif
                             <tr>
                                 <td>Nominal Klaim Pada Pengajuan ini</td>
-                                <td>Rp. {{ number_format($trxM->klaim_kesehatan, 2) }} (Kesehatan)
-                                    <br />Rp. {{ number_format($trxM->klaim_non_kesehatan, 2) }} (Non Kesehatan)
+                                <td>Rp. {{ number_format($trxM->klaim_kesehatan, 0) }} (Kesehatan)
+                                    <br />Rp. {{ number_format($trxM->klaim_non_kesehatan, 0) }} (Non Kesehatan)
                                 </td>
                             </tr>
                             @if($trxM->plafon>0)
                             <tr>
                                 <td>Saldo</td>
-                                <td>Rp. {{ number_format($trxM->sisa_plafon_2, 2) }} (Sisa Plafon - Klaim Kesehatan)
+                                <td>Rp. {{ number_format($trxM->sisa_plafon_2, 0) }} (Sisa Plafon - Klaim Kesehatan)
                                 </td>
                             </tr>
                             @endif
@@ -188,7 +188,7 @@
                                     <td>{{ $value->_id_hubungan->hubungan }}</td>
                                     <td>{{ $value->_id_layanan->layanan }}</td>
                                     <td>@if(!empty($value->tanggal)) {{ \Carbon\Carbon::parse($value->tanggal)->format('d-m-Y') }} @endif</td>
-                                    <td>Rp. {{ number_format($value->jumlah_klaim, 2) }}</td>
+                                    <td>Rp. {{ number_format($value->jumlah_klaim, 0) }}</td>
                                     <td>
                                         <form action="{{ route('reimburse.updateDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id)) }}" method="POST">
                                             @csrf

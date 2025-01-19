@@ -178,14 +178,14 @@
                                             <td><?php if(!empty($data->ot_start_at_rev)): ?> <?php echo e(\Carbon\Carbon::parse($data->ot_start_at_rev)->format('d-m-Y H:i:s')); ?> <?php endif; ?></td>
                                             <td><?php if(!empty($data->ot_end_at_rev)): ?> <?php echo e(\Carbon\Carbon::parse($data->ot_end_at_rev)->format('d-m-Y H:i:s')); ?> <?php endif; ?></td>
                                             <td><?php if(!empty($data->ot_length_rev)): ?> <?php echo e($data->ot_length_rev); ?> <?php endif; ?></td>
-                                            <td><?php if($_data['status_karyawan']=='Freelance'): ?> <?php if($_isHoliday||$_isWeekend): ?> <?php echo e(number_format($_arr[1]['informasi'])); ?> <?php else: ?> <?php echo e(number_format($_arr[0]['informasi'])); ?> <?php endif; ?> <?php else: ?> <?php echo e(number_format($_data['gaji_pokok'])); ?> <?php endif; ?></td>
-                                            <td><?php echo e(number_format($data->ot_length_rp)); ?></td>
-                                            <td><?php echo e(number_format(round($data->ot_length_rp, -3))); ?></td>
+                                            <td class="text-end"><?php if($_data['status_karyawan']=='Freelance'): ?> <?php if($_isHoliday||$_isWeekend): ?> <?php echo e(number_format($_arr[1]['informasi'])); ?> <?php else: ?> <?php echo e(number_format($_arr[0]['informasi'])); ?> <?php endif; ?> <?php else: ?> <?php echo e(number_format($_data['gaji_pokok'])); ?> <?php endif; ?></td>
+                                            <td class="text-end"><?php echo e(number_format($data->ot_length_rp)); ?></td>
+                                            <td class="text-end"><?php echo e(number_format(round($data->ot_length_rp, -3))); ?></td>
                                             <!-- <td><?php if(!empty($data->ot_length_adj)): ?> <?php echo e(\Carbon\CarbonInterval::seconds($data->ot_length_adj)->cascade()->forHumans()); ?> <?php endif; ?></td> -->
                                             <td><?php if(!empty($data->ot_length_adj)): ?> <?php echo e(gmdate('H:i:s', $data->ot_length_adj)); ?> <?php endif; ?></td>
                                             <!-- <td><?php if(!empty($data->ot_length_adj)): ?> <a href="<?php echo e(route('adj_ot', [$data->id])); ?>" data-toggle="tooltip" title='Adjustment'><?php echo e(number_format($data->ot_length_adj)); ?> <i class="icon-pencil-alt"></i></a> <?php endif; ?></td> -->
-                                            <td><?php echo e(number_format($data->ot_length_rp_adj)); ?></td>
-                                            <td><?php echo e(number_format(round($data->ot_length_rp_adj, -3))); ?></td>
+                                            <td class="text-end"><?php echo e(number_format($data->ot_length_rp_adj)); ?></td>
+                                            <td class="text-end"><?php echo e(number_format(round($data->ot_length_rp_adj, -3))); ?></td>
                                             <td><?php echo e($_data['status_karyawan']); ?></td>
                                             <td><?php echo e($_data['wg_name']); ?></td>
                                             <td><?php echo $_day; ?></td>
@@ -197,6 +197,7 @@
                             </div>
                         </div>
                         
+                        <?php $max = App\Models\MtrUtility::find(33)->informasi ?>
                         <div class="tab-pane fade" id="recapdata" role="tabpanel" aria-labelledby="recapdata-tab">
                             <div class="table-responsive mt-2">
                                 <table class="display" id="recap_datatable">
@@ -211,15 +212,14 @@
                                             <th>Maker NIP</th>
                                             <th>Approve Name</th>
                                             <th>Rp Adj (Round)</th>
+                                            <th>Rp Max Value</th>
                                             <th>Employee Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php $no = 0; ?>
                                         <?php $__currentLoopData = $otrecap; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php
-                                            $_data = json_decode($data->ot_maker_property, true);
-                                        ?>
+                                        <?php $_data = json_decode($data->ot_maker_property, true) ?>
                                         <tr>
                                             <td><?php echo e(++$no); ?></td>
                                             <td><?php echo e($_data['perusahaan']); ?></td>
@@ -229,7 +229,8 @@
                                             <td><?php echo e($data->_ot_maker_by->nama); ?></td>
                                             <td><?php echo e($data->ot_maker_by); ?></td>
                                             <td><?php echo e($data->_ot_approver_by->nama); ?></td>
-                                            <td><?php echo e(number_format(round($data->ot_length_rp_adj, -3))); ?></td>
+                                            <td class="text-end"><?php echo e(number_format(round($data->ot_length_rp_adj, -3))); ?></td>
+                                            <td class="text-end"><?php if($max > round($data->ot_length_rp_adj, -3)): ?><?php echo e(number_format(round($data->ot_length_rp_adj, -3))); ?><?php else: ?> <?php echo e(number_format($max)); ?> <?php endif; ?></td>
                                             <td><?php echo e($_data['status_karyawan']); ?></td>
                                         </tr>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

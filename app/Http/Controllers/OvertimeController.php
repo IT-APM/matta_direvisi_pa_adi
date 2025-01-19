@@ -271,7 +271,10 @@ class OvertimeController extends Controller
         // filter parameter
         $_status = ['Approve', 'Reject'];
         $_arr_ot_approver_status = Overtime::whereIn('ot_approver_status', $_status)->distinct()->orderBy( 'ot_approver_status', 'asc' )->get(['ot_approver_status']);
-        $perusahaan = Perusahaan::orderBy( 'nama', 'asc' )->get();
+        // $perusahaan = Perusahaan::orderBy( 'nama', 'asc' )->get();
+        // 0=NA
+        // 3=SMS Project
+        $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy( 'nama', 'asc' )->get();
         $arr_ot_approver_status = array();
         $arr_perusahaan = array();
         foreach ($_arr_ot_approver_status as $data){

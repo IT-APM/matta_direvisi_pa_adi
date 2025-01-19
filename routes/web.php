@@ -176,6 +176,7 @@ Route::post('logoutapp', [LoginController::class, 'logout'])->name('logoutapp');
 // 
 Route::resource('todolist', TrxToDoListController::class)->middleware('auth');
 Route::get('todolist/recap/{id}', [TrxToDoListController::class, 'recap'])->name('todolist.recap')->middleware('can:hc');
+Route::get('todolist/recap/detail/{id}', [TrxToDoListController::class, 'detail'])->name('todolist.recap.detail')->middleware('can:hc');
 // 
 Route::resource('karyawan', KaryawanController::class);
 Route::resource('karyawanpendidikan', KaryawanPendidikanController::class)->middleware('auth');
@@ -286,6 +287,7 @@ Route::resource('nonaktif_auto', TrxNonaktifAutoController::class)->middleware('
 // 
 Route::resource('izin', TrxIjinController::class);
 Route::get('izin/recap/{id}', [TrxIjinController::class, 'recap'])->name('izin.recap')->middleware('can:hc');
+Route::get('izin/recap/detail/{id}', [TrxIjinController::class, 'detail'])->name('izin.recap.detail')->middleware('can:hc');
 // 
 Route::resource('kebutuhan', TrxKebutuhanController::class);
 Route::resource('kebutuhan_detail', TrxKebutuhanDetailController::class)->middleware('can:hc');

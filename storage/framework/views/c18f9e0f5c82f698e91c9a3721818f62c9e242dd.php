@@ -30,50 +30,50 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <?php endif; ?>
-                        <form action="<?php echo e(route('reimburse.updateDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxD->id))); ?>" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
-                        <?php echo method_field('POST'); ?>
-                        <?php echo csrf_field(); ?>
-                            <input type="hidden" id="trxMId" name="trxMId" value="<?php echo e((new App\Http\Controllers\OpenDataController)->encryptWithKey($trxD->id_reimburse)); ?>" >
-                            <input type="hidden" id="_id_layanan" name="_id_layanan" value="<?php echo e($trxD->id_layanan); ?>" >
-                            <div class="row m-t-10">
-                                <div class="col-md-4">
-                                    <label class="form-label" for="id_hubungan">Hubungan Dengan Karyawan</label>
-                                    <select class="form-select" id="id_hubungan" name="id_hubungan" required="">
-                                        <option selected="" value="">Pilih...</option>
-                                        <?php $__currentLoopData = $hubungan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <option value="<?php echo e($data->id); ?>" <?php if($data->id == $trxD->id_hubungan): ?> selected <?php endif; ?> ><?php echo e($data->hubungan); ?></option>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label" for="nama_pasien">Nama Pasien</label>
-                                    <input name="nama_pasien" id="nama_pasien" class="form-control" type="text" required="" value="<?php echo e($trxD->nama_pasien); ?>" >
-                                </div>
+                    <form action="<?php echo e(route('reimburse.updateDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxD->id))); ?>" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <?php echo method_field('POST'); ?>
+                    <?php echo csrf_field(); ?>
+                        <input type="hidden" id="trxMId" name="trxMId" value="<?php echo e((new App\Http\Controllers\OpenDataController)->encryptWithKey($trxD->id_reimburse)); ?>" >
+                        <input type="hidden" id="_id_layanan" name="_id_layanan" value="<?php echo e($trxD->id_layanan); ?>" >
+                        <div class="row m-t-10">
+                            <div class="col-md-4">
+                                <label class="form-label" for="id_hubungan">Hubungan Dengan Karyawan</label>
+                                <select class="form-select" id="id_hubungan" name="id_hubungan" required="">
+                                    <option selected="" value="">Pilih...</option>
+                                    <?php $__currentLoopData = $hubungan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($data->id); ?>" <?php if($data->id == $trxD->id_hubungan): ?> selected <?php endif; ?> ><?php echo e($data->hubungan); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
                             </div>
-                            <div class="row m-t-10">
-                                <div class="col-md-4">
-                                    <label class="form-label" for="id_layanan">Layanan</label>
-                                    <select class="form-select" id="id_layanan" name="id_layanan" required="" disabled>
-                                        <option selected="" value="">Pilih...</option>
-                                        <?php $__currentLoopData = $layanan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <option value="<?php echo e($data->id); ?>" <?php if($data->id == $trxD->id_layanan): ?> selected <?php endif; ?> ><?php echo e($data->layanan); ?></option>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label" for="tanggal">Tanggal Layanan</label>
-                                    <input name="tanggal" id="tanggal" class="form-control" type="date" required="" value="<?php echo e($trxD->tanggal); ?>" >
-                                </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="nama_pasien">Nama Pasien</label>
+                                <input name="nama_pasien" id="nama_pasien" class="form-control" type="text" required="" value="<?php echo e($trxD->nama_pasien); ?>" >
                             </div>
-                            <div class="row m-t-10">
-                                <div class="col-md-4">
-                                    <label class="form-label" for="jumlah_klaim">Nominal Klaim</label>
-                                    <input min=0 type="number" name="jumlah_klaim" id="jumlah_klaim" class="form-control numbers" required="" value="<?php echo e($trxD->jumlah_klaim); ?>" >
-                                </div>
+                        </div>
+                        <div class="row m-t-10">
+                            <div class="col-md-4">
+                                <label class="form-label" for="id_layanan">Layanan</label>
+                                <select class="form-select" id="id_layanan" name="id_layanan" required="" disabled>
+                                    <option selected="" value="">Pilih...</option>
+                                    <?php $__currentLoopData = $layanan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($data->id); ?>" <?php if($data->id == $trxD->id_layanan): ?> selected <?php endif; ?> ><?php echo e($data->layanan); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
                             </div>
-                            <br />
-                            <button class="btn btn-success" type="submit">Submit</button> | <a href="<?php echo e(route('reimburse.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxD->id_reimburse))); ?>" class="btn btn-warning" type="button">Cancel</a>
-                        </form>
+                            <div class="col-md-4">
+                                <label class="form-label" for="tanggal">Tanggal Layanan</label>
+                                <input name="tanggal" id="tanggal" class="form-control" type="date" required="" value="<?php echo e($trxD->tanggal); ?>" >
+                            </div>
+                        </div>
+                        <div class="row m-t-10">
+                            <div class="col-md-4">
+                                <label class="form-label" for="jumlah_klaim">Nominal Klaim</label>
+                                <input min=0 type="number" name="jumlah_klaim" id="jumlah_klaim" class="form-control numbers" required="" value="<?php echo e($trxD->jumlah_klaim); ?>" >
+                            </div>
+                        </div>
+                        <br />
+                        <button class="btn btn-success" type="submit">Submit</button> | <a href="<?php echo e(route('reimburse.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxD->id_reimburse))); ?>" class="btn btn-warning" type="button">Cancel</a>
+                    </form>
                 </div>
             </div>
         </div>

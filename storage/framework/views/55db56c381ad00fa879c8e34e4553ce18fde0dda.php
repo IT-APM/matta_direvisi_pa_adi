@@ -14,12 +14,12 @@
    <div class="error-wrapper">
         <div class="container"><img class="img-100" src="<?php echo e(asset('assets/images/other-images/sad.png')); ?>" alt="">
                <div class="error-heading">
-                  <h2 class="headline font-info">400</h2>
+                  <h2 class="headline font-danger">400</h2>
                </div>
                <div class="col-md-8 offset-md-2">
-                  <p class="sub-content">The page you are attempting to reach is currently not available. This may be because the page does not exist or has been moved.</p>
+                  <p class="sub-content">Bad Request<br/>The request was invalid or cannot be otherwise served.</p>
                </div>
-               <div><a class="btn btn-info-gradien btn-lg" href="<?php echo e(route('index')); ?>">BACK TO HOME PAGE</a></div>
+               
         </div>
    </div>
 <!-- error-400 end-->

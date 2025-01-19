@@ -164,6 +164,9 @@
                         </div>
                         <!-- end -->
                     </div>
+                    <form action="<?php echo e(route('pelatihan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id))); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <?php echo method_field('PATCH'); ?>
+                    <?php echo csrf_field(); ?>
                     <div class="row">
                         <div class="col-sm-6">
                             <label class="form-label" for="status_pengajuan">Status Pengajuan</label>
@@ -175,9 +178,6 @@
                             </select>
                         </div>
                     </div>
-                    <form action="<?php echo e(route('pelatihan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id))); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
-                    <?php echo method_field('PATCH'); ?>
-                    <?php echo csrf_field(); ?>
                         <button class="btn btn-success mt-2" type="submit">Update</button> | <a href="<?php echo e(route('pelatihan.index')); ?>" class="btn btn-warning" type="button">Back</a>
                     </form>
                 

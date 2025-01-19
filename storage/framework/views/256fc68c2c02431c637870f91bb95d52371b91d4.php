@@ -3,6 +3,7 @@
 <?php $__env->startSection('css'); ?>
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/datatables.css')); ?>">
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/datatable-extension.css')); ?>">
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/select2.css')); ?>">
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('style'); ?>
@@ -37,11 +38,23 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <select class="form-select js-example-basic-single col-sm-12" id="nik_karyawan" name="nik_karyawan">
+                                <option value="0">Pilih Karyawan...</option>
+                                <?php $__currentLoopData = $karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e(Crypt::encrypt($data->nik)); ?>"><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                     <?php if($isPlafon): ?>
                     <?php if(\Carbon\Carbon::now()->toDateString() >= '2024-12-16' && \Carbon\Carbon::now()->toDateString() <= '2025-01-02'): ?>
                     <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#exampleModalCenter1"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button>
                     <?php else: ?>
-                    <a href="<?php echo e(route('reimburse.create')); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | 
+                    <a class="btn btn-primary" type="button" onclick="PilihKaryawan()"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | 
                     <?php endif; ?>
                     <?php endif; ?>
                     <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
@@ -133,24 +146,12 @@
                                     <td><?php echo e($data->_nik->nama); ?></td>
                                     <td><?php echo e($data->_nik->nik); ?></td>
                                     <td><?php echo e($data->periode); ?></td>
-                                    <td>Rp. <?php echo e(number_format($data->klaim_kesehatan + $data->klaim_non_kesehatan, 2)); ?></td>
+                                    <td>Rp. <?php echo e(number_format($data->klaim_kesehatan + $data->klaim_non_kesehatan, 0)); ?></td>
                                     <td><?php echo e($data->_status->status); ?></td>
                                     <td><?php echo e($data->created_at); ?></td>
                                 </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
-                            <!-- <tfoot>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Karyawan</th>
-                                    <th>NIP Karyawan</th>
-                                    <th>Tahun</th>
-                                    <th>Nominal Klaim</th>
-                                    <th>Status</th>
-                                    <th>Created at</th>
-                                    <th>Action</th>
-                                </tr>
-                            </tfoot> -->
                         </table>
                     </div>
                 </div>
@@ -169,7 +170,18 @@
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/vfs_fonts.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.html5.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.print.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/select2/select2.full.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/select2/select2-custom.js')); ?>"></script>
 <script type="text/javascript">
+function PilihKaryawan() {
+    var nik_karyawan = "<?php echo e(Crypt::encrypt(auth()->user()->nik)); ?>";
+    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+    if($('#nik_karyawan').val() != '0'){
+        nik_karyawan = $('#nik_karyawan').val();
+    }
+    <?php endif; ?>
+    location.href = "<?php echo e(route('reimburse.create')); ?>"+"?nik_karyawan="+nik_karyawan;
+}
 function toggle_status_pengajuan(source) {
     checkboxes = document.getElementsByName('status_pengajuan[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {

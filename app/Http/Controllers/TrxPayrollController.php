@@ -914,6 +914,7 @@ class TrxPayrollController extends Controller
             $payroll = TrxPayroll::find($id);
             $view = \View::make('payroll.pdf', compact('payroll'));
         }
+        $password = Carbon::parse(Karyawan::where(['nik' => $payroll->nik])->first()->tanggal_lahir)->format("dmY");
         $filename = $payroll->nik.' Slip Gaji '.$payroll->tahun.' '.str_pad($payroll->bulan, 2, '0', STR_PAD_LEFT).'.pdf';
         $html = $view->render();
         $pdf = new TCPDF;
@@ -921,8 +922,29 @@ class TrxPayrollController extends Controller
         $pdf::SetFont('times', '', 9, '', true);
         $pdf::AddPage('P', 'A4');
         $pdf::writeHTML($html, true, false, true, false, '');
-        $pdf::Output(public_path($filename), 'I');
+        // $pdf->SetProtection(array('print', 'copy'), 'yourpassword', 'userpassword');
+        $pdf::SetProtection(array('print', 'copy'), $password, $password);
+        // open browser
+        // $pdf::Output(public_path($filename), 'I');
+        // download pdf
+        $pdf::Output(public_path($filename), 'D');
         return response()->download(public_path($filename));
+        // $pdf::AddPage();
+        // // $pdf::SetCreator(PDF_CREATOR);
+        // // $pdf::SetAuthor('Your Name');
+        // $pdf::SetTitle('PDF with Background Image');
+        // // $imagePath = public_path('images/6055615734165391782.jpg');
+        // $imagePath = public_path('images/page1.png');
+        // $pageWidth = $pdf::getPageWidth();
+        // $pageHeight = $pdf::getPageHeight();
+        // $pdf::Image($imagePath, 0, 0, $pageWidth, $pageHeight);
+        // // $pdf::Image($imagePath, 0, 0, 210, 297);
+        // $pdf::SetFont('helvetica', '', 10);
+        // $pdf::SetXY(5, 40);
+        // // $pdf::Cell(0, 0, 'Hello, this is your PDF with a background image.', 0, 1, 'C');
+        // $pdf::writeHTML($html, true, false, true, false, '');
+        // $pdf::Output('example.pdf', 'I');
+        // // return response($pdf->Output('example.pdf', 'I'), 200)->header('Content-Type', 'application/pdf');
     }
 
     /**

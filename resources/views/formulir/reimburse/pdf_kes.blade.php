@@ -58,13 +58,13 @@
                         <td>{{ $value->_id_hubungan->hubungan }}</td>
                         <td>{{ $value->_id_layanan->layanan }}</td>
                         <td>{{ date("d-m-Y", strtotime($value->tanggal)) }}</td>
-                        <td align="right">Rp. {{ number_format($value->jumlah_klaim, 2) }}</td>
+                        <td align="right">Rp. {{ number_format($value->jumlah_klaim, 0) }}</td>
                     </tr>
                     @endif
                     @endforeach
                     <tr>
                         <td colspan="4" align="right">Total Klaim</td>
-                        <td align="right">Rp. {{ number_format($trxM->klaim_kesehatan, 2) }}</td>
+                        <td align="right">Rp. {{ number_format($trxM->klaim_kesehatan, 0) }}</td>
                     </tr>
                 </table>
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
@@ -92,15 +92,15 @@
                     @if($trxM->plafon>0)
                     <tr>
                         <td>Jumlah Plafon</td>
-                        <td>: Rp. {{ number_format($trxM->plafon, 2) }}</td>
+                        <td>: Rp. {{ number_format($trxM->plafon, 0) }}</td>
                     </tr>
                     <tr>
                         <td>Plafon Telah Diambil</td>
-                        <td>: Rp. {{ number_format($trxM->plafon_diambil, 2) }}</td>
+                        <td>: Rp. {{ number_format($trxM->plafon_diambil, 0) }}</td>
                     </tr>
                     <tr>
                         <td>Sisa Plafon</td>
-                        <td>: Rp. {{ number_format($trxM->sisa_plafon_1, 2) }}</td>
+                        <td>: Rp. {{ number_format($trxM->sisa_plafon_1, 0) }}</td>
                     </tr>
                     @endif
                     @endif
@@ -109,7 +109,7 @@
                         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td width="25%">: Kesehatan</td>
-                                    <td width="75%">: Rp. {{ number_format($trxM->klaim_kesehatan, 2) }}</td>
+                                    <td width="75%">: Rp. {{ number_format($trxM->klaim_kesehatan, 0) }}</td>
                                 </tr>
                             </table>
                         </td>
@@ -118,7 +118,7 @@
                     @if($trxM->plafon>0)
                     <tr>
                         <td>Saldo</td>
-                        <td>: Rp. {{ number_format($trxM->sisa_plafon_2, 2) }} (Sisa Plafon - Klaim Kesehatan)</td>
+                        <td>: Rp. {{ number_format($trxM->sisa_plafon_2, 0) }} (Sisa Plafon - Klaim Kesehatan)</td>
                     </tr>
                     @endif
                     @endif

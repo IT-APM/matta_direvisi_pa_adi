@@ -32,11 +32,7 @@
                     <?php endif; ?>
                     <form action="<?php echo e(route('izin.store')); ?>" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                         <?php echo csrf_field(); ?>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label" for="tanggal">Tanggal</label>
-                                <input class="form-control" name="tanggal" id="tanggal" type="date" required="">
-                            </div>
+                        <div class="row">
                             <div class="col-md-4">
                                 <label class="form-label" for="tipe">Tipe Izin</label>
                                 <select class="form-select" id="tipe" name="tipe" required="">
@@ -46,8 +42,12 @@
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="tanggal">Tanggal</label>
+                                <input class="form-control" name="tanggal" id="tanggal" type="date" required="">
+                            </div>
                             <div class="col-md-4" id="div_jam">
-                                <div class="row g-3">
+                                <div class="row">
                                     <div class="col-md-6">
                                         <label class="form-label" for="jam_awal">Jam Mulai</label>
                                         <input class="form-control" name="jam_awal" id="jam_awal" type="time" required="">
@@ -59,15 +59,19 @@
                                 </div>
                             </div>
                         </div>
-                        <br />
-                        <div class="row g-3">
+                        
+                        <div class="row mt-2">
                             <div class="col-md-8">
                                 <label class="form-label" for="alasan">Alasan</label>
                                 <textarea class="form-control" id="alasan" name="alasan" rows="4" required=""></textarea>
                             </div>
                         </div>
-                        <br />
-                        <button class="btn btn-success" type="submit">Submit</button> | <a href="<?php echo e(route('izin.index')); ?>" class="btn btn-warning" type="button">Back</a>
+                        
+                        <div class="row mt-2">
+                            <div class="col-md">
+                                <button class="btn btn-success" type="submit">Submit</button> | <a href="<?php echo e(route('izin.index')); ?>" class="btn btn-warning" type="button">Back</a>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -83,26 +87,26 @@
 <script src="<?php echo e(asset('assets/js/select2/select2.full.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/select2/select2-custom.js')); ?>"></script>
 <script type="text/javascript">
-    $(document).ready(function() {
-        // var _url = window.location.origin;
-        $("#jam_awal").prop('disabled', true);
-        $("#jam_akhir").prop('disabled', true);
-        $('#div_jam').hide();
-        $("#tipe").change(function() {
-            var selectedText = $(this).find("option:selected").text();
-            var selectedValue = $(this).val();
-            // alert("Selected Text: " + selectedText + " Value: " + selectedValue);
-            if (selectedValue == 2) {
-                $("#div_jam").show();
-                $("#jam_awal").prop('disabled', false);
-                $("#jam_akhir").prop('disabled', false);
-            } else {
-                $("#div_jam").hide();
-                $("#jam_awal").prop('disabled', true);
-                $("#jam_akhir").prop('disabled', true);
-            }
-        });
+$(document).ready(function() {
+    // var _url = window.location.origin;
+    $("#jam_awal").prop('disabled', true);
+    $("#jam_akhir").prop('disabled', true);
+    $('#div_jam').hide();
+    $("#tipe").change(function() {
+        var selectedText = $(this).find("option:selected").text();
+        var selectedValue = $(this).val();
+        // alert("Selected Text: " + selectedText + " Value: " + selectedValue);
+        if (selectedValue == 2) {
+            $("#div_jam").show();
+            $("#jam_awal").prop('disabled', false);
+            $("#jam_akhir").prop('disabled', false);
+        } else {
+            $("#div_jam").hide();
+            $("#jam_awal").prop('disabled', true);
+            $("#jam_akhir").prop('disabled', true);
+        }
     });
+});
 </script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.simple.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\matta\resources\views/formulir/izin/insert.blade.php ENDPATH**/ ?>

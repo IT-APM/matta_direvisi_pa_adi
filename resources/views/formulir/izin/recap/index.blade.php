@@ -46,8 +46,7 @@
                                     <br /><input class="form-control" name="date_to" id="date_to" type="date" required="" value="{{ $date_to }}">
                                 </div>
                                 <div class="col-sm-3">
-                                    <label class="h6">Aktif/Non Aktif</label>&nbsp;<input type="checkbox"
-                                        onClick="toggle_is_aktif(this)" /> Check All
+                                    <label class="h6">Aktif/Non Aktif</label>&nbsp;<input type="checkbox" onClick="toggle_is_aktif(this)" /> Check All
                                     <label class="d-block" for="is_aktif">
                                         @foreach ($is_aktif as $data)
                                             <input class="checkbox_animated" id="is_aktif[]" name="is_aktif[]" type="checkbox" value="{{ $data['id'] }}" @if (in_array($data['id'], $arr_is_aktif)) checked @endif>
@@ -55,11 +54,19 @@
                                         @endforeach
                                     </label>
                                 </div>
+                                <div class="col-sm-3">
+                                    <label class="h6">Tipe</label>&nbsp;<input type="checkbox" onClick="toggle_tipe(this)" /> Check All
+                                    <label class="d-block" for="tipe">
+                                        @foreach ($tipe as $data)
+                                            <input class="checkbox_animated" id="tipe[]" name="tipe[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_tipe)) checked @endif>
+                                            {{ $data->tipe }}<br />
+                                        @endforeach
+                                    </label>
+                                </div>
                             </div>
                             <div class="row mt-2">
                                 <div class="col-sm-3">
-                                    <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox"
-                                        onClick="toggle_perusahaan(this)" /> Check All
+                                    <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
                                     <label class="d-block" for="kode_perusahaan">
                                         @foreach ($perusahaan as $data)
                                             <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan()" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>
@@ -68,8 +75,7 @@
                                     </label>
                                 </div>
                                 <div class="col-sm-3">
-                                    <label class="h6">Direktorat</label>&nbsp;<input type="checkbox"
-                                        onClick="toggle_divisi(this)" /> Check All
+                                    <label class="h6">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi(this)" /> Check All
                                     <label class="d-block" for="kode_divisi">
                                         <div id="div_kode_divisi">
                                             @foreach ($divisi as $data)
@@ -80,8 +86,7 @@
                                     </label>
                                 </div>
                                 <div class="col-sm-3">
-                                    <label class="h6">Divisi</label>&nbsp;<input type="checkbox"
-                                        onClick="toggle_kode_departemen(this)" /> Check All
+                                    <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen(this)" /> Check All
                                     <label class="d-block" for="kode_departemen">
                                         <div id="div_kode_departemen">
                                             @foreach ($departemen as $data)
@@ -92,8 +97,7 @@
                                     </label>
                                 </div>
                                 <div class="col-sm-3">
-                                    <label class="h6">Departemen</label>&nbsp;<input type="checkbox"
-                                        onClick="toggle_kode_sub_departemen(this)" /> Check All
+                                    <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen(this)" /> Check All
                                     <label class="d-block" for="kode_sub_departemen">
                                         <div id="div_kode_sub_departemen">
                                             @foreach ($sub_departemen as $data)
@@ -116,6 +120,8 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Action</th>
+                                    <th>Jumlah</th>
                                     <th>Karyawan</th>
                                     <th>NIP Karyawan</th>
                                     <th>Perusahaan</th>
@@ -123,7 +129,6 @@
                                     <th>Divisi</th>
                                     <th>Departemen</th>
                                     <th>Tipe</th>
-                                    <th>Jumlah</th>
                                 </tr>
                             </thead>
                             @php $no = 0; @endphp
@@ -134,6 +139,8 @@
                                 @endphp
                                 <tr>
                                     <td>{{ ++$no }}</td>
+                                    <td><a target="_blank" href="{{ route('izin.recap.detail', [0, 'karyawan'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->karyawan), 'tipe'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->tipe), 'date_from'=>$date_from, 'date_to'=>$date_to]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a></td>
+                                    <td>{{ $data->jumlah }}</td>
                                     <td>{{ $karyawan_property['nama'] }}</td>
                                     <td>{{ $karyawan_property['nik'] }}</td>
                                     <td>{{ $karyawan_property['perusahaan'] }}</td>
@@ -141,7 +148,6 @@
                                     <td>{{ $karyawan_property['dep'] }}</td>
                                     <td>{{ $karyawan_property['sub_dep'] }}</td>
                                     <td>{{ $data->_tipe->tipe }}</td>
-                                    <td>{{ $data->jumlah }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -204,6 +210,13 @@ function toggle_kode_departemen(source) {
 // 
 function toggle_kode_sub_departemen(source) {
     checkboxes = document.getElementsByName('kode_sub_departemen[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+// 
+function toggle_tipe(source) {
+    checkboxes = document.getElementsByName('tipe[]');
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         checkboxes[i].checked = source.checked;
     }

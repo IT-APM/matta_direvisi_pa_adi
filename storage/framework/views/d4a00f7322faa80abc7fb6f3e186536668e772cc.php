@@ -54,6 +54,7 @@
                                     <tr>
                                         <th><input type="checkbox" onClick="toggle_status_check(this)" /></th>
                                         <th>No</th>
+                                        <th>Ke</th>
                                         <th>Tanggal Awal</th>
                                         <th>Tanggal Akhir</th>
                                         <th>Working Group</th>
@@ -79,11 +80,40 @@
                                     $nik_property = json_decode($data->nik_property, true);
                                     $where = ['nik' => $nik_property['layer1']];
                                     $layer1 = App\Models\Karyawan::where($where)->first();
+                                    // check history
+                                    $teguran_ke = 'Pertama';
+                                    $type = 'Reminder';
+                                    // check nik yang sama pada 1 bulan sebelumnya
+                                    $where = ['nik' => $data->nik, 'date_from' => Carbon\Carbon::parse($data->date_from)->modify('-1 month')->format('Y-m-d')];
+                                    $trxSend = App\Models\TrxReminderSpSend::where($where)->orderBy( 'id', 'desc' )->first();
+                                    if(!empty($trxSend)){
+                                        if($trxSend->type == 'reminder'){
+                                            if($trxSend->number == 1){
+                                                $teguran_ke = 'Kedua';
+                                            }elseif($trxSend->number == 2){
+                                                $teguran_ke = 'Ketiga';
+                                            }elseif($trxSend->number == 3){
+                                                $teguran_ke = 'Keempat';
+                                            }elseif($trxSend->number == 4){
+                                                $teguran_ke = 'Kelima';
+                                            }elseif($trxSend->number == 5){
+                                                $teguran_ke = 'Pertama';
+                                                $type = 'Warning';
+                                            }
+                                        }elseif($trxSend->type == 'warning'){
+                                            $type = 'Warning';
+                                            if($trxSend->number == 1){
+                                                $teguran_ke = 'Kedua';
+                                            }elseif($trxSend->number == 2){
+                                                $teguran_ke = 'Ketiga';
+                                            }
+                                        }
+                                    }
                                     ?>
                                     <tr>
-                                        <td><input id="reminder_sp[]" name="reminder_sp[]" type="checkbox"
-                                                value="<?php echo e($data->id); ?>"></td>
+                                        <td><input id="reminder_sp[]" name="reminder_sp[]" type="checkbox" value="<?php echo e($data->id); ?>"></td>
                                         <td><?php echo e(++$no); ?></td>
+                                        <td><?php echo e($type); ?> <?php echo e($teguran_ke); ?></td>
                                         <td><?php echo e($data->date_from); ?></td>
                                         <td><?php echo e($data->date_to); ?></td>
                                         <td><?php echo e($nik_property['wg_name']); ?></td>

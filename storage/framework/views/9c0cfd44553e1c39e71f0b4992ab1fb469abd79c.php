@@ -25,6 +25,9 @@
         <div class="col-sm-12 col-xl-12">
             <div class="card">
                 <div class="card-header">
+                    <h5>Pengaju: <?php echo e($pengaju); ?></h5>
+                </div>
+                <div class="card-header">
                     <h5>Plafon</h5>
                 </div>
                 <div class="card-body typography">
@@ -64,13 +67,18 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                    <?php if($plafon->periode == 0): ?>
+                                    <td><?php echo e(Carbon\Carbon::now()->year); ?></td>
+                                    <td>Rp. <?php echo e(number_format(0, 0)); ?></td>
+                                    <?php else: ?>
                                     <td><?php echo e($plafon->periode); ?></td>
-                                    <td>Rp. <?php echo e(number_format($plafon->kesehatan, 2)); ?></td>
-                                    <td>Rp. <?php echo e(number_format($plafon->frame, 2)); ?></td>
-                                    <td>Rp. <?php echo e(number_format($plafon->lensa, 2)); ?></td>
-                                    <td>Rp. <?php echo e(number_format($plafon->kehamilan, 2)); ?></td>
-                                    <td>Rp. <?php echo e(number_format($plafon->persalinan_normal, 2)); ?></td>
-                                    <td>Rp. <?php echo e(number_format($plafon->persalinan_caesar, 2)); ?></td>
+                                    <td>Rp. <?php echo e(number_format($plafon->kesehatan, 0)); ?></td>
+                                    <?php endif; ?>
+                                    <td>Rp. <?php echo e(number_format($plafon->frame, 0)); ?></td>
+                                    <td>Rp. <?php echo e(number_format($plafon->lensa, 0)); ?></td>
+                                    <td>Rp. <?php echo e(number_format($plafon->kehamilan, 0)); ?></td>
+                                    <td>Rp. <?php echo e(number_format($plafon->persalinan_normal, 0)); ?></td>
+                                    <td>Rp. <?php echo e(number_format($plafon->persalinan_caesar, 0)); ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -78,6 +86,7 @@
                 </div>
                 <form action="<?php echo e(route('reimburse.store')); ?>" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                     <?php echo csrf_field(); ?>
+                    <input type="hidden" id="nik_karyawan" name="nik_karyawan" value="<?php echo e($nik_karyawan); ?>">
                     <!--  -->
                     <div class="card-header">
                         <h5>Isian Reimbursement</h5>

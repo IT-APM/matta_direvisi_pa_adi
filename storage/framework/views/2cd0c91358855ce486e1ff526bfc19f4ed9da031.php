@@ -44,8 +44,7 @@
                                     <br /><input class="form-control" name="date_to" id="date_to" type="date" required="" value="<?php echo e($date_to); ?>">
                                 </div>
                                 <div class="col-sm-3">
-                                    <label class="h6">Aktif/Non Aktif</label>&nbsp;<input type="checkbox"
-                                        onClick="toggle_is_aktif(this)" /> Check All
+                                    <label class="h6">Aktif/Non Aktif</label>&nbsp;<input type="checkbox" onClick="toggle_is_aktif(this)" /> Check All
                                     <label class="d-block" for="is_aktif">
                                         <?php $__currentLoopData = $is_aktif; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <input class="checkbox_animated" id="is_aktif[]" name="is_aktif[]" type="checkbox" value="<?php echo e($data['id']); ?>" <?php if(in_array($data['id'], $arr_is_aktif)): ?> checked <?php endif; ?>>
@@ -53,11 +52,19 @@
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </label>
                                 </div>
+                                <div class="col-sm-3">
+                                    <label class="h6">Tipe</label>&nbsp;<input type="checkbox" onClick="toggle_tipe(this)" /> Check All
+                                    <label class="d-block" for="tipe">
+                                        <?php $__currentLoopData = $tipe; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <input class="checkbox_animated" id="tipe[]" name="tipe[]" type="checkbox" value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, $arr_tipe)): ?> checked <?php endif; ?>>
+                                            <?php echo e($data->tipe); ?><br />
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </label>
+                                </div>
                             </div>
                             <div class="row mt-2">
                                 <div class="col-sm-3">
-                                    <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox"
-                                        onClick="toggle_perusahaan(this)" /> Check All
+                                    <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
                                     <label class="d-block" for="kode_perusahaan">
                                         <?php $__currentLoopData = $perusahaan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan()" value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, $arr_perusahaan)): ?> checked <?php endif; ?>>
@@ -66,8 +73,7 @@
                                     </label>
                                 </div>
                                 <div class="col-sm-3">
-                                    <label class="h6">Direktorat</label>&nbsp;<input type="checkbox"
-                                        onClick="toggle_divisi(this)" /> Check All
+                                    <label class="h6">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi(this)" /> Check All
                                     <label class="d-block" for="kode_divisi">
                                         <div id="div_kode_divisi">
                                             <?php $__currentLoopData = $divisi; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -78,8 +84,7 @@
                                     </label>
                                 </div>
                                 <div class="col-sm-3">
-                                    <label class="h6">Divisi</label>&nbsp;<input type="checkbox"
-                                        onClick="toggle_kode_departemen(this)" /> Check All
+                                    <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen(this)" /> Check All
                                     <label class="d-block" for="kode_departemen">
                                         <div id="div_kode_departemen">
                                             <?php $__currentLoopData = $departemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -90,8 +95,7 @@
                                     </label>
                                 </div>
                                 <div class="col-sm-3">
-                                    <label class="h6">Departemen</label>&nbsp;<input type="checkbox"
-                                        onClick="toggle_kode_sub_departemen(this)" /> Check All
+                                    <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen(this)" /> Check All
                                     <label class="d-block" for="kode_sub_departemen">
                                         <div id="div_kode_sub_departemen">
                                             <?php $__currentLoopData = $sub_departemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -114,6 +118,8 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Action</th>
+                                    <th>Jumlah</th>
                                     <th>Karyawan</th>
                                     <th>NIP Karyawan</th>
                                     <th>Perusahaan</th>
@@ -121,7 +127,6 @@
                                     <th>Divisi</th>
                                     <th>Departemen</th>
                                     <th>Tipe</th>
-                                    <th>Jumlah</th>
                                 </tr>
                             </thead>
                             <?php $no = 0; ?>
@@ -132,6 +137,8 @@
                                 ?>
                                 <tr>
                                     <td><?php echo e(++$no); ?></td>
+                                    <td><a target="_blank" href="<?php echo e(route('izin.recap.detail', [0, 'karyawan'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->karyawan), 'tipe'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->tipe), 'date_from'=>$date_from, 'date_to'=>$date_to])); ?>" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a></td>
+                                    <td><?php echo e($data->jumlah); ?></td>
                                     <td><?php echo e($karyawan_property['nama']); ?></td>
                                     <td><?php echo e($karyawan_property['nik']); ?></td>
                                     <td><?php echo e($karyawan_property['perusahaan']); ?></td>
@@ -139,7 +146,6 @@
                                     <td><?php echo e($karyawan_property['dep']); ?></td>
                                     <td><?php echo e($karyawan_property['sub_dep']); ?></td>
                                     <td><?php echo e($data->_tipe->tipe); ?></td>
-                                    <td><?php echo e($data->jumlah); ?></td>
                                 </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
@@ -202,6 +208,13 @@ function toggle_kode_departemen(source) {
 // 
 function toggle_kode_sub_departemen(source) {
     checkboxes = document.getElementsByName('kode_sub_departemen[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+// 
+function toggle_tipe(source) {
+    checkboxes = document.getElementsByName('tipe[]');
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         checkboxes[i].checked = source.checked;
     }

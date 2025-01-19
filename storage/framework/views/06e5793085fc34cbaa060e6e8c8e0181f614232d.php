@@ -30,6 +30,13 @@
                     <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <?php endif; ?>
+                <?php if(Session::has('error')): ?>
+                <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                    <h4>ERROR:</h4>
+                    <h5><?php echo session('error'); ?></h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php endif; ?>
                 <div class="row g-0">
                     <h3 class="text-center">SURAT PERSETUJUAN DATA PRIBADI PELAMAR KERJA</h3>
                 </div>

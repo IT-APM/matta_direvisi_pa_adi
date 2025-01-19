@@ -193,7 +193,7 @@ class TrxReimburseController extends Controller
         $max_date = Carbon::now()->toDateString();
         // jika tidak ada maka ambil default 0
         if($plafon->id == 1000){
-            $layanan = ReimburseLayanan::whereIn('id', [7])->orderBy('layanan', 'asc')->get();
+            $layanan = ReimburseLayanan::whereIn('id', [1])->orderBy('layanan', 'asc')->get();
             $layanan_istri = $layanan;
             $layanan_anak = $layanan;
         }
@@ -296,12 +296,15 @@ class TrxReimburseController extends Controller
         $trxM->status_pengajuan = 1;
         $trxM->catatan = $request->catatan;
         // cek apakah klaim_kesehatan lebih dari plafon kesehatan
+        // hanya yang ada plafonnya
         $error = '<h4>ERROR:</h4>';
-        if($klaim_kesehatan > $trxM->sisa_plafon_1){
-            $error .= '<h5>Nominal klaim kesehatan melebihi plafon.
-            <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
-            <br/>Terima kasih.</h5>';
-            return redirect()->back()->with('error', $error);
+        if($plafon->id > 1000){
+            if($klaim_kesehatan > $trxM->sisa_plafon_1){
+                $error .= '<h5>Nominal klaim kesehatan melebihi plafon.
+                <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                <br/>Terima kasih.</h5>';
+                return redirect()->back()->with('error', $error);
+            }
         }
         // cek apakah klaim_non_kesehatan lebih dari plafonnya
         for ($x = 0; $x < count($layanan); $x++) {
@@ -773,17 +776,24 @@ class TrxReimburseController extends Controller
         // 
         $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
         $plafon = ReimbursePlafon::where($where)->orderBy('id', 'desc')->first();
+        // jika tidak ada maka ambil default 0
+        if(empty($plafon)){
+            $plafon = ReimbursePlafon::find(1000);
+        }
         // 1 = Kesehatan
         if($request->_id_layanan == 1){
             $klaim_kesehatan_awal = $trxM->klaim_kesehatan;
             $klaim_kesehatan_akhir = $klaim_kesehatan_awal - $jumlah_klaim_awal + $jumlah_klaim_akhir;
             // cek apakah klaim_kesehatan lebih dari plafon kesehatan
             $error = '<h4>ERROR:</h4>';
-            if($klaim_kesehatan_akhir > $trxM->sisa_plafon_1){
-                $error .= '<h5>Nominal klaim kesehatan melebihi plafon.
-                <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
-                <br/>Terima kasih.</h5>';
-                return redirect()->back()->with('error', $error);
+            // hanya yang ada plafonnya
+            if($plafon->id > 1000){
+                if($klaim_kesehatan_akhir > $trxM->sisa_plafon_1){
+                    $error .= '<h5>Nominal klaim kesehatan melebihi plafon.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Terima kasih.</h5>';
+                    return redirect()->back()->with('error', $error);
+                }
             }
             // 
             $trxM->klaim_kesehatan = $klaim_kesehatan_akhir;

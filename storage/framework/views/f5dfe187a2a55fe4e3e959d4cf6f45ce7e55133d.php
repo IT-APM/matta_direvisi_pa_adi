@@ -41,9 +41,7 @@
                                                         <?php echo e($penilaian->_perpanjang->informasi); ?> <?php if($penilaian->is_perpanjang == 1): ?> <?php echo e($penilaian->bulan); ?> Bulan <?php endif; ?>
                                                     </h6>
                                                 </td>
-                                                <!-- <td><a href="<?php echo e(route('penilaian.edit', $penilaian->id)); ?>"
-                                                                        class="btn btn-primary" type="button">Update</a>
-                                                                </td> -->
+                                                
                                             </tr>
                                             <tr>
                                                 <td><img class="img-thumbnail" src="<?php echo e(asset('assets/images/matta/karyawan/'.$penilaian->nik_karyawan.'/'.$penilaian->nik_karyawan.'.jpg')); ?>" alt="user"></td>

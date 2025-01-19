@@ -104,33 +104,37 @@
                                 <td>Tahun</td>
                                 <td><?php echo e($trxM->periode); ?></td>
                             </tr>
+                            <?php if($trxM->plafon>0): ?>
                             <tr>
                                 <td>Plafon</td>
                                 <td>Ada</td>
                             </tr>
                             <tr>
                                 <td>Jumlah Plafon</td>
-                                <td>Rp. <?php echo e(number_format($trxM->plafon, 2)); ?></td>
+                                <td>Rp. <?php echo e(number_format($trxM->plafon, 0)); ?></td>
                             </tr>
                             <tr>
                                 <td>Plafon Telah Diambil</td>
-                                <td>Rp. <?php echo e(number_format($trxM->plafon_diambil, 2)); ?></td>
+                                <td>Rp. <?php echo e(number_format($trxM->plafon_diambil, 0)); ?></td>
                             </tr>
                             <tr>
                                 <td>Sisa Plafon</td>
-                                <td>Rp. <?php echo e(number_format($trxM->sisa_plafon_1, 2)); ?></td>
+                                <td>Rp. <?php echo e(number_format($trxM->sisa_plafon_1, 0)); ?></td>
                             </tr>
+                            <?php endif; ?>
                             <tr>
                                 <td>Nominal Klaim Pada Pengajuan ini</td>
-                                <td>Rp. <?php echo e(number_format($trxM->klaim_kesehatan, 2)); ?> (Kesehatan)
-                                    <br />Rp. <?php echo e(number_format($trxM->klaim_non_kesehatan, 2)); ?> (Non Kesehatan)
+                                <td>Rp. <?php echo e(number_format($trxM->klaim_kesehatan, 0)); ?> (Kesehatan)
+                                    <br />Rp. <?php echo e(number_format($trxM->klaim_non_kesehatan, 0)); ?> (Non Kesehatan)
                                 </td>
                             </tr>
+                            <?php if($trxM->plafon>0): ?>
                             <tr>
                                 <td>Saldo</td>
-                                <td>Rp. <?php echo e(number_format($trxM->sisa_plafon_2, 2)); ?> (Sisa Plafon - Klaim Kesehatan)
+                                <td>Rp. <?php echo e(number_format($trxM->sisa_plafon_2, 0)); ?> (Sisa Plafon - Klaim Kesehatan)
                                 </td>
                             </tr>
+                            <?php endif; ?>
                             <tr>
                                 <td>Lampiran</td>
                                 <td>
@@ -182,7 +186,7 @@
                                     <td><?php echo e($value->_id_hubungan->hubungan); ?></td>
                                     <td><?php echo e($value->_id_layanan->layanan); ?></td>
                                     <td><?php if(!empty($value->tanggal)): ?> <?php echo e(\Carbon\Carbon::parse($value->tanggal)->format('d-m-Y')); ?> <?php endif; ?></td>
-                                    <td>Rp. <?php echo e(number_format($value->jumlah_klaim, 2)); ?></td>
+                                    <td>Rp. <?php echo e(number_format($value->jumlah_klaim, 0)); ?></td>
                                     <td>
                                         <form action="<?php echo e(route('reimburse.updateDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id))); ?>" method="POST">
                                             <?php echo csrf_field(); ?>

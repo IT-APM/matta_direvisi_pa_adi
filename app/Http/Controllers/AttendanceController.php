@@ -73,7 +73,9 @@ class AttendanceController extends Controller
         $_arr_att_type = Attendance::distinct()->orderBy( 'att_type', 'asc' )->get(['att_type']);
         $_arr_att_status = Attendance::distinct()->orderBy( 'att_status', 'asc' )->get(['att_status']);
         $_arr_att_data_src = Attendance::distinct()->orderBy( 'att_data_src', 'asc' )->get(['att_data_src']);
-        $perusahaan = Perusahaan::orderBy( 'nama', 'asc' )->get();
+        // 0=NA
+        // 3=SMS Project
+        $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy( 'nama', 'asc' )->get();
         $wg_id = WorkingGroup::orderBy( 'id', 'asc' )->get();
         $arr_att_type = array();
         $arr_att_status = array();

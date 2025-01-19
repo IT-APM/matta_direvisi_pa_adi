@@ -28,7 +28,10 @@ class RecapAttendanceController extends Controller
         // dd($request->all());
         // filter parameter
         $no = 0;
-        $perusahaan = Perusahaan::all();
+        // $perusahaan = Perusahaan::all();
+        // 0=NA
+        // 3=SMS Project
+        $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy( 'nama', 'asc' )->get();
         $divisi = [];
         $departemen = [];
         $sub_departemen = [];

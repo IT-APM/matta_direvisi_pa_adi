@@ -216,8 +216,14 @@ class TrxCutiController extends Controller
     {
         $where = ['nik_karyawan' => $nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
         $trx = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->where('id', '<=', $id)->sum('jumlah_hari');
-        $where = ['is_cuti' => 1];
-        $cuti_bersama = Holiday::whereYear('tanggal', $periode)->where($where)->count();
+        // cek apakah karyawan reguler atau tidak, jika iya maka dihitung cuti bersama
+        $where = [ 'nik' => $nik, 'wg_id' => 1 ];
+        $check = Karyawan::where($where)->exists();
+        $cuti_bersama = 0;
+        if($check){
+            $where = ['is_cuti' => 1];
+            $cuti_bersama = Holiday::whereYear('tanggal', $periode)->where($where)->count();
+        }
         return 12 - $trx - $cuti_bersama;
     }
 
@@ -228,8 +234,13 @@ class TrxCutiController extends Controller
         // $nik = auth()->user()->nik;
         $where = ['nik_karyawan' => $nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
         $trx = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
-        $where = ['is_cuti' => 1];
-        $cuti_bersama = Holiday::whereYear('tanggal', $periode)->where($where)->count();
+        $where = [ 'nik' => $nik, 'is_aktif' => 1, 'wg_id' => 1 ];
+        $check = Karyawan::where($where)->exists();
+        $cuti_bersama = 0;
+        if($check){
+            $where = ['is_cuti' => 1];
+            $cuti_bersama = Holiday::whereYear('tanggal', $periode)->where($where)->count();
+        }
         return 12 - $trx - $cuti_bersama;
     }
 

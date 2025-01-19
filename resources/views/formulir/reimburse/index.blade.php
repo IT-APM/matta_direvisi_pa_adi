@@ -148,24 +148,12 @@
                                     <td>{{ $data->_nik->nama }}</td>
                                     <td>{{ $data->_nik->nik }}</td>
                                     <td>{{ $data->periode }}</td>
-                                    <td>Rp. {{ number_format($data->klaim_kesehatan + $data->klaim_non_kesehatan, 2) }}</td>
+                                    <td>Rp. {{ number_format($data->klaim_kesehatan + $data->klaim_non_kesehatan, 0) }}</td>
                                     <td>{{ $data->_status->status }}</td>
                                     <td>{{ $data->created_at }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
-                            <!-- <tfoot>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Karyawan</th>
-                                    <th>NIP Karyawan</th>
-                                    <th>Tahun</th>
-                                    <th>Nominal Klaim</th>
-                                    <th>Status</th>
-                                    <th>Created at</th>
-                                    <th>Action</th>
-                                </tr>
-                            </tfoot> -->
                         </table>
                     </div>
                 </div>

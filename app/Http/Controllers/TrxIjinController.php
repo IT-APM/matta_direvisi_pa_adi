@@ -11,6 +11,7 @@ use App\Models\Perusahaan;
 use App\Models\Divisi;
 use App\Models\Departemen;
 use App\Models\SubDepartemen;
+use App\Models\Holiday;
 // 
 use App\Models\IjinTipe;
 use App\Models\IjinStatus;
@@ -35,18 +36,33 @@ class TrxIjinController extends Controller
     {
         $this->middleware('auth', ['except' => ['show','update']]);
     }
+
+    public function detail(Request $request)
+    {
+        $karyawan = (new OpenDataController)->decryptWithKey($request->karyawan);
+        $tipe = (new OpenDataController)->decryptWithKey($request->tipe);
+        $date_from = $request->date_from;
+        $date_to = $request->date_to;
+        $where = ['karyawan' => $karyawan, 'tipe' => $tipe];
+        $trx = TrxIjin::where($where)->whereBetween('tanggal', [$date_from, $date_to])->orderBy('id', 'desc')->get();
+        return view( 'formulir.izin.recap.detail', compact('trx'));
+    }
     
     public function recap(Request $request)
     {
-        $perusahaan = Perusahaan::orderBy('nama', 'asc')->get();
+        // 0=NA
+        // 3=SMS Project
+        $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy('nama', 'asc')->get();
         $divisi = [];
         $departemen = [];
         $sub_departemen = [];
+        $tipe = IjinTipe::orderBy('tipe', 'asc')->get();
         //
         $arr_perusahaan = [];
         $arr_divisi = [];
         $arr_departemen = [];
         $arr_sub_departemen = [];
+        $arr_tipe = [];
         // $limit = 25000;
         $trx = [];
         $arr_is_aktif = [['id' => 1, 'is_aktif' => 'Aktif'], ['id' => 0, 'is_aktif' => 'Non Aktif']];
@@ -62,6 +78,7 @@ class TrxIjinController extends Controller
             $_departemen = $request->input('kode_departemen', []);
             $_sub_departemen = $request->input('kode_sub_departemen', []);
             $_is_aktif = $request->input('is_aktif', []);
+            $_tipe = $request->input('tipe', []);
             if (count($_perusahaan) > 0) {
                 $arr_perusahaan = $_perusahaan;
             }
@@ -76,8 +93,9 @@ class TrxIjinController extends Controller
             }
             if (count($_is_aktif) > 0) {
                 $arr_is_aktif = $_is_aktif;
-            } else {
-                $arr_is_aktif = [];
+            }
+            if (count($_tipe) > 0) {
+                $arr_tipe = $_tipe;
             }
             $divisi = Divisi::whereIn('kode_perusahaan', $arr_perusahaan)->get();
             $departemen = Departemen::whereIn('kode_divisi', $arr_divisi)->get();
@@ -89,10 +107,10 @@ class TrxIjinController extends Controller
             }
             // dd($karyawan);
             // $trx = DB::select("SELECT COUNT(karyawan) AS jumlah,karyawan,tipe FROM trx_tbl_ijin WHERE tanggal BETWEEN '".$date_from."' AND '".$date_to."' AND karyawan IN ('01021403097','CV2023681') GROUP BY karyawan,tipe");
-            $trx = TrxIjin::select('karyawan','karyawan_property','tipe', DB::raw('COUNT(karyawan) AS jumlah'))->whereIn('karyawan', $_karyawan)->whereBetween('tanggal', [$date_from, $date_to])->groupBy('karyawan', 'tipe')->get();
+            $trx = TrxIjin::select('karyawan','karyawan_property','tipe', DB::raw('COUNT(karyawan) AS jumlah'))->whereIn('karyawan', $_karyawan)->whereIn('tipe', $arr_tipe)->whereBetween('tanggal', [$date_from, $date_to])->groupBy('karyawan', 'tipe')->orderBy('jumlah', 'desc')->get();
         }
         // end filter
-        return view( 'formulir.izin.recap.index', compact('trx', 'date_from', 'date_to', 'arr_is_aktif', 'is_aktif', 'perusahaan', 'divisi', 'departemen', 'sub_departemen', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_sub_departemen'));
+        return view( 'formulir.izin.recap.index', compact('trx', 'date_from', 'date_to', 'arr_is_aktif', 'is_aktif', 'perusahaan', 'divisi', 'departemen', 'sub_departemen', 'tipe', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_sub_departemen', 'arr_tipe'));
     }
     /**
      * Display a listing of the resource.
@@ -234,16 +252,44 @@ class TrxIjinController extends Controller
             $layer2 = null;
             $layer2_property = null;
         }
+        // 2=Izin 1/2 hari
         // 3=Work From Anywhere (WFA)
         // 4=Work From Home (WFH)
         $where = [ 'karyawan' => $karyawan, 'tanggal' => $request->tanggal ];
         // 3=Reject by L1
         // 7=Reject by L2
         $check = TrxIjin::where($where)->whereIn('tipe', [2,3,4])->whereNotIn('status', [3,7])->exists();
-        // Work From Anywhere (WFA)/Work From Home (WFH) tidak boleh di tanggal yang sama
-        if($check && in_array($request->tipe, [3,4])){
-            return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) tidak boleh di tanggal yang sama');
+        // Izin tidak boleh di tanggal yang sama
+        if($check){
+            return redirect()->back()->with('error', 'Izin tidak boleh di tanggal yang sama');
         }
+        // 
+        $where = [ 'nik' => $karyawan, 'is_aktif' => 1, 'wg_id' => 1 ];
+        $isreguler = Karyawan::where($where)->exists();
+        $check = Carbon::parse($request->tanggal)->isMonday() || Carbon::parse($request->tanggal)->isFriday();
+        $where = [ 'tanggal' => $request->tanggal ];
+        $isholiday = Holiday::where($where)->exists();
+        // Untuk karyawan reguler, Izin Work From Anywhere (WFA)/Work From Home (WFH) hanya di Hari Selasa, Rabu dan Kamis dan bukan libur nasional
+        if($isreguler){
+            if($check && in_array($request->tipe, [3,4])){
+                return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) hanya di Hari Selasa, Rabu dan Kamis dan bukan libur nasional');
+            }else if(Carbon::parse($request->tanggal)->isWeekend() || $isholiday){
+                return redirect()->back()->with('error', 'Izin hanya di hari kerja dan bukan libur nasional');
+            }
+        }
+        // 
+        $startDate = Carbon::parse($request->tanggal)->startOfWeek()->format('Y-m-d');
+        $endDate = Carbon::parse($request->tanggal)->endOfWeek()->format('Y-m-d');
+        $where = [ 'karyawan' => $karyawan ];
+        $check = TrxIjin::where($where)->whereBetween('tanggal', [$startDate, $endDate])->whereNotIn('status', [3,7])->count();
+        // Work From Anywhere (WFA)/Work From Home (WFH) tidak boleh lebih dari 2x dalam 1 minggu pengajuan
+        if($check==2 && in_array($request->tipe, [3,4])){
+            return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) maksimal 2x dalam 1 minggu');
+        }
+        // menuggu penjelasan lebih lanjut
+        $where = [ 'is_aktif' => 1, 'wg_id' => 1, 'kode_sub_departemen' => $dataKaryawan->kode_sub_departemen ];
+        $jumlah = Karyawan::where($where)->count();
+        // dd($jumlah);
         // 2=Izin 1/2 hari
         $where = [ 'karyawan' => $karyawan, 'tanggal' => $request->tanggal ];
         // 3=Reject by L1

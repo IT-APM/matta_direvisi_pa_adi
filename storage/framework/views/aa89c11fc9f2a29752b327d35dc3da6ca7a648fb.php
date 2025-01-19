@@ -3,7 +3,8 @@
 
 <head>
     <title><?php if(!empty($_trx)): ?><?php echo e($trx->_pekerjaan->pekerjaan); ?><?php else: ?> Job Vacancy <?php endif; ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/bootstrap.css')); ?>">
 </head>
 <style>
     /* body {
@@ -17,7 +18,7 @@
 
 <body>
     <?php if(!empty($_trx)): ?>
-    <div class="container">
+    <div class="container" id="content">
         <div class="row">
             <div class="col-6">
                 <img class="img-fluid" style="height: 90px" loading="lazy" src="<?php echo e(asset('assets/recruitment/header_left.png')); ?>" alt="image">
@@ -38,13 +39,30 @@
                     
                 </div>
             </div>
-            <div class="col-12 text-center mt-5" style="font-size:20px">
+            <div class="col-12 text-center mt-2" style="font-size:20px">
                 <a href="https://alita.id/" target="_blank">www.alita.id</a>
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-12 text-center mt-2">
+            <button class="btn btn-warning" id="downloadButton">Download as PDF</button>
+        </div>
+    </div>
     <?php endif; ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+    <script>
+        document.getElementById('downloadButton').addEventListener('click', function() {
+            const element = document.getElementById('content');
+            // Convert HTML to PDF and trigger download
+            html2pdf(element, {
+                filename: 'Job Vacancy_<?php echo e(Carbon\Carbon::now()->timestamp); ?>.pdf',
+                margin: 2,
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            });
+        });
+    </script>
 </body>
 
 </html>

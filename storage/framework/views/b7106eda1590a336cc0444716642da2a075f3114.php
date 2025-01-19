@@ -96,14 +96,15 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Karyawan</th>
+                                    <th>Action</th>
+                                    <th>Jumlah</th>
                                     <th>NIP Karyawan</th>
+                                    <th>Karyawan</th>
                                     <th>Perusahaan</th>
                                     <th>Direktorat</th>
                                     <th>Divisi</th>
                                     <th>Departemen</th>
                                     <th>Formulir</th>
-                                    <th>Jumlah</th>
                                 </tr>
                             </thead>
                             <?php $no = 0; ?>
@@ -111,14 +112,15 @@
                                 <?php $__currentLoopData = $trx; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
                                     <td><?php echo e(++$no); ?></td>
-                                    <td><?php echo e($data->_nik->nama); ?></td>
+                                    <td><a target="_blank" href="<?php echo e(route('todolist.recap.detail', [0, 'nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->nik), 'title'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->title)])); ?>" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a></td>
+                                    <td><?php echo e($data->jumlah); ?></td>
                                     <td><?php echo e($data->nik); ?></td>
+                                    <td><?php echo e($data->_nik->nama); ?></td>
                                     <td><?php echo e($data->_nik->_perusahaan->nama); ?></td>
                                     <td><?php echo e($data->_nik->_divisi->nama); ?></td>
                                     <td><?php echo e($data->_nik->_departemen->nama); ?></td>
                                     <td><?php echo e($data->_nik->_subdepartemen->nama); ?></td>
                                     <td><?php echo e($data->title); ?></td>
-                                    <td><?php echo e($data->jumlah); ?></td>
                                 </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>

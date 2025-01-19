@@ -14,10 +14,21 @@ use DB;
 class TrxToDoListController extends Controller
 {
 
+    public function detail(Request $request)
+    {
+        $nik = (new OpenDataController)->decryptWithKey($request->nik);
+        $title = (new OpenDataController)->decryptWithKey($request->title);
+        $where = ['nik' => $nik, 'title' => $title];
+        $trx = ToDoList::where($where)->orderBy('id', 'desc')->get();
+        return view('todolist.recap_detail', compact('trx'));
+    }
+
     public function recap(Request $request)
     {
         // dd($request->all());
-        $perusahaan = Perusahaan::orderBy('nama', 'asc')->get();
+        // 0=NA
+        // 3=SMS Project
+        $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy('nama', 'asc')->get();
         $divisi = [];
         $departemen = [];
         $sub_departemen = [];

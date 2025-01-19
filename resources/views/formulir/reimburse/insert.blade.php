@@ -67,13 +67,18 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                    @if($plafon->periode == 0)
+                                    <td>{{ Carbon\Carbon::now()->year }}</td>
+                                    <td>Rp. {{ number_format(0, 0) }}</td>
+                                    @else
                                     <td>{{ $plafon->periode }}</td>
-                                    <td>Rp. {{ number_format($plafon->kesehatan, 2) }}</td>
-                                    <td>Rp. {{ number_format($plafon->frame, 2) }}</td>
-                                    <td>Rp. {{ number_format($plafon->lensa, 2) }}</td>
-                                    <td>Rp. {{ number_format($plafon->kehamilan, 2) }}</td>
-                                    <td>Rp. {{ number_format($plafon->persalinan_normal, 2) }}</td>
-                                    <td>Rp. {{ number_format($plafon->persalinan_caesar, 2) }}</td>
+                                    <td>Rp. {{ number_format($plafon->kesehatan, 0) }}</td>
+                                    @endif
+                                    <td>Rp. {{ number_format($plafon->frame, 0) }}</td>
+                                    <td>Rp. {{ number_format($plafon->lensa, 0) }}</td>
+                                    <td>Rp. {{ number_format($plafon->kehamilan, 0) }}</td>
+                                    <td>Rp. {{ number_format($plafon->persalinan_normal, 0) }}</td>
+                                    <td>Rp. {{ number_format($plafon->persalinan_caesar, 0) }}</td>
                                 </tr>
                             </tbody>
                         </table>
