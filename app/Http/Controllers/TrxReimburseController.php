@@ -902,6 +902,9 @@ class TrxReimburseController extends Controller
         $catatan = $request->catatan;
         $trx->status_pengajuan = $status_pengajuan;
         $trx->update();
+        // check 7=Ekses
+        $where = ['id_reimburse' => $id];
+        $check_ekses = TrxReimburseDetail::where($where)->whereIn('id_layanan', [7])->exists();
         $this->deleteToDoList(['id_trx'=>$id, 'pic'=>'pic', 'filename'=>'emails.reimburse0']);
         $this->insertLog($id, $status_pengajuan, MtrUtility::find(12)->informasi, $catatan);
         if($request->status_pengajuan == 2){
@@ -913,7 +916,10 @@ class TrxReimburseController extends Controller
             $mailData['to'] = $karyawan['email'];
             $mailData['data'] = ['status' => 'disetujui', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
             if($trx->plafon > 0){
-                $this->sendEmail($mailData);
+                // jika bukan Ekses
+                if(!$check_ekses){
+                    $this->sendEmail($mailData);
+                }
             }
             // finish
         }
@@ -926,7 +932,10 @@ class TrxReimburseController extends Controller
             $mailData['to'] = $karyawan['email'];
             $mailData['data'] = ['status' => 'ditolak', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
             if($trx->plafon > 0){
-                $this->sendEmail($mailData);
+                // jika bukan Ekses
+                if(!$check_ekses){
+                    $this->sendEmail($mailData);
+                }
             }
             // finish
         }
