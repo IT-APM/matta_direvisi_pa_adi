@@ -184,12 +184,13 @@ class TrxReimburseController extends Controller
         // 
         $hubungan = ReimburseHubungan::orderBy('id', 'asc')->get();
         $layanan = ReimburseLayanan::orderBy('layanan', 'asc')->get();
+        $lampiran = ReimburseLampiran::orderBy('lampiran', 'asc')->get();
         if(auth()->user()->userrole == 'nhc'){
             $layanan = ReimburseLayanan::whereIn('id', [1,2,3,4,5,6])->orderBy('layanan', 'asc')->get();
+            $lampiran = ReimburseLampiran::whereIn('id', [1,2,3,4,5,6,7,8,9])->orderBy('lampiran', 'asc')->get();
         }
         $layanan_istri = ReimburseLayanan::whereIn('id', [1,4,5,6])->orderBy('layanan', 'asc')->get();
         $layanan_anak = ReimburseLayanan::whereIn('id', [1])->orderBy('layanan', 'asc')->get();
-        $lampiran = ReimburseLampiran::orderBy('lampiran', 'asc')->get();
         $max_date = Carbon::now()->toDateString();
         // jika tidak ada maka ambil default 0
         if($plafon->id == 1000){
