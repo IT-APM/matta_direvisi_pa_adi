@@ -57,7 +57,7 @@
                                     <td>@if(!empty($data->file_psikotes)) <a href="{{ asset('assets/kebutuhan/'.$data->file_psikotes) }}" target="_blank">File Psikotes</a> @endif</td>
                                     <td>@if(!empty($data->tanggal_negosiasi)) {{ \Carbon\Carbon::parse($data->tanggal_negosiasi)->format('d-m-Y') }} @endif</td>
                                     <td>
-                                        <a href="{{ route('kebutuhan_detail.edit', $data->id) }}" data-toggle="tooltip" title="Document"><i class="fa fa-file-text-o"></i></a>
+                                        <a href="{{ route('kebutuhan_detail.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" data-toggle="tooltip" title="Document"><i class="fa fa-file-text-o"></i></a>
                                     </td>
                                 </tr>
                                 @endforeach
