@@ -65,9 +65,10 @@ class TrxKebutuhanDetailController extends Controller
      */
     public function edit($id)
     {
-        //
+        // dd($id);
         $linkAction = route('kebutuhan_detail.update', $id);
         // $trxM = TrxKebutuhanMaster::find( $id );
+        $id = (new OpenDataController)->decryptWithKey($id);
         $trxD = TrxKebutuhanDetail::find( $id );
         // level minimal 4 = Assistant Manager
         $where = ['is_aktif' => 1];
@@ -221,7 +222,7 @@ class TrxKebutuhanDetailController extends Controller
         $trxD->tanggal_akhir = $request->tanggal_akhir;
         $trxD->tanggal_ttd_kontrak = $request->tanggal_ttd_kontrak;
         $trxD->update();
-        return redirect()->route('kebutuhan.show', [$id_kebutuhan, 'view' => 'doc'])->with('msg', 'Data is saved successfully.');
+        return redirect()->route('kebutuhan.show', [(new OpenDataController)->encryptWithKey($id_kebutuhan), 'view' => (new OpenDataController)->encryptWithKey('doc')])->with('msg', 'Data is saved successfully.');
     }
 
     /**
