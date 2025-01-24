@@ -26,7 +26,8 @@ class OpenDataController extends Controller
 
     public function encrypt_link()
     {
-        dd($this->encryptWithKey(123456));
+        // dd($this->encryptWithKey(123456));
+        dd($this->decryptWithKey('M3BMekpTcVBTUlFuVzg0TUQ0R2tQUT09OjoyTGZVUm82dG5zY0hQWmNU'));
         // $url = 'https://matta-reborn.alita.id/matta/nonaktif/TWVIZmNxajV5bHZuWElsSkdoNGpndz09OjpuRVgyUnJYZnJkYjUwTmtX?view=Rk1nT3hJemlHdzhlcXlMc1JvaUV1dz09OjpUWVJLdTBrMmlDcWhXV0JZ&nik=RnpINlczNmFvSXpJMWFiUDlZcm1WUT09Ojo5VWhpdFpaaU42RUoycllv&id_status=bFEwc1hXYlhma0liOC9FbUJCWlI0QT09OjpOaEgwOUt2d0JDWlc2SjVF&pic=OEMrd0o5OSt4MFZoSnJRbGpGMHJYUT09OjoyRVZVUE1kWUNucXNLalAy';
         // $trx = ToDoList::where('created_at','>','2025-01-08 05:00:00')->get();
         // // dd(count($trx));
