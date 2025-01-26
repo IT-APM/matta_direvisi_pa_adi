@@ -135,7 +135,9 @@
                 </div>
                 <?php endif; ?>
             </div>
-            <p>&nbsp;</p>
+            <div class="col-12 m-2 text-center">
+            <a target="_blank" href="<?php echo e(route('recruitment.download_interpretation', Crypt::encrypt($_trx->id))); ?>" class="btn btn-primary" type="button"><i class="fa fa-download" aria-hidden="true"></i> Download</a>
+            </div>
         </div>
     </section>
 </body>

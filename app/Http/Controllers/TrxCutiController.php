@@ -216,6 +216,13 @@ class TrxCutiController extends Controller
     {
         $where = ['nik_karyawan' => $nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
         $trx = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->where('id', '<=', $id)->sum('jumlah_hari');
+        // cek karyawan jika ada perubahan nik tetapi emailnya sama maka cutinya dihitung juga
+        $email = Karyawan::where(['nik' => $nik])->first()->email;
+        $arr_nik = array_values(array_diff(Karyawan::where(['email' => $email])->get()->pluck('nik')->toArray(), [$nik]));
+        foreach($arr_nik as $_nik){
+            $where = ['nik_karyawan' => $_nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
+            $trx += TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->where('id', '<=', $id)->sum('jumlah_hari');
+        }
         // cek apakah karyawan reguler atau tidak, jika iya maka dihitung cuti bersama
         $where = [ 'nik' => $nik, 'wg_id' => 1 ];
         $check = Karyawan::where($where)->exists();
@@ -234,6 +241,14 @@ class TrxCutiController extends Controller
         // $nik = auth()->user()->nik;
         $where = ['nik_karyawan' => $nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
         $trx = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
+        // cek karyawan jika ada perubahan nik tetapi emailnya sama maka cutinya dihitung juga
+        $email = Karyawan::where(['nik' => $nik])->first()->email;
+        $arr_nik = array_values(array_diff(Karyawan::where(['email' => $email])->get()->pluck('nik')->toArray(), [$nik]));
+        foreach($arr_nik as $_nik){
+            $where = ['nik_karyawan' => $_nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
+            $trx += TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
+        }
+        // cek apakah karyawan reguler atau tidak, jika iya maka dihitung cuti bersama
         $where = [ 'nik' => $nik, 'is_aktif' => 1, 'wg_id' => 1 ];
         $check = Karyawan::where($where)->exists();
         $cuti_bersama = 0;
@@ -279,6 +294,13 @@ class TrxCutiController extends Controller
         $cek = true;
         $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan, 'tipe_cuti' => $tipe_cuti];
         $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->count();
+        // cek karyawan jika ada perubahan nik tetapi emailnya sama maka cutinya dihitung juga
+        $email = Karyawan::where(['nik' => $nik_karyawan])->first()->email;
+        $arr_nik = array_values(array_diff(Karyawan::where(['email' => $email])->get()->pluck('nik')->toArray(), [$nik_karyawan]));
+        foreach($arr_nik as $_nik){
+            $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $_nik, 'tipe_cuti' => $tipe_cuti];
+            $jumlah += TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->count();
+        }
         if ($jumlah > 0) {
             $cek = false;
         }

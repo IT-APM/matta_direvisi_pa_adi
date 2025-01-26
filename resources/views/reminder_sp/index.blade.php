@@ -43,13 +43,12 @@
                         onsubmit="return confirm('Are you sure want to do this?');">
                         @csrf
                         @if (count($trx) > 0)
-                        <button class="btn btn-success" type="submit" name="submit" id="submit" value="execute"><i
-                                class="fa fa-plus-circle" aria-hidden="true"></i> Execute</button>
-                        | <button class="btn btn-danger" type="submit" name="submit" id="submit" value="delete"><i
-                                class="icon-trash" aria-hidden="true"></i> Delete</button>
+                        <button class="btn btn-success" type="submit" name="submit" id="submit" value="execute"><i class="fa fa-plus-circle" aria-hidden="true"></i> Execute</button>
+                        | <button class="btn btn-danger" type="submit" name="submit" id="submit" value="delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button> |
                         @endif
+                        <a href="{{ route('reminder_sp.show', 0) }}" class="btn btn-primary"><i class="fa fa-history"></i> History</a>
                         <div class="mt-2 table-responsive">
-                            <table class="display" id="_datatable">
+                            <table class="display nowrap" id="_datatable">
                                 <thead>
                                     <tr>
                                         <th><input type="checkbox" onClick="toggle_status_check(this)" /></th>
@@ -114,8 +113,8 @@
                                         <td><input id="reminder_sp[]" name="reminder_sp[]" type="checkbox" value="{{ $data->id }}"></td>
                                         <td>{{ ++$no }}</td>
                                         <td>{{ $type }} {{ $teguran_ke }}</td>
-                                        <td>{{ $data->date_from }}</td>
-                                        <td>{{ $data->date_to }}</td>
+                                        <td>{{ Carbon\Carbon::parse($data->date_from) ->format('d-m-Y') }}</td>
+                                        <td>{{ Carbon\Carbon::parse($data->date_to) ->format('d-m-Y') }}</td>
                                         <td>{{ $nik_property['wg_name'] }}</td>
                                         <td>{{ $data->nik }}</td>
                                         <td>{{ $nik_property['nama'] }}</td>

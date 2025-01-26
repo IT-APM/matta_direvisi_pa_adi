@@ -39,15 +39,16 @@ class KaryawanSertifikasiController extends Controller
     public function store(Request $request)
     {
         //
+        $nik = (new OpenDataController)->decryptWithKey($request->nik);
         $trx = New KaryawanSertifikasi;
-        $trx->nik = $request->nik;
+        $trx->nik = $nik;
         $trx->nama = $request->nama;
         $trx->keterangan = $request->keterangan;
         $trx->save();
         if($request->src=='open'){
             return redirect()->route('karyawan.show', $request->nik)->with('success','Data is saved successfully.');
         }else{
-            return redirect()->route('karyawan.edit', $request->karyawan_id)->with('success','Data is saved successfully.');
+            return redirect()->route('karyawan.edit', (new OpenDataController)->decryptWithKey($request->karyawan_id))->with('success','Data is saved successfully.');
         }
     }
 
@@ -71,6 +72,7 @@ class KaryawanSertifikasiController extends Controller
     public function edit($id)
     {
         //
+        $id = (new OpenDataController)->decryptWithKey($id);
         $status = 'edit';
         $trx = KaryawanSertifikasi::find( $id );
         return view( 'master.karyawan.sertifikasi.upsert', compact( 'status', 'trx' ) );
@@ -93,7 +95,7 @@ class KaryawanSertifikasiController extends Controller
         if($request->src=='open'){
             return redirect()->route('karyawan.show', $request->nik)->with('success','Data is saved successfully.');
         }else{
-            return redirect()->route('karyawan.edit', $request->karyawan_id)->with('success','Data is saved successfully.');
+            return redirect()->route('karyawan.edit', (new OpenDataController)->decryptWithKey($request->karyawan_id))->with('success','Data is saved successfully.');
         }
     }
 
@@ -111,7 +113,7 @@ class KaryawanSertifikasiController extends Controller
         if($request->src=='open'){
             return redirect()->route('karyawan.show', $request->nik)->with('success','Data is deleted successfully.');
         }else{
-            return redirect()->route('karyawan.edit', $request->karyawan_id)->with('success','Data is deleted successfully.');
+            return redirect()->route('karyawan.edit', (new OpenDataController)->decryptWithKey($request->karyawan_id))->with('success','Data is deleted successfully.');
         }
     }
 }

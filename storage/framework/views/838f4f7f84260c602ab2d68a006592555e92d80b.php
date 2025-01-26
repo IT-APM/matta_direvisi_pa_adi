@@ -55,7 +55,7 @@
                                     <td><?php if(!empty($data->file_psikotes)): ?> <a href="<?php echo e(asset('assets/kebutuhan/'.$data->file_psikotes)); ?>" target="_blank">File Psikotes</a> <?php endif; ?></td>
                                     <td><?php if(!empty($data->tanggal_negosiasi)): ?> <?php echo e(\Carbon\Carbon::parse($data->tanggal_negosiasi)->format('d-m-Y')); ?> <?php endif; ?></td>
                                     <td>
-                                        <a href="<?php echo e(route('kebutuhan_detail.edit', $data->id)); ?>" data-toggle="tooltip" title="Document"><i class="fa fa-file-text-o"></i></a>
+                                        <a href="<?php echo e(route('kebutuhan_detail.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id))); ?>" data-toggle="tooltip" title="Document"><i class="fa fa-file-text-o"></i></a>
                                     </td>
                                 </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

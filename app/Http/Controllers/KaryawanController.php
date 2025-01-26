@@ -322,8 +322,9 @@ class KaryawanController extends Controller
     public function show($id)
     {
         // dd($id);
+        $id = (new OpenDataController)->decryptWithKey($id);
         if($id != auth()->user()->nik){
-            return redirect()->route('error-404');
+            return redirect()->route('error-403');
         }
         $karyawan = Karyawan::where('nik', $id)->first();
         $kelamin = Kelamin::whereIn('id', [2,3])->get();
@@ -530,9 +531,11 @@ class KaryawanController extends Controller
     }
     
     public function update_profile(Request $request, $id){
+        // dd($request->all(), $id);
+        $id = (new OpenDataController)->decryptWithKey($id);
         // $karyawan = Karyawan::find( $id );
         if($id != auth()->user()->nik){
-            return redirect()->route('error-404');
+            return redirect()->route('error-403');
         }
         $karyawan = Karyawan::where('nik', $id)->first();
         // $karyawan->nama = $request->nama;
@@ -616,7 +619,7 @@ class KaryawanController extends Controller
             // end sendEmail
         }
         // return response()->json( [ 'arr' => $arr ], 200 );
-        return redirect()->route('karyawan.show', $id)->with('success','Data is saved successfully.');
+        return redirect()->route('karyawan.show', (new OpenDataController)->encryptWithKey($id))->with('success','Data is saved successfully.');
     }
 
     public function sendEmail($mailData)

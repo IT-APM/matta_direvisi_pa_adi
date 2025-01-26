@@ -39,6 +39,7 @@ use App\Exports\TrxRecruitmentPsychotestExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Elibyy\TCPDF\Facades\TCPDF;
 
 class TrxRecruitmentController extends Controller
 {
@@ -666,6 +667,26 @@ class TrxRecruitmentController extends Controller
         $resume = TrxRecruitmentResume::where($where)->orderBy('id', 'asc')->get();
         // dd($_trx);
         return view('recruitment.get_interpretation', compact('_trx', 'resume'));
+    }
+
+    public function download_interpretation($id)
+    {
+        $id = Crypt::decrypt($id);
+        // dd($id);
+        $trx = TrxRecruitmentIdentitas::find($id);
+        $where = ['id_identitas' => $id];
+        $resume = TrxRecruitmentResume::where($where)->orderBy('id', 'asc')->get();
+        $interview = TrxRecruitmentInterview::where($where)->orderBy('id', 'desc')->get();
+        $filename = $id . '_resume.pdf';
+        $view = \View::make('recruitment.pdf_resume', compact('trx', 'resume', 'interview'));
+        $html = $view->render();
+        $pdf = new TCPDF;
+        $pdf::SetTitle('Resume Hasil Tes');
+        $pdf::SetFont('times', '', 10, '', true);
+        $pdf::AddPage();
+        $pdf::writeHTML($html, true, false, true, false, '');
+        $pdf::Output(public_path($filename), 'I');
+        return response()->download(public_path($filename));
     }
 
     public function upload_dokumen_get($id)

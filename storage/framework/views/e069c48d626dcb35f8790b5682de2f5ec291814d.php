@@ -100,8 +100,8 @@
                                                     <a href="<?php echo e(route('recruitment.psychotestexcel', [Crypt::encrypt([$data->id,1])])); ?>" target="_blank" data-toggle="tooltip" title="EPPS"><i class="fa fa-file-text-o"></i></a>
                                                     &nbsp;<a href="<?php echo e(route('recruitment.psychotestexcel', [Crypt::encrypt([$data->id,2])])); ?>" target="_blank" data-toggle="tooltip" title="PAPI Kostick"><i class="fa fa-file-text-o"></i></a>
                                                     &nbsp;<a href="<?php echo e(route('recruitment.psychotestexcel', [Crypt::encrypt([$data->id,3])])); ?>" target="_blank" data-toggle="tooltip" title="DISC"><i class="fa fa-file-text-o"></i></a>
-                                                    <?php if(!empty($pohon[0]->jawaban1)): ?><br/><a href="<?php echo e(asset('assets/recruitment/upload/'.$pohon[0]->jawaban1)); ?>" target="_blank" data-toggle="tooltip" title="Pohon"><i class="fa fa-file-image-o"></i></a><?php endif; ?>
-                                                    <?php if(!empty($manusia[0]->jawaban1)): ?>&nbsp;<a href="<?php echo e(asset('assets/recruitment/upload/'.$manusia[0]->jawaban1)); ?>" target="_blank" data-toggle="tooltip" title="Manusia"><i class="fa fa-file-image-o"></i></a><?php endif; ?>
+                                                    <?php if(!empty($pohon[0]->jawaban1)): ?><br/><a href="<?php echo e(asset('assets/recruitment/upload/'.$pohon[0]->jawaban1)); ?>" target="_blank" data-toggle="tooltip" title="BAUM"><i class="fa fa-file-image-o"></i></a><?php endif; ?>
+                                                    <?php if(!empty($manusia[0]->jawaban1)): ?>&nbsp;<a href="<?php echo e(asset('assets/recruitment/upload/'.$manusia[0]->jawaban1)); ?>" target="_blank" data-toggle="tooltip" title="DAP"><i class="fa fa-file-image-o"></i></a><?php endif; ?>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td><?php echo e($recruitment->_pekerjaan->pekerjaan); ?></td>

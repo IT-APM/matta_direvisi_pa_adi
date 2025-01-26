@@ -183,7 +183,7 @@
                     </div>
                     <ul class="profile-dropdown onhover-show-div">
                         <!-- <li> -->
-                          <a class="btn btn-default" href="<?php echo e(route('karyawan.show', auth()->user()->nik)); ?>"><i data-feather="user"></i><span> Profile</span></a>
+                          <a class="btn btn-default" href="<?php echo e(route('karyawan.show', (new App\Http\Controllers\OpenDataController)->encryptWithKey(auth()->user()->nik))); ?>"><i data-feather="user"></i><span> Profile</span></a>
                         <!-- </li> -->
                         <!-- <li><a href="#"><i data-feather="mail"></i><span>Inbox</span></a></li>
             <li><a href="#"><i data-feather="file-text"></i><span>Taskboard</span></a></li>

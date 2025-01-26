@@ -40,16 +40,17 @@ class KaryawanAnakController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $nik = (new OpenDataController)->decryptWithKey($request->nik);
         $trx = New KaryawanAnak;
-        $trx->nik = $request->nik;
+        $trx->nik = $nik;
         $trx->id_anakke = $request->id_anakke;
         $trx->nama = $request->nama;
         $trx->save();
         if($request->src=='open'){
             return redirect()->route('karyawan.show', $request->nik)->with('success','Data is saved successfully.');
         }else{
-            return redirect()->route('karyawan.edit', $request->karyawan_id)->with('success','Data is saved successfully.');
+            return redirect()->route('karyawan.edit', (new OpenDataController)->decryptWithKey($request->karyawan_id))->with('success','Data is saved successfully.');
         }
     }
 
@@ -72,7 +73,7 @@ class KaryawanAnakController extends Controller
      */
     public function edit($id)
     {
-        //
+        $id = (new OpenDataController)->decryptWithKey($id);
         $status = 'edit';
         $trx = KaryawanAnak::find( $id );
         $anakke = AnakKe::all();
@@ -88,8 +89,7 @@ class KaryawanAnakController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-        // return response()->json( [ 'request' => $request->all() ] );
+        // dd($request->all(), $id);
         $trx = KaryawanAnak::find( $id );
         $trx->id_anakke = $request->id_anakke;
         $trx->nama = $request->nama;
@@ -97,7 +97,7 @@ class KaryawanAnakController extends Controller
         if($request->src=='open'){
             return redirect()->route('karyawan.show', $request->nik)->with('success','Data is saved successfully.');
         }else{
-            return redirect()->route('karyawan.edit', $request->karyawan_id)->with('success','Data is saved successfully.');
+            return redirect()->route('karyawan.edit', (new OpenDataController)->decryptWithKey($request->karyawan_id))->with('success','Data is saved successfully.');
         }
     }
 
@@ -115,7 +115,7 @@ class KaryawanAnakController extends Controller
         if($request->src=='open'){
             return redirect()->route('karyawan.show', $request->nik)->with('success','Data is deleted successfully.');
         }else{
-            return redirect()->route('karyawan.edit', $request->karyawan_id)->with('success','Data is deleted successfully.');
+            return redirect()->route('karyawan.edit', (new OpenDataController)->decryptWithKey($request->karyawan_id))->with('success','Data is deleted successfully.');
         }
     }
 }

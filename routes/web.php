@@ -224,6 +224,8 @@ Route::post('payroll/master/addsub', [TrxPayrollController::class, 'upsert_maste
 Route::post('payroll/upload_payroll', [ TrxPayrollController::class, 'upload_payroll'])->name('payroll.upload_payroll')->middleware('can:payroll');
 Route::get('payroll/bkp/{id}', [TrxPayrollController::class, 'bkp'])->name('payroll.bkp');
 Route::get('payroll/history/{id}', [TrxPayrollController::class, 'history'])->name('payroll.history')->middleware('can:payroll');
+Route::get('payroll/slip/{id}', [TrxPayrollController::class, 'slip'])->name('payroll.slip')->middleware('auth');
+Route::get('payroll/slip/detail/{id}', [TrxPayrollController::class, 'slip_detail'])->name('payroll.slip.detail')->middleware('auth');
 // 
 Route::resource('recruitment', TrxRecruitmentController::class)->middleware('can:hc');
 Route::get('recruitment/apply/{id}', [TrxRecruitmentController::class, 'apply'])->name('recruitment.apply');
@@ -242,6 +244,7 @@ Route::get('recruitment/negotiation_process/{id}', [TrxRecruitmentController::cl
 Route::post('recruitment/negotiation_save', [ TrxRecruitmentController::class, 'negotiation_save'])->name('recruitment.negotiation_save');
 Route::get('recruitment/upload_dokumen_get/{id}', [TrxRecruitmentController::class, 'upload_dokumen_get'])->name('recruitment.upload_dokumen_get');
 Route::get('recruitment/get_interpretation/{id}', [TrxRecruitmentController::class, 'get_interpretation'])->name('recruitment.get_interpretation')->middleware('can:hc');
+Route::get('recruitment/interpretation/download/{id}', [TrxRecruitmentController::class, 'download_interpretation'])->name('recruitment.download_interpretation')->middleware('can:hc');
 Route::post('recruitment/upload_dokumen_post', [ TrxRecruitmentController::class, 'upload_dokumen_post'])->name('recruitment.upload_dokumen_post');
 Route::resource('noattendance', NoAttendanceController::class)->middleware('can:hc');
 Route::resource('overtime', OvertimeController::class)->middleware('auth');

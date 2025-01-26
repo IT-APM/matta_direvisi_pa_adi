@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Karyawan;
 use App\Models\TrxPenilaian;
 use App\Models\TrxPenilaianSkor;
 use App\Models\TrxPenilaianLog;
@@ -70,8 +71,9 @@ class TrxPenilaianSkorController extends Controller
         $id_status = (new OpenDataController)->decryptWithKey($request->id_status);
         $pic = (new OpenDataController)->decryptWithKey($request->pic);
         // dd($id_trx, $nik, $id_status, $pic);
-        // 
         $penilaian = TrxPenilaian::find( $id_trx );
+        $is_kt = Karyawan::where(['kode_status'=>1, 'nik'=>$penilaian->nik_karyawan])->exists();
+        // dd($is_kt);
         $id_tipe = $penilaian->id_tipe;
         // 
         $nik_pic = $penilaian['nik_karyawan'];
@@ -251,15 +253,17 @@ class TrxPenilaianSkorController extends Controller
             }else{
                 return view( 'emails.penilaian_ok' );
             }
-        }else{
+        }
+        // selain Penilaian Outsourcing
+        else{
             if($nik==$penilaian[$pic]){
                 if($id_status==$penilaian['id_status']){
-                    return view( 'emails.penilaian', compact( 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
+                    return view( 'emails.penilaian', compact( 'is_kt', 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
                 }else{
                     if($pic == 'nik_penilai_2' && $nPenilai2==0){
-                        return view( 'emails.penilaian', compact( 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
+                        return view( 'emails.penilaian', compact( 'is_kt', 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
                     }elseif($pic=='nik_penilai_3' && $nPenilai3==0){
-                        return view( 'emails.penilaian', compact( 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
+                        return view( 'emails.penilaian', compact( 'is_kt', 'data', 'ket_penilaian', 'isian_penilaian', 'isRequired', 'linkAction', 'kes_rek', 'pic', 'isian_kes_rek' ) );
                     }else{
                         return view( 'emails.penilaian_ok' );
                     }

@@ -221,6 +221,11 @@
                                 <label class="form-label" for="_<?php echo e($no+1); ?>"><?php echo e($utilitas[$no]->keterangan); ?></label>
                                 <input name="_<?php echo e($no+1); ?>" id="_<?php echo e($no+1); ?>" class="form-control" type="text" required="" value="<?php echo e($utilitas[$no]->informasi); ?>">
                             </div>
+                            <div class="col-md-3">
+                                <?php $no=34; ?>
+                                <label class="form-label" for="_<?php echo e($no+1); ?>"><?php echo e($utilitas[$no]->keterangan); ?></label>
+                                <input name="_<?php echo e($no+1); ?>" id="_<?php echo e($no+1); ?>" class="form-control" type="text" required="" value="<?php echo e($utilitas[$no]->informasi); ?>">
+                            </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-12">

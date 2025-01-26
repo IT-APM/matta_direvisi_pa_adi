@@ -130,7 +130,7 @@
                 </div>
             </div>
             <div class="col-xl-6">
-                <form id="form" class="card" action="{{ route('karyawan.update_profile', $karyawan->nik) }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
+                <form id="form" class="card" action="{{ route('karyawan.update_profile', (new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik)) }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                 @method('POST')
                 @csrf
                     <div class="card-header">
@@ -289,7 +289,7 @@
                         <div class="tab-content" id="pills-warningtabContent">
                             <div class="tab-pane fade show active" id="pills-emp_anak" role="tabpanel" aria-labelledby="pills-emp_anak-tab">
                                 <p class="mb-0 m-t-30">
-                                    <a href="{{ route('karyawananak.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id, 'src'=>'open'] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
+                                    <a href="{{ route('karyawananak.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id), 'src'=>'open'] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-anak">
                                             <thead>
@@ -307,7 +307,7 @@
                                                     <td>{{ $data->_anakke->anakke }}</td>
                                                     <td>{{ $data->nama }}</td>
                                                     <td>
-                                                        <a href="{{ route('karyawananak.edit', [$data->id, 'nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id, 'src'=>'open']) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
+                                                        <a href="{{ route('karyawananak.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id), 'src'=>'open']) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -318,7 +318,7 @@
                             </div>
                             <div class="tab-pane fade" id="pills-emp_edu" role="tabpanel" aria-labelledby="pills-emp_edu-tab">
                                 <p class="mb-0 m-t-30">
-                                    <a href="{{ route('karyawanpendidikan.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id, 'src'=>'open'] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
+                                    <a href="{{ route('karyawanpendidikan.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id), 'src'=>'open'] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-pendidikan">
                                             <thead>
@@ -338,7 +338,7 @@
                                                     <td>{{ $data->nama }}</td>
                                                     <td>{{ $data->jurusan_prodi }}</td>
                                                     <td>
-                                                        <a href="{{ route('karyawanpendidikan.edit', [$data->id, 'nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id, 'src'=>'open']) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
+                                                        <a href="{{ route('karyawanpendidikan.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id), 'src'=>'open']) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -349,7 +349,7 @@
                             </div>
                             <div class="tab-pane fade" id="pills-emp_lat" role="tabpanel" aria-labelledby="pills-emp_lat-tab">
                             <p class="mb-0 m-t-30">
-                                    <a href="{{ route('karyawanpelatihan.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id, 'src'=>'open'] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
+                                    <a href="{{ route('karyawanpelatihan.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id), 'src'=>'open'] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-pelatihan">
                                             <thead>
@@ -367,7 +367,7 @@
                                                     <td>{{ $data->nama }}</td>
                                                     <td>{{ $data->keterangan }}</td>
                                                     <td>
-                                                        <a href="{{ route('karyawanpelatihan.edit', [$data->id, 'nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id, 'src'=>'open']) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
+                                                        <a href="{{ route('karyawanpelatihan.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id), 'src'=>'open']) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -378,7 +378,7 @@
                             </div>
                             <div class="tab-pane fade" id="pills-emp_ser" role="tabpanel" aria-labelledby="pills-emp_ser-tab">
                             <p class="mb-0 m-t-30">
-                                    <a href="{{ route('karyawansertifikasi.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id, 'src'=>'open'] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
+                                    <a href="{{ route('karyawansertifikasi.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id), 'src'=>'open'] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-sertifikasi">
                                             <thead>
@@ -396,7 +396,7 @@
                                                     <td>{{ $data->nama }}</td>
                                                     <td>{{ $data->keterangan }}</td>
                                                     <td>
-                                                        <a href="{{ route('karyawansertifikasi.edit', [$data->id, 'nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id, 'src'=>'open']) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
+                                                        <a href="{{ route('karyawansertifikasi.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id), 'src'=>'open']) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
                                                     </td>
                                                 </tr>
                                                 @endforeach

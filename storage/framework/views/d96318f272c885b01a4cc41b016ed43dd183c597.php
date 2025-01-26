@@ -25,12 +25,10 @@
                                         <td>
                                             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                                 <tr>
-                                                    <td>
-                                                        <h5>Semangat Pagi,</h5>
+                                                    <td><h5>Semangat Pagi,</h5></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>
-                                                        Berikut ini adalah Formulir Evaluasi Karyawan yang harus diisi dan dilengkapi. Terima kasih.</td>
+                                                    <td>Berikut ini adalah Formulir Evaluasi Karyawan yang harus diisi dan dilengkapi. Terima kasih.</td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -85,8 +83,7 @@
                                                                 <td>3.1 Karyawan dan Penilai diwajibkan untuk memberikan feedback atas beberapa obyek penilaian dengan menggunakan 5 (lima) poin skala penilaian.</td>
                                                             </tr>
                                                             <tr>
-                                                                <td>3.2 Semakin tinggi poin skala, semakin positif kemampuan/perilaku yang ditunjukkan oleh karyawan.
-                                                                </td>
+                                                                <td>3.2 Semakin tinggi poin skala, semakin positif kemampuan/perilaku yang ditunjukkan oleh karyawan.</td>
                                                             </tr>
                                                             <tr>
                                                                 <td>3.3 Apabila ada pertanyaan yang tidak diisi, maka skor dihitung nol dan tidak akan diperhitungkan dalam rata-rata penilaian.</td>
@@ -204,9 +201,16 @@
 
                                                                 <!--  -->
                                                                 <?php if($pic != 'nik_karyawan'): ?>
+                                                                <?php if($is_kt): ?>
                                                                 <tr>
                                                                     <td>
-                                                                        <div class="row g-3">
+                                                                        <label class="form-label mt-2">Apakah anda akan merekomendasikan karyawan ini, jika iya maka <a href="<?php echo e(route('rekomendasi.create')); ?>" target="_blank">Klik Link Rekomendasi</a> ini.</label>
+                                                                    </td>
+                                                                </tr>
+                                                                <?php else: ?>
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="row mt-2">
                                                                             <div class="col-md-4" id="div_is_perpanjang">
                                                                                 <label class="form-label" for="is_perpanjang">Status Perpanjangan</label>
                                                                                 <select class="form-select" id="is_perpanjang" name="is_perpanjang" required="">
@@ -223,14 +227,14 @@
                                                                     </td>
                                                                 </tr>
                                                                 <?php endif; ?>
+                                                                <?php endif; ?>
                                                                 <!--  -->
                                                                 <tr>
                                                                     <td>
-                                                                        <table border="0" cellspacing="0"
-                                                                            cellpadding="0">
+                                                                        <table border="0" cellspacing="0" cellpadding="0">
                                                                             <tr>
                                                                                 <td>
-                                                                                    <br /><button type="submit" class="btn btn-primary">SUBMIT</button>
+                                                                                    <button type="submit" class="btn btn-primary mt-2">SUBMIT</button>
                                                                                     <!-- <input type="submit" class="btn btn-primary"> -->
                                                                                 </td>
                                                                             </tr>
@@ -257,8 +261,7 @@
                 <div class="card-body typography text-center">
                     <h6>Terima kasih untuk partisipasi dan kerjasamanya dalam pengisian Formulir Evaluasi Karyawan ini.
                     </h6>
-                    <a href="https://alita.id/"><img src="<?php echo e(asset('assets/images/matta/Alita-New-Log.png')); ?>"
-                            height="40" alt="Alita" /></a><br />
+                    <a href="https://alita.id/"><img src="<?php echo e(asset('assets/images/matta/Alita-New-Log.png')); ?>" height="40" alt="Alita" /></a><br />
                     <h6>&reg; PT Alita Praya Mitra - 2021</h6>
                 </div>
             </div>

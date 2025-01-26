@@ -536,7 +536,7 @@
                             </div>
                             <div class="tab-pane fade" id="pills-emp_anak" role="tabpanel" aria-labelledby="pills-emp_anak-tab">
                                 <p class="mb-0 mt-2">
-                                    <a href="<?php echo e(route('karyawananak.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id] )); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
+                                    <a href="<?php echo e(route('karyawananak.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)] )); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-anak">
                                             <thead>
@@ -554,7 +554,7 @@
                                                     <td><?php echo e($data->_anakke->anakke); ?></td>
                                                     <td><?php echo e($data->nama); ?></td>
                                                     <td>
-                                                        <a href="<?php echo e(route('karyawananak.edit', [$data->id, 'karyawan_id'=>$karyawan->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
+                                                        <a href="<?php echo e(route('karyawananak.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
                                                     </td>
                                                 </tr>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -565,7 +565,7 @@
                             </div>
                             <div class="tab-pane fade" id="pills-emp_edu" role="tabpanel" aria-labelledby="pills-emp_edu-tab">
                                 <p class="mb-0 mt-2">
-                                    <a href="<?php echo e(route('karyawanpendidikan.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id] )); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
+                                    <a href="<?php echo e(route('karyawanpendidikan.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)] )); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-pendidikan">
                                             <thead>
@@ -585,7 +585,7 @@
                                                     <td><?php echo e($data->nama); ?></td>
                                                     <td><?php echo e($data->jurusan_prodi); ?></td>
                                                     <td>
-                                                        <a href="<?php echo e(route('karyawanpendidikan.edit', [$data->id, 'karyawan_id'=>$karyawan->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
+                                                        <a href="<?php echo e(route('karyawanpendidikan.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
                                                     </td>
                                                 </tr>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -596,7 +596,7 @@
                             </div>
                             <div class="tab-pane fade" id="pills-emp_lat" role="tabpanel" aria-labelledby="pills-emp_lat-tab">
                             <p class="mb-0 mt-2">
-                                    <a href="<?php echo e(route('karyawanpelatihan.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id] )); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
+                                    <a href="<?php echo e(route('karyawanpelatihan.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)] )); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-pelatihan">
                                             <thead>
@@ -614,7 +614,7 @@
                                                     <td><?php echo e($data->nama); ?></td>
                                                     <td><?php echo e($data->keterangan); ?></td>
                                                     <td>
-                                                        <a href="<?php echo e(route('karyawanpelatihan.edit', [$data->id, 'karyawan_id'=>$karyawan->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
+                                                        <a href="<?php echo e(route('karyawanpelatihan.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
                                                     </td>
                                                 </tr>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -625,7 +625,7 @@
                             </div>
                             <div class="tab-pane fade" id="pills-emp_ser" role="tabpanel" aria-labelledby="pills-emp_ser-tab">
                             <p class="mb-0 mt-2">
-                                    <a href="<?php echo e(route('karyawansertifikasi.create', ['nik'=>$karyawan->nik, 'karyawan_id'=>$karyawan->id] )); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
+                                    <a href="<?php echo e(route('karyawansertifikasi.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)] )); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
                                     <div class="table-responsive">
                                         <table class="display" id="basic-sertifikasi">
                                             <thead>
@@ -643,7 +643,7 @@
                                                     <td><?php echo e($data->nama); ?></td>
                                                     <td><?php echo e($data->keterangan); ?></td>
                                                     <td>
-                                                        <a href="<?php echo e(route('karyawansertifikasi.edit', [$data->id, 'karyawan_id'=>$karyawan->id])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
+                                                        <a href="<?php echo e(route('karyawansertifikasi.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
                                                     </td>
                                                 </tr>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

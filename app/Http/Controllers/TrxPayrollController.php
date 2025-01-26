@@ -44,10 +44,77 @@ use App\Models\Level;
 class TrxPayrollController extends Controller
 {
     
+    public function slip($id)
+    {
+        $nik = (new OpenDataController)->decryptWithKey($id);
+        if($nik != auth()->user()->nik){
+            return redirect()->route('error-403');
+        }
+        $where = ['nik'=>$nik];
+        $payroll = TrxPayroll::where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        $payroll_h = TrxPayrollLog::where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        return view('payroll.self', compact('payroll', 'payroll_h'));
+    }
+    
+    public function slip_detail(Request $request, $id)
+    {
+        // dd($request->all(), $id);
+        $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+        $id = (new OpenDataController)->decryptWithKey($id);
+        $payroll = null;
+        $_view = $request->view;
+        if($_view == 'pdf_h'){
+            $payroll = TrxPayrollLog::find($id);
+            // $view = \View::make('payroll.pdf_h', compact('payroll'));
+        }else if($_view == 'pdf'){
+            $payroll = TrxPayroll::find($id);
+            // $view = \View::make('payroll.pdf', compact('payroll'));
+        }
+        $pic_paraf = Karyawan::where(['nik' => MtrUtility::find(35)->informasi])->first();
+        $pic_paraf = $pic_paraf->nama;
+        $view = \View::make('payroll.pdf', compact('payroll', '_view', 'pic_paraf'));
+        $password = Carbon::parse(Karyawan::where(['nik' => $payroll->nik])->first()->tanggal_lahir)->format("dmY");
+        $filename = (new OpenDataController)->encryptWithKey($payroll->nik).' Slip Gaji '.$bulan[$payroll->bulan - 1].' '.$payroll->tahun.'.pdf';
+        $html = $view->render();
+        $pdf = new TCPDF;
+        $pdf::SetTitle($filename);
+        // $pdf::SetFont('times', '', 8, '', true);
+        $pdf::SetFont('helvetica', '', 8, '', true);
+        $pdf::AddPage('L', 'A4');
+        $pdf::writeHTML($html, true, false, true, false, '');
+        $pdf::SetProtection(array('print', 'copy'), $password, $password);
+        // open browser
+        // $pdf::Output(public_path($filename), 'I');
+        // download pdf
+        $pdf::Output(public_path($filename), 'D');
+        return response()->download(public_path($filename));
+    }
+    
+    public function terbilang($x)
+    {
+        $angka = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+        if ($x < 12)
+            return " " . $angka[$x];
+        elseif ($x < 20)
+            return $this->terbilang($x - 10) . " Belas";
+        elseif ($x < 100)
+            return $this->terbilang($x / 10) . " Puluh" . $this->terbilang($x % 10);
+        elseif ($x < 200)
+            return " Seratus" . $this->terbilang($x - 100);
+        elseif ($x < 1000)
+            return $this->terbilang($x / 100) . " Ratus" . $this->terbilang($x % 100);
+        elseif ($x < 2000)
+            return " Seribu" . $this->terbilang($x - 1000);
+        elseif ($x < 1000000)
+            return $this->terbilang($x / 1000) . " Ribu" . $this->terbilang($x % 1000);
+        elseif ($x < 1000000000)
+            return $this->terbilang($x / 1000000) . " Juta" . $this->terbilang($x % 1000000);
+    }
+    
     public function history($id, Request $request)
     {
         // dd($id, $request->all());
-        $payroll = TrxPayrollLog::orderBy('id', 'asc')->get();
+        $payroll = TrxPayrollLog::orderByRaw('tahun desc, bulan desc')->get();
         // 
         $arr_nik = [];
         $arr_findim_subdepartemen = [];
@@ -99,6 +166,9 @@ class TrxPayrollController extends Controller
         $_arr_status_karyawan = [];
         $_arr_jabatan = [];
         $_arr_level = [];
+        // default only one month before and year displayed
+        $where = ['bulan'=>Carbon::now()->subMonth()->month, 'tahun'=>Carbon::now()->subMonth()->year];
+        $payroll = TrxPayrollLog::where($where)->orderByRaw('tahun desc, bulan desc')->get();
         // start filter
         if($request->filter == true){
             $bulan_tahun_dari = $request->bulan_tahun_dari;
@@ -115,31 +185,31 @@ class TrxPayrollController extends Controller
             $_arr_jabatan = $request->input('jabatan', []);
             $_arr_level = $request->input('level', []);
             $payroll = TrxPayrollLog::whereIn('nik', $_arr_nik)
-            ->whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
-            ->whereIn('findim_departemen', $_arr_findim_departemen)
-            ->whereIn('findim_divisi', $_arr_findim_divisi)
-            ->whereIn('findim_project', $_arr_findim_project)
-            ->whereIn('divisi', $_arr_divisi)
-            ->whereIn('departemen', $_arr_departemen)
-            ->whereIn('subdepartemen', $_arr_subdepartemen)
+            // ->whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
+            // ->whereIn('findim_departemen', $_arr_findim_departemen)
+            // ->whereIn('findim_divisi', $_arr_findim_divisi)
+            // ->whereIn('findim_project', $_arr_findim_project)
+            // ->whereIn('divisi', $_arr_divisi)
+            // ->whereIn('departemen', $_arr_departemen)
+            // ->whereIn('subdepartemen', $_arr_subdepartemen)
             ->whereIn('status_karyawan', $_arr_status_karyawan)
             // ->whereIn('jabatan', $_arr_jabatan)
             ->whereIn('level', $_arr_level)
             ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
-            ->orderBy('id', 'asc')->get();
+            ->orderByRaw('tahun desc, bulan desc')->get();
             if(in_array('0', $_arr_nik)){
-                $payroll = TrxPayrollLog::whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
-                ->whereIn('findim_departemen', $_arr_findim_departemen)
-                ->whereIn('findim_divisi', $_arr_findim_divisi)
-                ->whereIn('findim_project', $_arr_findim_project)
-                ->whereIn('divisi', $_arr_divisi)
-                ->whereIn('departemen', $_arr_departemen)
-                ->whereIn('subdepartemen', $_arr_subdepartemen)
-                ->whereIn('status_karyawan', $_arr_status_karyawan)
+                // $payroll = TrxPayrollLog::whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
+                // ->whereIn('findim_departemen', $_arr_findim_departemen)
+                // ->whereIn('findim_divisi', $_arr_findim_divisi)
+                // ->whereIn('findim_project', $_arr_findim_project)
+                // ->whereIn('divisi', $_arr_divisi)
+                // ->whereIn('departemen', $_arr_departemen)
+                // ->whereIn('subdepartemen', $_arr_subdepartemen)
+                $payroll = TrxPayrollLog::whereIn('status_karyawan', $_arr_status_karyawan)
                 // ->whereIn('jabatan', $_arr_jabatan)
                 ->whereIn('level', $_arr_level)
                 ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
-                ->orderBy('id', 'asc')->get();
+                ->orderByRaw('tahun desc, bulan desc')->get();
             }
         }
         // end filter
@@ -442,6 +512,7 @@ class TrxPayrollController extends Controller
     public function upload_payroll(Request $request)
     {
         // dd($request->all());
+        set_time_limit(3600);
         $jenis = $request->jenis;
         if($request->hasFile('template')){
             $request->validate([
@@ -454,7 +525,7 @@ class TrxPayrollController extends Controller
                 // data payroll dan penambahan
                 $data0 = $trx[0];
                 // data potongan
-                $data1 = $trx[1];
+                // $data1 = $trx[1];
                 // 101=NIP
                 // 102=Bulan
                 // 103=Tahun
@@ -524,35 +595,35 @@ class TrxPayrollController extends Controller
                         $this->insertBpjs($payroll);
                     }
                 }
-                // data potongan
-                $addsub = MtrPayrollAddsub::whereIn('id', $data1[0])->orderBy('id', 'asc')->get();
-                $arr = [];
-                foreach($addsub as $_addsub){
-                    if(in_array($_addsub->id, $data1[0])){
-                        $_arr = [];
-                        array_push($_arr, array_search($_addsub->id, $data1[0]), $_addsub->id, $_addsub->tipe);
-                    }
-                    array_push($arr, $_arr);
-                }
-                for ($x = 2; $x < count($data1); $x++) {
-                    foreach($arr as $_arr){
-                        $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_addsub'=>$_arr[1]];
-                        TrxPayrollAddsub::where($where)->delete();
-                        $trx = New TrxPayrollAddsub;
-                        $trx->nik = $data1[$x][$_101];
-                        $trx->bulan = $data1[$x][$_102];
-                        $trx->tahun = $data1[$x][$_103];
-                        // 0=index data
-                        $trx->angka = $data1[$x][$_arr[0]];
-                        // 1=id_addsub
-                        $trx->id_addsub = $_arr[1];
-                        // 2=tipe
-                        $trx->tipe = $_arr[2];
-                        $trx->created_by = auth()->user()->nik;
-                        $trx->updated_by = auth()->user()->nik;
-                        $trx->save();
-                    }
-                }
+                // // data potongan
+                // $addsub = MtrPayrollAddsub::whereIn('id', $data1[0])->orderBy('id', 'asc')->get();
+                // $arr = [];
+                // foreach($addsub as $_addsub){
+                //     if(in_array($_addsub->id, $data1[0])){
+                //         $_arr = [];
+                //         array_push($_arr, array_search($_addsub->id, $data1[0]), $_addsub->id, $_addsub->tipe);
+                //     }
+                //     array_push($arr, $_arr);
+                // }
+                // for ($x = 2; $x < count($data1); $x++) {
+                //     foreach($arr as $_arr){
+                //         $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_addsub'=>$_arr[1]];
+                //         TrxPayrollAddsub::where($where)->delete();
+                //         $trx = New TrxPayrollAddsub;
+                //         $trx->nik = $data1[$x][$_101];
+                //         $trx->bulan = $data1[$x][$_102];
+                //         $trx->tahun = $data1[$x][$_103];
+                //         // 0=index data
+                //         $trx->angka = $data1[$x][$_arr[0]];
+                //         // 1=id_addsub
+                //         $trx->id_addsub = $_arr[1];
+                //         // 2=tipe
+                //         $trx->tipe = $_arr[2];
+                //         $trx->created_by = auth()->user()->nik;
+                //         $trx->updated_by = auth()->user()->nik;
+                //         $trx->save();
+                //     }
+                // }
                 return redirect('payroll')->with('msg', 'Data is saved successfully.');
             }
             // upload master
@@ -735,9 +806,11 @@ class TrxPayrollController extends Controller
                 // 
                 $where = ['nik'=>$data->nik, 'bulan'=>$data->bulan, 'tahun'=>$data->tahun];
                 $mtr = MtrPayroll::where($where)->orderBy('id', 'asc')->first();
-                $trx->pasangan = $mtr->pasangan;
-                $trx->anak = $mtr->anak;
-                $trx->tambahan = $mtr->tambahan;
+                if(!empty($mtr)){
+                    $trx->pasangan = $mtr->pasangan;
+                    $trx->anak = $mtr->anak;
+                    $trx->tambahan = $mtr->tambahan;
+                }
                 // 
                 $where = ['nik'=>$data->nik, 'tipe'=>'add'];
                 $arr_id = [1,2,3,4,5];
@@ -775,7 +848,7 @@ class TrxPayrollController extends Controller
         // $year = '2024';
         // dd(Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->subMonth()->startOfMonth()->format('Y-m-d'));
         // dd(Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->subMonth()->endOfMonth()->format('Y-m-d'));
-        $payroll = TrxPayroll::orderBy('id', 'asc')->get();
+        $payroll = TrxPayroll::orderByRaw('tahun desc, bulan desc')->get();
         // 
         $arr_nik = [];
         $arr_findim_subdepartemen = [];
@@ -798,7 +871,7 @@ class TrxPayrollController extends Controller
             array_push($arr_departemen, $data['departemen']);
             array_push($arr_subdepartemen, $data['subdepartemen']);
             array_push($arr_status_karyawan, $data['status_karyawan']);
-            array_push($arr_jabatan, $data['jabatan']);
+            // array_push($arr_jabatan, $data['jabatan']);
             array_push($arr_level, $data['level']);
         }
         // 
@@ -827,6 +900,9 @@ class TrxPayrollController extends Controller
         $_arr_status_karyawan = [];
         $_arr_jabatan = [];
         $_arr_level = [];
+        // default only current month and year displayed
+        $where = ['bulan'=>Carbon::now()->month, 'tahun'=>Carbon::now()->year];
+        $payroll = TrxPayroll::where($where)->orderByRaw('tahun desc, bulan desc')->get();
         // start filter
         if($request->filter == true){
             $bulan_tahun_dari = $request->bulan_tahun_dari;
@@ -840,34 +916,34 @@ class TrxPayrollController extends Controller
             $_arr_departemen = $request->input('departemen', []);
             $_arr_subdepartemen = $request->input('subdepartemen', []);
             $_arr_status_karyawan = $request->input('status_karyawan', []);
-            $_arr_jabatan = $request->input('jabatan', []);
+            // $_arr_jabatan = $request->input('jabatan', []);
             $_arr_level = $request->input('level', []);
             $payroll = TrxPayroll::whereIn('nik', $_arr_nik)
-            ->whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
-            ->whereIn('findim_departemen', $_arr_findim_departemen)
-            ->whereIn('findim_divisi', $_arr_findim_divisi)
-            ->whereIn('findim_project', $_arr_findim_project)
-            ->whereIn('divisi', $_arr_divisi)
-            ->whereIn('departemen', $_arr_departemen)
-            ->whereIn('subdepartemen', $_arr_subdepartemen)
+            // ->whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
+            // ->whereIn('findim_departemen', $_arr_findim_departemen)
+            // ->whereIn('findim_divisi', $_arr_findim_divisi)
+            // ->whereIn('findim_project', $_arr_findim_project)
+            // ->whereIn('divisi', $_arr_divisi)
+            // ->whereIn('departemen', $_arr_departemen)
+            // ->whereIn('subdepartemen', $_arr_subdepartemen)
             ->whereIn('status_karyawan', $_arr_status_karyawan)
             // ->whereIn('jabatan', $_arr_jabatan)
             ->whereIn('level', $_arr_level)
             ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
-            ->orderBy('id', 'asc')->get();
+            ->orderByRaw('tahun desc, bulan desc')->get();
             if(in_array('0', $_arr_nik)){
-                $payroll = TrxPayroll::whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
-                ->whereIn('findim_departemen', $_arr_findim_departemen)
-                ->whereIn('findim_divisi', $_arr_findim_divisi)
-                ->whereIn('findim_project', $_arr_findim_project)
-                ->whereIn('divisi', $_arr_divisi)
-                ->whereIn('departemen', $_arr_departemen)
-                ->whereIn('subdepartemen', $_arr_subdepartemen)
-                ->whereIn('status_karyawan', $_arr_status_karyawan)
+                // $payroll = TrxPayroll::whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
+                // ->whereIn('findim_departemen', $_arr_findim_departemen)
+                // ->whereIn('findim_divisi', $_arr_findim_divisi)
+                // ->whereIn('findim_project', $_arr_findim_project)
+                // ->whereIn('divisi', $_arr_divisi)
+                // ->whereIn('departemen', $_arr_departemen)
+                // ->whereIn('subdepartemen', $_arr_subdepartemen)
+                $payroll = TrxPayroll::whereIn('status_karyawan', $_arr_status_karyawan)
                 // ->whereIn('jabatan', $_arr_jabatan)
                 ->whereIn('level', $_arr_level)
                 ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
-                ->orderBy('id', 'asc')->get();
+                ->orderByRaw('tahun desc, bulan desc')->get();
             }
         }
         // end filter
@@ -904,47 +980,35 @@ class TrxPayrollController extends Controller
     public function show(Request $request, $id)
     {
         // dd($request->all(), $id);
+        $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
         $id = (new OpenDataController)->decryptWithKey($id);
         $payroll = null;
-        $view = null;
-        if($request->view == 'pdf_h'){
+        $_view = $request->view;
+        if($_view == 'pdf_h'){
             $payroll = TrxPayrollLog::find($id);
-            $view = \View::make('payroll.pdf_h', compact('payroll'));
-        }else if($request->view == 'pdf'){
+            // $view = \View::make('payroll.pdf_h', compact('payroll'));
+        }else if($_view == 'pdf'){
             $payroll = TrxPayroll::find($id);
-            $view = \View::make('payroll.pdf', compact('payroll'));
+            // $view = \View::make('payroll.pdf', compact('payroll'));
         }
+        $pic_paraf = Karyawan::where(['nik' => MtrUtility::find(35)->informasi])->first();
+        $pic_paraf = $pic_paraf->nama;
+        $view = \View::make('payroll.pdf', compact('payroll', '_view', 'pic_paraf'));
         $password = Carbon::parse(Karyawan::where(['nik' => $payroll->nik])->first()->tanggal_lahir)->format("dmY");
-        $filename = $payroll->nik.' Slip Gaji '.$payroll->tahun.' '.str_pad($payroll->bulan, 2, '0', STR_PAD_LEFT).'.pdf';
+        $filename = (new OpenDataController)->encryptWithKey($payroll->nik).' Slip Gaji '.$bulan[$payroll->bulan - 1].' '.$payroll->tahun.'.pdf';
         $html = $view->render();
         $pdf = new TCPDF;
         $pdf::SetTitle($filename);
-        $pdf::SetFont('times', '', 9, '', true);
-        $pdf::AddPage('P', 'A4');
+        // $pdf::SetFont('times', '', 8, '', true);
+        $pdf::SetFont('helvetica', '', 8, '', true);
+        $pdf::AddPage('L', 'A4');
         $pdf::writeHTML($html, true, false, true, false, '');
-        // $pdf->SetProtection(array('print', 'copy'), 'yourpassword', 'userpassword');
         $pdf::SetProtection(array('print', 'copy'), $password, $password);
         // open browser
         // $pdf::Output(public_path($filename), 'I');
         // download pdf
         $pdf::Output(public_path($filename), 'D');
         return response()->download(public_path($filename));
-        // $pdf::AddPage();
-        // // $pdf::SetCreator(PDF_CREATOR);
-        // // $pdf::SetAuthor('Your Name');
-        // $pdf::SetTitle('PDF with Background Image');
-        // // $imagePath = public_path('images/6055615734165391782.jpg');
-        // $imagePath = public_path('images/page1.png');
-        // $pageWidth = $pdf::getPageWidth();
-        // $pageHeight = $pdf::getPageHeight();
-        // $pdf::Image($imagePath, 0, 0, $pageWidth, $pageHeight);
-        // // $pdf::Image($imagePath, 0, 0, 210, 297);
-        // $pdf::SetFont('helvetica', '', 10);
-        // $pdf::SetXY(5, 40);
-        // // $pdf::Cell(0, 0, 'Hello, this is your PDF with a background image.', 0, 1, 'C');
-        // $pdf::writeHTML($html, true, false, true, false, '');
-        // $pdf::Output('example.pdf', 'I');
-        // // return response($pdf->Output('example.pdf', 'I'), 200)->header('Content-Type', 'application/pdf');
     }
 
     /**

@@ -76,6 +76,17 @@ class TrxToDoListController extends Controller
      */
     public function index()
     {
+        // $arr = [];
+        // $trx = DB::select("SELECT COUNT(kode_sub_departemen) AS jumlah,kode_sub_departemen FROM mtr_tbl_karyawan WHERE is_aktif=1 AND wg_id=1 AND nik NOT IN ('Hco.all', 'IT.BM') GROUP BY kode_sub_departemen ORDER BY jumlah");
+        // foreach ($trx as $data) {
+        //     // $_arr = [];
+        //     $where = ['kode_sub_departemen'=>$data->kode_sub_departemen, 'is_aktif'=>1, 'wg_id'=>1];
+        //     $karyawan = Karyawan::where($where)->whereNotIn('nik', ['Hco.all', 'IT.BM'])->orderBy('nama', 'asc')->get();
+        //     array_push($arr, ['jumlah'=>$data->jumlah, 'karyawan'=>$karyawan]);
+        //     // array_push($arr, $_arr);
+        // }
+        // // dd($arr);
+        // return view('todolist.karyawan_detail', compact('arr'));
         //
         // kebutuhan0
         $where = ['nik' => auth()->user()->nik, 'filename' => 'emails.kebutuhan0'];

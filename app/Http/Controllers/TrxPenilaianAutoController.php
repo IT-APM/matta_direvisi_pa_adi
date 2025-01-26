@@ -22,8 +22,7 @@ class TrxPenilaianAutoController extends Controller
     public function index()
     {
         // karyawan tetap
-        $where = ['is_aktif'=>1, 'kode_status'=>1];
-        $kt = Karyawan::select('nik')->where($where)->get();
+        $kt = Karyawan::select('nik')->where(['kode_status'=>1])->get();
         // 
         $no_non_outsource = 0;
         $no_outsource = 0;
@@ -55,12 +54,20 @@ class TrxPenilaianAutoController extends Controller
     {
         // dd($request->all());
         $data = array();
+        $kt = Karyawan::select('nik')->where(['kode_status'=>1])->get();
+        // karyawan outsource
         if($request->is_outsource == 1){
-            $data = TrxPenilaianAuto::whereIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
-            // dd($data);
-        }else if($request->is_outsource == 0){
-            $data = TrxPenilaianAuto::whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
-            // dd($data);
+            // $data = TrxPenilaianAuto::whereIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+            $data = TrxPenilaianAuto::whereNotIn('nik_karyawan', $kt)->whereIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+        }
+        // karyawan non outsource dan non kt
+        else if($request->is_outsource == 0){
+            // $data = TrxPenilaianAuto::whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+            $data = TrxPenilaianAuto::whereNotIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+        }
+        // karyawan non outsource dan kt
+        else if($request->is_outsource == 2){
+            $data = TrxPenilaianAuto::whereIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'id', 'asc' )->get();
         }
         // dd($data);
         foreach ($data as $_data){

@@ -28,7 +28,9 @@
 <li class="breadcrumb-item">Payroll</li>
 <li class="breadcrumb-item active">Payroll Transaction</li>
 @endsection
-
+@php
+$bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+@endphp
 @section('content')
 <div class="container-fluid">
     <div class="row">
@@ -87,7 +89,7 @@
                                 <div class="collapse mt-2" id="collapse_filter">
                                     <form action="{{ route('payroll.index') }}" method="get" enctype="multipart/form-data" class="needs-validation" novalidate="">
                                         <div class="row">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-2">
                                                 <label class="h6" for="nama">Bulan-Tahun</label>
                                                 <div>
                                                     <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_dari }}">
@@ -98,6 +100,8 @@
                                                     <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_sampai }}">
                                                     <div class="invalid-feedback txt-danger">Field is required.</div>
                                                 </div>
+                                            </div>
+                                            <div class="col-sm-4">
                                                 <div>
                                                     <label class="h6 mt-2" for="nik">Karyawan</label>
                                                     <select class="form-select js-example-basic-single col-sm-12" id="nik" name="nik" required="">
@@ -109,12 +113,16 @@
                                                     </select>
                                                     <div class="invalid-feedback txt-danger">Field is required.</div>
                                                 </div>
+                                            </div>
+                                            <div class="col-sm-2">
                                                 <label class="h6 mt-2">Status</label>&nbsp;<input type="checkbox" onClick="status_karyawan(this)" />&nbsp;Check All
                                                 <label class="d-block" for="status_karyawan">
                                                     @foreach ($status_karyawan as $data)
                                                     <input class="checkbox_animated" id="status_karyawan[]" name="status_karyawan[]" type="checkbox" value="{{ $data->status_karyawan }}" @if(in_array($data->status_karyawan, $_arr_status_karyawan)) checked @endif> {{ $data->status_karyawan }}<br/>
                                                     @endforeach
                                                 </label>
+                                            </div>
+                                            <div class="col-sm-4">
                                                 <label class="h6 mt-2">Level</label>&nbsp;<input type="checkbox" onClick="level(this)" />&nbsp;Check All
                                                 <label class="d-block" for="level">
                                                     @foreach ($level as $data)
@@ -128,7 +136,7 @@
                                                     @endforeach
                                                 </label> --}}
                                             </div>
-                                            <div class="col-sm-4">
+                                            {{-- <div class="col-sm-4">
                                                 <label class="h6">Findim</label>
                                                 <br/>
                                                 <label class="form-label">Divisi</label>&nbsp;<input type="checkbox" onClick="findim_divisi(this)" />&nbsp;Check All
@@ -175,7 +183,7 @@
                                                     <input class="checkbox_animated" id="subdepartemen[]" name="subdepartemen[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_subdepartemen)) checked @endif> {{ $data->nama }}<br/>
                                                     @endforeach
                                                 </label>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div class="row mt-2">
                                             <div class="col-sm-12">
@@ -184,8 +192,8 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div class="table-responsive text-nowrap">
-                                    <table class="display" id="_datatable1">
+                                <div class="table-responsive">
+                                    <table class="display nowrap" id="_datatable1">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
@@ -231,7 +239,7 @@
                                             <tr>
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ $data->tahun }}</td>
-                                                <td>{{ str_pad($data->bulan, 2, '0', STR_PAD_LEFT) }}</td>
+                                                <td>{{ $bulan[$data->bulan - 1] }}</td>
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($data->gapok, 0) }}</td>
@@ -270,8 +278,8 @@
                         {{-- potongan --}}
                         <div class="tab-pane fade" id="pills-potongan" role="tabpanel" aria-labelledby="pills-potongan-tab">
                             <p class="mb-0 m-t-10">
-                                <div class="table-responsive text-nowrap">
-                                    <table class="display" id="_datatable2">
+                                <div class="table-responsive">
+                                    <table class="display nowrap" id="_datatable2">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
@@ -323,7 +331,7 @@
                                             <tr>
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ $data->tahun }}</td>
-                                                <td>{{ str_pad($data->bulan, 2, '0', STR_PAD_LEFT) }}</td>
+                                                <td>{{ $bulan[$data->bulan - 1] }}</td>
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
                                                 {{-- total upah --}}
@@ -348,8 +356,8 @@
                         {{-- bpjstk --}}
                         <div class="tab-pane fade" id="pills-bpjstk" role="tabpanel" aria-labelledby="pills-bpjstk-tab">
                             <p class="mb-0 m-t-10">
-                                <div class="table-responsive text-nowrap">
-                                    <table class="display" id="_datatable3">
+                                <div class="table-responsive">
+                                    <table class="display nowrap" id="_datatable3">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
@@ -380,7 +388,7 @@
                                             <tr>
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ $data->tahun }}</td>
-                                                <td>{{ str_pad($data->bulan, 2, '0', STR_PAD_LEFT) }}</td>
+                                                <td>{{ $bulan[$data->bulan - 1] }}</td>
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->upah, 0) }}</td>
@@ -404,8 +412,8 @@
                         {{-- bpjskes --}}
                         <div class="tab-pane fade" id="pills-bpjskes" role="tabpanel" aria-labelledby="pills-bpjskes-tab">
                             <p class="mb-0 m-t-10">
-                                <div class="table-responsive text-nowrap">
-                                    <table class="display" id="_datatable4">
+                                <div class="table-responsive">
+                                    <table class="display nowrap" id="_datatable4">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
@@ -436,7 +444,7 @@
                                             <tr>
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ $data->tahun }}</td>
-                                                <td>{{ str_pad($data->bulan, 2, '0', STR_PAD_LEFT) }}</td>
+                                                <td>{{ $bulan[$data->bulan - 1] }}</td>
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($bpjskes[0]->upah, 0) }}</td>
@@ -460,8 +468,8 @@
                         {{-- kertas kerja --}}
                         <div class="tab-pane fade" id="pills-kerja" role="tabpanel" aria-labelledby="pills-kerja-tab">
                             <p class="mb-0 m-t-10">
-                                <div class="table-responsive text-nowrap">
-                                    <table class="display" id="_datatable5">
+                                <div class="table-responsive">
+                                    <table class="display nowrap" id="_datatable5">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
@@ -558,7 +566,6 @@
                                                 $date_from = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth()->startOfMonth()->format('Y-m-d');
                                                 $date_to = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth()->endOfMonth()->format('Y-m-d');
                                                 $where = ['ot_maker_by'=>$data->nik, 'ot_approver_status'=>'Approve'];
-                                                // $overtime = App\Models\Overtime::where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy('id', 'asc')->get();
                                                 $overtime = App\Models\Overtime::select(DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
                                                 $total_overtime = $overtime->sum('ot_length_rp_adj');
                                                 // dd($total_overtime);
@@ -566,7 +573,7 @@
                                             <tr>
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ $data->tahun }}</td>
-                                                <td>{{ str_pad($data->bulan, 2, '0', STR_PAD_LEFT) }}</td>
+                                                <td>{{ $bulan[$data->bulan - 1] }}</td>
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
                                                 <td>{{ $data->findim_subdepartemen }}</td>
@@ -596,8 +603,8 @@
                                                 @endforeach
                                                 {{-- total upah --}}
                                                 <td class="text-end">{{ number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0) }}</td>
-                                                <td>{{ $mtr->no_kpj }}</td>
-                                                <td>{{ $mtr->no_jkn }}</td>
+                                                <td>@if(!empty($mtr->no_kpj)){{ $mtr->no_kpj }}@endif</td>
+                                                <td>@if(!empty($mtr->no_jkn)){{ $mtr->no_jkn }}@endif</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->angka, 0) }}</td>
                                                 <td class="text-end">{{ number_format($bpjsks[0]->angka, 0) }}</td>
                                                 {{--  --}}

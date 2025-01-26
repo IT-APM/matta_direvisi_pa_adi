@@ -13,9 +13,15 @@ use Carbon\Carbon;
 use DB;
 use App\Models\Karyawan;
 use App\Models\WorkingDay;
+use App\Models\WorkingGroup;
+use App\Models\Level;
 
 class ReminderSpController extends Controller
 {
+    public function history($id)
+    {
+        dd('ok');
+    }
     // reminder_sp
     public function reminder_sp($id)
     {
@@ -301,9 +307,117 @@ class ReminderSpController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        //
+        $trx = TrxReminderSpSend::orderBy( 'date_from', 'desc', 'persentase', 'asc' )->get();
+        $arr_nik = [];
+        $arr_wg = [];
+        $arr_level = [];
+        foreach(($trx->toArray()) as $data){
+            $nik_property = json_decode($data['nik_property'], true);
+            array_push($arr_nik, $data['nik']);
+            array_push($arr_wg, $nik_property['wg_id']);
+            array_push($arr_level, $nik_property['kode_level']);
+        }
+        $karyawan = Karyawan::select('nama','nik')->whereIn('nik', $arr_nik)->orderBy('nama', 'asc')->get();
+        $wg = WorkingGroup::whereIn('id', $arr_wg)->orderBy('id', 'asc')->get();
+        $level = Level::whereIn('id', $arr_level)->orderBy('id', 'asc')->get();
+        // filter parameter
+        $bulan_tahun_dari = '';
+        $bulan_tahun_sampai = '';
+        $_arr_nik = [];
+        $_arr_wg = [];
+        $_arr_level = [];
+        // start filter
+        if($request->filter == true){
+            $bulan_tahun_dari = $request->bulan_tahun_dari;
+            $bulan_tahun_sampai = $request->bulan_tahun_sampai;
+            $_arr_nik = [$request->nik];
+            $_arr_wg = $request->input('wg', []);
+            $_arr_level = $request->input('level', []);
+            $patterns_wg = [];
+            $patterns_level = [];
+            foreach($_arr_wg as $data){
+                array_push($patterns_wg, '"wg_id":'.$data.',');
+            }
+            foreach($_arr_level as $data){
+                array_push($patterns_level, '"kode_level":'.$data.',');
+            }
+            $query = TrxReminderSpSend::query();
+            $trx = $query->where(function($query) use ($patterns_level) {
+                // jika level ada pilihan
+                if(count($patterns_level)>0){
+                    foreach ($patterns_level as $index => $pattern) {
+                        if($index == 0){
+                            $query->where('nik_property', 'like', '%' . $pattern . '%');
+                        }else{
+                            $query->orWhere('nik_property', 'like', '%' . $pattern . '%');
+                        }
+                    }
+                }else{
+                    $query->whereNull('nik_property');
+                }
+            })
+            ->where(function($query) use ($patterns_wg) {
+                // jika wg ada pilihan
+                if(count($patterns_wg)>0){
+                    foreach ($patterns_wg as $index => $pattern) {
+                        if($index == 0){
+                            $query->where('nik_property', 'like', '%' . $pattern . '%');
+                        }else{
+                            $query->orWhere('nik_property', 'like', '%' . $pattern . '%');
+                        }
+                    }
+                }else{
+                    $query->whereNull('nik_property');
+                }
+            })
+            ->whereIn('nik', $_arr_nik)
+            ->whereBetween(DB::raw('date_from'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+            ->orderBy( 'date_from', 'desc', 'persentase', 'asc' )->get();
+            // jika semua karyawan dipilih
+            if(in_array('0', $_arr_nik)){
+                $query = TrxReminderSpSend::query();
+                $trx = $query->where(function($query) use ($patterns_level) {
+                    // jika level ada pilihan
+                    if(count($patterns_level)>0){
+                        foreach ($patterns_level as $index => $pattern) {
+                            if($index == 0){
+                                $query->where('nik_property', 'like', '%' . $pattern . '%');
+                            }else{
+                                $query->orWhere('nik_property', 'like', '%' . $pattern . '%');
+                            }
+                        }
+                    }else{
+                        $query->whereNull('nik_property');
+                    }
+                })
+                ->where(function($query) use ($patterns_wg) {
+                    // jika wg ada pilihan
+                    if(count($patterns_wg)>0){
+                        foreach ($patterns_wg as $index => $pattern) {
+                            if($index == 0){
+                                $query->where('nik_property', 'like', '%' . $pattern . '%');
+                            }else{
+                                $query->orWhere('nik_property', 'like', '%' . $pattern . '%');
+                            }
+                        }
+                    }else{
+                        $query->whereNull('nik_property');
+                    }
+                })
+                ->whereBetween(DB::raw('date_from'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                ->orderBy( 'date_from', 'desc', 'persentase', 'asc' )->get();
+            }
+            // $sql = $query->toSql();
+            // $bindings = $query->getBindings();
+            // foreach ($bindings as $binding) {
+            //     $sql = preg_replace('/\?/', "'" . addslashes($binding) . "'", $sql, 1); // Replace each placeholder
+            // }
+            // dd($sql);
+        }
+        // end filter
+        return view( 'reminder_sp.history', compact( 'trx', 'karyawan', 'bulan_tahun_dari', 'bulan_tahun_sampai', 'wg', 'level', 'arr_nik', 'arr_wg', 'arr_level', '_arr_nik', '_arr_wg', '_arr_level' ) );
     }
 
     /**
