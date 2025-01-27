@@ -26,12 +26,51 @@
 				<br/><br/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr>
-						<td width="25%">Tanggal Psikotest<br/>Tanggal Interview<br/>Perusahaan</td>
-						<td width="75%">: {{ Carbon\Carbon::parse($trx->check_in)->format('d-m-Y') }}<br/>
-							@foreach($interview as $data)
-							: {{ Carbon\Carbon::parse($data->check_in)->format('d-m-Y') }} Oleh @if($data->jenis == 'hco') HCO @elseif($data->jenis == 'user') User @elseif($data->jenis == 'user_hco') User dan HCO  @endif<br/>
+						<td width="24%">Tanggal Psikotest</td>
+						<td width="2%">:</td>
+						<td width="74%">{{ Carbon\Carbon::parse($trx->check_in)->format('d-m-Y') }}</td>
+					</tr>
+					<tr>
+						<td>Tanggal Interview</td>
+						<td>:</td>
+						<td><table width="100%" border="0" cellspacing="0" cellpadding="2">
+								@foreach($interview as $data)
+								<tr>
+									<td width="15%">{{ Carbon\Carbon::parse($data->check_in)->format('d-m-Y') }}</td>
+									<td width="10%">{{ $data->metode }}</td>
+									<td width="75%">
+										{{-- @php $interviewer = ''; @endphp --}}
+										@foreach(explode(';', $data->interviewer) as $_data)
+										@php 
+										$interviewer = '';
+										$nama = App\Models\Karyawan::where(['nik' => $_data])->first()->nama;
+										$interviewer .= $nama.'/'.$_data;
+										if(!$loop->last){
+											$interviewer .= '<br/>';
+										}
+										@endphp
+										{!! $interviewer !!}
+										@endforeach
+									</td>
+								</tr>
+								@endforeach
+							</table>
+							{{-- @foreach($interview as $data)
+							@php $interviewer = ''; @endphp
+							@foreach(explode(';', $data->interviewer) as $_data)
+							@php 
+							$nama = App\Models\Karyawan::where(['nik' => $_data])->first()->nama;
+							$interviewer .= $nama.'/'.$_data.' ';
+							@endphp
 							@endforeach
-							: PT. ALITA PRAYA MITRA</td>
+							{{ Carbon\Carbon::parse($data->check_in)->format('d-m-Y') }}<br/>Metode: {{ $data->metode }}<br/>Oleh: {{ $interviewer }} @if(!$loop->last) <br/> @endif
+							@endforeach --}}
+						</td>
+					</tr>
+					<tr>
+						<td>Perusahaan</td>
+						<td>:</td>
+						<td>PT. ALITA PRAYA MITRA</td>
 					</tr>
 				</table>
 				<br/><br/>
@@ -39,26 +78,31 @@
 				@php $x=0 @endphp
 				<table width="100%" border="1" cellspacing="0" cellpadding="2">
 					<tr align="center">
-						<th width="5%"><b>NO</b></th>
-						<th width="35%"><b>NAMA</b></th>
-						<th width="60%"><b>REKOMENDASI</b></th>
+						<th width="5%" rowspan="2"><b>NO</b></th>
+						<th width="45%" rowspan="2"><b>NAMA</b></th>
+						<th colspan="2"><b>REKOMENDASI</b></th>
 					</tr>
 					<tr align="center">
-						<td>1</td>
-						<td>{{ $trx->nama }}</td>
-						<td>@if($resume[$x]->jawaban == 1)DISARANKAN @else TIDAK DISARANKAN @endif</td>
+						<td><b>DISARANKAN</b></td>
+						<td><b>TIDAK DISARANKAN</b></td>
+					</tr>
+					<tr align="center">
+						<td width="5%">1</td>
+						<td width="45%">{{ $trx->nama }}</td>
+						<td width="25%">@if($resume[$x]->jawaban)<img width="20" src="{{ public_path('assets/images/matta/checklist.png') }}" alt="checklist"> @endif</td>
+						<td width="25%">@if(!$resume[$x]->jawaban)<img width="20" src="{{ public_path('assets/images/matta/checklist.png') }}" alt="checklist"> @endif</td>
 					</tr>
 				</table>
 				<br/><br/>
 				<table width="100%" border="1" cellspacing="0" cellpadding="0">
 					<tr>
-						<td align="center"><strong>URAIAN PERILAKU</strong></td>
+						<td align="center"><b>URAIAN PERILAKU</b></td>
 					</tr>
 				</table>
 				<table width="100%" border="1" cellspacing="0" cellpadding="2">
 					<tr align="center">
-						<th width="50%">Strong Point</th>
-						<th width="50%">To Be Develop</th>
+						<th width="50%"><b>Strong Point</b></th>
+						<th width="50%"><b>To Be Develop</b></th>
 					</tr>
 					<tr>
 						@php $x=1 @endphp
@@ -73,7 +117,7 @@
 				@php $x=3 @endphp
 				<table width="100%" border="1" cellspacing="0" cellpadding="2">
 					<tr>
-						<td align="justify">Kesimpulan :<br/>{!! nl2br(e($resume[$x]->jawaban)) !!}</td>
+						<td align="justify"><b>Kesimpulan :</b><br/>{!! nl2br(e($resume[$x]->jawaban)) !!}</td>
 					</tr>
 				</table>
 			</td>

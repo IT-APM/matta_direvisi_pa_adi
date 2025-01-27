@@ -26,12 +26,43 @@
 				<br/><br/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr>
-						<td width="25%">Tanggal Psikotest<br/>Tanggal Interview<br/>Perusahaan</td>
-						<td width="75%">: <?php echo e(Carbon\Carbon::parse($trx->check_in)->format('d-m-Y')); ?><br/>
-							<?php $__currentLoopData = $interview; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-							: <?php echo e(Carbon\Carbon::parse($data->check_in)->format('d-m-Y')); ?> Oleh <?php if($data->jenis == 'hco'): ?> HCO <?php elseif($data->jenis == 'user'): ?> User <?php elseif($data->jenis == 'user_hco'): ?> User dan HCO  <?php endif; ?><br/>
-							<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-							: PT. ALITA PRAYA MITRA</td>
+						<td width="24%">Tanggal Psikotest</td>
+						<td width="2%">:</td>
+						<td width="74%"><?php echo e(Carbon\Carbon::parse($trx->check_in)->format('d-m-Y')); ?></td>
+					</tr>
+					<tr>
+						<td>Tanggal Interview</td>
+						<td>:</td>
+						<td><table width="100%" border="0" cellspacing="0" cellpadding="2">
+								<?php $__currentLoopData = $interview; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+								<tr>
+									<td width="15%"><?php echo e(Carbon\Carbon::parse($data->check_in)->format('d-m-Y')); ?></td>
+									<td width="10%"><?php echo e($data->metode); ?></td>
+									<td width="75%">
+										
+										<?php $__currentLoopData = explode(';', $data->interviewer); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+										<?php 
+										$interviewer = '';
+										$nama = App\Models\Karyawan::where(['nik' => $_data])->first()->nama;
+										$interviewer .= $nama.'/'.$_data;
+										if(!$loop->last){
+											$interviewer .= '<br/>';
+										}
+										?>
+										<?php echo $interviewer; ?>
+
+										<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+									</td>
+								</tr>
+								<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+							</table>
+							
+						</td>
+					</tr>
+					<tr>
+						<td>Perusahaan</td>
+						<td>:</td>
+						<td>PT. ALITA PRAYA MITRA</td>
 					</tr>
 				</table>
 				<br/><br/>
@@ -39,26 +70,31 @@
 				<?php $x=0 ?>
 				<table width="100%" border="1" cellspacing="0" cellpadding="2">
 					<tr align="center">
-						<th width="5%"><b>NO</b></th>
-						<th width="35%"><b>NAMA</b></th>
-						<th width="60%"><b>REKOMENDASI</b></th>
+						<th width="5%" rowspan="2"><b>NO</b></th>
+						<th width="45%" rowspan="2"><b>NAMA</b></th>
+						<th colspan="2"><b>REKOMENDASI</b></th>
 					</tr>
 					<tr align="center">
-						<td>1</td>
-						<td><?php echo e($trx->nama); ?></td>
-						<td><?php if($resume[$x]->jawaban == 1): ?>DISARANKAN <?php else: ?> TIDAK DISARANKAN <?php endif; ?></td>
+						<td><b>DISARANKAN</b></td>
+						<td><b>TIDAK DISARANKAN</b></td>
+					</tr>
+					<tr align="center">
+						<td width="5%">1</td>
+						<td width="45%"><?php echo e($trx->nama); ?></td>
+						<td width="25%"><?php if($resume[$x]->jawaban): ?><img width="20" src="<?php echo e(public_path('assets/images/matta/checklist.png')); ?>" alt="checklist"> <?php endif; ?></td>
+						<td width="25%"><?php if(!$resume[$x]->jawaban): ?><img width="20" src="<?php echo e(public_path('assets/images/matta/checklist.png')); ?>" alt="checklist"> <?php endif; ?></td>
 					</tr>
 				</table>
 				<br/><br/>
 				<table width="100%" border="1" cellspacing="0" cellpadding="0">
 					<tr>
-						<td align="center"><strong>URAIAN PERILAKU</strong></td>
+						<td align="center"><b>URAIAN PERILAKU</b></td>
 					</tr>
 				</table>
 				<table width="100%" border="1" cellspacing="0" cellpadding="2">
 					<tr align="center">
-						<th width="50%">Strong Point</th>
-						<th width="50%">To Be Develop</th>
+						<th width="50%"><b>Strong Point</b></th>
+						<th width="50%"><b>To Be Develop</b></th>
 					</tr>
 					<tr>
 						<?php $x=1 ?>
@@ -73,7 +109,7 @@
 				<?php $x=3 ?>
 				<table width="100%" border="1" cellspacing="0" cellpadding="2">
 					<tr>
-						<td align="justify">Kesimpulan :<br/><?php echo nl2br(e($resume[$x]->jawaban)); ?></td>
+						<td align="justify"><b>Kesimpulan :</b><br/><?php echo nl2br(e($resume[$x]->jawaban)); ?></td>
 					</tr>
 				</table>
 			</td>

@@ -678,13 +678,18 @@ class TrxRecruitmentController extends Controller
         $resume = TrxRecruitmentResume::where($where)->orderBy('id', 'asc')->get();
         $interview = TrxRecruitmentInterview::where($where)->orderBy('id', 'desc')->get();
         $filename = $id . '_resume.pdf';
-        $view = \View::make('recruitment.pdf_resume', compact('trx', 'resume', 'interview'));
-        $html = $view->render();
         $pdf = new TCPDF;
         $pdf::SetTitle('Resume Hasil Tes');
         $pdf::SetFont('times', '', 10, '', true);
+        // page-1
         $pdf::AddPage();
+        $html = \View::make('recruitment.pdf_resume', compact('trx', 'resume', 'interview'))->render();
         $pdf::writeHTML($html, true, false, true, false, '');
+        // page-2
+        $pdf::AddPage();
+        $html = \View::make('recruitment.pdf_resume2', compact('trx', 'resume', 'interview'))->render();
+        $pdf::writeHTML($html, true, false, true, false, '');
+        // 
         $pdf::Output(public_path($filename), 'I');
         return response()->download(public_path($filename));
     }
