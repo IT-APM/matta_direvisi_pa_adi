@@ -277,7 +277,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                             <tr>
                                                 <td>&nbsp;</td>
-                                                <td colspan="6">A.4. Tunjangan yang tidak diterimakan ke karyawan (ditanggung/dibayarkan Perusahaan)</td>
+                                                <td colspan="6">A.4. Tunjangan yang tidak diterimakan ke karyawan (ditanggung Perusahaan)</td>
                                                 <td>&nbsp;</td>
                                             </tr>
                                             <tr>
