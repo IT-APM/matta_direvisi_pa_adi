@@ -36,12 +36,123 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KaryawanController extends Controller
 {
     public function __construct(Gate $gate)
     {
         $this->middleware('can:hc', ['except' => ['show', 'get_divisi', 'update_profile']]);
+    }
+    
+    public function upload_data($id)
+    {
+        return view('master.karyawan.upload_data');
+    }
+    
+    public function upload_data_xlsx(Request $request, $id)
+    {
+        $jenis = $request->jenis;
+        if($request->hasFile('template')){
+            $request->validate([
+                'template'=>'required|file|mimes:xls,xlsx|max:2048',
+            ]);
+            // upload data
+            if($jenis == 'data_findim'){
+                $path = $request->file('template')->getPathname();
+                $trx = Excel::toArray([], $path);
+                $data0 = $trx[0];
+                // 100=NIP
+                // 101=NO SUB DEPARTEMENT
+                // 102=SUB DEPARTEMENT DESCRIPTION
+                // 103=NO DEPARTEMENT
+                // 104=DEPARTEMENT DESCRIPTION
+                // 105=NO DIVISION
+                // 106=DIVISION DESCRIPTION
+                // 107=PROJECT ID
+                // 108=PROJECT DESCRIPTION
+                $_100 = array_search(100, $data0[0]);
+                $_101 = array_search(101, $data0[0]);
+                $_102 = array_search(102, $data0[0]);
+                $_103 = array_search(103, $data0[0]);
+                $_104 = array_search(104, $data0[0]);
+                $_105 = array_search(105, $data0[0]);
+                $_106 = array_search(106, $data0[0]);
+                $_107 = array_search(107, $data0[0]);
+                $_108 = array_search(108, $data0[0]);
+                // dimulai dari baris ke-3
+                for ($x = 2; $x < count($data0); $x++) {
+                    // get karyawan
+                    $where = ['nik' => $data0[$x][$_100]];
+                    $karyawan = Karyawan::where($where)->first();
+                    // 
+                    // get NO SUB DEPARTEMENT
+                    $where = ['subdepartemen_id' => $data0[$x][$_101]];
+                    $f_sub_dep = MtrFindimSubdepartemen::where($where)->first();
+                    // check jika tidak ada maka insert
+                    if(empty($f_sub_dep)){
+                        $data = New MtrFindimSubdepartemen;
+                        $data->subdepartemen_id = $data0[$x][$_101];
+                        $data->subdepartemen_desc = $data0[$x][$_102];
+                        $data->save();
+                    }
+                    // get NO SUB DEPARTEMENT
+                    $where = ['subdepartemen_id' => $data0[$x][$_101]];
+                    $f_sub_dep = MtrFindimSubdepartemen::where($where)->first();
+                    // 
+                    // get NO DEPARTEMENT
+                    $where = ['departemen_id' => $data0[$x][$_103]];
+                    $f_dep = MtrFindimDepartemen::where($where)->first();
+                    // check jika tidak ada maka insert
+                    if(empty($f_dep)){
+                        $data = New MtrFindimDepartemen;
+                        $data->departemen_id = $data0[$x][$_103];
+                        $data->departemen_desc = $data0[$x][$_104];
+                        $data->save();
+                    }
+                    // get NO DEPARTEMENT
+                    $where = ['departemen_id' => $data0[$x][$_103]];
+                    $f_dep = MtrFindimDepartemen::where($where)->first();
+                    // 
+                    // get NO DIVISION
+                    $where = ['divisi_id' => $data0[$x][$_105]];
+                    $f_divisi = MtrFindimDivisi::where($where)->first();
+                    // check jika tidak ada maka insert
+                    if(empty($f_divisi)){
+                        $data = New MtrFindimDivisi;
+                        $data->divisi_id = $data0[$x][$_105];
+                        $data->divisi_desc = $data0[$x][$_106];
+                        $data->save();
+                    }
+                    // get NO DIVISION
+                    $where = ['divisi_id' => $data0[$x][$_105]];
+                    $f_divisi = MtrFindimDivisi::where($where)->first();
+                    // 
+                    // get PROJECT ID
+                    $where = ['project_id' => $data0[$x][$_107]];
+                    $f_project = MtrFindimProject::where($where)->first();
+                    // check jika tidak ada maka insert
+                    if(empty($f_project)){
+                        $data = New MtrFindimProject;
+                        $data->project_id = $data0[$x][$_107];
+                        $data->project_desc = $data0[$x][$_108];
+                        $data->save();
+                    }
+                    // get PROJECT ID
+                    $where = ['project_id' => $data0[$x][$_107]];
+                    $f_project = MtrFindimProject::where($where)->first();
+                    // update karyawan
+                    if ($karyawan) {
+                        $karyawan->findim_project = $f_project->id;
+                        $karyawan->findim_divisi = $f_divisi->id;
+                        $karyawan->findim_departemen = $f_dep->id;
+                        $karyawan->findim_subdepartemen = $f_sub_dep->id;
+                        $karyawan->update();
+                    }
+                }
+            }
+        }
+        return redirect('karyawan/upload_data/0')->with('msg', 'Data is saved successfully.');
     }
     /**
      * Display a listing of the resource.

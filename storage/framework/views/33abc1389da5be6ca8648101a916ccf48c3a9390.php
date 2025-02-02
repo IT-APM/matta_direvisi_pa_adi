@@ -277,7 +277,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                             <tr>
                                                 <td>&nbsp;</td>
-                                                <td colspan="6">A.4. Tunjangan yang tidak diterimakan ke karyawan (ditanggung/dibayarkan Perusahaan)</td>
+                                                <td colspan="6">A.4. Tunjangan yang tidak diterimakan ke karyawan (ditanggung Perusahaan)</td>
                                                 <td>&nbsp;</td>
                                             </tr>
                                             <tr>
@@ -285,7 +285,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>&nbsp;</td>
                                                 <td>a. PPh 21</td>
                                                 <td>:</td>
-                                                <td class="align-right underline"><?php echo e(number_format(0, 0)); ?></td>
+                                                <td class="align-right underline"><?php echo e(number_format($payroll->pajak, 0)); ?></td>
                                                 <td>&nbsp;</td>
                                                 <td>&nbsp;</td>
                                                 <td>&nbsp;</td>
@@ -298,7 +298,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             }
                                             $potongan_bpjskes = 0;
                                             foreach ($bpjskes as $_data){
-                                                $angka = round($_data->angka*$_data->persen/100, 0);
+                                                // tidak digunakan, menjadi upload angka bpjsks
+                                                // $angka = round($_data->angka*$_data->persen/100, 0);
+                                                $angka = $_data->angka;
                                                 $potongan_bpjskes += $angka;
                                             }
                                             ?>
@@ -320,7 +322,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             }
                                             $potongan_bpjstk = 0;
                                             foreach ($bpjstk as $_data){
-                                                $angka = round($_data->angka*$_data->persen/100, 0);
+                                                // tidak digunakan, menjadi upload angka bpjsks
+                                                // $angka = round($_data->angka*$_data->persen/100, 0);
+                                                $angka = $_data->angka;
                                                 $potongan_bpjstk += $angka;
                                             }
                                             ?>
@@ -338,7 +342,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>&nbsp;</td>
                                                 <td class="bold-text" colspan="4">Total (A.4)</td>
                                                 <td>:</td>
-                                                <td class="align-right underline"><?php echo e(number_format($potongan_bpjskes + $potongan_bpjstk, 0)); ?></td>
+                                                <td class="align-right underline"><?php echo e(number_format($potongan_bpjskes + $potongan_bpjstk + $payroll->pajak, 0)); ?></td>
                                                 <td>&nbsp;</td>
                                             </tr>
                                             <tr>
@@ -418,7 +422,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <tr>
                                                 <td>Dibayarkan Tanggal<br>Via</td>
                                                 <td>:<br/>:</td>
-                                                <td colspan="3">25 <?php echo e($bulan[$payroll->bulan - 1]); ?> <?php echo e($payroll->tahun); ?><br/>Transfer</td>
+                                                
+                                                <td colspan="3"><?php if(!empty($payroll->paid_at)): ?><?php echo e(Carbon\Carbon::parse($payroll->paid_at)->format("d")); ?> <?php echo e($bulan[Carbon\Carbon::parse($payroll->paid_at)->format("m") - 1]); ?> <?php echo e(Carbon\Carbon::parse($payroll->paid_at)->format("Y")); ?><?php else: ?> &nbsp; <?php endif; ?><br/>Transfer</td>
                                                 <td align="right"><br/><br/><br/><br/>PT Alita Praya Mitra - Human Capital & Organization<br/><?php echo e(Carbon\Carbon::parse(now())->format("d-m-Y H:i:s")); ?></td>
                                                 
                                             </tr>

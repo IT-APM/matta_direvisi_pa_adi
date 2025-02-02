@@ -150,6 +150,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th><?php echo e($data->nama); ?></th>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 <th>Total Upah</th>
+                                                <th>Dibayarkan Tanggal</th>
                                                 <th>Slip Gaji</th>
                                             </tr>
                                         </thead>
@@ -186,6 +187,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 
                                                 <td class="text-end"><?php echo e(number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0)); ?></td>
+                                                <td><?php if(!empty($data->paid_at)): ?><?php echo e(Carbon\Carbon::parse($data->paid_at)->format("d-m-Y")); ?><?php endif; ?></td>
                                                 <td><a href="<?php echo e(route('payroll.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => 'pdf_h'])); ?>" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -312,10 +314,12 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td><?php echo e($data->nik); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjstk[0]->upah, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjstk[0]->maksimal, 0)); ?></td>
-                                                <td class="text-end"><?php echo e(number_format($bpjstk[0]->angka, 0)); ?></td>
+                                                <td class="text-end"><?php if($bpjstk[0]->upah > $bpjstk[0]->maksimal): ?><?php echo e(number_format($bpjstk[0]->maksimal, 0)); ?><?php else: ?><?php echo e(number_format($bpjstk[0]->upah, 0)); ?><?php endif; ?></td>
                                                 <?php $__currentLoopData = $bpjstk; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <?php
-                                                    $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    // tidak digunakan, menjadi upload angka bpjstk
+                                                    // $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    $angka = $_data->angka;
                                                     $potongan += $angka;
                                                 ?>
                                                 <td class="text-end"><?php echo e(number_format($angka, 0)); ?></td>
@@ -368,10 +372,12 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td><?php echo e($data->nik); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjskes[0]->upah, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjskes[0]->maksimal, 0)); ?></td>
-                                                <td class="text-end"><?php echo e(number_format($bpjskes[0]->angka, 0)); ?></td>
+                                                <td class="text-end"><?php if($bpjskes[0]->upah > $bpjskes[0]->maksimal): ?><?php echo e(number_format($bpjskes[0]->maksimal, 0)); ?><?php else: ?><?php echo e(number_format($bpjskes[0]->upah, 0)); ?><?php endif; ?></td>
                                                 <?php $__currentLoopData = $bpjskes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <?php
-                                                    $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    // tidak digunakan, menjadi upload angka bpjsks
+                                                    // $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    $angka = $_data->angka;
                                                     $potongan += $angka;
                                                 ?>
                                                 <td class="text-end"><?php echo e(number_format($angka, 0)); ?></td>

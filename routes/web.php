@@ -193,6 +193,8 @@ Route::get('karyawan/get_departemen', [KaryawanController::class, 'get_departeme
 Route::get('karyawan/get_sub_departemen/{id}', [KaryawanController::class, 'get_sub_departemen'])->name('karyawan.get_sub_departemen');
 Route::get('karyawan/get_sub_departemen', [KaryawanController::class, 'get_sub_departemen'])->name('get_sub_departemen');
 Route::post('karyawan/image/store', [ KaryawanController::class, 'ImageUploadStore' ])->name('upload.image.store');
+Route::get('karyawan/upload_data/{id}', [KaryawanController::class, 'upload_data'])->name('karyawan.upload_data')->middleware('can:hc');
+Route::post('karyawan/upload_data/xlsx/{id}', [KaryawanController::class, 'upload_data_xlsx'])->name('karyawan.upload_data_xlsx')->middleware('can:hc');
 // 
 Route::resource('perusahaan', PerusahaanController::class)->middleware('can:hc');
 Route::resource('divisi', DivisiController::class)->middleware('can:hc');

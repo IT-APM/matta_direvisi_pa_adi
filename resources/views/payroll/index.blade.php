@@ -82,10 +82,36 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     </form>
                                 </div>
                                 <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <a href="{{ route('payroll.master',[6, 'tipe'=>'trxpayroll']) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                                    <div class="col-md-12">
+                                        <a href="{{ route('payroll.master',[6, 'tipe'=>'trxpayroll']) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" type="button" data-bs-toggle="modal" data-original-title="test" data-bs-target="#exampleModal"><i class="fa fa-calendar"></i> Paid Date</button>
                                     </div>
                                 </div>
+                                {{--  --}}
+                                @if(count($payroll)>0)
+                                <!-- The Modal -->
+                                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Paid Date</h5>
+                                            {{-- <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button> --}}
+                                            </div>
+                                            <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                            @csrf
+                                            <div class="modal-body">
+                                                <input type="hidden" id="jenis" name="jenis" value="paid_at">
+                                                <input type="hidden" id="id" name="id" value="{{ $payroll[0]->id }}">
+                                                <input name="paid_at" id="paid_at" class="form-control" type="date" value="@if(!empty($payroll[0]->paid_at)){{ $payroll[0]->paid_at }}"@endif></div>
+                                            <div class="modal-footer">
+                                            <button class="btn btn-success mt-2" type="submit">Submit</button>
+                                            <button class="btn btn-warning mt-2" type="button" data-bs-dismiss="modal">Cancel</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
+                                {{--  --}}
                                 <div class="collapse mt-2" id="collapse_filter">
                                     <form action="{{ route('payroll.index') }}" method="get" enctype="multipart/form-data" class="needs-validation" novalidate="">
                                         <div class="row">
@@ -221,6 +247,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>{{ $data->nama }}</th>
                                                 @endforeach
                                                 <th>Total Upah</th>
+                                                <th>Dibayarkan Tanggal</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -257,6 +284,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 @endforeach
                                                 {{-- total upah --}}
                                                 <td class="text-end">{{ number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0) }}</td>
+                                                <td>@if(!empty($data->paid_at)){{ Carbon\Carbon::parse($data->paid_at)->format("d-m-Y") }}@endif</td>
                                                 <td>
                                                     <form action="{{ route('payroll.destroy',[6, 'tipe'=>'del_trxpayroll', 'id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" method="POST">
                                                         @csrf
@@ -356,6 +384,22 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         {{-- bpjstk --}}
                         <div class="tab-pane fade" id="pills-bpjstk" role="tabpanel" aria-labelledby="pills-bpjstk-tab">
                             <p class="mb-0 m-t-10">
+                                <div class="row g-3 mb-2">
+                                    <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                    @csrf
+                                    <input type="hidden" id="jenis" name="jenis" value="bpjstk">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <input name="template" id="template" class="form-control" type="file" required="">
+                                            <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                            <br/><a href="{{ asset('assets/template/template_upload_bpjstk_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                        </div>
+                                    </div>
+                                    </form>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="display nowrap" id="_datatable3">
                                         <thead>
@@ -393,10 +437,12 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->upah, 0) }}</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->maksimal, 0) }}</td>
-                                                <td class="text-end">{{ number_format($bpjstk[0]->angka, 0) }}</td>
+                                                <td class="text-end">@if($bpjstk[0]->upah > $bpjstk[0]->maksimal){{ number_format($bpjstk[0]->maksimal, 0) }}@else{{ number_format($bpjstk[0]->upah, 0) }}@endif</td>
                                                 @foreach ($bpjstk as $_data)
                                                 @php
-                                                    $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    // tidak digunakan, menjadi upload angka bpjstk
+                                                    // $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    $angka = $_data->angka;
                                                     $potongan += $angka;
                                                 @endphp
                                                 <td class="text-end">{{ number_format($angka, 0) }}</td>
@@ -409,9 +455,25 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                 </div>
                             </p>
                         </div>
-                        {{-- bpjskes --}}
+                        {{-- bpjsks --}}
                         <div class="tab-pane fade" id="pills-bpjskes" role="tabpanel" aria-labelledby="pills-bpjskes-tab">
                             <p class="mb-0 m-t-10">
+                                <div class="row g-3 mb-2">
+                                    <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                    @csrf
+                                    <input type="hidden" id="jenis" name="jenis" value="bpjsks">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <input name="template" id="template" class="form-control" type="file" required="">
+                                            <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                            <br/><a href="{{ asset('assets/template/template_upload_bpjsks_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                        </div>
+                                    </div>
+                                    </form>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="display nowrap" id="_datatable4">
                                         <thead>
@@ -449,10 +511,12 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($bpjskes[0]->upah, 0) }}</td>
                                                 <td class="text-end">{{ number_format($bpjskes[0]->maksimal, 0) }}</td>
-                                                <td class="text-end">{{ number_format($bpjskes[0]->angka, 0) }}</td>
+                                                <td class="text-end">@if($bpjskes[0]->upah > $bpjskes[0]->maksimal){{ number_format($bpjskes[0]->maksimal, 0) }}@else{{ number_format($bpjskes[0]->upah, 0) }}@endif</td>
                                                 @foreach ($bpjskes as $_data)
                                                 @php
-                                                    $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    // tidak digunakan, menjadi upload angka bpjsks
+                                                    // $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    $angka = $_data->angka;
                                                     $potongan += $angka;
                                                 @endphp
                                                 <td class="text-end">{{ number_format($angka, 0) }}</td>
@@ -696,7 +760,7 @@ $('#_datatable3').DataTable( {
 	],
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
 } );
-// bpjskes
+// bpjsks
 $('#_datatable4').DataTable( {
 	// dom: 'lBfrtip',
     dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +

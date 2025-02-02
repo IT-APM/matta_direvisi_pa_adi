@@ -680,7 +680,7 @@ class TrxRecruitmentController extends Controller
         $filename = $id . '_resume.pdf';
         $pdf = new TCPDF;
         $pdf::SetTitle('Resume Hasil Tes');
-        $pdf::SetFont('times', '', 10, '', true);
+        $pdf::SetFont('times', '', 11, '', true);
         // page-1
         $pdf::AddPage();
         $html = \View::make('recruitment.pdf_resume', compact('trx', 'resume', 'interview'))->render();

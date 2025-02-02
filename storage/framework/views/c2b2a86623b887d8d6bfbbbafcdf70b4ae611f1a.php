@@ -44,7 +44,8 @@
                     <?php endif; ?>
                     <a href="<?php echo e(route('karyawan.create')); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | 
                     <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | 
-                    <a href="<?php echo e(route('karyawancopy.create')); ?>" class="btn btn-success" type="button"><i class="fa fa-copy" aria-hidden="true"></i> Copy data</a>
+                    <a href="<?php echo e(route('karyawancopy.create')); ?>" class="btn btn-success" type="button"><i class="fa fa-copy" aria-hidden="true"></i> Copy data</a> | 
+                    <a href="<?php echo e(route('karyawan.upload_data', 0)); ?>" class="btn btn-info" type="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload data</a>
                     <div class="collapse" id="collapse_filter">
                         <form class="m-4" action="<?php echo e(route('karyawan.index')); ?>" method="get" enctype="multipart/form-data">
                             <div class="row">

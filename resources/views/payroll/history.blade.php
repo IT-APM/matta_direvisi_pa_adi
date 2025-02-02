@@ -204,6 +204,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>{{ $data->nama }}</th>
                                                 @endforeach
                                                 <th>Total Upah</th>
+                                                <th>Dibayarkan Tanggal</th>
                                                 <th>Slip Gaji</th>
                                             </tr>
                                         </thead>
@@ -240,6 +241,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 @endforeach
                                                 {{-- total upah --}}
                                                 <td class="text-end">{{ number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0) }}</td>
+                                                <td>@if(!empty($data->paid_at)){{ Carbon\Carbon::parse($data->paid_at)->format("d-m-Y") }}@endif</td>
                                                 <td><a href="{{ route('payroll.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => 'pdf_h']) }}" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>
                                             </tr>
                                             @endforeach
@@ -366,10 +368,12 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->upah, 0) }}</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->maksimal, 0) }}</td>
-                                                <td class="text-end">{{ number_format($bpjstk[0]->angka, 0) }}</td>
+                                                <td class="text-end">@if($bpjstk[0]->upah > $bpjstk[0]->maksimal){{ number_format($bpjstk[0]->maksimal, 0) }}@else{{ number_format($bpjstk[0]->upah, 0) }}@endif</td>
                                                 @foreach ($bpjstk as $_data)
                                                 @php
-                                                    $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    // tidak digunakan, menjadi upload angka bpjstk
+                                                    // $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    $angka = $_data->angka;
                                                     $potongan += $angka;
                                                 @endphp
                                                 <td class="text-end">{{ number_format($angka, 0) }}</td>
@@ -382,7 +386,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                 </div>
                             </p>
                         </div>
-                        {{-- bpjskes --}}
+                        {{-- bpjsks --}}
                         <div class="tab-pane fade" id="pills-bpjskes" role="tabpanel" aria-labelledby="pills-bpjskes-tab">
                             <p class="mb-0 m-t-10">
                                 <div class="table-responsive">
@@ -422,10 +426,12 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($bpjskes[0]->upah, 0) }}</td>
                                                 <td class="text-end">{{ number_format($bpjskes[0]->maksimal, 0) }}</td>
-                                                <td class="text-end">{{ number_format($bpjskes[0]->angka, 0) }}</td>
+                                                <td class="text-end">@if($bpjskes[0]->upah > $bpjskes[0]->maksimal){{ number_format($bpjskes[0]->maksimal, 0) }}@else{{ number_format($bpjskes[0]->upah, 0) }}@endif</td>
                                                 @foreach ($bpjskes as $_data)
                                                 @php
-                                                    $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    // tidak digunakan, menjadi upload angka bpjsks
+                                                    // $angka = round($_data->angka*$_data->persen/100, 0);
+                                                    $angka = $_data->angka;
                                                     $potongan += $angka;
                                                 @endphp
                                                 <td class="text-end">{{ number_format($angka, 0) }}</td>
