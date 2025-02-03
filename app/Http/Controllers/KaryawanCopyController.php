@@ -92,6 +92,15 @@ class KaryawanCopyController extends Controller
         $karyawan->kode_kelamin = $_karyawan->kode_kelamin;
         $karyawan->kode_warga = $_karyawan->kode_warga;
         $karyawan->kode_kawin = $_karyawan->kode_kawin;
+        // 
+        $karyawan->no_rek = $_karyawan->no_rek;
+        $karyawan->nama_bank = $_karyawan->nama_bank;
+        $karyawan->nama_rek = $_karyawan->nama_rek;
+        $karyawan->findim_project = $_karyawan->findim_project;
+        $karyawan->findim_divisi = $_karyawan->findim_divisi;
+        $karyawan->findim_departemen = $_karyawan->findim_departemen;
+        $karyawan->findim_subdepartemen = $_karyawan->findim_subdepartemen;
+        // 
         $karyawan->created_by = auth()->user()->nik;
         $karyawan->updated_by = auth()->user()->nik;
         $karyawan->save();
