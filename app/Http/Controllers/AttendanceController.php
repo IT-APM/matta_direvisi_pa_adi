@@ -18,7 +18,7 @@ class AttendanceController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        set_time_limit(3600);
         $limit = 25000;
         $tahun = Carbon::parse(now())->format('Y');
         $bulan = Carbon::parse(now())->format('m');
