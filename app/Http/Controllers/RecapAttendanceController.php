@@ -26,6 +26,7 @@ class RecapAttendanceController extends Controller
     public function index(Request $request)
     {
         // dd($request->all());
+        set_time_limit(3600);
         // filter parameter
         $no = 0;
         // $perusahaan = Perusahaan::all();
