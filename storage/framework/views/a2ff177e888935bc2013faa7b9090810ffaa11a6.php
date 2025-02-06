@@ -86,6 +86,39 @@
                                 <td>Jumlah hari cuti</td>
                                 <td><?php echo e($trxCuti->jumlah_hari); ?></td>
                             </tr>
+                            
+                            <?php if($trxCuti->tipe_cuti == 12): ?>
+                            
+                            <tr>
+                                <td>Tanggal sebelum</td>
+                                <td>
+                                    <?php for($x = 0; $x <5; $x++): ?>
+                                        <?php echo e($arrTanggal['arrTanggalCuti'][$x]); ?><br />
+                                    <?php endfor; ?>
+                                    
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>Tanggal umroh</td>
+                                <td>
+                                    <?php for($x = 5; $x <12; $x++): ?>
+                                        <?php echo e($arrTanggal['arrTanggalCuti'][$x]); ?><br />
+                                    <?php endfor; ?>
+                                    
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>Tanggal sesudah</td>
+                                <td>
+                                    <?php for($x = 12; $x <15; $x++): ?>
+                                        <?php echo e($arrTanggal['arrTanggalCuti'][$x]); ?><br />
+                                    <?php endfor; ?>
+                                    
+                                </td>
+                            </tr>
+                            <?php else: ?>
                             <tr>
                                 <td>Tanggal cuti</td>
                                 <td>
@@ -94,6 +127,7 @@
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </td>
                             </tr>
+                            <?php endif; ?>
                             <tr>
                                 <td>Masuk bekerja kembali</td>
                                 <td><?php echo e($arrTanggal['tanggal_masuk']); ?></td>

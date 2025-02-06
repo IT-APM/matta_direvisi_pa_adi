@@ -51,7 +51,7 @@
                     @endif
                     <form target="_self" id="form" name="form" action="{{ route('cuti.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @csrf
-                        <div class="row g-3">
+                        <div class="row mt-2">
                             <div class="col-md-4">
                                 <label class="form-label">Sisa Jumlah Hari Cuti Tahunan</label>
                                 {{-- <h4>{{ App\Http\Controllers\TrxCutiController::getSisaFormCuti() }} Hari</h4> --}}
@@ -78,8 +78,16 @@
                                 <input id="jumlah_hari" name="jumlah_hari" min="1" oninput="validity.valid||(value='');" required="" class="form-control numbers" type="number" placeholder="Jumlah Hari">
                             </div>
                         </div>
-                        <br />
-                        <div class="row g-3">
+                        <div class="row mt-2" id="div_umroh">
+                            <div class="col-md-4">&nbsp;</div>
+                            <div class="col-md-8">
+                                <div class="form-label">
+                                    <span class="text-danger">Catatan:<br/>1. Diberikan cuti 5 hari kerja sebelum keberangkatan.<br/>2. Diberikan cuti 3 hari kerja setelah kepulangan.<br/>3. Tanggal mulai yang dimasukkan adalah tanggal keberangkatan.</span>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- <br /> --}}
+                        <div class="row mt-2">
                             <div class="col-md-4">
                                 <label class="form-label" for="tanggal_mulai">Tanggal Mulai</label>
                                 <input class="form-control" name="tanggal_mulai" id="tanggal_mulai" type="date" required="">
@@ -99,8 +107,8 @@
                                 <input class="form-control m-input digits" type="tel" name="telepon" id="telepon" required="">
                             </div>
                         </div>
-                        <br />
-                        <div class="row g-3">
+                        {{-- <br /> --}}
+                        <div class="row mt-2">
                             <div class="col-md-4">
                                 <label class="form-label" for="alasan">Alasan</label>
                                 <textarea class="form-control" id="alasan" name="alasan" rows="4" required=""></textarea>
@@ -114,8 +122,8 @@
                                 <textarea class="form-control" id="keterangan" name="keterangan" rows="4"></textarea>
                             </div>
                         </div>
-                        <br />
-                        <button id="submit" name="submit" value="submit" class="btn btn-success" type="submit">Submit</button> | <button class="btn btn-primary" type="submit" id="preview" name="preview" value="preview">Preview</button> | <a href="{{ URL::previous() }}" class="btn btn-warning" type="button">Back</a>
+                        {{-- <br /> --}}
+                        <button id="submit" name="submit" value="submit" class="btn btn-success mt-2" type="submit">Submit</button> | <button class="btn btn-primary mt-2" type="submit" id="preview" name="preview" value="preview">Preview</button> | <a href="{{ URL::previous() }}" class="btn btn-warning mt-2" type="button">Back</a>
                     </form>
                 </div>
             </div>
@@ -134,14 +142,21 @@
 $(document).ready(function() {
     $("#jumlah_hari").prop('disabled', true);
     $('#div_jumlah_hari').hide();
+    $('#div_umroh').hide();
     $("#tipe_cuti").change(function() {
         var selectedValue = $(this).val();
         if (selectedValue == 0) {
             $("#jumlah_hari").prop('disabled', false);
             $('#div_jumlah_hari').show();
-        } else {
+            $('#div_umroh').hide();
+        } else if (selectedValue == 12) {
             $("#jumlah_hari").prop('disabled', true);
             $('#div_jumlah_hari').hide();
+            $('#div_umroh').show();
+        } else{
+            $("#jumlah_hari").prop('disabled', true);
+            $('#div_jumlah_hari').hide();
+            $('#div_umroh').hide();
         }
     });
     $('form#form #submit').click(function() {

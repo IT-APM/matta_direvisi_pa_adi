@@ -46,6 +46,22 @@ class TrxPayrollController extends Controller
     
     public function slip($id)
     {
+        // fungsi untuk set paid_at default pada trx_tbl_payroll_log
+        // $arr = array();
+        // $startYear = 2022;
+        // $endYear = 2024;
+        // for ($year = $startYear; $year <= $endYear; $year++) {
+        //     for ($month = 1; $month <= 12; $month++) {
+        //         $tgl = Carbon::create($year, $month, 25);
+        //         while (!(new TrxCutiController)->isWeekend($tgl)['status'] || !(new TrxCutiController)->isHoliday($tgl)['status']) {
+        //             $tgl = date("Y-m-d", strtotime($tgl . "-1 day"));
+        //         }
+        //         array_push($arr, "UPDATE trx_tbl_payroll_log SET paid_at='".Carbon::parse($tgl)->format('Y-m-d')."' WHERE bulan=".$month." AND tahun=".$year.";");
+        //         echo "UPDATE trx_tbl_payroll_log SET paid_at='".Carbon::parse($tgl)->format('Y-m-d')."' WHERE bulan=".$month." AND tahun=".$year.";<br/>";
+        //         // array_push($arr, (new TrxCutiController)->getTanggalIndonesia(Carbon::parse($tgl)->format('Y-m-d')));
+        //     }
+        // }
+        // dd('');
         $nik = (new OpenDataController)->decryptWithKey($id);
         if($nik != auth()->user()->nik){
             return redirect()->route('error-403');
@@ -298,6 +314,8 @@ class TrxPayrollController extends Controller
                 'jabatan' => $_trx->jabatan,
                 'level' => $_trx->level,
                 'grade' => $_trx->grade,
+                'paid_at' => $_trx->paid_at,
+                'pajak' => $_trx->pajak,
             ));
         }
         // bkp TrxPayrollAddsub

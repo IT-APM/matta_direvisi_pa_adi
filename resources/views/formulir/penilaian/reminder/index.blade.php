@@ -45,13 +45,13 @@
                     <div class="tab-content" id="pills-warningtabContent">
                         <div class="tab-pane fade show active" id="pills-non_outsource" role="tabpanel" aria-labelledby="pills-non_outsource-tab">
                             <!--  -->
-                            <br/>
+                            {{-- <br/> --}}
                             @if(count($trx_non_outsource)>0)
                             <form action="{{ route('penilaian_reminder.store') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to execute this data?');">
                             @csrf
                             <input type="hidden" id="is_outsource" name="is_outsource" value="0">
-                            <button class="btn btn-info" type="submit" name="submit" id="submit" value="execute"><i class="fa fa-repeat" aria-hidden="true"></i> Execute</button> | <button class="btn btn-danger" type="submit" name="submit" id="submit" value="delete"><i class="icon-trash" aria-hidden="true"></i> Delete</button>
-                            <br/>
+                            <button class="btn btn-info mt-2 mb-2" type="submit" name="submit" id="submit" value="execute"><i class="fa fa-repeat" aria-hidden="true"></i> Execute</button> | <button class="btn btn-danger mt-2 mb-2" type="submit" name="submit" id="submit" value="delete"><i class="icon-trash" aria-hidden="true"></i> Delete</button>
+                            {{-- <br/> --}}
                             @endif
                             <div class="table-responsive">
                                 <table class="display" id="_datatable_non_outsource">
@@ -92,13 +92,13 @@
                         </div>
                         <div class="tab-pane fade" id="pills-outsource" role="tabpanel" aria-labelledby="pills-outsource-tab">
                             <!--  -->
-                            <br/>
+                            {{-- <br/> --}}
                             @if(count($trx_outsource)>0)
                             <form action="{{ route('penilaian_reminder.store') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to execute this data?');">
                             @csrf
                             <input type="hidden" id="is_outsource" name="is_outsource" value="1">
-                            <button class="btn btn-info" type="submit" name="submit" id="submit" value="execute"><i class="fa fa-repeat" aria-hidden="true"></i> Execute</button> | <button class="btn btn-danger" type="submit" name="submit" id="submit" value="delete"><i class="icon-trash" aria-hidden="true"></i> Delete</button>
-                            <br/>
+                            <button class="btn btn-info mt-2 mb-2" type="submit" name="submit" id="submit" value="execute"><i class="fa fa-repeat" aria-hidden="true"></i> Execute</button> | <button class="btn btn-danger mt-2 mb-2" type="submit" name="submit" id="submit" value="delete"><i class="icon-trash" aria-hidden="true"></i> Delete</button>
+                            {{-- <br/> --}}
                             @endif
                             <div class="table-responsive">
                                 <table class="display" id="_datatable_outsource">
@@ -193,22 +193,22 @@ $('#_datatable_outsource').DataTable( {
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
 } );
 // 
-$(document).on('click', '#btn-delete', function(event) {
-    var form = $(this).closest("form");
-    event.preventDefault();
-    swal({
-            title: "Are you sure to delete this?",
-            text: "If you delete this, it will be gone for this session only.",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-            if (willDelete) {
-                form.submit();
-            }
-        });
-});
+// $(document).on('click', '#btn-delete', function(event) {
+//     var form = $(this).closest("form");
+//     event.preventDefault();
+//     swal({
+//             title: "Are you sure to delete this?",
+//             text: "If you delete this, it will be gone for this session only.",
+//             icon: "warning",
+//             buttons: true,
+//             dangerMode: true,
+//         })
+//         .then((willDelete) => {
+//             if (willDelete) {
+//                 form.submit();
+//             }
+//         });
+// });
 // 
 </script>
 @endsection

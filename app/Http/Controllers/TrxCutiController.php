@@ -38,6 +38,7 @@ class TrxCutiController extends Controller
      */
     public function index(Request $request)
     {
+        set_time_limit(3600);
         // dd($request->all());
         // $tipe_cuti = 0;
         // $waktu = date('Y-m-d');
@@ -313,8 +314,10 @@ class TrxCutiController extends Controller
         // 10 = Menjaga-Anak/Istri/Suami Yang Rawat Inap (3 hari)
         // 11 = Kebakaran/Bencana Alam (2 hari)
         // 12 = Ibadah Umroh (7 hari)
+        // 13 = Ibadah Haji Plus (30 hari)
         // 14 = Ibadah Umroh (10 hari)
-        $arr_tipe_cuti = array(2,3,4,5,6,7,10,11,12,14);
+        // 15 = Ibadah Haji Reguler (40 hari)
+        $arr_tipe_cuti = array(2,3,4,5,6,7,10,11,12,13,14,15);
         if(in_array($tipe_cuti, $arr_tipe_cuti)){
             $cek = true;
         }
@@ -384,9 +387,10 @@ class TrxCutiController extends Controller
     {
         if (!$this->isWeekend($str)['status'] || !$this->isHoliday($str)['status']) {
             $str = $this->getTanggalCuti(date("Y-m-d", strtotime($str . "+1 day")));
-        } else {
-            // $str = $this->getTanggalCuti(date("Y-m-d", strtotime($str ."+1 day")));
-        }
+        } 
+        // else {
+        //     $str = $this->getTanggalCuti(date("Y-m-d", strtotime($str ."+1 day")));
+        // }
         return $str;
     }
 
@@ -397,9 +401,24 @@ class TrxCutiController extends Controller
         $check = WorkingDay::where($where)->exists();
         if (!$check) {
             $str = $this->getTanggalCutiNonReguler(date("Y-m-d", strtotime($str . "+1 day")), $nik);
-        } else {
-            // $str = $this->getTanggalCuti(date("Y-m-d", strtotime($str ."+1 day")));
-        }
+        } 
+        // else {
+        //     $str = $this->getTanggalCuti(date("Y-m-d", strtotime($str ."+1 day")));
+        // }
+        return $str;
+    }
+
+    // ambil tanggal tanggal cuti non reguler sebelum
+    public function getTanggalCutiNonRegulerSebelum($str, $nik)
+    {
+        $where = [ 'nik' => $nik, 'working_date' => $str ];
+        $check = WorkingDay::where($where)->exists();
+        if (!$check) {
+            $str = $this->getTanggalCutiNonRegulerSebelum(date("Y-m-d", strtotime($str . "-1 day")), $nik);
+        } 
+        // else {
+        //     $str = $this->getTanggalCuti(date("Y-m-d", strtotime($str ."+1 day")));
+        // }
         return $str;
     }
 
@@ -463,7 +482,8 @@ class TrxCutiController extends Controller
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', [auth()->user()->nik])->orderBy('nama', 'asc')->get();
         // $tipe = CutiTipe::orderBy('id', 'asc')->get();
-        $tipe = CutiTipe::whereNotIn('id', [12])->orderBy('created_at', 'asc')->get();
+        // 14=Ibadah Umroh (10 hari)
+        $tipe = CutiTipe::whereNotIn('id', [14])->orderBy('created_at', 'asc')->get();
         $status = 'create';
         // $jumlah_hari = [1,2,3,4,5,6,7,8,9,10,11,12];
         return view('formulir.cuti.insert', compact('karyawan', 'tipe', 'status'));
@@ -544,6 +564,29 @@ class TrxCutiController extends Controller
             }
         }
         $tanggal_akhir = $arr1[$jumlah_hari - 1];
+        // Menambahkan cuti tambahan untuk ibadah umroh
+        // 5 hari kerja sebelum ibadah & 3 hari kerja sesudah ibadah
+        // tanggal diambil berdasarkan pengajuan cuti ibadah yang diajukan karyawan
+        // 12 = Ibadah Umroh (7 hari)
+        if($tipe_cuti == 12){
+            // 5 hari kerja sebelum ibadah
+            $jumlah_hari += 5;
+            $arr1_sebelum = array();
+            for ($x = 0; $x < 5; $x++) {
+                $tanggal_mulai = $this->getTanggalSebelum($tanggal_mulai, $is_reguler, $nik_karyawan);
+                array_push($arr1, $tanggal_mulai);
+            }
+            // 3 hari kerja sesudah ibadah
+            $jumlah_hari += 3;
+            // $arr1_sesudah = array();
+            $str = $tanggal_akhir;
+            for ($x = 0; $x < 3; $x++) {
+                $tanggal_akhir = $this->getTanggalSesudah($tanggal_akhir, $is_reguler, $nik_karyawan);
+                array_push($arr1, $tanggal_akhir);
+            }
+            sort($arr1);
+        }
+        // 
         $tanggal_cuti = implode(";", $arr1);
         // 
         $data5 = $this->isCutiExisting($nik_karyawan, $tanggal_mulai, $tanggal_akhir, $periode_cuti);
@@ -881,6 +924,34 @@ class TrxCutiController extends Controller
         $strTgl = $hari[Carbon::createFromFormat('Y-m-d', $tgl)->dayOfWeek] . ', ';
         $strTgl .= Carbon::createFromFormat('Y-m-d', $tgl)->format('d-m-Y');
         return $strTgl;
+    }
+
+    public function getTanggalSebelum($tgl, $is_reguler, $nik)
+    {
+        if ($is_reguler == 1) {
+            $tgl = date("Y-m-d", strtotime($tgl . "-1 day"));
+            while (!$this->isWeekend($tgl)['status'] || !$this->isHoliday($tgl)['status']) {
+                $tgl = date("Y-m-d", strtotime($tgl . "-1 day"));
+            }
+        } else {
+            $tgl = date("Y-m-d", strtotime($tgl . "-1 day"));
+            $tgl = $this->getTanggalCutiNonRegulerSebelum($tgl, $nik);
+        }
+        return $tgl;
+    }
+
+    public function getTanggalSesudah($tgl, $is_reguler, $nik)
+    {
+        if ($is_reguler == 1) {
+            $tgl = date("Y-m-d", strtotime($tgl . "+1 day"));
+            while (!$this->isWeekend($tgl)['status'] || !$this->isHoliday($tgl)['status']) {
+                $tgl = date("Y-m-d", strtotime($tgl . "+1 day"));
+            }
+        } else {
+            $tgl = date("Y-m-d", strtotime($tgl . "+1 day"));
+            $tgl = $this->getTanggalCutiNonReguler($tgl, $nik);
+        }
+        return $tgl;
     }
 
     public function getTanggalMasuk($tgl, $is_reguler, $nik)

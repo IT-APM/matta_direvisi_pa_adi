@@ -55,19 +55,74 @@ class TrxPenilaianAutoController extends Controller
         // dd($request->all());
         $data = array();
         $kt = Karyawan::select('nik')->where(['kode_status'=>1])->get();
-        // karyawan outsource
-        if($request->is_outsource == 1){
-            // $data = TrxPenilaianAuto::whereIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
-            $data = TrxPenilaianAuto::whereNotIn('nik_karyawan', $kt)->whereIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+        if($request->submit == 'execute'){
+            // karyawan outsource
+            if($request->is_outsource == 1){
+                // $data = TrxPenilaianAuto::whereIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+                $id = $request->input('id_outsource', []);
+                if(count($id)==0){
+                    return redirect( 'penilaian_auto' )->with( 'msg', 'No Outsourcing Data is executed.' );
+                }
+                $data = TrxPenilaianAuto::whereIn('id', $id)->whereNotIn('nik_karyawan', $kt)->whereIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+            }
+            // karyawan non outsource dan non kt
+            else if($request->is_outsource == 0){
+                // $data = TrxPenilaianAuto::whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+                $id = $request->input('id_non_outsource', []);
+                if(count($id)==0){
+                    return redirect( 'penilaian_auto' )->with( 'msg', 'No Reguler Data is executed.' );
+                }
+                $data = TrxPenilaianAuto::whereIn('id', $id)->whereNotIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+            }
+            // karyawan non outsource dan kt
+            else if($request->is_outsource == 2){
+                $id = $request->input('id_kt', []);
+                if(count($id)==0){
+                    return redirect( 'penilaian_auto' )->with( 'msg', 'No Karyawan Tetap Data is executed.' );
+                }
+                $data = TrxPenilaianAuto::whereIn('id', $id)->whereIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'id', 'asc' )->get();
+            }
         }
-        // karyawan non outsource dan non kt
-        else if($request->is_outsource == 0){
-            // $data = TrxPenilaianAuto::whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
-            $data = TrxPenilaianAuto::whereNotIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
-        }
-        // karyawan non outsource dan kt
-        else if($request->is_outsource == 2){
-            $data = TrxPenilaianAuto::whereIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'id', 'asc' )->get();
+        elseif($request->submit == 'delete'){
+            // karyawan outsource
+            if($request->is_outsource == 1){
+                $id = $request->input('id_outsource', []);
+                if(count($id)==0){
+                    return redirect( 'penilaian_auto' )->with( 'msg', 'No Outsourcing Data is deleted.' );
+                }
+                else{
+                    foreach($id as $_id){
+                        $this->destroy($_id);
+                    }
+                    return redirect( 'penilaian_auto' )->with( 'msg', 'Outsourcing Data is deleted successfully.' );
+                }
+            }
+            // karyawan non outsource dan non kt
+            else if($request->is_outsource == 0){
+                $id = $request->input('id_non_outsource', []);
+                if(count($id)==0){
+                    return redirect( 'penilaian_auto' )->with( 'msg', 'No Reguler Data is deleted.' );
+                }
+                else{
+                    foreach($id as $_id){
+                        $this->destroy($_id);
+                    }
+                    return redirect( 'penilaian_auto' )->with( 'msg', 'Reguler Data is deleted successfully.' );
+                }
+            }
+            // karyawan non outsource dan kt
+            else if($request->is_outsource == 2){
+                $id = $request->input('id_kt', []);
+                if(count($id)==0){
+                    return redirect( 'penilaian_auto' )->with( 'msg', 'No Karyawan Tetap Data is deleted.' );
+                }
+                else{
+                    foreach($id as $_id){
+                        $this->destroy($_id);
+                    }
+                    return redirect( 'penilaian_auto' )->with( 'msg', 'Karyawan Tetap Data is deleted successfully.' );
+                }
+            }
         }
         // dd($data);
         foreach ($data as $_data){
@@ -209,9 +264,9 @@ class TrxPenilaianAutoController extends Controller
     public function destroy($id)
     {
         //
-        $id = (new OpenDataController)->decryptWithKey($id);
+        // $id = (new OpenDataController)->decryptWithKey($id);
         $trx = TrxPenilaianAuto::find( $id );
         $trx->delete();
-        return redirect( 'penilaian_auto' )->with( 'msg', 'Data is deleted successfully.' );
+        // return redirect( 'penilaian_auto' )->with( 'msg', 'Data is deleted successfully.' );
     }
 }

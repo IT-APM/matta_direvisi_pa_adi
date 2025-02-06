@@ -118,6 +118,45 @@
                                 <td>Jumlah hari cuti</td>
                                 <td>{{ $trx->jumlah_hari }}</td>
                             </tr>
+                            {{-- 12=Ibadah Umroh (7 hari) --}}
+                            @if($trx->tipe_cuti == 12)
+                            {{-- 5 hari sebelum --}}
+                            <tr>
+                                <td>Tanggal sebelum</td>
+                                <td>
+                                    @for ($x = 0; $x <5; $x++)
+                                        {{ $arrTanggal['arrTanggalCuti'][$x] }}<br />
+                                    @endfor
+                                    {{-- @foreach ($arrTanggal['arrTanggalCuti'] as $value)
+                                    {{ $value }}<br />
+                                    @endforeach --}}
+                                </td>
+                            </tr>
+                            {{-- 7 hari umroh --}}
+                            <tr>
+                                <td>Tanggal umroh</td>
+                                <td>
+                                    @for ($x = 5; $x <12; $x++)
+                                        {{ $arrTanggal['arrTanggalCuti'][$x] }}<br />
+                                    @endfor
+                                    {{-- @foreach ($arrTanggal['arrTanggalCuti'] as $value)
+                                    {{ $value }}<br />
+                                    @endforeach --}}
+                                </td>
+                            </tr>
+                            {{-- 3 hari sesudah --}}
+                            <tr>
+                                <td>Tanggal sesudah</td>
+                                <td>
+                                    @for ($x = 12; $x <15; $x++)
+                                        {{ $arrTanggal['arrTanggalCuti'][$x] }}<br />
+                                    @endfor
+                                    {{-- @foreach ($arrTanggal['arrTanggalCuti'] as $value)
+                                    {{ $value }}<br />
+                                    @endforeach --}}
+                                </td>
+                            </tr>
+                            @else
                             <tr>
                                 <td>Tanggal cuti</td>
                                 <td>
@@ -126,6 +165,7 @@
                                     @endforeach
                                 </td>
                             </tr>
+                            @endif
                             <tr>
                                 <td>Masuk bekerja kembali</td>
                                 <td>{{ $arrTanggal['tanggal_masuk'] }}</td>
