@@ -31,8 +31,8 @@
 				<hr />
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr>
-						<td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen</td>
-						<td width="70%">: {{ $karyawan['nama'] }}<br />: {{ $karyawan['nik'] }}<br />: {{ $karyawan['jabatan'] }}<br />: {{ $karyawan['divisi'] }} / {{ $karyawan['dep'] }} / {{ $karyawan['sub_dep'] }} </td>
+						<td width="30%">Nama<br/>NIP<br/>Jabatan<br/>Direktorat / Divisi / Departemen</td>
+						<td width="70%">: {{ $karyawan['nama'] }}<br/>: {{ $karyawan['nik'] }}<br/>: {{ $karyawan['jabatan'] }}<br/>: {{ $karyawan['divisi'] }} / {{ $karyawan['dep'] }} / {{ $karyawan['sub_dep'] }} </td>
 					</tr>
 				</table>
 				<hr />
@@ -75,10 +75,10 @@
 						<td>Tanggal sebelum</td>
 						<td>
 							@for ($x = 0; $x <5; $x++)
-								: {{ $arrTanggal['arrTanggalCuti'][$x] }}@if($x<4)<br />@endif
+								: {{ $arrTanggal['arrTanggalCuti'][$x] }}@if($x<4)<br/>@endif
 							@endfor
 							{{-- @foreach ($arrTanggal['arrTanggalCuti'] as $value)
-							{{ $value }}<br />
+							{{ $value }}<br/>
 							@endforeach --}}
 						</td>
 					</tr>
@@ -87,10 +87,10 @@
 						<td>Tanggal umroh</td>
 						<td>
 							@for ($x = 5; $x <12; $x++)
-								: {{ $arrTanggal['arrTanggalCuti'][$x] }}@if($x<11)<br />@endif
+								: {{ $arrTanggal['arrTanggalCuti'][$x] }}@if($x<11)<br/>@endif
 							@endfor
 							{{-- @foreach ($arrTanggal['arrTanggalCuti'] as $value)
-							{{ $value }}<br />
+							{{ $value }}<br/>
 							@endforeach --}}
 						</td>
 					</tr>
@@ -99,23 +99,23 @@
 						<td>Tanggal sesudah</td>
 						<td>
 							@for ($x = 12; $x <15; $x++)
-								: {{ $arrTanggal['arrTanggalCuti'][$x] }}@if($x<14)<br />@endif
+								: {{ $arrTanggal['arrTanggalCuti'][$x] }}@if($x<14)<br/>@endif
 							@endfor
 							{{-- @foreach ($arrTanggal['arrTanggalCuti'] as $value)
-							{{ $value }}<br />
+							{{ $value }}<br/>
 							@endforeach --}}
 						</td>
 					</tr>
 					@else
 					<tr>
 						<td>Tanggal cuti</td>
-						<td>@foreach ($arrTanggal['arrTanggalCuti'] as $value): {{ $value }}<br />@endforeach
+						<td>@foreach ($arrTanggal['arrTanggalCuti'] as $value): {{ $value }}@if(!$loop->last)<br/>@endif @endforeach
 						</td>
 					</tr>
 					@endif
 					{{-- <tr>
 						<td>Tanggal cuti</td>
-						<td>@foreach ($arrTanggal['arrTanggalCuti'] as $value): {{ $value }}<br />@endforeach
+						<td>@foreach ($arrTanggal['arrTanggalCuti'] as $value): {{ $value }}<br/>@endforeach
 						</td>
 					</tr> --}}
 					<tr>
@@ -153,9 +153,9 @@
 					</tr>
 					@foreach ($arrPicProperty as $value)
 					<tr>
-						<td>{{ $value['nama'] }}<br />{{ $value['nik'] }}</td>
-						<td>{{ $value['jabatan'] }}<br />{{ $value['divisi'] }} / {{ $value['dep'] }} / {{ $value['sub_dep'] }}</td>
-						<td>{{ $value['telepon1'] }}<br />{{ $value['email'] }}</td>
+						<td>{{ $value['nama'] }}<br/>{{ $value['nik'] }}</td>
+						<td>{{ $value['jabatan'] }}<br/>{{ $value['divisi'] }} / {{ $value['dep'] }} / {{ $value['sub_dep'] }}</td>
+						<td>{{ $value['telepon1'] }}<br/>{{ $value['email'] }}</td>
 					</tr>
 					@endforeach
 				</table>
