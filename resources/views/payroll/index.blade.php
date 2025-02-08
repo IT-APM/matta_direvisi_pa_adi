@@ -584,6 +584,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Persalinan</th>
                                                 <th>Kacamata</th>
                                                 <th>Medical Reimburse</th>
+                                                <th>Ekses</th>
                                                 <th>Total Medical Cost</th>
                                                 <th>Overtime</th>
                                             </tr>
@@ -626,6 +627,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 // 1 = Kesehatan
                                                 $kesehatan = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$data->nik."' AND DATE(b.updated_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (1)"))[0]->jumlah_klaim;
                                                 $total_kesehatan += $kesehatan;
+                                                // 7 = Ekses
+                                                $ekses = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$data->nik."' AND DATE(b.updated_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (7)"))[0]->jumlah_klaim;
+                                                $total_kesehatan += $ekses;
                                                 // overtime data bulan lalu
                                                 $date_from = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth()->startOfMonth()->format('Y-m-d');
                                                 $date_to = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth()->endOfMonth()->format('Y-m-d');
@@ -693,6 +697,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td class="text-end">{{ number_format($persalinan, 0) }}</td>
                                                 <td class="text-end">{{ number_format($kacamata, 0) }}</td>
                                                 <td class="text-end">{{ number_format($kesehatan, 0) }}</td>
+                                                <td class="text-end">{{ number_format($ekses, 0) }}</td>
                                                 <td class="text-end">{{ number_format($total_kesehatan, 0) }}</td>
                                                 <td class="text-end">{{ number_format($total_overtime, 0) }}</td>
                                             </tr>
