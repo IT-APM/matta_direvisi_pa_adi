@@ -279,6 +279,9 @@ class TrxPayrollController extends Controller
             // 1 = Kesehatan
             $kesehatan = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$_trx->nik."' AND DATE(b.created_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (1)"))[0]->jumlah_klaim;
             // $total_kesehatan += $kesehatan;
+            // 7 = Ekses
+            $ekses = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$_trx->nik."' AND DATE(b.created_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (7)"))[0]->jumlah_klaim;
+            // $total_kesehatan += $ekses;
             // overtime data bulan lalu
             $date_from = Carbon::createFromFormat('Y-m-d', "{$_trx->tahun}-{$_trx->bulan}-01")->subMonth()->startOfMonth()->format('Y-m-d');
             $date_to = Carbon::createFromFormat('Y-m-d', "{$_trx->tahun}-{$_trx->bulan}-01")->subMonth()->endOfMonth()->format('Y-m-d');
@@ -297,6 +300,7 @@ class TrxPayrollController extends Controller
                 'persalinan' => $persalinan,
                 'kacamata' => $kacamata,
                 'kesehatan' => $kesehatan,
+                'ekses' => $ekses,
                 'overtime' => $overtime,
                 'created_by' => $_trx->created_by,
                 'updated_by' => $_trx->updated_by,
