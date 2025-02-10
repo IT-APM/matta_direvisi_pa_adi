@@ -238,6 +238,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 @endforeach
                                                 <th>Total Tunjangan</th>
                                                 <th>Upah</th>
+                                                <th>Perubahan Upah</th>
                                                 @php
                                                     $where = ['tipe'=>'add'];
                                                     $arr_id = [6,7,8,9];
@@ -264,6 +265,23 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 $arr_id = [6,7,8,9];
                                                 $_add = App\Models\TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
                                                 $_total_tunjangan = $_add->sum('angka');
+                                                // membandingkan data 1 bulan sebelumnya untuk mengecek apakah ada perubahan gapok + total_tunjangan
+                                                $submonth = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth();
+                                                $where = ['nik'=>$data->nik, 'bulan'=>$submonth->month, 'tahun'=>$submonth->year];
+                                                $gapok_submonth = 0;
+                                                $gapok_sub = App\Models\TrxPayrollLog::where($where)->first();
+                                                if(!empty($gapok_sub)){
+                                                    $gapok_submonth = $gapok_sub->gapok;
+                                                }
+                                                $where = ['nik'=>$data->nik, 'tipe'=>'add', 'bulan'=>$submonth->month, 'tahun'=>$submonth->year];
+                                                $arr_id = [1,2,3,4,5];
+                                                $add_submonth = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                                                $total_tunjangan_submonth = 0;
+                                                if(!empty($add_submonth)){
+                                                    $total_tunjangan_submonth = $add_submonth->sum('angka');
+                                                }
+                                                $selisih = ($data->gapok + $total_tunjangan) - ($gapok_submonth + $total_tunjangan_submonth);
+                                                // 
                                             @endphp
                                             <tr>
                                                 <td>{{ ++$no }}</td>
@@ -280,6 +298,16 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td class="text-end">{{ number_format($total_tunjangan, 0) }}</td>
                                                 {{-- upah --}}
                                                 <td class="text-end">{{ number_format($data->gapok + $total_tunjangan, 0) }}</td>
+                                                {{-- perubahan upah --}}
+                                                <td class="text-end">
+                                                    @if($selisih > 0)
+                                                        <span class="font-success f-12 f-w-500"><i class="icon-arrow-up"></i></span> <span class="badge badge-success" style="font-size:12px;">{{ number_format($selisih, 0) }}</span>
+                                                    @elseif($selisih < 0)
+                                                        <span class="font-danger f-12 f-w-500"><i class="icon-arrow-down"></i></span> <span class="badge badge-danger" style="font-size:12px;">{{ number_format($selisih, 0) }}</span>
+                                                    @else
+                                                        <span class="badge badge-primary" style="font-size:12px;">{{ number_format($selisih, 0) }}</span>
+                                                    @endif
+                                                </td>
                                                 {{--  --}}
                                                 @foreach ($_add as $_data)
                                                 <td class="text-end">{{ number_format($_data->angka, 0) }}</td>
@@ -308,7 +336,11 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>&nbsp;</th>
                                                 <th>&nbsp;</th>
                                                 <th>Rekapitulasi</th>
-                                                @for ($x = 5; $x <= 17; $x++)
+                                                @for ($x = 5; $x <= 12; $x++)
+                                                <th id="semua_{{$x}}" class="text-end">0</th>
+                                                @endfor
+                                                <th>&nbsp;</th>
+                                                @for ($x = 14; $x <= 18; $x++)
                                                 <th id="semua_{{$x}}" class="text-end">0</th>
                                                 @endfor
                                                 <th>&nbsp;</th>
@@ -833,7 +865,12 @@ $('#_datatable1').DataTable( {
                 ? i
                 : 0;
         };
-        @for ($x = 5; $x <= 17; $x++)
+        @for ($x = 5; $x <= 12; $x++)
+        semua_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_semua_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column({{$x}}).footer().innerHTML = nfObject.format(page_semua_{{$x}}) + '<br/>Total: ' + nfObject.format(semua_{{$x}});
+        @endfor
+        @for ($x = 14; $x <= 18; $x++)
         semua_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         page_semua_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_semua_{{$x}}) + '<br/>Total: ' + nfObject.format(semua_{{$x}});
