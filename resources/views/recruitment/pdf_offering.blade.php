@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+.center {
+  line-height: 55px;
+  text-align: center;
+}
+.border-left {
+  border-left: 0.5px thin black;
+}
+.border-right {
+  border-right: 0.5px thin black;
+}
+.border-top {
+    border-top: 0.5px thin black;
+}
+.border-bottom {
+    border-bottom: 0.5px thin black;
+}
+</style>
+<head>
+	<title>Matta Reborn</title>
+</head>
+
+<body>
+	<!-- start -->
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<td>
+				<table width="100%" border="0.5" cellspacing="0" cellpadding="2">
+					<tr>
+						<td width="25%">&nbsp;<img src="{{ public_path('assets/images/matta/alita_new.png') }}" alt="Logo Alita"></td>
+                        <td width="50%"><div class="center" style="font-weight: bold; font-size: 12px">FORM PENERIMAAN KARYAWAN BARU</div></td>
+                        <td width="25%"><div class="center">No: {{ $_trx->id }}</div></td>
+					</tr>
+				</table>
+				<br/><br/>
+				<table width="100%" border="0.5" cellspacing="0" cellpadding="2">
+					<tr>
+						<td align="center"><b>PERSONAL</b></td>
+					</tr>
+				</table>
+				<table class="border-top border-bottom border-left border-right" width="100%" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td width="29%">Nama Lengkap</td>
+                        <td width="2%">:</td>
+                        <td width="69%">{{ $_trx->nama }}</td>
+                    </tr>
+                    <tr>
+                        <td>Alamat</td>
+                        <td>:</td>
+                        <td>{{ $_trx->alamat_ktp }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tempat/Tanggal Lahir</td>
+                        <td>:</td>
+                        <td>{{ $_trx->tempat_lahir }}/{{ Carbon\Carbon::parse($_trx->tanggal_lahir)->format('d-m-Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Pendidikan</td>
+                        <td>:</td>
+                        <td>{{ $_trx->pendidikan }}</td>
+                    </tr>
+                </table>
+				<br/><br/>
+				<table width="100%" border="0.5" cellspacing="0" cellpadding="2">
+					<tr>
+						<td align="center"><b>KELENGKAPAN DOKUMEN</b></td>
+					</tr>
+				</table>
+				<table width="100%" class="border-top border-bottom border-left border-right" cellspacing="0" cellpadding="2">
+					<tr>
+                        <td width="50%">@if(!empty($_trx->cv)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif CV Lengkap</td>
+						<td width="50%" style="border-left: 0.5px thin black;">@if(!empty($_trx->file_ijazah)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Ijazah</td>
+                    </tr>
+					<tr>
+                        <td>@if(!empty($_trx->file_sertifikat_keahlian)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Sertifikat Keahlian</td>
+						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_skck)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Surat Keterangan Catatan Kepolisian (SKCK)</td>
+                    </tr>
+					<tr>
+                        <td>@if(!empty($_trx->file_ktp)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Kartu Tanda Penduduk (KTP)</td>
+						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_bpjs_tk)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Kartu BPJS Ketenagakerjaan (BPJSTK)</td>
+                    </tr>
+					<tr>
+                        <td>@if(!empty($_trx->file_kk)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Kartu Keluarga (KK)</td>
+						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_bpjs_kes)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Kartu BPJS Kesehatan (BPJSKS)</td>
+                    </tr>
+					<tr>
+                        <td>@if(!empty($_trx->file_npwp)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Kartu NPWP</td>
+						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_buku_tabungan)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Buku Tabungan (No. Rekening Bank Mandiri)</td>
+                    </tr>
+					<tr>
+                        <td>@if(!empty($_trx->file_ket_sehat)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Surat Keterangan Sehat</td>
+						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_covid)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Sertifikat Vaksin Covid-19</td>
+                    </tr>
+				</table>
+				<br/><br/>
+				<table width="100%" border="0.5" cellspacing="0" cellpadding="2">
+					<tr>
+						<td align="center"><b>ORGANISASI</b></td>
+					</tr>
+				</table>
+				<table class="border-top border-bottom border-left border-right" width="100%" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td width="29%">Posisi / Jabatan</td>
+                        <td width="2%">:</td>
+                        <td width="69%">{{ $trx->posisi }}</td>
+                    </tr>
+                    <tr>
+                        <td>Area Kerja</td>
+                        <td>:</td>
+                        <td>{{ $trx->area_kerja }}</td>
+                    </tr>
+                    <tr>
+                        <td>Direktorat / Divisi / Departemen</td>
+                        <td>:</td>
+                        <td>{{ $trx->divisi }}</td>
+                    </tr>
+                </table>
+				<br/><br/>
+				<table width="100%" border="0.5" cellspacing="0" cellpadding="2">
+					<tr>
+						<td align="center"><b>BENEFIT</b></td>
+					</tr>
+				</table>
+				<table width="100%" class="border-top border-bottom border-left border-right" cellspacing="0" cellpadding="2">
+					@php $benefit_utama = explode(',', $trx->benefit_utama); @endphp
+					<tr>
+                        <td width="55%">@if(!empty($trx->thp)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Take Home Pay (THP): Rp. {{ number_format($trx->thp, 0) }}</td>
+						{{-- 9=Cuti Setelah 1 tahun --}}
+						<td width="45%" style="border-left: 0.5px thin black;">@if(in_array(9, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Cuti Setelah 1 tahun</td>
+                    </tr>
+					<tr>
+						{{-- 1=Upah Lembur --}}
+                        <td>@if(in_array(1, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Upah Lembur</td>
+						{{-- 10=Asuransi --}}
+						<td style="border-left: 0.5px thin black;">@if(in_array(10, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Asuransi</td>
+                    </tr>
+					<tr>
+						{{-- 2=Medical Reimbursement --}}
+                        <td>@if(in_array(2, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Medical Reimbursement</td>
+						{{-- 11=Tunjangan Corporate --}}
+						<td style="border-left: 0.5px thin black;">@if(in_array(10, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Tunjangan Corporate</td>
+                    </tr>
+					<tr>
+						{{-- 3=PPh 21, ditanggung perusahaan --}}
+						{{-- 4=PPh 21, ditanggung perusahaan & karyawan --}}
+                        <td>@if(in_array(3, $benefit_utama)||in_array(4, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif PPh 21 @if(in_array(3, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">6</span> Karyawan @elseif(in_array(4, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">4</span> Karyawan @endif</td>
+						{{-- 12=Tunjangan Project / Operasional --}}
+						<td style="border-left: 0.5px thin black;">@if(in_array(12, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Tunjangan Project / Operasional</td>
+                    </tr>
+					<tr>
+						{{-- 5=BPJS Ketenagakerjaan, ditanggung perusahaan --}}
+						{{-- 6=BPJS Ketenagakerjaan, ditanggung  perusahaan & karyawan --}}
+                        <td>@if(in_array(5, $benefit_utama)||in_array(6, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif BPJS Ketenagakerjaan @if(in_array(5, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">6</span> Karyawan @elseif(in_array(6, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">4</span> Karyawan @endif</td>
+						{{-- 13=Alat kerja (laptop / notebook) --}}
+						<td style="border-left: 0.5px thin black;">@if(in_array(12, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Alat kerja (laptop / notebook)</td>
+                    </tr>
+					<tr>
+						{{-- 7=BPJS Kesehatan, ditanggung perusahaan --}}
+						{{-- 8=BPJS Kesehatan, ditanggung  perusahaan & karyawan --}}
+                        <td>@if(in_array(7, $benefit_utama)||in_array(8, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif BPJS Kesehatan @if(in_array(7, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">6</span> Karyawan @elseif(in_array(8, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">4</span> Karyawan @endif</td>
+						{{-- benefit_lainnya --}}
+						<td style="border-left: 0.5px thin black;">&nbsp;</td>
+                    </tr>
+					<tr>
+						{{-- benefit_lainnya --}}
+						<td colspan="2" style="border-top: 0.5px thin black;">Keterangan:<br/>@if(!empty($trx->benefit_lainnya)){{ $trx->benefit_lainnya }}@endif</td>
+                    </tr>
+				</table>
+				<br/><br/>
+				<table width="100%" border="0.5" cellspacing="0" cellpadding="2">
+					<tr>
+						<td align="center"><b>KEPEGAWAIAN</b></td>
+					</tr>
+				</table>
+				<table class="border-top border-bottom border-left border-right" width="100%" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td width="29%">Mulai Bergabung</td>
+                        <td width="2%">:</td>
+                        <td width="69%">{{ Carbon\Carbon::parse($trx->tgl_bergabung)->format('d-m-Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Pencatatan Kepegawaian</td>
+                        <td>:</td>
+                        {{-- <td>{{ $trx->_catat_pegawai->pencatatan }}</td> --}}
+						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%">@if($trx->id_catat_pegawai == 1)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif ALITA</td><td width="20%">@if($trx->id_catat_pegawai == 2)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Outsource</td></tr></table></td>
+                    </tr>
+                    <tr>
+                        <td>Status Kepegawaian</td>
+                        <td>:</td>
+                        {{-- <td>{{ $trx->_status_pegawai->status }}</td> --}}
+						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%">@if($trx->id_status_pegawai == 1)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Kontrak</td><td width="15%">@if($trx->id_status_pegawai == 2)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Tetap</td><td width="40%">@if($trx->id_status_pegawai == 3)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Tenaga Lepas Harian (TLH)</td><td width="25%">@if($trx->id_status_pegawai == 4)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Konsultan</td></tr></table></td>
+                    </tr>
+                    <tr>
+                        <td>Masa Perjanjian Kerja</td>
+                        <td>:</td>
+                        <td>{{ $trx->masa_kerja }} bulan</td>
+                    </tr>
+                </table>
+				<br/><br/>
+				<table width="100%" class="border-top border-bottom border-left border-right" align="center" cellpadding="2" cellspacing="0">
+					@php
+					// 3=Apply
+					$where = ['id_identitas' => $trx->id_identitas, 'id_status' => 3];
+					$flow1 = App\Models\TrxRecruitmentLog::where($where)->first();
+					// 12=Negotiation Process
+					$where = ['id_identitas' => $trx->id_identitas, 'id_status' => 12];
+					$flow2 = App\Models\TrxRecruitmentLog::where($where)->first();
+					// 13=Negotiation Deal by HCO
+					$where = ['id_identitas' => $trx->id_identitas, 'id_status' => 13];
+					$flow3 = App\Models\TrxRecruitmentLog::where($where)->first();
+					@endphp
+                    <tr>
+                        <td>Kandidat<br/><img src="{{ public_path('assets/images/matta/requested_new.png') }}" height="30" /><br/>{{ $flow1->pic }}<br/>{{ $flow1->created_at }}</td>
+                        @if(!empty($flow2))<td>Human Capital & Org.<br/><img src="{{ public_path('assets/images/matta/verified_new.png') }}" height="30" /><br/>{{ $flow2->pic }}<br/>{{ $flow2->created_at }}</td>@endif
+                        @if(!empty($flow3))<td>Mengetahui/Menyetujui<br/><img src="{{ public_path('assets/images/matta/approved_new.png') }}" height="30" /><br/>{{ $flow3->pic }}<br/>{{ $flow3->created_at }}</td>@endif
+                        {{-- <td>Diarsip oleh<br/><img src="{{ public_path('assets/images/matta/informed_new.png') }}" height="30" /><br/>{{ $kandidat->pic }}<br/>{{ $kandidat->created_at }}</td> --}}
+                    </tr>
+                </table>
+			</td>
+		</tr>
+	</table>
+	<!-- finish -->
+</body>
+
+</html>

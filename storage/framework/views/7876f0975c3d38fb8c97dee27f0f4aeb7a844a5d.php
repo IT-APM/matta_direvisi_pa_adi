@@ -31,8 +31,8 @@
 				<hr />
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr>
-						<td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen</td>
-						<td width="70%">: <?php echo e($karyawan['nama']); ?><br />: <?php echo e($karyawan['nik']); ?><br />: <?php echo e($karyawan['jabatan']); ?><br />: <?php echo e($karyawan['divisi']); ?> / <?php echo e($karyawan['dep']); ?> / <?php echo e($karyawan['sub_dep']); ?> </td>
+						<td width="30%">Nama<br/>NIP<br/>Jabatan<br/>Direktorat / Divisi / Departemen</td>
+						<td width="70%">: <?php echo e($karyawan['nama']); ?><br/>: <?php echo e($karyawan['nik']); ?><br/>: <?php echo e($karyawan['jabatan']); ?><br/>: <?php echo e($karyawan['divisi']); ?> / <?php echo e($karyawan['dep']); ?> / <?php echo e($karyawan['sub_dep']); ?> </td>
 					</tr>
 				</table>
 				<hr />
@@ -75,7 +75,7 @@
 						<td>Tanggal sebelum</td>
 						<td>
 							<?php for($x = 0; $x <5; $x++): ?>
-								: <?php echo e($arrTanggal['arrTanggalCuti'][$x]); ?><?php if($x<4): ?><br /><?php endif; ?>
+								: <?php echo e($arrTanggal['arrTanggalCuti'][$x]); ?><?php if($x<4): ?><br/><?php endif; ?>
 							<?php endfor; ?>
 							
 						</td>
@@ -85,7 +85,7 @@
 						<td>Tanggal umroh</td>
 						<td>
 							<?php for($x = 5; $x <12; $x++): ?>
-								: <?php echo e($arrTanggal['arrTanggalCuti'][$x]); ?><?php if($x<11): ?><br /><?php endif; ?>
+								: <?php echo e($arrTanggal['arrTanggalCuti'][$x]); ?><?php if($x<11): ?><br/><?php endif; ?>
 							<?php endfor; ?>
 							
 						</td>
@@ -95,7 +95,7 @@
 						<td>Tanggal sesudah</td>
 						<td>
 							<?php for($x = 12; $x <15; $x++): ?>
-								: <?php echo e($arrTanggal['arrTanggalCuti'][$x]); ?><?php if($x<14): ?><br /><?php endif; ?>
+								: <?php echo e($arrTanggal['arrTanggalCuti'][$x]); ?><?php if($x<14): ?><br/><?php endif; ?>
 							<?php endfor; ?>
 							
 						</td>
@@ -103,7 +103,7 @@
 					<?php else: ?>
 					<tr>
 						<td>Tanggal cuti</td>
-						<td><?php $__currentLoopData = $arrTanggal['arrTanggalCuti']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>: <?php echo e($value); ?><br /><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+						<td><?php $__currentLoopData = $arrTanggal['arrTanggalCuti']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>: <?php echo e($value); ?><?php if(!$loop->last): ?><br/><?php endif; ?> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 						</td>
 					</tr>
 					<?php endif; ?>
@@ -143,9 +143,9 @@
 					</tr>
 					<?php $__currentLoopData = $arrPicProperty; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 					<tr>
-						<td><?php echo e($value['nama']); ?><br /><?php echo e($value['nik']); ?></td>
-						<td><?php echo e($value['jabatan']); ?><br /><?php echo e($value['divisi']); ?> / <?php echo e($value['dep']); ?> / <?php echo e($value['sub_dep']); ?></td>
-						<td><?php echo e($value['telepon1']); ?><br /><?php echo e($value['email']); ?></td>
+						<td><?php echo e($value['nama']); ?><br/><?php echo e($value['nik']); ?></td>
+						<td><?php echo e($value['jabatan']); ?><br/><?php echo e($value['divisi']); ?> / <?php echo e($value['dep']); ?> / <?php echo e($value['sub_dep']); ?></td>
+						<td><?php echo e($value['telepon1']); ?><br/><?php echo e($value['email']); ?></td>
 					</tr>
 					<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 				</table>

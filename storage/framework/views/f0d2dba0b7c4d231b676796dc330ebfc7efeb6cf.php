@@ -371,7 +371,7 @@ $('#_datatable1').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]]
 } );
 // penambahan
 $('#_datatable2').DataTable( {
@@ -382,7 +382,7 @@ $('#_datatable2').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]]
 } );
 // pengurangan
 $('#_datatable3').DataTable( {
@@ -393,7 +393,7 @@ $('#_datatable3').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]]
 } );
 // bpjstk
 $('#_datatable4').DataTable( {
@@ -404,7 +404,7 @@ $('#_datatable4').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]]
 } );
 // bpjskes
 $('#_datatable5').DataTable( {
@@ -415,7 +415,7 @@ $('#_datatable5').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]]
 } );
 // bpjsmax
 $('#_datatable6').DataTable( {
@@ -426,7 +426,7 @@ $('#_datatable6').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]]
 } );
 </script>
 <?php $__env->stopSection(); ?>

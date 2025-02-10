@@ -5,6 +5,7 @@
     <title>Application Form</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -161,11 +162,12 @@
                                     <div class="col-12">
                                         <label for="status_hidup" class="form-label">Status<span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="status_hidup" id="status_hidup" value="{{ $trx->status_hidup }}">
-                                        @if(!empty($trx->tanggal_status))
+                                        @if(!empty($trx->tanggal_status) && in_array($trx->status_hidup, ['Menikah','Cerai Hidup','Cerai Mati']))
                                         <div class="row mt-2" id="row_status">
                                             <div class="col-6">
                                                 <label for="tanggal_status" class="form-label">Sejak</label>
-                                                <input type="date" class="form-control" name="tanggal_status" value="{{ $trx->tanggal_status }}" id="tanggal_status">
+                                                {{-- <input type="date" class="form-control" name="tanggal_status" value="{{ $trx->tanggal_status }}" id="tanggal_status"> --}}
+                                                <input type="text" class="form-control" name="tanggal_status" id="tanggal_status" value="{{ Carbon\Carbon::parse($trx->tanggal_status)->format('d-m-Y') }}">
                                             </div>
                                         </div>
                                         @endif
@@ -491,7 +493,7 @@
                                                     <td><input type="text" class="form-control" value="{{ $data->tahun_masuk }}"></td>
                                                     <td><input type="text" class="form-control" value="{{ $data->tahun_keluar }}"></td>
                                                     <td><input type="text" class="form-control" value="{{ $data->jabatan }}"></td>
-                                                    <td><input type="text" class="form-control" value="Rp. {{ number_format($data->gaji, 0) }}"></td>
+                                                    <td><input type="text" class="form-control" value="@if(!empty($data->gaji))Rp. {{ number_format($data->gaji, 0) }}@endif"></td>
                                                     <td><input type="text" class="form-control" value="{{ $data->alasan }}"></td>
                                                 </tr>
                                                 @endforeach
@@ -575,8 +577,13 @@
                 </div>
             </div>
         </div>
+        @can('hc')
+        <div class="col-12 m-2 text-center">
+            <a target="_blank" href="{{ route('recruitment.download_applicant', Crypt::encrypt($trx->id)) }}" class="btn btn-primary" type="button"><i class="fa fa-download" aria-hidden="true"></i> Download</a>
+        </div>
+        @endcan
         {{--  --}}
-        <div class="modal fade" id="modal_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        {{-- <div class="modal fade" id="modal_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                <div class="modal-content">
                 <form action="{{ route('recruitment.applicant_save') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
@@ -607,7 +614,7 @@
                 </form>
                </div>
             </div>
-         </div>
+         </div> --}}
         {{--  --}}
     </section>
 </body>

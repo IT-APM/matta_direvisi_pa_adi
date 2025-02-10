@@ -61,6 +61,7 @@
                                                 <th>Check_in</th>
                                                 <th>Check_out</th>
                                                 <th>Interpretasi</th>
+                                                <th>Offering Letter</th>
                                                 <th>Upload</th>
                                                 <th>Status</th>
                                                 <th>Created_at</th>
@@ -114,6 +115,10 @@
                                                     
                                                     <?php if(in_array(16, $log)): ?><a href="<?php echo e(route('recruitment.get_interpretation', [Crypt::encrypt([$data->id, 'view'])])); ?>" target="_blank" data-toggle="tooltip" title="Interpretation"><i class="fa fa-file-text-o"></i></a><?php endif; ?>
                                                     
+                                                </td>
+                                                <td>
+                                                    
+                                                    <?php if(in_array(12, $log)): ?><a href="<?php echo e(route('recruitment.get_offering', [Crypt::encrypt([$data->id, 'view'])])); ?>" target="_blank" data-toggle="tooltip" title="Interpretation"><i class="fa fa-file-text-o"></i></a><?php endif; ?>
                                                 </td>
                                                 <td>
                                                     

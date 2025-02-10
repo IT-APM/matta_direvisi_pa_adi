@@ -81,12 +81,13 @@
 					<tr align="center">
 						<td width="5%">1</td>
 						<td width="45%"><?php echo e($trx->nama); ?></td>
-						<td width="25%"><?php if($resume[$x]->jawaban): ?><img width="20" src="<?php echo e(public_path('assets/images/matta/checklist.png')); ?>" alt="checklist"> <?php endif; ?></td>
-						<td width="25%"><?php if(!$resume[$x]->jawaban): ?><img width="20" src="<?php echo e(public_path('assets/images/matta/checklist.png')); ?>" alt="checklist"> <?php endif; ?></td>
+						
+						<td width="25%"><?php if($resume[$x]->jawaban): ?><span style="font-family:zapfdingbats;font-size:20px;">4</span><?php endif; ?></td>
+						<td width="25%"><?php if(!$resume[$x]->jawaban): ?><span style="font-family:zapfdingbats;font-size:20px;">4</span><?php endif; ?></td>
 					</tr>
 				</table>
 				<br/><br/>
-				<table width="100%" border="1" cellspacing="0" cellpadding="0">
+				<table width="100%" border="1" cellspacing="0" cellpadding="2">
 					<tr>
 						<td align="center"><b>URAIAN PERILAKU</b></td>
 					</tr>

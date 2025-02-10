@@ -5,6 +5,7 @@
     <title>Application Form</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="<?php echo e(asset('assets/images/favicon.png')); ?>" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -161,11 +162,12 @@
                                     <div class="col-12">
                                         <label for="status_hidup" class="form-label">Status<span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="status_hidup" id="status_hidup" value="<?php echo e($trx->status_hidup); ?>">
-                                        <?php if(!empty($trx->tanggal_status)): ?>
+                                        <?php if(!empty($trx->tanggal_status) && in_array($trx->status_hidup, ['Menikah','Cerai Hidup','Cerai Mati'])): ?>
                                         <div class="row mt-2" id="row_status">
                                             <div class="col-6">
                                                 <label for="tanggal_status" class="form-label">Sejak</label>
-                                                <input type="date" class="form-control" name="tanggal_status" value="<?php echo e($trx->tanggal_status); ?>" id="tanggal_status">
+                                                
+                                                <input type="text" class="form-control" name="tanggal_status" id="tanggal_status" value="<?php echo e(Carbon\Carbon::parse($trx->tanggal_status)->format('d-m-Y')); ?>">
                                             </div>
                                         </div>
                                         <?php endif; ?>
@@ -491,7 +493,7 @@
                                                     <td><input type="text" class="form-control" value="<?php echo e($data->tahun_masuk); ?>"></td>
                                                     <td><input type="text" class="form-control" value="<?php echo e($data->tahun_keluar); ?>"></td>
                                                     <td><input type="text" class="form-control" value="<?php echo e($data->jabatan); ?>"></td>
-                                                    <td><input type="text" class="form-control" value="Rp. <?php echo e(number_format($data->gaji, 0)); ?>"></td>
+                                                    <td><input type="text" class="form-control" value="<?php if(!empty($data->gaji)): ?>Rp. <?php echo e(number_format($data->gaji, 0)); ?><?php endif; ?>"></td>
                                                     <td><input type="text" class="form-control" value="<?php echo e($data->alasan); ?>"></td>
                                                 </tr>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -567,39 +569,13 @@
                 </div>
             </div>
         </div>
+        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+        <div class="col-12 m-2 text-center">
+            <a target="_blank" href="<?php echo e(route('recruitment.download_applicant', Crypt::encrypt($trx->id))); ?>" class="btn btn-primary" type="button"><i class="fa fa-download" aria-hidden="true"></i> Download</a>
+        </div>
+        <?php endif; ?>
         
-        <div class="modal fade" id="modal_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-               <div class="modal-content">
-                <form action="<?php echo e(route('recruitment.applicant_save')); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
-                <?php echo csrf_field(); ?>
-                <input type="hidden" id="id" name="id" value="<?php echo e(Crypt::encrypt($trx->id)); ?>">
-                <input type="hidden" id="id_status" name="id_status" value="4">
-                <input type="hidden" id="back_url" name="back_url" value="<?php echo e(URL::full()); ?>">
-                  <div class="modal-header">
-                     <h5 class="modal-title" id="exampleModalLabel2">Psychotest Send</h5>
-                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                        <div class="row mt-2">
-                            <div class="col-md-6">
-                                <label class="form-label" for="check_in">Check_in*</label>
-                                <input class="form-control" name="check_in" id="check_in" type="datetime-local" required="" value="<?php echo e($trx->check_in); ?>">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="check_out">Check_out*</label>
-                                <input class="form-control" name="check_out" id="check_out" type="datetime-local" required="" value="<?php echo e($trx->check_out); ?>" disabled>
-                            </div>
-                        </div>
-                  </div>
-                  <div class="modal-footer">
-                     <button class="btn btn-danger" type="button" data-bs-dismiss="modal">Close</button>
-                     <button class="btn btn-primary" type="submit">Submit</button>
-                  </div>
-                </form>
-               </div>
-            </div>
-         </div>
+        
         
     </section>
 </body>

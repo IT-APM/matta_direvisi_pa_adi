@@ -59,8 +59,9 @@ class TrxRecruitmentController extends Controller
                 array_push($id_trx, $data->id);
             }
         }
-        // terposting adalah pengajuan yang statusnya 9=Approved by L2 to HC
-        $trx = TrxKebutuhanMaster::whereIn('id', $id_trx)->orderBy('id', 'desc')->get();
+        // $trx = TrxKebutuhanMaster::whereIn('id', $id_trx)->orderBy('id', 'desc')->get();
+        // terposting adalah pengajuan yang statusnya 9=Approved by L2 to HC dan bukan 7=Magang
+        $trx = TrxKebutuhanMaster::whereIn('id', $id_trx)->whereNotIn('id_status_kerja', [7])->orderBy('id', 'desc')->get();
         return view('recruitment.index', compact('trx'));
     }
 
@@ -297,9 +298,9 @@ class TrxRecruitmentController extends Controller
     public function applicant_list($id)
     {
         // dd($id);
-        $trx = TrxRecruitmentIdentitas::orderBy('id', 'asc')->get();
-        $trx1 = TrxRecruitmentInterview::orderBy('id_identitas', 'asc')->orderBy('id', 'desc')->get();
-        $trx2 = TrxRecruitmentNegosiasiLog::orderBy('id_identitas', 'asc')->orderBy('id', 'desc')->get();
+        $trx = TrxRecruitmentIdentitas::orderBy('updated_at', 'desc')->get();
+        $trx1 = TrxRecruitmentInterview::orderBy('updated_at', 'desc')->get();
+        $trx2 = TrxRecruitmentNegosiasiLog::orderBy('updated_at', 'desc')->get();
         return view('recruitment.applicant_list', compact('trx', 'trx1', 'trx2'));
     }
 
@@ -311,6 +312,24 @@ class TrxRecruitmentController extends Controller
         $_trx = TrxKebutuhanMaster::find($trx->id_kebutuhan);
         // $posisi = $_trx->_pekerjaan->pekerjaan;
         return view('recruitment.applicant_item', compact('trx'));
+    }
+
+    public function download_applicant($id)
+    {
+        $id = Crypt::decrypt($id);
+        $trx = TrxRecruitmentIdentitas::find($id);
+        $filename = $id . '_applicant.pdf';
+        $pdf = new TCPDF;
+        $pdf::SetTitle('Formulir Identitas');
+        $pdf::SetFont('times', '', 11, '', true);
+        $pdf::AddPage();
+        $html = \View::make('recruitment.pdf_persetujuan', compact('trx'))->render();
+        $pdf::writeHTML($html, true, false, true, false, '');
+        $pdf::AddPage();
+        $html = \View::make('recruitment.pdf_applicant', compact('trx'))->render();
+        $pdf::writeHTML($html, true, false, true, false, '');
+        $pdf::Output(public_path($filename), 'I');
+        return response()->download(public_path($filename));
     }
 
     public function interview_item($id)
@@ -690,6 +709,31 @@ class TrxRecruitmentController extends Controller
         $html = \View::make('recruitment.pdf_resume2', compact('trx', 'resume', 'interview'))->render();
         $pdf::writeHTML($html, true, false, true, false, '');
         // 
+        $pdf::Output(public_path($filename), 'I');
+        return response()->download(public_path($filename));
+    }
+
+    public function get_offering($id)
+    {
+        $id = Crypt::decrypt($id)[0];
+        $_trx = TrxRecruitmentIdentitas::find($id);
+        $trx = TrxRecruitmentNegosiasi::where(['id_identitas'=>$id])->first();
+        return view('recruitment.get_offering', compact('trx', '_trx'));
+    }
+
+    public function download_offering($id)
+    {
+        $id = Crypt::decrypt($id);
+        // $id = Crypt::decrypt($id)[0];
+        $_trx = TrxRecruitmentIdentitas::find($id);
+        $trx = TrxRecruitmentNegosiasi::where(['id_identitas'=>$id])->first();
+        $filename = $id . '_offering.pdf';
+        $pdf = new TCPDF;
+        $pdf::SetTitle('Offering Letter');
+        $pdf::SetFont('times', '', 10, '', true);
+        $pdf::AddPage();
+        $html = \View::make('recruitment.pdf_offering', compact('trx', '_trx'))->render();
+        $pdf::writeHTML($html, true, false, true, false, '');
         $pdf::Output(public_path($filename), 'I');
         return response()->download(public_path($filename));
     }

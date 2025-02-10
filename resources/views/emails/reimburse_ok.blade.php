@@ -5,6 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="status" content="true">
   <title>Formulir Reimbursement</title>
+  <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
   <style type="text/css">
     body {
       margin: 0;

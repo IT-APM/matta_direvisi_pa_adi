@@ -237,6 +237,7 @@ Route::post('recruitment/apply_save', [ TrxRecruitmentController::class, 'apply_
 Route::post('recruitment/applicant_save', [ TrxRecruitmentController::class, 'applicant_save'])->name('recruitment.applicant_save')->middleware('can:hc');
 Route::get('recruitment/applicant_list/{id}', [TrxRecruitmentController::class, 'applicant_list'])->name('recruitment.applicant_list')->middleware('can:hc');
 Route::get('recruitment/applicant_item/{id}', [TrxRecruitmentController::class, 'applicant_item'])->name('recruitment.applicant_item')->middleware('can:hc');
+Route::get('recruitment/applicant_item/download/{id}', [TrxRecruitmentController::class, 'download_applicant'])->name('recruitment.download_applicant')->middleware('can:hc');
 Route::get('recruitment/applicant_process/{id}', [TrxRecruitmentController::class, 'applicant_process'])->name('recruitment.applicant_process')->middleware('can:hc');
 Route::get('recruitment/interview_item/{id}', [TrxRecruitmentController::class, 'interview_item'])->name('recruitment.interview_item')->middleware('can:hc');
 Route::post('recruitment/interview_save', [ TrxRecruitmentController::class, 'interview_save'])->name('recruitment.interview_save')->middleware('can:hc');
@@ -247,6 +248,8 @@ Route::post('recruitment/negotiation_save', [ TrxRecruitmentController::class, '
 Route::get('recruitment/upload_dokumen_get/{id}', [TrxRecruitmentController::class, 'upload_dokumen_get'])->name('recruitment.upload_dokumen_get');
 Route::get('recruitment/get_interpretation/{id}', [TrxRecruitmentController::class, 'get_interpretation'])->name('recruitment.get_interpretation')->middleware('can:hc');
 Route::get('recruitment/interpretation/download/{id}', [TrxRecruitmentController::class, 'download_interpretation'])->name('recruitment.download_interpretation')->middleware('can:hc');
+Route::get('recruitment/get_offering/{id}', [TrxRecruitmentController::class, 'get_offering'])->name('recruitment.get_offering')->middleware('can:hc');
+Route::get('recruitment/get_offering/download/{id}', [TrxRecruitmentController::class, 'download_offering'])->name('recruitment.download_offering')->middleware('can:hc');
 Route::post('recruitment/upload_dokumen_post', [ TrxRecruitmentController::class, 'upload_dokumen_post'])->name('recruitment.upload_dokumen_post');
 Route::resource('noattendance', NoAttendanceController::class)->middleware('can:hc');
 Route::resource('overtime', OvertimeController::class)->middleware('auth');

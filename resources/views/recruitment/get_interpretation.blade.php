@@ -5,6 +5,7 @@
     <title>Interpretation</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -135,9 +136,11 @@
                 </div>
                 @endif
             </div>
+            @can('hc')
             <div class="col-12 m-2 text-center">
-            <a target="_blank" href="{{ route('recruitment.download_interpretation', Crypt::encrypt($_trx->id)) }}" class="btn btn-primary" type="button"><i class="fa fa-download" aria-hidden="true"></i> Download</a>
+                <a target="_blank" href="{{ route('recruitment.download_interpretation', Crypt::encrypt($_trx->id)) }}" class="btn btn-primary" type="button"><i class="fa fa-download" aria-hidden="true"></i> Download</a>
             </div>
+            @endcan
         </div>
     </section>
 </body>

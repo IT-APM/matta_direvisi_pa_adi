@@ -198,7 +198,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php $no=0; ?>
+                                            <?php
+                                                $no=0;
+                                            ?>
                                             <?php $__currentLoopData = $payroll; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <?php
                                                 $where = ['nik'=>$data->nik, 'tipe'=>'add', 'bulan'=>$data->bulan, 'tahun'=>$data->tahun];
@@ -245,6 +247,20 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                <?php for($x = 5; $x <= 17; $x++): ?>
+                                                <th id="semua_<?php echo e($x); ?>" class="text-end">0</th>
+                                                <?php endfor; ?>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </p>
@@ -323,6 +339,18 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                <?php for($x = 5; $x <= 17; $x++): ?>
+                                                <th id="potongan_<?php echo e($x); ?>" class="text-end">0</th>
+                                                <?php endfor; ?>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </p>
@@ -397,6 +425,18 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                <?php for($x = 5; $x <= 14; $x++): ?>
+                                                <th id="bpjstk_<?php echo e($x); ?>" class="text-end">0</th>
+                                                <?php endfor; ?>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </p>
@@ -471,6 +511,18 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                <?php for($x = 5; $x <= 11; $x++): ?>
+                                                <th id="bpjsks_<?php echo e($x); ?>" class="text-end">0</th>
+                                                <?php endfor; ?>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </p>
@@ -530,6 +582,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Persalinan</th>
                                                 <th>Kacamata</th>
                                                 <th>Medical Reimburse</th>
+                                                <th>Ekses</th>
                                                 <th>Total Medical Cost</th>
                                                 <th>Overtime</th>
                                             </tr>
@@ -572,6 +625,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 // 1 = Kesehatan
                                                 $kesehatan = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$data->nik."' AND DATE(b.updated_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (1)"))[0]->jumlah_klaim;
                                                 $total_kesehatan += $kesehatan;
+                                                // 7 = Ekses
+                                                $ekses = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$data->nik."' AND DATE(b.updated_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (7)"))[0]->jumlah_klaim;
+                                                $total_kesehatan += $ekses;
                                                 // overtime data bulan lalu
                                                 $date_from = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth()->startOfMonth()->format('Y-m-d');
                                                 $date_to = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth()->endOfMonth()->format('Y-m-d');
@@ -639,11 +695,41 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td class="text-end"><?php echo e(number_format($persalinan, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($kacamata, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($kesehatan, 0)); ?></td>
+                                                <td class="text-end"><?php echo e(number_format($ekses, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($total_kesehatan, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($total_overtime, 0)); ?></td>
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                <?php for($x = 17; $x <= 29; $x++): ?>
+                                                <th id="kertas_<?php echo e($x); ?>" class="text-end">0</th>
+                                                <?php endfor; ?>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <?php for($x = 32; $x <= 43; $x++): ?>
+                                                <th id="kertas_<?php echo e($x); ?>" class="text-end">0</th>
+                                                <?php endfor; ?>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </p>
@@ -681,7 +767,23 @@ $('#_datatable1').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    footerCallback: function (row, data, start, end, display) {
+        nfObject = new Intl.NumberFormat('en-US');
+        let api = this.api();
+        let intVal = function (i) {
+            return typeof i === 'string'
+                ? i.replace(/[\$,]/g, '') * 1
+                : typeof i === 'number'
+                ? i
+                : 0;
+        };
+        <?php for($x = 5; $x <= 17; $x++): ?>
+        semua_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_semua_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_semua_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(semua_<?php echo e($x); ?>);
+        <?php endfor; ?>
+    },
 } );
 // potongan
 $('#_datatable2').DataTable( {
@@ -692,7 +794,23 @@ $('#_datatable2').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    footerCallback: function (row, data, start, end, display) {
+        nfObject = new Intl.NumberFormat('en-US');
+        let api = this.api();
+        let intVal = function (i) {
+            return typeof i === 'string'
+                ? i.replace(/[\$,]/g, '') * 1
+                : typeof i === 'number'
+                ? i
+                : 0;
+        };
+        <?php for($x = 5; $x <= 17; $x++): ?>
+        potongan_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_potongan_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_potongan_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(potongan_<?php echo e($x); ?>);
+        <?php endfor; ?>
+    },
 } );
 // bpjstk
 $('#_datatable3').DataTable( {
@@ -703,7 +821,23 @@ $('#_datatable3').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    footerCallback: function (row, data, start, end, display) {
+        nfObject = new Intl.NumberFormat('en-US');
+        let api = this.api();
+        let intVal = function (i) {
+            return typeof i === 'string'
+                ? i.replace(/[\$,]/g, '') * 1
+                : typeof i === 'number'
+                ? i
+                : 0;
+        };
+        <?php for($x = 5; $x <= 14; $x++): ?>
+        bpjstk_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_bpjstk_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_bpjstk_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(bpjstk_<?php echo e($x); ?>);
+        <?php endfor; ?>
+    },
 } );
 // bpjsks
 $('#_datatable4').DataTable( {
@@ -714,7 +848,23 @@ $('#_datatable4').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    footerCallback: function (row, data, start, end, display) {
+        nfObject = new Intl.NumberFormat('en-US');
+        let api = this.api();
+        let intVal = function (i) {
+            return typeof i === 'string'
+                ? i.replace(/[\$,]/g, '') * 1
+                : typeof i === 'number'
+                ? i
+                : 0;
+        };
+        <?php for($x = 5; $x <= 11; $x++): ?>
+        bpjsks_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_bpjsks_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_bpjsks_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(bpjsks_<?php echo e($x); ?>);
+        <?php endfor; ?>
+    },
 } );
 // kertas kerja
 $('#_datatable5').DataTable( {
@@ -725,7 +875,29 @@ $('#_datatable5').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    footerCallback: function (row, data, start, end, display) {
+        nfObject = new Intl.NumberFormat('en-US');
+        let api = this.api();
+        let intVal = function (i) {
+            return typeof i === 'string'
+                ? i.replace(/[\$,]/g, '') * 1
+                : typeof i === 'number'
+                ? i
+                : 0;
+        };
+        <?php for($x = 17; $x <= 29; $x++): ?>
+        kertas_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_kertas_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_kertas_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(kertas_<?php echo e($x); ?>);
+        <?php endfor; ?>
+        // 
+        <?php for($x = 32; $x <= 43; $x++): ?>
+        kertas_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_kertas_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_kertas_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(kertas_<?php echo e($x); ?>);
+        <?php endfor; ?>
+    },
 } );
 // 
 $(document).on('click', '#btn-delete', function(event) {

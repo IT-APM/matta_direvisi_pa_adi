@@ -124,6 +124,12 @@
                                     <td width="75%">: Rp. {{ number_format($plafon->persalinan_caesar, 0) }}</td>
                                 </tr>
                                 @endif
+                                @if($value->id_layanan == 7)
+                                <tr>
+                                    <td width="25%">: {{ $value->_id_layanan->layanan }}</td>
+                                    <td width="75%">&nbsp;</td>
+                                </tr>
+                                @endif
                                 @endforeach
                             </table>
                         </td>

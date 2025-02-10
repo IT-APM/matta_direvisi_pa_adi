@@ -128,7 +128,7 @@
                             <tr>
                                 <td>Nominal Klaim Pada Pengajuan ini</td>
                                 <td>Rp. {{ number_format($trxM->klaim_kesehatan, 0) }} (Kesehatan)
-                                    <br />Rp. {{ number_format($trxM->klaim_non_kesehatan, 0) }} (Non Kesehatan)
+                                    <br/>Rp. {{ number_format($trxM->klaim_non_kesehatan, 0) }} (Non Kesehatan)
                                 </td>
                             </tr>
                             @if($trxM->plafon>0)
@@ -142,7 +142,7 @@
                                 <td>Lampiran</td>
                                 <td>
                                     @foreach ($lampiran as $value)
-                                    <a href="{{ asset('assets/reimburse/'.$value->filename) }}" target="_blank">{{ $value->_id_lampiran->lampiran }}</a><br />
+                                    <a href="{{ asset('assets/reimburse/'.$value->filename) }}" target="_blank">{{ $value->_id_lampiran->lampiran }}</a><br/>
                                     @endforeach
                                 </td>
                             </tr>
@@ -176,21 +176,14 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>
-                                    <h6>Nama Pasien</h6>
-                                </th>
-                                <th>
-                                    <h6>Hubungan Dengan Karyawan</h6>
-                                </th>
-                                <th>
-                                    <h6>Layanan</h6>
-                                </th>
-                                <th>
-                                    <h6>Tanggal Layanan</h6>
-                                </th>
-                                <th>
-                                    <h6>Nominal Klaim</h6>
-                                </th>
+                                <th>Nama Pasien</th>
+                                <th>Hubungan Dengan Karyawan</th>
+                                <th>Layanan</th>
+                                <th>Tanggal Layanan</th>
+                                <th>Nominal Klaim</th>
+                                @if($value->id_layanan==7 && auth()->user()->userrole=='hc')
+                                <th>Action</th>
+                                @endif
                             </tr>
                         </thead>
                         @foreach ($trxD as $value)
@@ -200,12 +193,31 @@
                             <td>{{ $value->_id_layanan->layanan }}</td>
                             <td>@if(!empty($value->tanggal)) {{ \Carbon\Carbon::parse($value->tanggal)->format('d-m-Y') }} @endif</td>
                             <td>Rp. {{ number_format($value->jumlah_klaim, 0) }}</td>
+                            @if($value->id_layanan==7 && auth()->user()->userrole=='hc')
+                            <td>
+                                <form action="{{ route('reimburse.updateDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id)) }}" method="POST">
+                                    @csrf
+                                    @method('POST')
+                                    <input type="hidden" id="trxMId" name="trxMId" value="{{ (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id_reimburse) }}" >
+                                    <input type="hidden" id="_id_layanan" name="_id_layanan" value="{{ $value->id_layanan }}" >
+                                    <input type="hidden" id="id_hubungan" name="id_hubungan" value="{{ $value->id_hubungan }}" >
+                                    <input type="hidden" id="nama_pasien" name="nama_pasien" value="{{ $value->nama_pasien }}" >
+                                    <input type="hidden" id="tanggal" name="tanggal" value="{{ $value->tanggal }}" >
+                                    <input type="hidden" id="jumlah_klaim" name="jumlah_klaim" value="0" >
+                                    <input type="hidden" id="delete" name="delete" value="1" >
+                                    <ul class="action">
+                                        <li class="edit"><a href="{{ route('reimburse.editDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id)) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                        <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
+                                    </ul>
+                                </form>
+                            </td>
+                            @endif
                         </tr>
                         @endforeach
                     </table>
                 </div>
                 <!-- finish -->
-                <br /><a href="{{ URL::previous() }}" class="btn btn-warning" type="button">Back</a>
+                <a href="{{ URL::previous() }}" class="btn btn-warning mt-2" type="button">Back</a>
             </div>
         </div>
     </div>

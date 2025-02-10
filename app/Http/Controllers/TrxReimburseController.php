@@ -871,6 +871,14 @@ class TrxReimburseController extends Controller
             $trxM->klaim_non_kesehatan = $klaim_kesehatan_akhir;
             $trxM->update();
         }
+        // 7 = Ekses
+        else if($request->_id_layanan == 7){
+            $klaim_kesehatan_awal = $trxM->klaim_non_kesehatan;
+            $klaim_kesehatan_akhir = $klaim_kesehatan_awal - $jumlah_klaim_awal + $jumlah_klaim_akhir;
+            // 
+            $trxM->klaim_non_kesehatan = $klaim_kesehatan_akhir;
+            $trxM->update();
+        }
         // 
         $trxD->id_hubungan = $id_hubungan;
         $trxD->nama_pasien = $nama_pasien;

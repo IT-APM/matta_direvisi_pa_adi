@@ -107,7 +107,7 @@ $('#_datatable1').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]]
 } );
 </script>
 @endsection

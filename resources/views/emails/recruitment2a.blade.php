@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Undangan Interview {{ $data['metode'] }}</title>
+<link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
 </head>
 <body>
 

@@ -5,6 +5,7 @@
     <title>@if(!empty($_trx)){{ $trx->_pekerjaan->pekerjaan }}@else Job Vacancy @endif</title>
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
     <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/bootstrap.css')}}">
+    <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
 </head>
 <style>
     /* body {
@@ -46,9 +47,9 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12 text-center mt-2">
-            <button class="btn btn-warning" id="downloadButton">Download as PDF</button>
+    <div class="row mt-2 mb-2">
+        <div class="col-12 text-center">
+            <button class="btn btn-primary" id="downloadButton">Download as PDF</button>
         </div>
     </div>
     @endif

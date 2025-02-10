@@ -127,7 +127,7 @@
                             <tr>
                                 <td>Nominal Klaim Pada Pengajuan ini</td>
                                 <td>Rp. <?php echo e(number_format($trxM->klaim_kesehatan, 0)); ?> (Kesehatan)
-                                    <br />Rp. <?php echo e(number_format($trxM->klaim_non_kesehatan, 0)); ?> (Non Kesehatan)
+                                    <br/>Rp. <?php echo e(number_format($trxM->klaim_non_kesehatan, 0)); ?> (Non Kesehatan)
                                 </td>
                             </tr>
                             <?php if($trxM->plafon>0): ?>
@@ -141,7 +141,7 @@
                                 <td>Lampiran</td>
                                 <td>
                                     <?php $__currentLoopData = $lampiran; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <a href="<?php echo e(asset('assets/reimburse/'.$value->filename)); ?>" target="_blank"><?php echo e($value->_id_lampiran->lampiran); ?></a><br />
+                                    <a href="<?php echo e(asset('assets/reimburse/'.$value->filename)); ?>" target="_blank"><?php echo e($value->_id_lampiran->lampiran); ?></a><br/>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </td>
                             </tr>
@@ -175,21 +175,14 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>
-                                    <h6>Nama Pasien</h6>
-                                </th>
-                                <th>
-                                    <h6>Hubungan Dengan Karyawan</h6>
-                                </th>
-                                <th>
-                                    <h6>Layanan</h6>
-                                </th>
-                                <th>
-                                    <h6>Tanggal Layanan</h6>
-                                </th>
-                                <th>
-                                    <h6>Nominal Klaim</h6>
-                                </th>
+                                <th>Nama Pasien</th>
+                                <th>Hubungan Dengan Karyawan</th>
+                                <th>Layanan</th>
+                                <th>Tanggal Layanan</th>
+                                <th>Nominal Klaim</th>
+                                <?php if($value->id_layanan==7 && auth()->user()->userrole=='hc'): ?>
+                                <th>Action</th>
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <?php $__currentLoopData = $trxD; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -199,12 +192,31 @@
                             <td><?php echo e($value->_id_layanan->layanan); ?></td>
                             <td><?php if(!empty($value->tanggal)): ?> <?php echo e(\Carbon\Carbon::parse($value->tanggal)->format('d-m-Y')); ?> <?php endif; ?></td>
                             <td>Rp. <?php echo e(number_format($value->jumlah_klaim, 0)); ?></td>
+                            <?php if($value->id_layanan==7 && auth()->user()->userrole=='hc'): ?>
+                            <td>
+                                <form action="<?php echo e(route('reimburse.updateDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id))); ?>" method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('POST'); ?>
+                                    <input type="hidden" id="trxMId" name="trxMId" value="<?php echo e((new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id_reimburse)); ?>" >
+                                    <input type="hidden" id="_id_layanan" name="_id_layanan" value="<?php echo e($value->id_layanan); ?>" >
+                                    <input type="hidden" id="id_hubungan" name="id_hubungan" value="<?php echo e($value->id_hubungan); ?>" >
+                                    <input type="hidden" id="nama_pasien" name="nama_pasien" value="<?php echo e($value->nama_pasien); ?>" >
+                                    <input type="hidden" id="tanggal" name="tanggal" value="<?php echo e($value->tanggal); ?>" >
+                                    <input type="hidden" id="jumlah_klaim" name="jumlah_klaim" value="0" >
+                                    <input type="hidden" id="delete" name="delete" value="1" >
+                                    <ul class="action">
+                                        <li class="edit"><a href="<?php echo e(route('reimburse.editDetail', (new App\Http\Controllers\OpenDataController)->encryptWithKey($value->id))); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                        <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
+                                    </ul>
+                                </form>
+                            </td>
+                            <?php endif; ?>
                         </tr>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </table>
                 </div>
                 <!-- finish -->
-                <br /><a href="<?php echo e(URL::previous()); ?>" class="btn btn-warning" type="button">Back</a>
+                <a href="<?php echo e(URL::previous()); ?>" class="btn btn-warning mt-2" type="button">Back</a>
             </div>
         </div>
     </div>

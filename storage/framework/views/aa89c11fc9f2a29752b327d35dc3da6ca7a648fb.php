@@ -5,6 +5,7 @@
     <title><?php if(!empty($_trx)): ?><?php echo e($trx->_pekerjaan->pekerjaan); ?><?php else: ?> Job Vacancy <?php endif; ?></title>
     
     <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/bootstrap.css')); ?>">
+    <link rel="icon" href="<?php echo e(asset('assets/images/favicon.png')); ?>" type="image/x-icon">
 </head>
 <style>
     /* body {
@@ -44,9 +45,9 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12 text-center mt-2">
-            <button class="btn btn-warning" id="downloadButton">Download as PDF</button>
+    <div class="row mt-2 mb-2">
+        <div class="col-12 text-center">
+            <button class="btn btn-primary" id="downloadButton">Download as PDF</button>
         </div>
     </div>
     <?php endif; ?>

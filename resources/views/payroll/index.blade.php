@@ -252,7 +252,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @php $no=0; @endphp
+                                            @php
+                                                $no=0;
+                                            @endphp
                                             @foreach ($payroll as $data)
                                             @php
                                                 $where = ['nik'=>$data->nik, 'tipe'=>'add', 'bulan'=>$data->bulan, 'tahun'=>$data->tahun];
@@ -270,7 +272,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($data->gapok, 0) }}</td>
-                                                {{--  --}}
+                                                {{-- tunjangan --}}
                                                 @foreach ($add as $_data)
                                                 <td class="text-end">{{ number_format($_data->angka, 0) }}</td>
                                                 @endforeach
@@ -299,6 +301,20 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                             @endforeach
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                @for ($x = 5; $x <= 17; $x++)
+                                                <th id="semua_{{$x}}" class="text-end">0</th>
+                                                @endfor
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </p>
@@ -377,6 +393,18 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                             @endforeach
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                @for ($x = 5; $x <= 17; $x++)
+                                                <th id="potongan_{{$x}}" class="text-end">0</th>
+                                                @endfor
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </p>
@@ -451,6 +479,18 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                             @endforeach
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                @for ($x = 5; $x <= 14; $x++)
+                                                <th id="bpjstk_{{$x}}" class="text-end">0</th>
+                                                @endfor
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </p>
@@ -525,6 +565,18 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                             @endforeach
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                @for ($x = 5; $x <= 11; $x++)
+                                                <th id="bpjsks_{{$x}}" class="text-end">0</th>
+                                                @endfor
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </p>
@@ -703,6 +755,35 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             </tr>
                                             @endforeach
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                @for ($x = 17; $x <= 29; $x++)
+                                                <th id="kertas_{{$x}}" class="text-end">0</th>
+                                                @endfor
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                @for ($x = 32; $x <= 43; $x++)
+                                                <th id="kertas_{{$x}}" class="text-end">0</th>
+                                                @endfor
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </p>
@@ -741,7 +822,23 @@ $('#_datatable1').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    footerCallback: function (row, data, start, end, display) {
+        nfObject = new Intl.NumberFormat('en-US');
+        let api = this.api();
+        let intVal = function (i) {
+            return typeof i === 'string'
+                ? i.replace(/[\$,]/g, '') * 1
+                : typeof i === 'number'
+                ? i
+                : 0;
+        };
+        @for ($x = 5; $x <= 17; $x++)
+        semua_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_semua_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column({{$x}}).footer().innerHTML = nfObject.format(page_semua_{{$x}}) + '<br/>Total: ' + nfObject.format(semua_{{$x}});
+        @endfor
+    },
 } );
 // potongan
 $('#_datatable2').DataTable( {
@@ -752,7 +849,23 @@ $('#_datatable2').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    footerCallback: function (row, data, start, end, display) {
+        nfObject = new Intl.NumberFormat('en-US');
+        let api = this.api();
+        let intVal = function (i) {
+            return typeof i === 'string'
+                ? i.replace(/[\$,]/g, '') * 1
+                : typeof i === 'number'
+                ? i
+                : 0;
+        };
+        @for ($x = 5; $x <= 17; $x++)
+        potongan_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_potongan_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column({{$x}}).footer().innerHTML = nfObject.format(page_potongan_{{$x}}) + '<br/>Total: ' + nfObject.format(potongan_{{$x}});
+        @endfor
+    },
 } );
 // bpjstk
 $('#_datatable3').DataTable( {
@@ -763,7 +876,23 @@ $('#_datatable3').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    footerCallback: function (row, data, start, end, display) {
+        nfObject = new Intl.NumberFormat('en-US');
+        let api = this.api();
+        let intVal = function (i) {
+            return typeof i === 'string'
+                ? i.replace(/[\$,]/g, '') * 1
+                : typeof i === 'number'
+                ? i
+                : 0;
+        };
+        @for ($x = 5; $x <= 14; $x++)
+        bpjstk_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_bpjstk_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column({{$x}}).footer().innerHTML = nfObject.format(page_bpjstk_{{$x}}) + '<br/>Total: ' + nfObject.format(bpjstk_{{$x}});
+        @endfor
+    },
 } );
 // bpjsks
 $('#_datatable4').DataTable( {
@@ -774,7 +903,23 @@ $('#_datatable4').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    footerCallback: function (row, data, start, end, display) {
+        nfObject = new Intl.NumberFormat('en-US');
+        let api = this.api();
+        let intVal = function (i) {
+            return typeof i === 'string'
+                ? i.replace(/[\$,]/g, '') * 1
+                : typeof i === 'number'
+                ? i
+                : 0;
+        };
+        @for ($x = 5; $x <= 11; $x++)
+        bpjsks_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_bpjsks_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column({{$x}}).footer().innerHTML = nfObject.format(page_bpjsks_{{$x}}) + '<br/>Total: ' + nfObject.format(bpjsks_{{$x}});
+        @endfor
+    },
 } );
 // kertas kerja
 $('#_datatable5').DataTable( {
@@ -785,7 +930,29 @@ $('#_datatable5').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    footerCallback: function (row, data, start, end, display) {
+        nfObject = new Intl.NumberFormat('en-US');
+        let api = this.api();
+        let intVal = function (i) {
+            return typeof i === 'string'
+                ? i.replace(/[\$,]/g, '') * 1
+                : typeof i === 'number'
+                ? i
+                : 0;
+        };
+        @for ($x = 17; $x <= 29; $x++)
+        kertas_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_kertas_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column({{$x}}).footer().innerHTML = nfObject.format(page_kertas_{{$x}}) + '<br/>Total: ' + nfObject.format(kertas_{{$x}});
+        @endfor
+        // 
+        @for ($x = 32; $x <= 43; $x++)
+        kertas_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_kertas_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column({{$x}}).footer().innerHTML = nfObject.format(page_kertas_{{$x}}) + '<br/>Total: ' + nfObject.format(kertas_{{$x}});
+        @endfor
+    },
 } );
 // 
 $(document).on('click', '#btn-delete', function(event) {
