@@ -902,6 +902,54 @@ class TrxPayrollController extends Controller
                 }
                 return redirect('payroll')->with('msg', 'Data is saved successfully.');
             }
+            // upload pajak
+            elseif($jenis == 'pajak_present'){
+                $path = $request->file('template')->getPathname();
+                $trx = Excel::toArray([], $path);
+                // data pajak
+                $data0 = $trx[0];
+                // 101=NIP
+                // 102=Bulan
+                // 103=Tahun
+                // 401=PPh21
+                $_101 = array_search(101, $data0[0]);
+                $_102 = array_search(102, $data0[0]);
+                $_103 = array_search(103, $data0[0]);
+                $_401 = array_search(401, $data0[0]);
+                // dimulai dari baris ke-3
+                // data pajak
+                for ($x = 2; $x < count($data0); $x++) {
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                    $trx = TrxPayroll::where($where)->first();
+                    $trx->pajak = $data0[$x][$_401];
+                    $trx->update();
+                }
+                return redirect('payroll')->with('msg', 'Data is saved successfully.');
+            }
+            // upload pajak
+            elseif($jenis == 'pajak_past'){
+                $path = $request->file('template')->getPathname();
+                $trx = Excel::toArray([], $path);
+                // data pajak
+                $data0 = $trx[0];
+                // 101=NIP
+                // 102=Bulan
+                // 103=Tahun
+                // 401=PPh21
+                $_101 = array_search(101, $data0[0]);
+                $_102 = array_search(102, $data0[0]);
+                $_103 = array_search(103, $data0[0]);
+                $_401 = array_search(401, $data0[0]);
+                // dimulai dari baris ke-3
+                // data pajak
+                for ($x = 2; $x < count($data0); $x++) {
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                    $trx = TrxPayrollLog::where($where)->first();
+                    $trx->pajak = $data0[$x][$_401];
+                    $trx->update();
+                }
+                return redirect('payroll')->with('msg', 'Data is saved successfully.');
+            }
         }
         // 
         else{
