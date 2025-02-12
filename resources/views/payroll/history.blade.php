@@ -529,6 +529,22 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         {{-- kertas kerja --}}
                         <div class="tab-pane fade" id="pills-kerja" role="tabpanel" aria-labelledby="pills-kerja-tab">
                             <p class="mb-0 m-t-10">
+                                <div class="row g-3 mb-2">
+                                    <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                    @csrf
+                                    <input type="hidden" id="jenis" name="jenis" value="pajak_past">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <input name="template" id="template" class="form-control" type="file" required="">
+                                            <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                            <br/><a href="{{ asset('assets/template/template_upload_pajak_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                        </div>
+                                    </div>
+                                    </form>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="display nowrap" id="_datatable5">
                                         <thead>
@@ -584,6 +600,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Ekses</th>
                                                 <th>Total Medical Cost</th>
                                                 <th>Overtime</th>
+                                                <th>PPh21</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -702,6 +719,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td class="text-end">{{ number_format($ekses, 0) }}</td>
                                                 <td class="text-end">{{ number_format($total_kesehatan, 0) }}</td>
                                                 <td class="text-end">{{ number_format($total_overtime, 0) }}</td>
+                                                <td class="text-end">{{ number_format($data->pajak, 0) }}</td>
                                             </tr>
                                             @endforeach
                                         </tbody>
@@ -729,7 +747,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 @endfor
                                                 <th>&nbsp;</th>
                                                 <th>&nbsp;</th>
-                                                @for ($x = 32; $x <= 43; $x++)
+                                                @for ($x = 32; $x <= 44; $x++)
                                                 <th id="kertas_{{$x}}" class="text-end">0</th>
                                                 @endfor
                                             </tr>
@@ -791,7 +809,7 @@ $('#_datatable1').DataTable( {
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_semua_{{$x}}) + '<br/>Total: ' + nfObject.format(semua_{{$x}});
         @endfor
     },
-} );
+});
 // potongan
 $('#_datatable2').DataTable( {
 	// dom: 'lBfrtip',
@@ -818,7 +836,7 @@ $('#_datatable2').DataTable( {
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_potongan_{{$x}}) + '<br/>Total: ' + nfObject.format(potongan_{{$x}});
         @endfor
     },
-} );
+});
 // bpjstk
 $('#_datatable3').DataTable( {
 	// dom: 'lBfrtip',
@@ -845,7 +863,7 @@ $('#_datatable3').DataTable( {
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_bpjstk_{{$x}}) + '<br/>Total: ' + nfObject.format(bpjstk_{{$x}});
         @endfor
     },
-} );
+});
 // bpjskes
 $('#_datatable4').DataTable( {
 	// dom: 'lBfrtip',
@@ -872,7 +890,7 @@ $('#_datatable4').DataTable( {
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_bpjsks_{{$x}}) + '<br/>Total: ' + nfObject.format(bpjsks_{{$x}});
         @endfor
     },
-} );
+});
 // kertas kerja
 $('#_datatable5').DataTable( {
 	// dom: 'lBfrtip',
@@ -899,13 +917,13 @@ $('#_datatable5').DataTable( {
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_kertas_{{$x}}) + '<br/>Total: ' + nfObject.format(kertas_{{$x}});
         @endfor
         // 
-        @for ($x = 32; $x <= 43; $x++)
+        @for ($x = 32; $x <= 44; $x++)
         kertas_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         page_kertas_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_kertas_{{$x}}) + '<br/>Total: ' + nfObject.format(kertas_{{$x}});
         @endfor
     },
-} );
+});
 function findim_subdepartemen(source) {
     checkboxes = document.getElementsByName('findim_subdepartemen[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
