@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Undangan Interview <?php echo e($data['metode']); ?></title>
+<link rel="icon" href="<?php echo e(asset('assets/images/favicon.png')); ?>" type="image/x-icon">
 </head>
 <body>
 

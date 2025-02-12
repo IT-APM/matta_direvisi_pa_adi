@@ -40,6 +40,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\TrxRecruitmentPedoman;
 
 class TrxRecruitmentController extends Controller
 {
@@ -319,7 +320,7 @@ class TrxRecruitmentController extends Controller
         $id = Crypt::decrypt($id);
         $trx = TrxRecruitmentIdentitas::find($id);
         $filename = $id . '_applicant.pdf';
-        $pdf = new TCPDF;
+        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf::SetTitle('Formulir Identitas');
         $pdf::SetFont('times', '', 11, '', true);
         $pdf::AddPage();
@@ -409,9 +410,26 @@ class TrxRecruitmentController extends Controller
             $_trx->update();
             $trx->id_status = $id_status;
             $trx->update();
+            // insert to TrxRecruitmentPedoman
+            $general = ['general_page-0001','general_page-0002','general_page-0003','general_page-0004','general_page-0005','general_page-0006'];
+            $leader = ['leader_page-0001','leader_page-0002','leader_page-0003','leader_page-0004','leader_page-0005','leader_page-0006'];
+            for($x = 0; $x < 6; $x++){
+                $pedoman = new TrxRecruitmentPedoman;
+                $pedoman->id_identitas = $id_identitas;
+                $pedoman->jenis = 'general';
+                $pedoman->nomor = $x+1;
+                $pedoman->filename = md5($general[$x]);
+                if($request->file_dokumen_ttd == 'leader.pdf'){
+                    $pedoman->jenis = 'leader';
+                    $pedoman->nomor = $x+1;
+                    $pedoman->filename = md5($leader[$x]);
+                }
+                $pedoman->save();
+            }
             // start
             // id_identitas,id_status,pic,pic_property,aktifitas,catatan
-            $arr = [$id_identitas,$id_status,$nama.'/'.$nik,'','negosiasi',''];
+            // $arr = [$id_identitas,$id_status,$nama.'/'.$nik,'','negosiasi',''];
+            $arr = [$id_identitas,$id_status,$nama,'','negosiasi',''];
             $this->insertLog($arr);
             // end
             
@@ -525,6 +543,34 @@ class TrxRecruitmentController extends Controller
             <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
             return view('recruitment.thank', compact('msg'));
         }
+    }
+
+    public function pedoman_post(Request $request)
+    {
+        $id = Crypt::decrypt($request->id);
+        $_trx = TrxRecruitmentIdentitas::find($id);
+        $nomor = $request->nomor;
+        $url = $request->url;
+        // dd($id, $request->all());
+        $where = ['id_identitas' => $id, 'nomor' => $nomor];
+        $cek_satu = TrxRecruitmentPedoman::where($where)->whereNull('check_in')->exists();
+        if($cek_satu){
+            $trx = TrxRecruitmentPedoman::where($where)->first();
+            $trx->check_in = Carbon::now();
+            $trx->update();
+        }else{
+            $trx = TrxRecruitmentPedoman::where($where)->first();
+            $trx->check_out = Carbon::now();
+            $trx->update();
+            $where = ['id_identitas' => $id, 'nomor' => $nomor+1];
+            // update nomor berikutnya
+            $trx = TrxRecruitmentPedoman::where($where)->first();
+            if(!empty($trx)){
+                $trx->check_in = Carbon::now();
+                $trx->update();
+            }
+        }
+        return redirect()->to($url);
     }
 
     public function upload_dokumen_post(Request $request)
@@ -644,16 +690,38 @@ class TrxRecruitmentController extends Controller
             $file_covid->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_covid = $namafile;
         }
-        if($request->hasFile('file_dokumen_ttd')){
-            $file_dokumen_ttd = $request->file('file_dokumen_ttd');
-            $request->validate([
-                'file_dokumen_ttd' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
-            ]);
-            $extension = $file_dokumen_ttd->getClientOriginalExtension();
-            $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
-            $file_dokumen_ttd->move('public/assets/recruitment/upload/', $namafile);
-            $_trx->file_dokumen_ttd = $namafile;
+        // tidak digunakan, diganti dengan dibuat persetujuan dalam setiap halaman setelah kandidat membaca
+        // if($request->hasFile('file_dokumen_ttd')){
+        //     $file_dokumen_ttd = $request->file('file_dokumen_ttd');
+        //     $request->validate([
+        //         'file_dokumen_ttd' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
+        //     ]);
+        //     $extension = $file_dokumen_ttd->getClientOriginalExtension();
+        //     $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
+        //     $file_dokumen_ttd->move('public/assets/recruitment/upload/', $namafile);
+        //     $_trx->file_dokumen_ttd = $namafile;
+        // }
+        // start generate pdf then save to public_path
+        $where = ['id_identitas' => $id];
+        $pedoman = TrxRecruitmentPedoman::where($where)->orderBy('nomor', 'asc')->get();
+        $filename = $id.'_'.now()->getTimestampMs().'.pdf';
+        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf::SetTitle('Pedoman Perilaku');
+        $pdf::SetFont('times', '', 10, '', true);
+        foreach($pedoman as $data){
+            $pdf::AddPage();
+            $bg = public_path('assets/recruitment/upload/'.$data->jenis.'/'.$data->filename.'.jpg');
+            $pdf::Image($bg, 10, 1, 210, 297, '', '', '', false, 0, '', false, false, 0);
+            $bg = public_path('assets/images/matta/approved_new.png');
+            $x = 138;
+            $y = 262;
+            $pdf::Image($bg, $x, $y, 30, 6, '', '', '', false, 0, '', false, false, 0);
+            $pdf::Text($x, $y+6, $_trx->nama);
+            $pdf::Text($x, $y+10, Carbon::parse($data->check_out)->format('d-m-Y H:i:s'));
         }
+        $pdf::Output(public_path('assets/recruitment/upload/'.$filename), 'F');
+        $_trx->file_dokumen_ttd = $filename;
+        // end
         $_trx->id_status = $id_status;
         $_trx->update();
         // start
@@ -697,7 +765,7 @@ class TrxRecruitmentController extends Controller
         $resume = TrxRecruitmentResume::where($where)->orderBy('id', 'asc')->get();
         $interview = TrxRecruitmentInterview::where($where)->orderBy('id', 'desc')->get();
         $filename = $id . '_resume.pdf';
-        $pdf = new TCPDF;
+        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf::SetTitle('Resume Hasil Tes');
         $pdf::SetFont('times', '', 11, '', true);
         // page-1
@@ -724,11 +792,11 @@ class TrxRecruitmentController extends Controller
     public function download_offering($id)
     {
         $id = Crypt::decrypt($id);
-        // $id = Crypt::decrypt($id)[0];
+        // dd($id);
         $_trx = TrxRecruitmentIdentitas::find($id);
         $trx = TrxRecruitmentNegosiasi::where(['id_identitas'=>$id])->first();
         $filename = $id . '_offering.pdf';
-        $pdf = new TCPDF;
+        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf::SetTitle('Offering Letter');
         $pdf::SetFont('times', '', 10, '', true);
         $pdf::AddPage();

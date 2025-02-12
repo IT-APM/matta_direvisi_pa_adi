@@ -228,6 +228,7 @@ Route::get('payroll/bkp/{id}', [TrxPayrollController::class, 'bkp'])->name('payr
 Route::get('payroll/history/{id}', [TrxPayrollController::class, 'history'])->name('payroll.history')->middleware('can:payroll');
 Route::get('payroll/slip/{id}', [TrxPayrollController::class, 'slip'])->name('payroll.slip')->middleware('auth');
 Route::get('payroll/slip/detail/{id}', [TrxPayrollController::class, 'slip_detail'])->name('payroll.slip.detail')->middleware('auth');
+Route::get('payroll/employee_gap/{id}', [TrxPayrollController::class, 'employee_gap'])->name('payroll.employee_gap')->middleware('can:payroll');
 // 
 Route::resource('recruitment', TrxRecruitmentController::class)->middleware('can:hc');
 Route::get('recruitment/apply/{id}', [TrxRecruitmentController::class, 'apply'])->name('recruitment.apply');
@@ -251,6 +252,7 @@ Route::get('recruitment/interpretation/download/{id}', [TrxRecruitmentController
 Route::get('recruitment/get_offering/{id}', [TrxRecruitmentController::class, 'get_offering'])->name('recruitment.get_offering')->middleware('can:hc');
 Route::get('recruitment/get_offering/download/{id}', [TrxRecruitmentController::class, 'download_offering'])->name('recruitment.download_offering')->middleware('can:hc');
 Route::post('recruitment/upload_dokumen_post', [ TrxRecruitmentController::class, 'upload_dokumen_post'])->name('recruitment.upload_dokumen_post');
+Route::post('recruitment/pedoman_post', [ TrxRecruitmentController::class, 'pedoman_post'])->name('recruitment.pedoman_post');
 Route::resource('noattendance', NoAttendanceController::class)->middleware('can:hc');
 Route::resource('overtime', OvertimeController::class)->middleware('auth');
 Route::resource('working', WorkingDayController::class)->middleware('auth');

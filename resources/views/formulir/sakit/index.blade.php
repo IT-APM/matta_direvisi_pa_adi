@@ -57,7 +57,7 @@
                             <select class="form-select js-example-basic-single col-sm-12" id="nik_karyawan" name="nik_karyawan">
                                 <option value="0">Pilih Karyawan...</option>
                                 @foreach ($karyawan as $data)
-                                <option value="{{ $data->nik }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                <option value="{{ Crypt::encrypt($data->nik) }}">{{ $data->nama }} - {{ $data->nik }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -169,7 +169,7 @@
 <script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 <script type="text/javascript">
 function PilihKaryawan() {
-    var nik_karyawan = "{{ auth()->user()->nik }}";
+    var nik_karyawan = "{{ Crypt::encrypt(auth()->user()->nik) }}";
     @can('hc')
     if($('#nik_karyawan').val() != '0'){
         nik_karyawan = $('#nik_karyawan').val();

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use DB;
 use Elibyy\TCPDF\Facades\TCPDF;
+use Illuminate\Support\Facades\Crypt;
 // 
 
 class TrxSakitController extends Controller
@@ -38,7 +39,7 @@ class TrxSakitController extends Controller
     {
         // 
         $where = ['is_aktif' => 1];
-        $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+        $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $no = 0;
         $trx = TrxSakit::orderBy('id', 'desc')->get();
         if(auth()->user()->userrole == 'nhc'){
@@ -241,7 +242,8 @@ class TrxSakitController extends Controller
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $status = 'create';
-        $nik_karyawan = $request->nik_karyawan;
+        // $nik_karyawan = $request->nik_karyawan;
+        $nik_karyawan = Crypt::decrypt($request->nik_karyawan);
         $where = ['nik' => $nik_karyawan];
         $pengaju = Karyawan::select('nik', 'nama')->where($where)->first();
         $pengaju = $pengaju->nama.' - '.$pengaju->nik;

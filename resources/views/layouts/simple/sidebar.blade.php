@@ -173,6 +173,13 @@
                         </div>
                     </li>
                     @can('payroll')
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('payroll.employee_gap', 0) }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-others') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-others') }}"></use>
+                            </svg><span>Payroll Employee Gap</span></a></li>
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('payroll.history', 0) }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-others') }}"></use>

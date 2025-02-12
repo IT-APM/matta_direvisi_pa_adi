@@ -23,6 +23,9 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
+                <div class="card-header">
+                    <h5>Pengaju: {{ $pengaju }}</h5>
+                </div>
                 <div class="card-body">
                     @if(Session::has('error'))
                     <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
@@ -32,6 +35,7 @@
                     @endif
                     <form action="{{ route('rekomendasi.store') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @csrf
+                        <input type="hidden" id="nik_atasan" name="nik_atasan" value="{{ $nik_atasan }}">
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label" for="nik_karyawan">Karyawan</label>

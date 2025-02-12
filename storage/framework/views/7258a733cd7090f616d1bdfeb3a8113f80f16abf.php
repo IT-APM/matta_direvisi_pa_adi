@@ -173,6 +173,13 @@
                         </div>
                     </li>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('payroll.employee_gap', 0)); ?>">
+                            <svg class="stroke-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-others')); ?>"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-others')); ?>"></use>
+                            </svg><span>Payroll Employee Gap</span></a></li>
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('payroll.history', 0)); ?>">
                             <svg class="stroke-icon">
                                 <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-others')); ?>"></use>

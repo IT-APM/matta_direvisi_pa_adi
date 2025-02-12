@@ -44,7 +44,99 @@ use App\Models\Level;
 class TrxPayrollController extends Controller
 {
     
-    public function slip($id)
+    public function employee_gap(Request $request, $id)
+    {
+        $result = array();
+        // membandingkan data 1 bulan sebelumnya untuk mengecek apakah ada perbedaan karyawan
+        // present
+        $periode = DB::select(DB::raw("SELECT bulan,tahun FROM trx_tbl_payroll GROUP BY bulan,tahun ORDER BY tahun DESC,bulan DESC"));
+        foreach($periode as $data){
+            array_push($result, $this->get_employee_gap($data->bulan, $data->tahun, 'present'));
+        }
+        // past
+        $periode = DB::select(DB::raw("SELECT bulan,tahun FROM trx_tbl_payroll_log GROUP BY bulan,tahun ORDER BY tahun DESC,bulan DESC"));
+        foreach($periode as $data){
+            array_push($result, $this->get_employee_gap($data->bulan, $data->tahun, 'past'));
+        }
+        // 
+        $bulan_tahun_dari = '';
+        $bulan_tahun_sampai = '';// start filter
+        if($request->filter == true){
+            $result = array();
+            $bulan_tahun_dari = $request->bulan_tahun_dari;
+            $bulan_tahun_sampai = $request->bulan_tahun_sampai;
+            // present
+            $periode = DB::select(DB::raw("SELECT bulan,tahun FROM trx_tbl_payroll WHERE DATE(CONCAT(tahun, '-', bulan, '-01')) BETWEEN '".$request->bulan_tahun_dari."-01' AND '".$request->bulan_tahun_sampai."-01' GROUP BY bulan,tahun ORDER BY tahun DESC,bulan DESC"));
+            foreach($periode as $data){
+                array_push($result, $this->get_employee_gap($data->bulan, $data->tahun, 'present'));
+            }
+            // past
+            $periode = DB::select(DB::raw("SELECT bulan,tahun FROM trx_tbl_payroll_log WHERE DATE(CONCAT(tahun, '-', bulan, '-01')) BETWEEN '".$request->bulan_tahun_dari."-01' AND '".$request->bulan_tahun_sampai."-01' GROUP BY bulan,tahun ORDER BY tahun DESC,bulan DESC"));
+            foreach($periode as $data){
+                array_push($result, $this->get_employee_gap($data->bulan, $data->tahun, 'past'));
+            }
+        }
+        return view('payroll.employee_gap', compact('result', 'bulan_tahun_dari', 'bulan_tahun_sampai'));
+        // $where = ['bulan'=>Carbon::now()->month, 'tahun'=>Carbon::now()->year];
+        // $payroll = TrxPayroll::where($where)->get();
+        // $where = ['bulan'=>Carbon::now()->subMonth(2)->month, 'tahun'=>Carbon::now()->subMonth(2)->year];
+        // $payroll = TrxPayrollLog::where($where)->get();
+        // $where = ['bulan'=>Carbon::now()->subMonth(3)->month, 'tahun'=>Carbon::now()->subMonth(3)->year];
+        // $payroll_h = TrxPayrollLog::where($where)->get();
+        // $arr_nik = [];
+        // $arr_nik_h = [];
+        // foreach(($payroll->toArray()) as $data){
+        //     array_push($arr_nik, $data['nik']);
+        // }
+        // foreach(($payroll_h->toArray()) as $data){
+        //     array_push($arr_nik_h, $data['nik']);
+        // }
+        // $collection1 = collect($arr_nik);
+        // $collection2 = collect($arr_nik_h);
+        // $diff = $collection2->diff($collection1);
+        // if ($diff->isNotEmpty()) {
+        //     dd('Ada anggota baru di array kedua yang tidak ada di array pertama:', $diff);
+        // } else {
+        //     dd('Tidak ada anggota baru di array kedua yang tidak ada di array pertama.');
+        // }
+        // dd($diff);
+    }
+    
+    public function get_employee_gap($bulan, $tahun, $periode)
+    {
+        $submonth = Carbon::createFromFormat('Y-m-d', $tahun."-".$bulan."-01")->subMonth();
+        $where = ['bulan'=>$bulan, 'tahun'=>$tahun];
+        $payroll = TrxPayroll::where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        if($periode == 'past'){
+            $payroll = TrxPayrollLog::where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        }
+        $where = ['bulan'=>$submonth->month, 'tahun'=>$submonth->year];
+        $payroll_h = TrxPayrollLog::where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        $arr_nik = [];
+        $arr_nik_h = [];
+        foreach(($payroll->toArray()) as $data){
+            array_push($arr_nik, $data['nik']);
+        }
+        foreach(($payroll_h->toArray()) as $data){
+            array_push($arr_nik_h, $data['nik']);
+        }
+        $coll = collect($arr_nik);
+        $coll_h = collect($arr_nik_h);
+        $diff_after = $coll->diff($coll_h);
+        $diff_before = $coll_h->diff($coll);
+        // 
+        $where = ['bulan'=>$bulan, 'tahun'=>$tahun];
+        $payroll = TrxPayroll::where($where)->whereIn('nik', $diff_after)->orderByRaw('tahun desc, bulan desc')->get();
+        if($periode == 'past'){
+            $payroll = TrxPayrollLog::where($where)->whereIn('nik', $diff_after)->orderByRaw('tahun desc, bulan desc')->get();
+        }
+        $where = ['bulan'=>$submonth->month, 'tahun'=>$submonth->year];
+        $payroll_h = TrxPayrollLog::where($where)->whereIn('nik', $diff_before)->orderByRaw('tahun desc, bulan desc')->get();
+        // 
+        return ['bulan'=>$bulan, 'tahun'=>$tahun, 'after'=>$payroll, 'before'=>$payroll_h];
+    }
+    
+    public function slip(Request $request, $id)
     {
         // fungsi untuk set paid_at default pada trx_tbl_payroll_log
         // $arr = array();
@@ -69,7 +161,16 @@ class TrxPayrollController extends Controller
         $where = ['nik'=>$nik];
         $payroll = TrxPayroll::where($where)->orderByRaw('tahun desc, bulan desc')->get();
         $payroll_h = TrxPayrollLog::where($where)->orderByRaw('tahun desc, bulan desc')->get();
-        return view('payroll.self', compact('payroll', 'payroll_h'));
+        // filter parameter
+        $bulan_tahun_dari = '';
+        $bulan_tahun_sampai = '';// start filter
+        if($request->filter == true){
+            $bulan_tahun_dari = $request->bulan_tahun_dari;
+            $bulan_tahun_sampai = $request->bulan_tahun_sampai;
+            $payroll = TrxPayroll::where($where)->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])->orderByRaw('tahun desc, bulan desc')->get();
+            $payroll_h = TrxPayrollLog::where($where)->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])->orderByRaw('tahun desc, bulan desc')->get();
+        }
+        return view('payroll.self', compact('payroll', 'payroll_h', 'bulan_tahun_dari', 'bulan_tahun_sampai'));
     }
     
     public function slip_detail(Request $request, $id)
@@ -82,7 +183,7 @@ class TrxPayrollController extends Controller
         if($_view == 'pdf_h'){
             $payroll = TrxPayrollLog::find($id);
             // $view = \View::make('payroll.pdf_h', compact('payroll'));
-        }else if($_view == 'pdf'){
+        }elseif($_view == 'pdf'){
             $payroll = TrxPayroll::find($id);
             // $view = \View::make('payroll.pdf', compact('payroll'));
         }
@@ -1124,7 +1225,7 @@ class TrxPayrollController extends Controller
         if($_view == 'pdf_h'){
             $payroll = TrxPayrollLog::find($id);
             // $view = \View::make('payroll.pdf_h', compact('payroll'));
-        }else if($_view == 'pdf'){
+        }elseif($_view == 'pdf'){
             $payroll = TrxPayroll::find($id);
             // $view = \View::make('payroll.pdf', compact('payroll'));
         }

@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use DB;
 use Elibyy\TCPDF\Facades\TCPDF;
+use Illuminate\Support\Facades\Crypt;
 // 
 
 class TrxRekomendasiController extends Controller
@@ -39,7 +40,9 @@ class TrxRekomendasiController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        // role asm kode_level >= 4
+        $where = ['is_aktif' => 1];
+        $layer1 = Karyawan::select('nik', 'nama')->where($where)->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $no = 0;
         $trx = TrxRekomendasiMaster::orderBy('id', 'desc')->get();
         if(auth()->user()->userrole == 'nhc'){
@@ -104,7 +107,7 @@ class TrxRekomendasiController extends Controller
             $arr_nik_atasan = array();
         }
         // end filter
-        return view('formulir.rekomendasi.index', compact('trx', 'no', 'status_rekomendasi', 'nik_karyawan', 'nik_atasan','arr_status_rekomendasi', 'arr_nik_karyawan', 'arr_nik_atasan'));
+        return view('formulir.rekomendasi.index', compact('layer1', 'trx', 'no', 'status_rekomendasi', 'nik_karyawan', 'nik_atasan','arr_status_rekomendasi', 'arr_nik_karyawan', 'arr_nik_atasan'));
     }
 
     /**
@@ -112,12 +115,16 @@ class TrxRekomendasiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
         // karyawan masih di hardcode dengan level minimal 4 = Assistant Manager
         // $nik_atasan = '01021403097';
-        $nik_atasan = auth()->user()->nik;
+        // $nik_atasan = auth()->user()->nik;
+        $nik_atasan = Crypt::decrypt($request->nik_atasan);
+        $where = ['nik' => $nik_atasan];
+        $pengaju = Karyawan::select('nik', 'nama')->where($where)->first();
+        $pengaju = $pengaju->nama.' / '.$pengaju->nik;
         $arr_karyawan = [];
         // karyawan yang bisa direkomendasikan adalah bawahan langsung pengaju
         $where = ['layer1' => $nik_atasan, 'is_aktif' => 1];
@@ -143,7 +150,7 @@ class TrxRekomendasiController extends Controller
         $level = Level::whereNotIn('id', [0])->orderBy('id', 'asc')->get();
         $rencana = RekomendasiRencana::whereNotIn('id', [0])->orderBy('rencana', 'asc')->get();
         // 
-        return view('formulir.rekomendasi.insert', compact('karyawan', 'approval', 'pengajuan', 'jabatan', 'level', 'rencana'));
+        return view('formulir.rekomendasi.insert', compact('pengaju', 'nik_atasan', 'karyawan', 'approval', 'pengajuan', 'jabatan', 'level', 'rencana'));
         // return response()->json( [ 'data' => $karyawan ] );
     }
 
@@ -155,7 +162,7 @@ class TrxRekomendasiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
         // return response()->json( [ 'data' => $request->all() ], 200 );
         $error = '<h4>ERROR:</h4>';
         if(!($request->has('pengajuan_id_2') || $request->has('pengajuan_id_3') || 
@@ -174,7 +181,8 @@ class TrxRekomendasiController extends Controller
         // 
         // pengaju masih di hardcode dengan level minimal 4 = Assistant Manager
         // $pengaju = '01021403097';
-        $pengaju = auth()->user()->nik;
+        // $pengaju = auth()->user()->nik;
+        $pengaju = $request->nik_atasan;
         $nik_atasan = $pengaju;
         $where = ['nik' => $pengaju];
         $karyawan = Karyawan::where($where)->first();

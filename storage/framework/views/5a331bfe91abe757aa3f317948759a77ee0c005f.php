@@ -22,6 +22,9 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
+                <div class="card-header">
+                    <h5>Pengaju: <?php echo e($pengaju); ?></h5>
+                </div>
                 <div class="card-body">
                     <?php if(Session::has('error')): ?>
                     <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
@@ -32,6 +35,7 @@
                     <?php endif; ?>
                     <form action="<?php echo e(route('rekomendasi.store')); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                         <?php echo csrf_field(); ?>
+                        <input type="hidden" id="nik_atasan" name="nik_atasan" value="<?php echo e($nik_atasan); ?>">
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label" for="nik_karyawan">Karyawan</label>

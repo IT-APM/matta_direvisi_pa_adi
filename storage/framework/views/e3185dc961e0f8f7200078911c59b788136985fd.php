@@ -57,7 +57,7 @@
                             <select class="form-select js-example-basic-single col-sm-12" id="nik_karyawan" name="nik_karyawan">
                                 <option value="0">Pilih Karyawan...</option>
                                 <?php $__currentLoopData = $karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <option value="<?php echo e($data->nik); ?>"><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
+                                <option value="<?php echo e(Crypt::encrypt($data->nik)); ?>"><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
@@ -169,7 +169,7 @@
 <script src="<?php echo e(asset('assets/js/select2/select2-custom.js')); ?>"></script>
 <script type="text/javascript">
 function PilihKaryawan() {
-    var nik_karyawan = "<?php echo e(auth()->user()->nik); ?>";
+    var nik_karyawan = "<?php echo e(Crypt::encrypt(auth()->user()->nik)); ?>";
     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
     if($('#nik_karyawan').val() != '0'){
         nik_karyawan = $('#nik_karyawan').val();

@@ -82,8 +82,8 @@
 						<td width="5%">1</td>
 						<td width="45%"><?php echo e($trx->nama); ?></td>
 						
-						<td width="25%"><?php if($resume[$x]->jawaban): ?><span style="font-family:zapfdingbats;font-size:20px;">4</span><?php endif; ?></td>
-						<td width="25%"><?php if(!$resume[$x]->jawaban): ?><span style="font-family:zapfdingbats;font-size:20px;">4</span><?php endif; ?></td>
+						<td width="25%"><?php if($resume[$x]->jawaban): ?><img width="20" src="<?php echo e(public_path('assets/images/matta/checklist.png')); ?>" alt="checklist"><?php endif; ?></td>
+						<td width="25%"><?php if(!$resume[$x]->jawaban): ?><img width="20" src="<?php echo e(public_path('assets/images/matta/checklist.png')); ?>" alt="checklist"><?php endif; ?></td>
 					</tr>
 				</table>
 				<br/><br/>

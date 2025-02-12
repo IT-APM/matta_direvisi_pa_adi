@@ -166,6 +166,23 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 $arr_id = [6,7,8,9];
                                                 $_add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
                                                 $_total_tunjangan = $_add->sum('angka');
+                                                // membandingkan data 1 bulan sebelumnya untuk mengecek apakah ada perubahan gapok + total_tunjangan
+                                                $submonth = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth();
+                                                $where = ['nik'=>$data->nik, 'bulan'=>$submonth->month, 'tahun'=>$submonth->year];
+                                                $gapok_submonth = 0;
+                                                $gapok_sub = App\Models\TrxPayrollLog::where($where)->first();
+                                                if(!empty($gapok_sub)){
+                                                    $gapok_submonth = $gapok_sub->gapok;
+                                                }
+                                                $where = ['nik'=>$data->nik, 'tipe'=>'add', 'bulan'=>$submonth->month, 'tahun'=>$submonth->year];
+                                                $arr_id = [1,2,3,4,5];
+                                                $add_submonth = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                                                $total_tunjangan_submonth = 0;
+                                                if(!empty($add_submonth)){
+                                                    $total_tunjangan_submonth = $add_submonth->sum('angka');
+                                                }
+                                                $selisih = ($data->gapok + $total_tunjangan) - ($gapok_submonth + $total_tunjangan_submonth);
+                                                // 
                                             ?>
                                             <tr>
                                                 <td><?php echo e(++$no); ?></td>
@@ -183,7 +200,15 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 
                                                 <td class="text-end"><?php echo e(number_format($data->gapok + $total_tunjangan, 0)); ?></td>
                                                 
-                                                <td class="text-end"><span class="font-success f-12 f-w-500"><i class="icon-arrow-up"></i><span>-10%</span></span></td>
+                                                <td class="text-end">
+                                                    <?php if($selisih > 0): ?>
+                                                        <span class="font-success f-12 f-w-500"><i class="icon-arrow-up"></i></span> <span class="badge badge-success" style="font-size:12px;"><?php echo e(number_format($selisih, 0)); ?></span>
+                                                    <?php elseif($selisih < 0): ?>
+                                                        <span class="font-danger f-12 f-w-500"><i class="icon-arrow-down"></i></span> <span class="badge badge-danger" style="font-size:12px;"><?php echo e(number_format($selisih, 0)); ?></span>
+                                                    <?php else: ?>
+                                                        <span class="badge badge-primary" style="font-size:12px;"><?php echo e(number_format($selisih, 0)); ?></span>
+                                                    <?php endif; ?>
+                                                </td>
                                                 
                                                 <?php $__currentLoopData = $_add; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <td class="text-end"><?php echo e(number_format($_data->angka, 0)); ?></td>
@@ -202,7 +227,11 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>&nbsp;</th>
                                                 <th>&nbsp;</th>
                                                 <th>Rekapitulasi</th>
-                                                <?php for($x = 5; $x <= 17; $x++): ?>
+                                                <?php for($x = 5; $x <= 12; $x++): ?>
+                                                <th id="semua_<?php echo e($x); ?>" class="text-end">0</th>
+                                                <?php endfor; ?>
+                                                <th>&nbsp;</th>
+                                                <?php for($x = 14; $x <= 18; $x++): ?>
                                                 <th id="semua_<?php echo e($x); ?>" class="text-end">0</th>
                                                 <?php endfor; ?>
                                                 <th>&nbsp;</th>
@@ -697,7 +726,12 @@ $('#_datatable1').DataTable( {
                 ? i
                 : 0;
         };
-        <?php for($x = 5; $x <= 17; $x++): ?>
+        <?php for($x = 5; $x <= 12; $x++): ?>
+        semua_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_semua_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_semua_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(semua_<?php echo e($x); ?>);
+        <?php endfor; ?>
+        <?php for($x = 14; $x <= 18; $x++): ?>
         semua_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         page_semua_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_semua_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(semua_<?php echo e($x); ?>);

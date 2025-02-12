@@ -36,7 +36,35 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
             <div class="card">
                 <div class="card-body">
                     <?php if(count($payroll)>0 || count($payroll_h)>0): ?><h6 class="text-danger">Catatan: Masukkan tanggal lahir anda dengan format ddmmyyyy sebagai password untuk membuka file pdf slip gaji.<br>Contoh: Jika tanggal lahir anda adalah 2 Maret 2004 maka passwordnya adalah 02032004.</h6><?php endif; ?>
-                    <div class="table-responsive mt-3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                        </div>
+                    </div>
+                    <div class="collapse mt-2" id="collapse_filter">
+                        <form action="<?php echo e(route('payroll.slip', (new App\Http\Controllers\OpenDataController)->encryptWithKey(auth()->user()->nik))); ?>" method="get" enctype="multipart/form-data" class="needs-validation" novalidate="">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label class="h6" for="nama">Bulan-Tahun</label>
+                                    <div>
+                                        <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="<?php echo e($bulan_tahun_dari); ?>">
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                    sampai
+                                    <div>
+                                        <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="<?php echo e($bulan_tahun_sampai); ?>">
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-sm-12">
+                                    <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive mt-2">
                         <table class="display nowrap" id="_datatable1">
                             <thead>
                                 <tr>
@@ -104,7 +132,7 @@ $('#_datatable1').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]]
 } );
 </script>
 <?php $__env->stopSection(); ?>

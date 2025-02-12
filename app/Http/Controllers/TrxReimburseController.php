@@ -45,7 +45,7 @@ class TrxReimburseController extends Controller
         $nik_karyawan = ReimbursePlafon::pluck('nik_karyawan')->toArray();
         // ambil semua data reimburse
         $where = ['is_aktif' => 1];
-        $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+        $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $no = 0;
         // $trx = TrxReimburseMaster::orderBy('id', 'desc')->limit(100)->get();
         $trx = TrxReimburseMaster::orderBy('id', 'desc')->get();

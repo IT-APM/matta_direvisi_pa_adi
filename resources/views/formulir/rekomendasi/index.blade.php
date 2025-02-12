@@ -5,6 +5,7 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatable-extension.css') }}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
 @endsection
 
 @section('style')
@@ -39,7 +40,22 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    <a href="{{ route('rekomendasi.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                    @can('hc')
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <select class="form-select js-example-basic-single col-sm-12" id="nik_atasan" name="nik_atasan">
+                                <option value="0">Pilih Layer 1...</option>
+                                @foreach ($layer1 as $data)
+                                <option value="{{ Crypt::encrypt($data->nik) }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    @endcan
+                    {{-- before --}}
+                    {{-- <a href="{{ route('rekomendasi.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> --}}
+                    {{-- after --}}
+                    <a class="btn btn-primary" type="button" onclick="pilih_atasan()"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="{{ route('rekomendasi.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
@@ -146,7 +162,18 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/vfs_fonts.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
+<script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
+<script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 <script type="text/javascript">
+function pilih_atasan() {
+    var nik_atasan = "{{ Crypt::encrypt(auth()->user()->nik) }}";
+    @can('hc')
+    if($('#nik_atasan').val() != '0'){
+        nik_atasan = $('#nik_atasan').val();
+    }
+    @endcan
+    location.href = "{{ route('rekomendasi.create') }}"+"?nik_atasan="+nik_atasan;
+}
 function toggle_status_rekomendasi(source) {
     checkboxes = document.getElementsByName('status_rekomendasi[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
