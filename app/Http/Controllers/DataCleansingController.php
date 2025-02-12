@@ -229,7 +229,9 @@ class DataCleansingController extends Controller
                 }
             }
         }
-        // return count($result);
+        // jika sudah non aktif maka delete dari trx_tbl_penilaian_auto
+        $data = Karyawan::select('nik')->where(['is_aktif'=>0])->get()->toArray();
+        TrxPenilaianAuto::whereIn('nik_karyawan', $data)->delete();
         return $result;
     }
 
@@ -249,7 +251,9 @@ class DataCleansingController extends Controller
                 }
             }
         }
-        // return count($result);
+        // jika sudah non aktif maka delete dari trx_tbl_penilaian_auto
+        $data = Karyawan::select('nik')->where(['is_aktif'=>0])->get()->toArray();
+        TrxPenilaianAuto::whereIn('nik_karyawan', $data)->delete();
         return $result;
     }
 
