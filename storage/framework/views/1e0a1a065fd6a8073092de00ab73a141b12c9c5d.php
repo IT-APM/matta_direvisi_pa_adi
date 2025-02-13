@@ -70,8 +70,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     <th>No</th>
                                     <th>Tahun</th>
                                     <th>Bulan</th>
-                                    <th>Ada</th>
-                                    <th>Tiada</th>
+                                    <th>Masuk</th>
+                                    <th>Keluar</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -83,22 +83,44 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     <td><?php echo e($bulan[$data['bulan'] - 1]); ?></td>
                                     <td>
                                         <?php if($data['tahun'] == 2022 && $data['bulan'] == 1): ?>
-                                            <span class="badge badge-primary" style="font-size:12px;">NA</span>
+                                            <span class="badge badge-primary" style="font-size:12px;">#0</span>
                                         <?php else: ?>
+                                            <?php $arr_nik = array() ?>
                                             <?php $__empty_1 = true; $__currentLoopData = $data['after']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_after): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                                <?php $nik_property_after = json_decode($_after->nik_property, true) ?>
-                                                <span class="badge badge-success mb-1" style="font-size:12px;"><?php echo e($nik_property_after['nama']); ?>/<?php echo e($nik_property_after['nik']); ?></span><br/>
+                                                <?php
+                                                    $nik_property_after = json_decode($_after->nik_property, true);
+                                                    array_push($arr_nik, $nik_property_after['nama'].'/'.$nik_property_after['nik']);
+                                                ?>
+                                                
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                                                <span class="badge badge-primary" style="font-size:12px;">NA</span>
+                                                <span class="badge badge-primary" style="font-size:12px;">#0</span>
+                                            <?php endif; ?>
+                                            <?php if(count($arr_nik)>0): ?>
+                                                <?php sort($arr_nik) ?>
+                                                <?php $__currentLoopData = $arr_nik; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <span class="badge badge-success mb-1" style="font-size:12px;"><?php echo e($_data); ?></span><br/>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <span class="badge badge-success mb-1" style="font-size:12px;">#<?php echo e(count($arr_nik)); ?></span>
                                             <?php endif; ?>
                                         <?php endif; ?>
                                     </td>
                                     <td>
+                                        <?php $arr_nik = array() ?>
                                         <?php $__empty_1 = true; $__currentLoopData = $data['before']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_before): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                            <?php $nik_property_before = json_decode($_before->nik_property, true) ?>
-                                            <span class="badge badge-danger mb-1" style="font-size:12px;"><?php echo e($nik_property_before['nama']); ?>/<?php echo e($nik_property_before['nik']); ?></span><br/>
+                                            <?php
+                                                $nik_property_before = json_decode($_before->nik_property, true);
+                                                array_push($arr_nik, $nik_property_before['nama'].'/'.$nik_property_before['nik']);
+                                            ?>
+                                            
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                                            <span class="badge badge-primary" style="font-size:12px;">NA</span>
+                                            <span class="badge badge-primary" style="font-size:12px;">#0</span>
+                                        <?php endif; ?>
+                                        <?php if(count($arr_nik)>0): ?>
+                                            <?php sort($arr_nik) ?>
+                                            <?php $__currentLoopData = $arr_nik; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <span class="badge badge-danger mb-1" style="font-size:12px;"><?php echo e($_data); ?></span><br/>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            <span class="badge badge-danger mb-1" style="font-size:12px;">#<?php echo e(count($arr_nik)); ?></span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

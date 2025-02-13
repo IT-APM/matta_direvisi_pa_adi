@@ -72,8 +72,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     <th>No</th>
                                     <th>Tahun</th>
                                     <th>Bulan</th>
-                                    <th>Ada</th>
-                                    <th>Tiada</th>
+                                    <th>Masuk</th>
+                                    <th>Keluar</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -85,23 +85,45 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     <td>{{ $bulan[$data['bulan'] - 1] }}</td>
                                     <td>
                                         @if($data['tahun'] == 2022 && $data['bulan'] == 1)
-                                            <span class="badge badge-primary" style="font-size:12px;">NA</span>
+                                            <span class="badge badge-primary" style="font-size:12px;">#0</span>
                                         @else
+                                            @php $arr_nik = array() @endphp
                                             @forelse ($data['after'] as $_after)
-                                                @php $nik_property_after = json_decode($_after->nik_property, true) @endphp
-                                                <span class="badge badge-success mb-1" style="font-size:12px;">{{ $nik_property_after['nama'] }}/{{ $nik_property_after['nik'] }}</span><br/>
+                                                @php
+                                                    $nik_property_after = json_decode($_after->nik_property, true);
+                                                    array_push($arr_nik, $nik_property_after['nama'].'/'.$nik_property_after['nik']);
+                                                @endphp
+                                                {{-- <span class="badge badge-success mb-1" style="font-size:12px;">{{ $nik_property_after['nama'] }}/{{ $nik_property_after['nik'] }}</span><br/> --}}
                                             @empty
-                                                <span class="badge badge-primary" style="font-size:12px;">NA</span>
+                                                <span class="badge badge-primary" style="font-size:12px;">#0</span>
                                             @endforelse
+                                            @if(count($arr_nik)>0)
+                                                @php sort($arr_nik) @endphp
+                                                @foreach($arr_nik as $_data)
+                                                    <span class="badge badge-success mb-1" style="font-size:12px;">{{ $_data }}</span><br/>
+                                                @endforeach
+                                                <span class="badge badge-success mb-1" style="font-size:12px;">#{{ count($arr_nik) }}</span>
+                                            @endif
                                         @endif
                                     </td>
                                     <td>
+                                        @php $arr_nik = array() @endphp
                                         @forelse ($data['before'] as $_before)
-                                            @php $nik_property_before = json_decode($_before->nik_property, true) @endphp
-                                            <span class="badge badge-danger mb-1" style="font-size:12px;">{{ $nik_property_before['nama'] }}/{{ $nik_property_before['nik'] }}</span><br/>
+                                            @php
+                                                $nik_property_before = json_decode($_before->nik_property, true);
+                                                array_push($arr_nik, $nik_property_before['nama'].'/'.$nik_property_before['nik']);
+                                            @endphp
+                                            {{-- <span class="badge badge-danger mb-1" style="font-size:12px;">{{ $nik_property_before['nama'] }}/{{ $nik_property_before['nik'] }}</span><br/> --}}
                                         @empty
-                                            <span class="badge badge-primary" style="font-size:12px;">NA</span>
+                                            <span class="badge badge-primary" style="font-size:12px;">#0</span>
                                         @endforelse
+                                        @if(count($arr_nik)>0)
+                                            @php sort($arr_nik) @endphp
+                                            @foreach($arr_nik as $_data)
+                                                <span class="badge badge-danger mb-1" style="font-size:12px;">{{ $_data }}</span><br/>
+                                            @endforeach
+                                            <span class="badge badge-danger mb-1" style="font-size:12px;">#{{ count($arr_nik) }}</span>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach

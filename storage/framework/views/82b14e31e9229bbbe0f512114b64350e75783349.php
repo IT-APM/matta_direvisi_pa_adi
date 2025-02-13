@@ -56,7 +56,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         <li class="nav-item"><a class="nav-link" id="pills-potongan-tab" data-bs-toggle="pill" href="#pills-potongan" role="tab" aria-controls="pills-potongan" aria-selected="true">Potongan</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-bpjstk-tab" data-bs-toggle="pill" href="#pills-bpjstk" role="tab" aria-controls="pills-bpjstk" aria-selected="true">BPJS TK</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-bpjskes-tab" data-bs-toggle="pill" href="#pills-bpjskes" role="tab" aria-controls="pills-bpjskes" aria-selected="true">BPJS Kesehatan</a></li>
-                        <li class="nav-item"><a class="nav-link" id="pills-kerja-tab" data-bs-toggle="pill" href="#pills-kerja" role="tab" aria-controls="pills-kerja" aria-selected="true">Kertas Kerja</a></li>
+                        <li class="nav-item"><a class="nav-link" id="pills-kerja-tab" data-bs-toggle="pill" href="#pills-kerja" role="tab" aria-controls="pills-kerja" aria-selected="true">PPh21</a></li>
                     </ul>
                     <div class="tab-content" id="pills-warningtabContent">
                         
@@ -216,7 +216,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 
                                                 <td class="text-end"><?php echo e(number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0)); ?></td>
                                                 <td><?php if(!empty($data->paid_at)): ?><?php echo e(Carbon\Carbon::parse($data->paid_at)->format("d-m-Y")); ?><?php endif; ?></td>
-                                                <td><a href="<?php echo e(route('payroll.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => 'pdf_h'])); ?>" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>
+                                                <td><?php if((!empty($data->paid_at)) && (Carbon\Carbon::parse($data->paid_at)->isPast() || Carbon\Carbon::parse($data->paid_at)->isToday())): ?><a href="<?php echo e(route('payroll.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => 'pdf_h'])); ?>" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a><?php endif; ?></td>
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
@@ -475,6 +475,22 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         
                         <div class="tab-pane fade" id="pills-kerja" role="tabpanel" aria-labelledby="pills-kerja-tab">
                             <p class="mb-0 m-t-10">
+                                <div class="row g-3 mb-2">
+                                    <form action="<?php echo e(route('payroll.upload_payroll')); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" id="jenis" name="jenis" value="pajak_past">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <input name="template" id="template" class="form-control" type="file" required="">
+                                            <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                            <br/><a href="<?php echo e(asset('assets/template/template_upload_pajak_v1.xlsx')); ?>" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                        </div>
+                                    </div>
+                                    </form>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="display nowrap" id="_datatable5">
                                         <thead>
@@ -530,6 +546,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Ekses</th>
                                                 <th>Total Medical Cost</th>
                                                 <th>Overtime</th>
+                                                <th>PPh21</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -648,6 +665,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td class="text-end"><?php echo e(number_format($ekses, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($total_kesehatan, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($total_overtime, 0)); ?></td>
+                                                <td class="text-end"><?php echo e(number_format($data->pajak, 0)); ?></td>
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
@@ -675,7 +693,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <?php endfor; ?>
                                                 <th>&nbsp;</th>
                                                 <th>&nbsp;</th>
-                                                <?php for($x = 32; $x <= 43; $x++): ?>
+                                                <?php for($x = 32; $x <= 44; $x++): ?>
                                                 <th id="kertas_<?php echo e($x); ?>" class="text-end">0</th>
                                                 <?php endfor; ?>
                                             </tr>
@@ -737,7 +755,7 @@ $('#_datatable1').DataTable( {
         api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_semua_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(semua_<?php echo e($x); ?>);
         <?php endfor; ?>
     },
-} );
+});
 // potongan
 $('#_datatable2').DataTable( {
 	// dom: 'lBfrtip',
@@ -764,7 +782,7 @@ $('#_datatable2').DataTable( {
         api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_potongan_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(potongan_<?php echo e($x); ?>);
         <?php endfor; ?>
     },
-} );
+});
 // bpjstk
 $('#_datatable3').DataTable( {
 	// dom: 'lBfrtip',
@@ -791,7 +809,7 @@ $('#_datatable3').DataTable( {
         api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_bpjstk_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(bpjstk_<?php echo e($x); ?>);
         <?php endfor; ?>
     },
-} );
+});
 // bpjskes
 $('#_datatable4').DataTable( {
 	// dom: 'lBfrtip',
@@ -818,8 +836,8 @@ $('#_datatable4').DataTable( {
         api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_bpjsks_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(bpjsks_<?php echo e($x); ?>);
         <?php endfor; ?>
     },
-} );
-// kertas kerja
+});
+// PPh21
 $('#_datatable5').DataTable( {
 	// dom: 'lBfrtip',
     dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
@@ -845,13 +863,13 @@ $('#_datatable5').DataTable( {
         api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_kertas_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(kertas_<?php echo e($x); ?>);
         <?php endfor; ?>
         // 
-        <?php for($x = 32; $x <= 43; $x++): ?>
+        <?php for($x = 32; $x <= 44; $x++): ?>
         kertas_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         page_kertas_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_kertas_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(kertas_<?php echo e($x); ?>);
         <?php endfor; ?>
     },
-} );
+});
 function findim_subdepartemen(source) {
     checkboxes = document.getElementsByName('findim_subdepartemen[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {

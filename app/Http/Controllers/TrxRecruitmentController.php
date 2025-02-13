@@ -816,6 +816,27 @@ class TrxRecruitmentController extends Controller
         // dan view untuk lihat file yang diupload
         $kondisi = $id[1];
         $_trx = TrxRecruitmentIdentitas::find($_id);
+        // start
+        // $where = ['id_identitas' => $_id];
+        // $pedoman = TrxRecruitmentPedoman::where($where)->orderBy('nomor', 'asc')->get();
+        // $filename = $_id.'_'.now()->getTimestampMs().'.pdf';
+        // $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        // $pdf::SetTitle('Pedoman Perilaku');
+        // $pdf::SetFont('times', '', 10, '', true);
+        // foreach($pedoman as $data){
+        //     $pdf::AddPage();
+        //     $bg = public_path('assets/recruitment/upload/'.$data->jenis.'/'.$data->filename.'.jpg');
+        //     $pdf::Image($bg, 10, 0, 210, 297, '', '', '', false, 0, '', false, false, 0);
+        //     $bg = public_path('assets/images/matta/approved_new.png');
+        //     $x = 90;
+        //     $y = 262;
+        //     $pdf::Image($bg, $x, $y, 30, 6, '', '', '', false, 0, '', false, false, 0);
+        //     $pdf::Text($x, $y+6, $_trx->nama);
+        //     $pdf::Text($x, $y+10, Carbon::parse($data->check_out)->format('d-m-Y H:i:s'));
+        // }
+        // $pdf::Output(public_path($filename), 'I');
+        // return response()->download(public_path($filename));
+        // end
         // negotiation
         if($kondisi == 'negotiation'){
             // 19=COC and File Upload Send

@@ -107,11 +107,56 @@ class TrxPayrollController extends Controller
         $submonth = Carbon::createFromFormat('Y-m-d', $tahun."-".$bulan."-01")->subMonth();
         $where = ['bulan'=>$bulan, 'tahun'=>$tahun];
         $payroll = TrxPayroll::where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        // cek jika jumlah gapok + id_addsub IN (1,2,3,4,5) = 0 maka dikeluarkan
+        $reject_nik = array();
+        foreach($payroll as $data){
+            $where = ['bulan'=>$bulan, 'tahun'=>$tahun, 'nik'=>$data->nik];
+            $arr_id = [1,2,3,4,5];
+            $add = TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->sum('angka');
+            if($data->gapok + $add == 0){
+                array_push($reject_nik, $data->nik);
+            }
+        }
+        foreach($reject_nik as $data){
+            $payroll = $payroll->reject(function ($item) use ($data) {
+                return $item['nik'] == $data;
+            });
+        }
         if($periode == 'past'){
             $payroll = TrxPayrollLog::where($where)->orderByRaw('tahun desc, bulan desc')->get();
+            // cek jika jumlah gapok + id_addsub IN (1,2,3,4,5) = 0 maka dikeluarkan
+            $reject_nik = array();
+            foreach($payroll as $data){
+                $where = ['bulan'=>$bulan, 'tahun'=>$tahun, 'nik'=>$data->nik];
+                $arr_id = [1,2,3,4,5];
+                $add = TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->sum('angka');
+                if($data->gapok + $add == 0){
+                    array_push($reject_nik, $data->nik);
+                }
+            }
+            foreach($reject_nik as $data){
+                $payroll = $payroll->reject(function ($item) use ($data) {
+                    return $item['nik'] == $data;
+                });
+            }
         }
         $where = ['bulan'=>$submonth->month, 'tahun'=>$submonth->year];
         $payroll_h = TrxPayrollLog::where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        // cek jika jumlah gapok + id_addsub IN (1,2,3,4,5) = 0 maka dikeluarkan
+        $reject_nik = array();
+        foreach($payroll_h as $data){
+            $where = ['bulan'=>$bulan, 'tahun'=>$tahun, 'nik'=>$data->nik];
+            $arr_id = [1,2,3,4,5];
+            $add = TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->sum('angka');
+            if($data->gapok + $add == 0){
+                array_push($reject_nik, $data->nik);
+            }
+        }
+        foreach($reject_nik as $data){
+            $payroll_h = $payroll_h->reject(function ($item) use ($data) {
+                return $item['nik'] == $data;
+            });
+        }
         $arr_nik = [];
         $arr_nik_h = [];
         foreach(($payroll->toArray()) as $data){
