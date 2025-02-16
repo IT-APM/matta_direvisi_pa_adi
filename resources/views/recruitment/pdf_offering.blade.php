@@ -70,29 +70,31 @@
 					</tr>
 				</table>
 				<table width="100%" class="border-top border-bottom border-left border-right" cellspacing="0" cellpadding="2">
+					{{-- <span style="font-family:zapfdingbats;">4</span> --}}
+					{{-- <span style="font-family:zapfdingbats;">6</span> --}}
 					<tr>
-                        <td width="50%">@if(!empty($_trx->cv)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif CV Lengkap</td>
-						<td width="50%" style="border-left: 0.5px thin black;">@if(!empty($_trx->file_ijazah)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Ijazah</td>
+                        <td width="50%">@if(!empty($_trx->cv)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif CV Lengkap</td>
+						<td width="50%" style="border-left: 0.5px thin black;">@if(!empty($_trx->file_ijazah)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Copy Ijazah</td>
                     </tr>
 					<tr>
-                        <td>@if(!empty($_trx->file_sertifikat_keahlian)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Sertifikat Keahlian</td>
-						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_skck)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Surat Keterangan Catatan Kepolisian (SKCK)</td>
+                        <td>@if(!empty($_trx->file_sertifikat_keahlian)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Copy Sertifikat Keahlian</td>
+						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_skck)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Surat Keterangan Catatan Kepolisian (SKCK)</td>
                     </tr>
 					<tr>
-                        <td>@if(!empty($_trx->file_ktp)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Kartu Tanda Penduduk (KTP)</td>
-						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_bpjs_tk)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Kartu BPJS Ketenagakerjaan (BPJSTK)</td>
+                        <td>@if(!empty($_trx->file_ktp)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Copy Kartu Tanda Penduduk (KTP)</td>
+						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_bpjs_tk)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Copy Kartu BPJS Ketenagakerjaan (BPJSTK)</td>
                     </tr>
 					<tr>
-                        <td>@if(!empty($_trx->file_kk)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Kartu Keluarga (KK)</td>
-						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_bpjs_kes)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Kartu BPJS Kesehatan (BPJSKS)</td>
+                        <td>@if(!empty($_trx->file_kk)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Copy Kartu Keluarga (KK)</td>
+						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_bpjs_kes)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Copy Kartu BPJS Kesehatan (BPJSKS)</td>
                     </tr>
 					<tr>
-                        <td>@if(!empty($_trx->file_npwp)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Kartu NPWP</td>
-						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_buku_tabungan)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Copy Buku Tabungan (No. Rekening Bank Mandiri)</td>
+                        <td>@if(!empty($_trx->file_npwp)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Copy Kartu NPWP</td>
+						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_buku_tabungan)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Copy Buku Tabungan (No. Rekening Bank Mandiri)</td>
                     </tr>
 					<tr>
-                        <td>@if(!empty($_trx->file_ket_sehat)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Surat Keterangan Sehat</td>
-						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_covid)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Sertifikat Vaksin Covid-19</td>
+                        <td>@if(!empty($_trx->file_ket_sehat)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Surat Keterangan Sehat</td>
+						<td style="border-left: 0.5px thin black;">@if(!empty($_trx->file_covid)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Sertifikat Vaksin Covid-19</td>
                     </tr>
 				</table>
 				<br/><br/>
@@ -127,40 +129,40 @@
 				<table width="100%" class="border-top border-bottom border-left border-right" cellspacing="0" cellpadding="2">
 					@php $benefit_utama = explode(',', $trx->benefit_utama); @endphp
 					<tr>
-                        <td width="55%">@if(!empty($trx->thp)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Take Home Pay (THP): Rp. {{ number_format($trx->thp, 0) }}</td>
+                        <td width="55%">@if(!empty($trx->thp)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Take Home Pay (THP): Rp. {{ number_format($trx->thp, 0) }}</td>
 						{{-- 9=Cuti Setelah 1 tahun --}}
-						<td width="45%" style="border-left: 0.5px thin black;">@if(in_array(9, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Cuti Setelah 1 tahun</td>
+						<td width="45%" style="border-left: 0.5px thin black;">@if(in_array(9, $benefit_utama)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Cuti Setelah 1 tahun</td>
                     </tr>
 					<tr>
 						{{-- 1=Upah Lembur --}}
-                        <td>@if(in_array(1, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Upah Lembur</td>
+                        <td>@if(in_array(1, $benefit_utama)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Upah Lembur</td>
 						{{-- 10=Asuransi --}}
-						<td style="border-left: 0.5px thin black;">@if(in_array(10, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Asuransi</td>
+						<td style="border-left: 0.5px thin black;">@if(in_array(10, $benefit_utama)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Asuransi</td>
                     </tr>
 					<tr>
 						{{-- 2=Medical Reimbursement --}}
-                        <td>@if(in_array(2, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Medical Reimbursement</td>
+                        <td>@if(in_array(2, $benefit_utama)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Medical Reimbursement</td>
 						{{-- 11=Tunjangan Corporate --}}
-						<td style="border-left: 0.5px thin black;">@if(in_array(10, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Tunjangan Corporate</td>
+						<td style="border-left: 0.5px thin black;">@if(in_array(10, $benefit_utama)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Tunjangan Corporate</td>
                     </tr>
 					<tr>
 						{{-- 3=PPh 21, ditanggung perusahaan --}}
 						{{-- 4=PPh 21, ditanggung perusahaan & karyawan --}}
-                        <td>@if(in_array(3, $benefit_utama)||in_array(4, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif PPh 21 @if(in_array(3, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">6</span> Karyawan @elseif(in_array(4, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">4</span> Karyawan @endif</td>
+                        <td>@if(in_array(3, $benefit_utama)||in_array(4, $benefit_utama)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif PPh 21 @if(in_array(3, $benefit_utama)) ditanggung: <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> Perusahaan <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> Karyawan @elseif(in_array(4, $benefit_utama)) ditanggung: <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> Perusahaan <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> Karyawan @endif</td>
 						{{-- 12=Tunjangan Project / Operasional --}}
-						<td style="border-left: 0.5px thin black;">@if(in_array(12, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Tunjangan Project / Operasional</td>
+						<td style="border-left: 0.5px thin black;">@if(in_array(12, $benefit_utama)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Tunjangan Project / Operasional</td>
                     </tr>
 					<tr>
 						{{-- 5=BPJS Ketenagakerjaan, ditanggung perusahaan --}}
 						{{-- 6=BPJS Ketenagakerjaan, ditanggung  perusahaan & karyawan --}}
-                        <td>@if(in_array(5, $benefit_utama)||in_array(6, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif BPJS Ketenagakerjaan @if(in_array(5, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">6</span> Karyawan @elseif(in_array(6, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">4</span> Karyawan @endif</td>
+                        <td>@if(in_array(5, $benefit_utama)||in_array(6, $benefit_utama)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif BPJS Ketenagakerjaan @if(in_array(5, $benefit_utama)) ditanggung: <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> Perusahaan <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> Karyawan @elseif(in_array(6, $benefit_utama)) ditanggung: <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> Perusahaan <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> Karyawan @endif</td>
 						{{-- 13=Alat kerja (laptop / notebook) --}}
-						<td style="border-left: 0.5px thin black;">@if(in_array(12, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Alat kerja (laptop / notebook)</td>
+						<td style="border-left: 0.5px thin black;">@if(in_array(12, $benefit_utama)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Alat kerja (laptop / notebook)</td>
                     </tr>
 					<tr>
 						{{-- 7=BPJS Kesehatan, ditanggung perusahaan --}}
 						{{-- 8=BPJS Kesehatan, ditanggung  perusahaan & karyawan --}}
-                        <td>@if(in_array(7, $benefit_utama)||in_array(8, $benefit_utama)) <span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif BPJS Kesehatan @if(in_array(7, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">6</span> Karyawan @elseif(in_array(8, $benefit_utama)) ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">4</span> Karyawan @endif</td>
+                        <td>@if(in_array(7, $benefit_utama)||in_array(8, $benefit_utama)) <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif BPJS Kesehatan @if(in_array(7, $benefit_utama)) ditanggung: <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> Perusahaan <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> Karyawan @elseif(in_array(8, $benefit_utama)) ditanggung: <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> Perusahaan <img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> Karyawan @endif</td>
 						{{-- benefit_lainnya --}}
 						<td style="border-left: 0.5px thin black;">&nbsp;</td>
                     </tr>
@@ -185,13 +187,13 @@
                         <td>Pencatatan Kepegawaian</td>
                         <td>:</td>
                         {{-- <td>{{ $trx->_catat_pegawai->pencatatan }}</td> --}}
-						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%">@if($trx->id_catat_pegawai == 1)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif ALITA</td><td width="20%">@if($trx->id_catat_pegawai == 2)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Outsource</td></tr></table></td>
+						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%">@if($trx->id_catat_pegawai == 1)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif ALITA</td><td width="20%">&nbsp;&nbsp;@if($trx->id_catat_pegawai == 2)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Outsource</td></tr></table></td>
                     </tr>
                     <tr>
                         <td>Status Kepegawaian</td>
                         <td>:</td>
                         {{-- <td>{{ $trx->_status_pegawai->status }}</td> --}}
-						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%">@if($trx->id_status_pegawai == 1)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Kontrak</td><td width="15%">@if($trx->id_status_pegawai == 2)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Tetap</td><td width="40%">@if($trx->id_status_pegawai == 3)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Tenaga Lepas Harian (TLH)</td><td width="25%">@if($trx->id_status_pegawai == 4)<span style="font-family:zapfdingbats;">4</span> @else <span style="font-family:zapfdingbats;">6</span> @endif Konsultan</td></tr></table></td>
+						<td>&nbsp;<table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%">@if($trx->id_status_pegawai == 1)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Kontrak</td><td width="15%">@if($trx->id_status_pegawai == 2)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Tetap</td><td width="40%">@if($trx->id_status_pegawai == 3)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Tenaga Lepas Harian (TLH)</td><td width="25%">@if($trx->id_status_pegawai == 4)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Konsultan</td></tr></table></td>
                     </tr>
                     <tr>
                         <td>Masa Perjanjian Kerja</td>
