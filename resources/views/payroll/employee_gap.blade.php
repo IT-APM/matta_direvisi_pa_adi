@@ -87,7 +87,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         @if($data['tahun'] == 2022 && $data['bulan'] == 1)
                                             <span class="badge badge-primary" style="font-size:12px;">#0</span>
                                         @else
-                                            @php $arr_nik = array() @endphp
+                                            @php $arr_nik = array(); @endphp
                                             @forelse ($data['after'] as $_after)
                                                 @php
                                                     $nik_property_after = json_decode($_after->nik_property, true);
@@ -98,7 +98,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <span class="badge badge-primary" style="font-size:12px;">#0</span>
                                             @endforelse
                                             @if(count($arr_nik)>0)
-                                                @php sort($arr_nik) @endphp
+                                                @php sort($arr_nik); @endphp
                                                 @foreach($arr_nik as $_data)
                                                     <span class="badge badge-success mb-1" style="font-size:12px;">{{ $_data }}</span><br/>
                                                 @endforeach
@@ -107,7 +107,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         @endif
                                     </td>
                                     <td>
-                                        @php $arr_nik = array() @endphp
+                                        @php $arr_nik = array(); @endphp
                                         @forelse ($data['before'] as $_before)
                                             @php
                                                 $nik_property_before = json_decode($_before->nik_property, true);
@@ -118,7 +118,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <span class="badge badge-primary" style="font-size:12px;">#0</span>
                                         @endforelse
                                         @if(count($arr_nik)>0)
-                                            @php sort($arr_nik) @endphp
+                                            @php sort($arr_nik); @endphp
                                             @foreach($arr_nik as $_data)
                                                 <span class="badge badge-danger mb-1" style="font-size:12px;">{{ $_data }}</span><br/>
                                             @endforeach
