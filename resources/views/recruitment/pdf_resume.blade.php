@@ -90,8 +90,8 @@
 						<td width="5%">1</td>
 						<td width="45%">{{ $trx->nama }}</td>
 						{{-- <span style="font-family:zapfdingbats;font-size:20px;">4</span> --}}
-						<td width="25%">@if($resume[$x]->jawaban)<img width="20" src="{{ public_path('assets/images/matta/checklist.png') }}" alt="checklist">@endif</td>
-						<td width="25%">@if(!$resume[$x]->jawaban)<img width="20" src="{{ public_path('assets/images/matta/checklist.png') }}" alt="checklist">@endif</td>
+						<td width="25%">@if($resume[$x]->jawaban)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="15px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="15px"> @endif</td>
+						<td width="25%">@if(!$resume[$x]->jawaban)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="15px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="15px"> @endif</td>
 					</tr>
 				</table>
 				<br/><br/>
