@@ -85,7 +85,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         <?php if($data['tahun'] == 2022 && $data['bulan'] == 1): ?>
                                             <span class="badge badge-primary" style="font-size:12px;">#0</span>
                                         <?php else: ?>
-                                            <?php $arr_nik = array() ?>
+                                            <?php $arr_nik = array(); ?>
                                             <?php $__empty_1 = true; $__currentLoopData = $data['after']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_after): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                                 <?php
                                                     $nik_property_after = json_decode($_after->nik_property, true);
@@ -96,7 +96,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <span class="badge badge-primary" style="font-size:12px;">#0</span>
                                             <?php endif; ?>
                                             <?php if(count($arr_nik)>0): ?>
-                                                <?php sort($arr_nik) ?>
+                                                <?php sort($arr_nik); ?>
                                                 <?php $__currentLoopData = $arr_nik; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <span class="badge badge-success mb-1" style="font-size:12px;"><?php echo e($_data); ?></span><br/>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -105,7 +105,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <?php $arr_nik = array() ?>
+                                        <?php $arr_nik = array(); ?>
                                         <?php $__empty_1 = true; $__currentLoopData = $data['before']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_before): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                             <?php
                                                 $nik_property_before = json_decode($_before->nik_property, true);
@@ -116,7 +116,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <span class="badge badge-primary" style="font-size:12px;">#0</span>
                                         <?php endif; ?>
                                         <?php if(count($arr_nik)>0): ?>
-                                            <?php sort($arr_nik) ?>
+                                            <?php sort($arr_nik); ?>
                                             <?php $__currentLoopData = $arr_nik; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <span class="badge badge-danger mb-1" style="font-size:12px;"><?php echo e($_data); ?></span><br/>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

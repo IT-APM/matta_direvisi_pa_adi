@@ -820,13 +820,19 @@ class TrxRecruitmentController extends Controller
         // $where = ['id_identitas' => $_id];
         // $pedoman = TrxRecruitmentPedoman::where($where)->orderBy('nomor', 'asc')->get();
         // $filename = $_id.'_'.now()->getTimestampMs().'.pdf';
-        // $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        // $pdf = new TCPDF('P', 'mm', 'A4', false, 'UTF-8', true);
         // $pdf::SetTitle('Pedoman Perilaku');
         // $pdf::SetFont('times', '', 10, '', true);
+        // // $pdf::setImageScale(100);
+        // $pdf::SetMargins(0, 0, 0);
+        // $pdf::SetHeaderMargin(0);
+        // $pdf::SetFooterMargin(0);
         // foreach($pedoman as $data){
         //     $pdf::AddPage();
         //     $bg = public_path('assets/recruitment/upload/'.$data->jenis.'/'.$data->filename.'.jpg');
-        //     $pdf::Image($bg, 10, 0, 210, 297, '', '', '', false, 0, '', false, false, 0);
+        //     // Image( filename, left, top, width, height, type, link, align, resize, dpi, align, ismask, imgmask, border, fitbox, hidden, fitonpage)
+        //     // $pdf::Image($bg, 0, 0, 210, 297, '', '', '', false, 0, '', false, false, 0);
+        //     $pdf::Image($bg, $x = 0, $y = 0, $w = 210, $h = 297, $type = '', $link = '', $align = '', $resize = false, $dpi = 300, $palign = '', $ismask = false, $imgmask = false, $border = 0, $fitbox = false, $hidden = false, $fitonpage = false, $alt = false, $altimgs = array());
         //     $bg = public_path('assets/images/matta/approved_new.png');
         //     $x = 90;
         //     $y = 262;

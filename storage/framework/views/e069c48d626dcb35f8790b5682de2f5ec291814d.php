@@ -118,7 +118,7 @@
                                                 </td>
                                                 <td>
                                                     
-                                                    <?php if(in_array(12, $log)): ?><a href="<?php echo e(route('recruitment.get_offering', [Crypt::encrypt([$data->id, 'view'])])); ?>" target="_blank" data-toggle="tooltip" title="Interpretation"><i class="fa fa-file-text-o"></i></a><?php endif; ?>
+                                                    <?php if(in_array(12, $log)): ?><a href="<?php echo e(route('recruitment.get_offering', [Crypt::encrypt([$data->id, 'view'])])); ?>" target="_blank" data-toggle="tooltip" title="Offering Letter"><i class="fa fa-file-text-o"></i></a><?php endif; ?>
                                                 </td>
                                                 <td>
                                                     

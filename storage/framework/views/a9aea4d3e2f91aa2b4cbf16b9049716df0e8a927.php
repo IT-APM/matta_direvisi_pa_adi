@@ -325,6 +325,17 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="id_grade">Grade</label>
+                                            <select class="form-select id="kode_status" name="id_grade" required="">
+                                                <option selected="" disabled="" value="">Pilih...</option>
+                                                <?php $__currentLoopData = $id_grade; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($data->id); ?>" <?php if($status=='edit' ): ?> <?php if($data->id == $karyawan->id_grade): ?> selected <?php endif; ?> <?php endif; ?> ><?php echo e($data->grade); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </p>
                             </div>
                             <div class="tab-pane fade" id="pills-emp_salary" role="tabpanel" aria-labelledby="pills-emp_salary-tab">

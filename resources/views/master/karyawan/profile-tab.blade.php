@@ -325,6 +325,17 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="id_grade">Grade</label>
+                                            <select class="form-select id="kode_status" name="id_grade" required="">
+                                                <option selected="" disabled="" value="">Pilih...</option>
+                                                @foreach ($id_grade as $data)
+                                                <option value="{{ $data->id }}" @if ($status=='edit' ) @if($data->id == $karyawan->id_grade) selected @endif @endif >{{ $data->grade }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                 </p>
                             </div>
                             <div class="tab-pane fade" id="pills-emp_salary" role="tabpanel" aria-labelledby="pills-emp_salary-tab">

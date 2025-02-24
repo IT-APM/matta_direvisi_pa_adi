@@ -120,7 +120,7 @@
                                                 </td>
                                                 <td>
                                                     {{-- 12=Negotiation Process --}}
-                                                    @if(in_array(12, $log))<a href="{{ route('recruitment.get_offering', [Crypt::encrypt([$data->id, 'view'])]) }}" target="_blank" data-toggle="tooltip" title="Interpretation"><i class="fa fa-file-text-o"></i></a>@endif
+                                                    @if(in_array(12, $log))<a href="{{ route('recruitment.get_offering', [Crypt::encrypt([$data->id, 'view'])]) }}" target="_blank" data-toggle="tooltip" title="Offering Letter"><i class="fa fa-file-text-o"></i></a>@endif
                                                 </td>
                                                 <td>
                                                     {{-- 20=COC and File Upload Done --}}

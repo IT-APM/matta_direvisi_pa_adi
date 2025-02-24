@@ -23,6 +23,7 @@ use App\Models\MtrPayrollAddsub;
 use App\Models\MtrPayrollBpjstk;
 use App\Models\MtrPayrollBpjskes;
 use App\Models\MtrPayrollBpjsMax;
+// 
 use App\Models\TrxPayroll;
 use App\Models\TrxPayrollLog;
 use App\Models\TrxPayrollAddsub;
@@ -31,6 +32,9 @@ use App\Models\TrxPayrollBpjstk;
 use App\Models\TrxPayrollBpjstkLog;
 use App\Models\TrxPayrollBpjskes;
 use App\Models\TrxPayrollBpjskesLog;
+use App\Models\TrxPayrollEmail;
+use App\Models\TrxPayrollEmailLog;
+// 
 use App\Models\MtrFindimSubdepartemen;
 use App\Models\MtrFindimDepartemen;
 use App\Models\MtrFindimDivisi;
@@ -41,8 +45,68 @@ use App\Models\SubDepartemen;
 use App\Models\KaryawanStatus;
 use App\Models\Jabatan;
 use App\Models\Level;
+// 
 class TrxPayrollController extends Controller
 {
+
+    public function sendEmail($mailData)
+    {
+        $ccEmails = explode(',', $mailData['cc']);
+        Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
+    }
+    
+    public function send_email_exe(Request $request)
+    {
+        // dd($request->all());
+        if($request->submit == 'execute'){
+            $id = $request->input('id_current', []);
+            if(count($id)==0){
+                return redirect( 'payroll/send_email/0' )->with( 'msg', 'No Payroll Email is executed.' );
+            }else{
+                foreach($id as $_id){
+                    $_trx = TrxPayrollEmail::find($_id);
+                    $email = json_decode($_trx->email, true);
+                    // parameter yang dipassing ke sendemail
+                    $mailData['title'] = $email['subject'];
+                    $mailData['data'] = ['msg' => $email['body']];
+                    $mailData['filename'] = 'emails.payroll0';
+                    $mailData['to'] = $email['to'];
+                    $mailData['cc'] = $email['cc'];
+                    $this->sendEmail($mailData);
+                    // insert into trx_tbl_payroll_email_log
+                    $trx = New TrxPayrollEmailLog;
+                    $trx->nik = $_trx->nik;
+                    $trx->nik_property = $_trx->nik_property;
+                    $trx->bulan = $_trx->bulan;
+                    $trx->tahun = $_trx->tahun;
+                    $trx->email = $_trx->email;
+                    $trx->id_addsub = $_trx->id_addsub;
+                    $trx->save();
+                    // delete
+                    TrxPayrollEmail::find($_id)->delete();
+                }
+                return redirect( 'payroll/send_email/0' )->with( 'msg', 'Payroll Email is executed successfully.' );
+            }
+        }
+        elseif($request->submit == 'delete'){
+            $id = $request->input('id_current', []);
+            if(count($id)==0){
+                return redirect( 'payroll/send_email/0' )->with( 'msg', 'No Payroll Email is deleted.' );
+            }else{
+                foreach($id as $_id){
+                    TrxPayrollEmail::find($_id)->delete();
+                }
+                return redirect( 'payroll/send_email/0' )->with( 'msg', 'Payroll Email is deleted successfully.' );
+            }
+        }
+    }
+
+    public function send_email(Request $request, $id)
+    {
+        $trx_current = TrxPayrollEmail::orderBy('id', 'desc')->get();
+        $trx_history = TrxPayrollEmailLog::orderBy('id', 'desc')->get();
+        return view('payroll.send_email', compact('trx_current', 'trx_history'));
+    }
     
     public function employee_gap(Request $request, $id)
     {
@@ -244,7 +308,13 @@ class TrxPayrollController extends Controller
         $pdf::SetFont('helvetica', '', 8, '', true);
         $pdf::AddPage('L', 'A4');
         $pdf::writeHTML($html, true, false, true, false, '');
-        $pdf::SetProtection(array('print', 'copy'), $password, $password);
+        // Set PDF protection settings
+        // The first parameter: permissions, ['copy', 'print'] means the user can copy and print but cannot modify the PDF
+        // The second parameter: User password (this can be empty)
+        // The third parameter: Owner password (this is used to unlock for modification)
+        // The fourth parameter: Encryption type (0 = no encryption, 256 = AES encryption)
+        // $pdf::SetProtection(array('print', 'copy'), $password, $password);
+        $pdf::SetProtection(array('print', 'copy'), $password, md5(123456), 0, null);
         // open browser
         // $pdf::Output(public_path($filename), 'I');
         // download pdf
@@ -435,6 +505,14 @@ class TrxPayrollController extends Controller
             // $overtime = Overtime::where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy('id', 'asc')->get();
             $overtime = Overtime::select(DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
             $overtime = $overtime->sum('ot_length_rp_adj');
+            // if($_trx->gapok == 0){
+            //     $kehamilan = 0;
+            //     $persalinan = 0;
+            //     $kacamata = 0;
+            //     $kesehatan = 0;
+            //     $ekses = 0;
+            //     $overtime = 0;
+            // }
             TrxPayrollLog::insert(array(
                 'nik' => $_trx->nik,
                 'nik_property' => $_trx->nik_property,
@@ -702,13 +780,19 @@ class TrxPayrollController extends Controller
                 $_102 = array_search(102, $data0[0]);
                 $_103 = array_search(103, $data0[0]);
                 $_104 = array_search(104, $data0[0]);
+                // delete data existing
+                $where = ['bulan'=>$data0[2][$_102], 'tahun'=>$data0[2][$_103]];
+                TrxPayroll::where($where)->delete();
+                TrxPayrollAddsub::where($where)->delete();
+                TrxPayrollBpjstk::where($where)->delete();
+                TrxPayrollBpjskes::where($where)->delete();
                 // dimulai dari baris ke-3
                 // data payroll
                 for ($x = 2; $x < count($data0); $x++) {
                     $where = ['nik' => $data0[$x][$_101]];
                     $karyawan = Karyawan::where($where)->first();
-                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
-                    TrxPayroll::where($where)->delete();
+                    // $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                    // TrxPayroll::where($where)->delete();
                     $trx = New TrxPayroll;
                     $trx->nik = $data0[$x][$_101];
                     $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
@@ -742,8 +826,8 @@ class TrxPayrollController extends Controller
                 }
                 for ($x = 2; $x < count($data0); $x++) {
                     foreach($arr as $_arr){
-                        $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_addsub'=>$_arr[1]];
-                        TrxPayrollAddsub::where($where)->delete();
+                        // $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_addsub'=>$_arr[1]];
+                        // TrxPayrollAddsub::where($where)->delete();
                         $trx = New TrxPayrollAddsub;
                         $trx->nik = $data0[$x][$_101];
                         $trx->bulan = $data0[$x][$_102];
@@ -757,10 +841,69 @@ class TrxPayrollController extends Controller
                         $trx->created_by = auth()->user()->nik;
                         $trx->updated_by = auth()->user()->nik;
                         $trx->save();
-                        // 
-                        $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
-                        $payroll = TrxPayroll::where($where)->orderBy('id', 'asc')->get();
-                        $this->insertBpjs($payroll);
+                    }
+                    // insert into bpjs
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                    $payroll = TrxPayroll::where($where)->orderBy('id', 'asc')->get();
+                    $this->insertBpjs($payroll);
+                    // membandingkan data 1 bulan sebelumnya untuk mengecek apakah ada penambahan Insentif dan atau Kompensasi KKWT
+                    $is_insentif = false;
+                    $is_kompensasi = false;
+                    // 6=Insentif
+                    $arr_id = [6];
+                    $insentif = TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
+                    // 9=Kompensasi KKWT
+                    $arr_id = [9];
+                    $kompensasi = TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
+                    $submonth = Carbon::createFromFormat('Y-m-d', "{$data0[$x][$_103]}-{$data0[$x][$_102]}-01")->subMonth();
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$submonth->month, 'tahun'=>$submonth->year];
+                    $arr_id = [6];
+                    $insentif_submonth = TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
+                    $arr_id = [9];
+                    $kompensasi_submonth = TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
+                    if($insentif > $insentif_submonth){
+                        $is_insentif = true;
+                    }
+                    if($kompensasi > $kompensasi_submonth){
+                        $is_kompensasi = true;
+                    }
+                    $karyawan = Karyawan::where(['nik'=>$data0[$x][$_101]])->first();
+                    $email_hco = array();
+                    $hco = Karyawan::whereIn('nik', explode(',', MtrUtility::find(32)->informasi))->get();
+                    foreach($hco as $data){
+                        array_push($email_hco, $data->email);
+                    }
+                    // insert into payroll_email
+                    if($is_insentif && $is_kompensasi){
+                        $trx = New TrxPayrollEmail;
+                        $trx->nik = $data0[$x][$_101];
+                        $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
+                        $trx->bulan = $data0[$x][$_102];
+                        $trx->tahun = $data0[$x][$_103];
+                        $subject = 'Penambahan Insentif dan Kompensasi PKWT';
+                        $trx->email = json_encode(['nik'=>$data0[$x][$_101], 'subject'=>$subject, 'body'=>$this->getBodyEmail($karyawan->nama, $data0[$x][$_102], $data0[$x][$_103], 69), 'to'=>$karyawan->email, 'cc'=>implode(',', $email_hco)]);
+                        $trx->id_addsub = '6,9';
+                        $trx->save();
+                    }elseif($is_insentif){
+                        $trx = New TrxPayrollEmail;
+                        $trx->nik = $data0[$x][$_101];
+                        $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
+                        $trx->bulan = $data0[$x][$_102];
+                        $trx->tahun = $data0[$x][$_103];
+                        $subject = 'Penambahan Insentif';
+                        $trx->email = json_encode(['nik'=>$data0[$x][$_101], 'subject'=>$subject, 'body'=>$this->getBodyEmail($karyawan->nama, $data0[$x][$_102], $data0[$x][$_103], 6), 'to'=>$karyawan->email, 'cc'=>implode(',', $email_hco)]);
+                        $trx->id_addsub = '6';
+                        $trx->save();
+                    }elseif($is_kompensasi){
+                        $trx = New TrxPayrollEmail;
+                        $trx->nik = $data0[$x][$_101];
+                        $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
+                        $trx->bulan = $data0[$x][$_102];
+                        $trx->tahun = $data0[$x][$_103];
+                        $subject = 'Penambahan Kompensasi PKWT';
+                        $trx->email = json_encode(['nik'=>$data0[$x][$_101], 'subject'=>$subject, 'body'=>$this->getBodyEmail($karyawan->nama, $data0[$x][$_102], $data0[$x][$_103], 9), 'to'=>$karyawan->email, 'cc'=>implode(',', $email_hco)]);
+                        $trx->id_addsub = '9';
+                        $trx->save();
                     }
                 }
                 // // data potongan
@@ -1086,9 +1229,9 @@ class TrxPayrollController extends Controller
     public function insertBpjs($payroll)
     {
         // dd($payroll);
-        $where = ['nik'=>$payroll[0]->nik, 'bulan'=>$payroll[0]->bulan, 'tahun'=>$payroll[0]->tahun];
-        TrxPayrollBpjstk::where($where)->delete();
-        TrxPayrollBpjskes::where($where)->delete();
+        // $where = ['nik'=>$payroll[0]->nik, 'bulan'=>$payroll[0]->bulan, 'tahun'=>$payroll[0]->tahun];
+        // TrxPayrollBpjstk::where($where)->delete();
+        // TrxPayrollBpjskes::where($where)->delete();
         // 
         $bpjstk = MtrPayrollBpjstk::orderBy('id', 'asc')->get();
         $bpjskes = MtrPayrollBpjskes::orderBy('id', 'asc')->get();
@@ -1334,7 +1477,8 @@ class TrxPayrollController extends Controller
         $pdf::SetFont('helvetica', '', 8, '', true);
         $pdf::AddPage('L', 'A4');
         $pdf::writeHTML($html, true, false, true, false, '');
-        $pdf::SetProtection(array('print', 'copy'), $password, $password);
+        // $pdf::SetProtection(array('print', 'copy'), $password, $password);
+        $pdf::SetProtection(array('print', 'copy'), $password, md5(123456), 0, null);
         // open browser
         // $pdf::Output(public_path($filename), 'I');
         // download pdf
@@ -1421,6 +1565,25 @@ class TrxPayrollController extends Controller
             // Log::error($e->errorInfo);
             return redirect()->route('error_db');
          }
+    }
+
+    public function getBodyEmail($nama, $bulan, $tahun, $addsub)
+    {
+        $nama_bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+        $body = '<p>Dear Bapak/Ibu '.$nama.'</p>';
+        // 6=Insentif
+        // 9=Kompensasi KKWT
+        if($addsub == 69){
+            $body .= '<p>Kami informasikan bahwa terdapat penambahan insentif dan penambahan kompensasi masa Perjanjian Kerja Karyawan (PKWT) yang telah berakhir pada akhir '.$nama_bulan[$bulan - 1].' '.$tahun.' dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'. Informasi lebih detail terdapat dalam slip gaji yang dapat diunduh melalui menu Payroll Slip dalam web Matta (https://matta-reborn.alita.id).</p>';
+        }elseif($addsub == 6){
+            $body .= '<p>Kami informasikan bahwa terdapat penambahan insentif dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'. Informasi lebih detail terdapat dalam slip gaji yang dapat diunduh melalui menu Payroll Slip dalam web Matta (https://matta-reborn.alita.id).</p>';
+        }elseif($addsub == 9){
+            $body .= '<p>Kami informasikan bahwa terdapat penambahan kompensasi masa Perjanjian Kerja Karyawan (PKWT) yang telah berakhir pada akhir '.$nama_bulan[$bulan - 1].' '.$tahun.' dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'. Informasi lebih detail terdapat dalam slip gaji yang dapat diunduh melalui menu Payroll Slip dalam web Matta (https://matta-reborn.alita.id).</p>';
+        }
+        $body .= '<p>Slip Gaji bersifat <strong style="color:red">PERSONAL & CONFIDENTIAL</strong>. Mohon untuk tidak diberitahukan kepada rekan kerja ataupun pihak lain dengan alasan apapun.</p>';
+        $body .= '<p>Demikian kami sampaikan, terimakasih atas perhatian dan kerjasamanya.</p>';
+        $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+        return $body;
     }
 
     public function getNikProperty($nik)

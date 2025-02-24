@@ -204,9 +204,10 @@
 				<br/><br/>
 				<table width="100%" class="border-top border-bottom border-left border-right" align="center" cellpadding="2" cellspacing="0">
 					@php
-					// 3=Apply
-					$where = ['id_identitas' => $trx->id_identitas, 'id_status' => 3];
-					$flow1 = App\Models\TrxRecruitmentLog::where($where)->first();
+					// 17=Negotiation Deal by Candidate
+					// 18=Negotiation No Deal by Candidate
+					$where = ['id_identitas' => $trx->id_identitas];
+					$flow1 = App\Models\TrxRecruitmentLog::where($where)->whereIn('id_status', [17,18])->orderBy('id', 'desc')->first();
 					// 12=Negotiation Process
 					$where = ['id_identitas' => $trx->id_identitas, 'id_status' => 12];
 					$flow2 = App\Models\TrxRecruitmentLog::where($where)->first();
@@ -215,9 +216,19 @@
 					$flow3 = App\Models\TrxRecruitmentLog::where($where)->first();
 					@endphp
                     <tr>
-                        <td>Kandidat<br/><img src="{{ public_path('assets/images/matta/requested_new.png') }}" height="30" /><br/>{{ $flow1->pic }}<br/>{{ $flow1->created_at }}</td>
+                        <td>
+							Kandidat<br/>
+							@if(!empty($flow1))
+							@if($flow1->id_status == 17)
+							<img src="{{ public_path('assets/images/matta/approved_new.png') }}" height="30" /><br/>{{ $flow1->pic }}<br/>{{ $flow1->created_at }}
+							@elseif($flow1->id_status == 18)
+							<img src="{{ public_path('assets/images/matta/rejected_new.png') }}" height="30" /><br/>{{ $flow1->pic }}<br/>{{ $flow1->created_at }}
+							@endif
+							@endif
+						</td>
                         @if(!empty($flow2))<td>Human Capital & Org.<br/><img src="{{ public_path('assets/images/matta/verified_new.png') }}" height="30" /><br/>{{ $flow2->pic }}<br/>{{ $flow2->created_at }}</td>@endif
-                        @if(!empty($flow3))<td>Mengetahui/Menyetujui<br/><img src="{{ public_path('assets/images/matta/approved_new.png') }}" height="30" /><br/>{{ $flow3->pic }}<br/>{{ $flow3->created_at }}</td>@endif
+						{{-- atasan kandidat --}}
+                        {{-- @if(!empty($flow3))<td>Mengetahui/Menyetujui<br/><img src="{{ public_path('assets/images/matta/approved_new.png') }}" height="30" /><br/>{{ $flow3->pic }}<br/>{{ $flow3->created_at }}</td>@endif --}}
                         {{-- <td>Diarsip oleh<br/><img src="{{ public_path('assets/images/matta/informed_new.png') }}" height="30" /><br/>{{ $kandidat->pic }}<br/>{{ $kandidat->created_at }}</td> --}}
                     </tr>
                 </table>

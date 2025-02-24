@@ -172,11 +172,12 @@ class UtilitasController extends Controller
     
     public function update_payroll(Request $request, $id)
     {
+        // dd($request->all(), $id);
         $utilitas = MtrUtility::find(32);
         $utilitas->informasi = $request->_32;
         $utilitas->update();
-        $utilitas = MtrUtility::find(35);
-        $utilitas->informasi = $request->_35;
+        $utilitas = MtrUtility::find(36);
+        $utilitas->informasi = $request->_36;
         $utilitas->update();
         return redirect('utilitas')->with('msg', 'Data is saved successfully.');
     }

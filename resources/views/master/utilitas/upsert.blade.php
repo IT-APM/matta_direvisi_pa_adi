@@ -223,7 +223,7 @@
                                 <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
                             </div>
                             <div class="col-md-3">
-                                @php $no=34; @endphp
+                                @php $no=35; @endphp
                                 <label class="form-label" for="_{{ $no+1 }}">{{ $utilitas[$no]->keterangan }}</label>
                                 <input name="_{{ $no+1 }}" id="_{{ $no+1 }}" class="form-control" type="text" required="" value="{{ $utilitas[$no]->informasi }}">
                             </div>

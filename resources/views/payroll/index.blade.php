@@ -54,6 +54,118 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
+                    <div class="row mb-2">
+                        <div class="col-md-12">
+                            <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> @can('payroll') | <a href="{{ route('payroll.master',[6, 'tipe'=>'trxpayroll']) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a> | <button class="btn btn-info" type="button" data-bs-toggle="modal" data-original-title="test" data-bs-target="#exampleModal"><i class="fa fa-calendar"></i> Paid Date</button> @endcan
+                        </div>
+                    </div>
+                    <div class="collapse mb-2" id="collapse_filter">
+                        <form action="{{ route('payroll.index') }}" method="get" enctype="multipart/form-data" class="needs-validation" novalidate="">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label class="h6" for="nama">Bulan-Tahun</label>
+                                    <div>
+                                        <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_dari }}">
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                    sampai
+                                    <div>
+                                        <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_sampai }}">
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div>
+                                        <label class="h6 mt-2" for="nik">Karyawan</label>
+                                        <select class="form-select js-example-basic-single col-sm-12" id="nik" name="nik" required="">
+                                            <option selected="" disabled="" value="">Pilih...</option>
+                                            <option value="0" @if(in_array('0', $_arr_nik)) selected @endif>Semua Karyawan</option>
+                                            @foreach ($karyawan as $data)
+                                            <option value="{{ $data->nik }}" @if(in_array($data->nik, $_arr_nik)) selected @endif>{{ $data->nama }} - {{ $data->nik }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="h6 mt-2">Status</label>&nbsp;<input type="checkbox" onClick="status_karyawan(this)" />&nbsp;Check All
+                                    <label class="d-block" for="status_karyawan">
+                                        @foreach ($status_karyawan as $data)
+                                        <input class="checkbox_animated" id="status_karyawan[]" name="status_karyawan[]" type="checkbox" value="{{ $data->status_karyawan }}" @if(in_array($data->status_karyawan, $_arr_status_karyawan)) checked @endif> {{ $data->status_karyawan }}<br/>
+                                        @endforeach
+                                    </label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="h6 mt-2">Level</label>&nbsp;<input type="checkbox" onClick="level(this)" />&nbsp;Check All
+                                    <label class="d-block" for="level">
+                                        @foreach ($level as $data)
+                                        <input class="checkbox_animated" id="level[]" name="level[]" type="checkbox" value="{{ $data->level }}" @if(in_array($data->level, $_arr_level)) checked @endif> {{ $data->level }}<br/>
+                                        @endforeach
+                                    </label>
+                                    {{-- <label class="h6 mt-2">Jabatan</label>&nbsp;<input type="checkbox" onClick="jabatan(this)" />&nbsp;Check All
+                                    <label class="d-block" for="jabatan">
+                                        @foreach ($jabatan as $data)
+                                        <input class="checkbox_animated" id="jabatan[]" name="jabatan[]" type="checkbox" value="{{ $data->jabatan }}" @if(in_array($data->jabatan, $_arr_jabatan)) checked @endif> {{ $data->jabatan }}<br/>
+                                        @endforeach
+                                    </label> --}}
+                                </div>
+                                {{-- <div class="col-sm-4">
+                                    <label class="h6">Findim</label>
+                                    <br/>
+                                    <label class="form-label">Divisi</label>&nbsp;<input type="checkbox" onClick="findim_divisi(this)" />&nbsp;Check All
+                                    <label class="d-block" for="findim_divisi">
+                                        @foreach ($findim_divisi as $data)
+                                        <input class="checkbox_animated" id="findim_divisi[]" name="findim_divisi[]" type="checkbox" value="{{ $data->divisi_id }}/{{ $data->divisi_desc }}" @if(in_array($data->divisi_id.'/'.$data->divisi_desc, $_arr_findim_divisi)) checked @endif> {{ $data->divisi_id }}/{{ $data->divisi_desc }}<br/>
+                                        @endforeach
+                                    </label>
+                                    <label class="form-label">Departemen</label>&nbsp;<input type="checkbox" onClick="findim_departemen(this)" />&nbsp;Check All
+                                    <label class="d-block" for="findim_departemen">
+                                        @foreach ($findim_departemen as $data)
+                                        <input class="checkbox_animated" id="findim_departemen[]" name="findim_departemen[]" type="checkbox" value="{{ $data->departemen_id }}/{{ $data->departemen_desc }}" @if(in_array($data->departemen_id.'/'.$data->departemen_desc, $_arr_findim_departemen)) checked @endif> {{ $data->departemen_id }}/{{ $data->departemen_desc }}<br/>
+                                        @endforeach
+                                    </label>
+                                    <label class="form-label">Sub Departemen</label>&nbsp;<input type="checkbox" onClick="findim_subdepartemen(this)" />&nbsp;Check All
+                                    <label class="d-block" for="findim_subdepartemen">
+                                        @foreach ($findim_subdepartemen as $data)
+                                        <input class="checkbox_animated" id="findim_subdepartemen[]" name="findim_subdepartemen[]" type="checkbox" value="{{ $data->subdepartemen_id }}/{{ $data->subdepartemen_desc }}" @if(in_array($data->subdepartemen_id.'/'.$data->subdepartemen_desc, $_arr_findim_subdepartemen)) checked @endif> {{ $data->subdepartemen_id }}/{{ $data->subdepartemen_desc }}<br/>
+                                        @endforeach
+                                    </label>
+                                    <label class="form-label">Project</label>&nbsp;<input type="checkbox" onClick="findim_project(this)" />&nbsp;Check All
+                                    <label class="d-block" for="findim_project">
+                                        @foreach ($findim_project as $data)
+                                        <input class="checkbox_animated" id="findim_project[]" name="findim_project[]" type="checkbox" value="{{ $data->project_id }}/{{ $data->project_desc }}" @if(in_array($data->project_id.'/'.$data->project_desc, $_arr_findim_project)) checked @endif> {{ $data->project_id }}/{{ $data->project_desc }}<br/>
+                                        @endforeach
+                                    </label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="h6">Direktorat</label>&nbsp;<input type="checkbox" onClick="divisi(this)" />&nbsp;Check All
+                                    <label class="d-block" for="divisi">
+                                        @foreach ($divisi as $data)
+                                        <input class="checkbox_animated" id="divisi[]" name="divisi[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_divisi)) checked @endif> {{ $data->nama }}<br/>
+                                        @endforeach
+                                    </label>
+                                    <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="departemen(this)" />&nbsp;Check All
+                                    <label class="d-block" for="departemen">
+                                        @foreach ($departemen as $data)
+                                        <input class="checkbox_animated" id="departemen[]" name="departemen[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_departemen)) checked @endif> {{ $data->nama }}<br/>
+                                        @endforeach
+                                    </label>
+                                    <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="subdepartemen(this)" />&nbsp;Check All
+                                    <label class="d-block" for="subdepartemen">
+                                        @foreach ($subdepartemen as $data)
+                                        <input class="checkbox_animated" id="subdepartemen[]" name="subdepartemen[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_subdepartemen)) checked @endif> {{ $data->nama }}<br/>
+                                        @endforeach
+                                    </label>
+                                </div> --}}
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-sm-12">
+                                    <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    @can('payroll')
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
                         <li class="nav-item"><a class="nav-link active" id="pills-semua-tab" data-bs-toggle="pill" href="#pills-semua" role="tab" aria-controls="pills-semua" aria-selected="true">Semua</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-potongan-tab" data-bs-toggle="pill" href="#pills-potongan" role="tab" aria-controls="pills-potongan" aria-selected="true">Potongan</a></li>
@@ -61,9 +173,15 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         <li class="nav-item"><a class="nav-link" id="pills-bpjskes-tab" data-bs-toggle="pill" href="#pills-bpjskes" role="tab" aria-controls="pills-bpjskes" aria-selected="true">BPJS Kesehatan</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-kerja-tab" data-bs-toggle="pill" href="#pills-kerja" role="tab" aria-controls="pills-kerja" aria-selected="true">PPh21</a></li>
                     </ul>
+                    @endcan
+                    @can('payroll_fin')
+                    <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
+                        <li class="nav-item"><a class="nav-link active" id="pills-kerja-tab" data-bs-toggle="pill" href="#pills-kerja" role="tab" aria-controls="pills-kerja" aria-selected="true">PPh21</a></li>
+                    </ul>
+                    @endcan
                     <div class="tab-content" id="pills-warningtabContent">
                         {{-- Semua --}}
-                        <div class="tab-pane fade show active" id="pills-semua" role="tabpanel" aria-labelledby="pills-semua-tab">
+                        <div class="tab-pane fade @can('payroll') show active @endcan" id="pills-semua" role="tabpanel" aria-labelledby="pills-semua-tab">
                             <p class="mb-0 mt-2">
                                 <div class="row g-3 mb-2">
                                     <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
@@ -80,11 +198,6 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         </div>
                                     </div>
                                     </form>
-                                </div>
-                                <div class="row g-3">
-                                    <div class="col-md-12">
-                                        <a href="{{ route('payroll.master',[6, 'tipe'=>'trxpayroll']) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" type="button" data-bs-toggle="modal" data-original-title="test" data-bs-target="#exampleModal"><i class="fa fa-calendar"></i> Paid Date</button>
-                                    </div>
                                 </div>
                                 {{--  --}}
                                 @if(count($payroll)>0)
@@ -111,113 +224,6 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     </div>
                                 </div>
                                 @endif
-                                {{--  --}}
-                                <div class="collapse mt-2" id="collapse_filter">
-                                    <form action="{{ route('payroll.index') }}" method="get" enctype="multipart/form-data" class="needs-validation" novalidate="">
-                                        <div class="row">
-                                            <div class="col-sm-2">
-                                                <label class="h6" for="nama">Bulan-Tahun</label>
-                                                <div>
-                                                    <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_dari }}">
-                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
-                                                </div>
-                                                sampai
-                                                <div>
-                                                    <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_sampai }}">
-                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div>
-                                                    <label class="h6 mt-2" for="nik">Karyawan</label>
-                                                    <select class="form-select js-example-basic-single col-sm-12" id="nik" name="nik" required="">
-                                                        <option selected="" disabled="" value="">Pilih...</option>
-                                                        <option value="0" @if(in_array('0', $_arr_nik)) selected @endif>Semua Karyawan</option>
-                                                        @foreach ($karyawan as $data)
-                                                        <option value="{{ $data->nik }}" @if(in_array($data->nik, $_arr_nik)) selected @endif>{{ $data->nama }} - {{ $data->nik }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <label class="h6 mt-2">Status</label>&nbsp;<input type="checkbox" onClick="status_karyawan(this)" />&nbsp;Check All
-                                                <label class="d-block" for="status_karyawan">
-                                                    @foreach ($status_karyawan as $data)
-                                                    <input class="checkbox_animated" id="status_karyawan[]" name="status_karyawan[]" type="checkbox" value="{{ $data->status_karyawan }}" @if(in_array($data->status_karyawan, $_arr_status_karyawan)) checked @endif> {{ $data->status_karyawan }}<br/>
-                                                    @endforeach
-                                                </label>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <label class="h6 mt-2">Level</label>&nbsp;<input type="checkbox" onClick="level(this)" />&nbsp;Check All
-                                                <label class="d-block" for="level">
-                                                    @foreach ($level as $data)
-                                                    <input class="checkbox_animated" id="level[]" name="level[]" type="checkbox" value="{{ $data->level }}" @if(in_array($data->level, $_arr_level)) checked @endif> {{ $data->level }}<br/>
-                                                    @endforeach
-                                                </label>
-                                                {{-- <label class="h6 mt-2">Jabatan</label>&nbsp;<input type="checkbox" onClick="jabatan(this)" />&nbsp;Check All
-                                                <label class="d-block" for="jabatan">
-                                                    @foreach ($jabatan as $data)
-                                                    <input class="checkbox_animated" id="jabatan[]" name="jabatan[]" type="checkbox" value="{{ $data->jabatan }}" @if(in_array($data->jabatan, $_arr_jabatan)) checked @endif> {{ $data->jabatan }}<br/>
-                                                    @endforeach
-                                                </label> --}}
-                                            </div>
-                                            {{-- <div class="col-sm-4">
-                                                <label class="h6">Findim</label>
-                                                <br/>
-                                                <label class="form-label">Divisi</label>&nbsp;<input type="checkbox" onClick="findim_divisi(this)" />&nbsp;Check All
-                                                <label class="d-block" for="findim_divisi">
-                                                    @foreach ($findim_divisi as $data)
-                                                    <input class="checkbox_animated" id="findim_divisi[]" name="findim_divisi[]" type="checkbox" value="{{ $data->divisi_id }}/{{ $data->divisi_desc }}" @if(in_array($data->divisi_id.'/'.$data->divisi_desc, $_arr_findim_divisi)) checked @endif> {{ $data->divisi_id }}/{{ $data->divisi_desc }}<br/>
-                                                    @endforeach
-                                                </label>
-                                                <label class="form-label">Departemen</label>&nbsp;<input type="checkbox" onClick="findim_departemen(this)" />&nbsp;Check All
-                                                <label class="d-block" for="findim_departemen">
-                                                    @foreach ($findim_departemen as $data)
-                                                    <input class="checkbox_animated" id="findim_departemen[]" name="findim_departemen[]" type="checkbox" value="{{ $data->departemen_id }}/{{ $data->departemen_desc }}" @if(in_array($data->departemen_id.'/'.$data->departemen_desc, $_arr_findim_departemen)) checked @endif> {{ $data->departemen_id }}/{{ $data->departemen_desc }}<br/>
-                                                    @endforeach
-                                                </label>
-                                                <label class="form-label">Sub Departemen</label>&nbsp;<input type="checkbox" onClick="findim_subdepartemen(this)" />&nbsp;Check All
-                                                <label class="d-block" for="findim_subdepartemen">
-                                                    @foreach ($findim_subdepartemen as $data)
-                                                    <input class="checkbox_animated" id="findim_subdepartemen[]" name="findim_subdepartemen[]" type="checkbox" value="{{ $data->subdepartemen_id }}/{{ $data->subdepartemen_desc }}" @if(in_array($data->subdepartemen_id.'/'.$data->subdepartemen_desc, $_arr_findim_subdepartemen)) checked @endif> {{ $data->subdepartemen_id }}/{{ $data->subdepartemen_desc }}<br/>
-                                                    @endforeach
-                                                </label>
-                                                <label class="form-label">Project</label>&nbsp;<input type="checkbox" onClick="findim_project(this)" />&nbsp;Check All
-                                                <label class="d-block" for="findim_project">
-                                                    @foreach ($findim_project as $data)
-                                                    <input class="checkbox_animated" id="findim_project[]" name="findim_project[]" type="checkbox" value="{{ $data->project_id }}/{{ $data->project_desc }}" @if(in_array($data->project_id.'/'.$data->project_desc, $_arr_findim_project)) checked @endif> {{ $data->project_id }}/{{ $data->project_desc }}<br/>
-                                                    @endforeach
-                                                </label>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <label class="h6">Direktorat</label>&nbsp;<input type="checkbox" onClick="divisi(this)" />&nbsp;Check All
-                                                <label class="d-block" for="divisi">
-                                                    @foreach ($divisi as $data)
-                                                    <input class="checkbox_animated" id="divisi[]" name="divisi[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_divisi)) checked @endif> {{ $data->nama }}<br/>
-                                                    @endforeach
-                                                </label>
-                                                <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="departemen(this)" />&nbsp;Check All
-                                                <label class="d-block" for="departemen">
-                                                    @foreach ($departemen as $data)
-                                                    <input class="checkbox_animated" id="departemen[]" name="departemen[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_departemen)) checked @endif> {{ $data->nama }}<br/>
-                                                    @endforeach
-                                                </label>
-                                                <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="subdepartemen(this)" />&nbsp;Check All
-                                                <label class="d-block" for="subdepartemen">
-                                                    @foreach ($subdepartemen as $data)
-                                                    <input class="checkbox_animated" id="subdepartemen[]" name="subdepartemen[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_subdepartemen)) checked @endif> {{ $data->nama }}<br/>
-                                                    @endforeach
-                                                </label>
-                                            </div> --}}
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="col-sm-12">
-                                                <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
                                 <div class="table-responsive">
                                     <table class="display nowrap" id="_datatable1">
                                         <thead>
@@ -614,7 +620,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                             </p>
                         </div>
                         {{-- PPh21 --}}
-                        <div class="tab-pane fade" id="pills-kerja" role="tabpanel" aria-labelledby="pills-kerja-tab">
+                        <div class="tab-pane fade @can('payroll_fin') show active @endcan" id="pills-kerja" role="tabpanel" aria-labelledby="pills-kerja-tab">
                             <p class="mb-0 m-t-10">
                                 <div class="row g-3 mb-2">
                                     <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">

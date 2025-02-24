@@ -70,29 +70,31 @@
 					</tr>
 				</table>
 				<table width="100%" class="border-top border-bottom border-left border-right" cellspacing="0" cellpadding="2">
+					
+					
 					<tr>
-                        <td width="50%"><?php if(!empty($_trx->cv)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> CV Lengkap</td>
-						<td width="50%" style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_ijazah)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Copy Ijazah</td>
+                        <td width="50%"><?php if(!empty($_trx->cv)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> CV Lengkap</td>
+						<td width="50%" style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_ijazah)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Copy Ijazah</td>
                     </tr>
 					<tr>
-                        <td><?php if(!empty($_trx->file_sertifikat_keahlian)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Copy Sertifikat Keahlian</td>
-						<td style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_skck)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Surat Keterangan Catatan Kepolisian (SKCK)</td>
+                        <td><?php if(!empty($_trx->file_sertifikat_keahlian)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Copy Sertifikat Keahlian</td>
+						<td style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_skck)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Surat Keterangan Catatan Kepolisian (SKCK)</td>
                     </tr>
 					<tr>
-                        <td><?php if(!empty($_trx->file_ktp)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Copy Kartu Tanda Penduduk (KTP)</td>
-						<td style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_bpjs_tk)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Copy Kartu BPJS Ketenagakerjaan (BPJSTK)</td>
+                        <td><?php if(!empty($_trx->file_ktp)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Copy Kartu Tanda Penduduk (KTP)</td>
+						<td style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_bpjs_tk)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Copy Kartu BPJS Ketenagakerjaan (BPJSTK)</td>
                     </tr>
 					<tr>
-                        <td><?php if(!empty($_trx->file_kk)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Copy Kartu Keluarga (KK)</td>
-						<td style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_bpjs_kes)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Copy Kartu BPJS Kesehatan (BPJSKS)</td>
+                        <td><?php if(!empty($_trx->file_kk)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Copy Kartu Keluarga (KK)</td>
+						<td style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_bpjs_kes)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Copy Kartu BPJS Kesehatan (BPJSKS)</td>
                     </tr>
 					<tr>
-                        <td><?php if(!empty($_trx->file_npwp)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Copy Kartu NPWP</td>
-						<td style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_buku_tabungan)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Copy Buku Tabungan (No. Rekening Bank Mandiri)</td>
+                        <td><?php if(!empty($_trx->file_npwp)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Copy Kartu NPWP</td>
+						<td style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_buku_tabungan)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Copy Buku Tabungan (No. Rekening Bank Mandiri)</td>
                     </tr>
 					<tr>
-                        <td><?php if(!empty($_trx->file_ket_sehat)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Surat Keterangan Sehat</td>
-						<td style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_covid)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Sertifikat Vaksin Covid-19</td>
+                        <td><?php if(!empty($_trx->file_ket_sehat)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Surat Keterangan Sehat</td>
+						<td style="border-left: 0.5px thin black;"><?php if(!empty($_trx->file_covid)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Sertifikat Vaksin Covid-19</td>
                     </tr>
 				</table>
 				<br/><br/>
@@ -127,40 +129,40 @@
 				<table width="100%" class="border-top border-bottom border-left border-right" cellspacing="0" cellpadding="2">
 					<?php $benefit_utama = explode(',', $trx->benefit_utama); ?>
 					<tr>
-                        <td width="55%"><?php if(!empty($trx->thp)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Take Home Pay (THP): Rp. <?php echo e(number_format($trx->thp, 0)); ?></td>
+                        <td width="55%"><?php if(!empty($trx->thp)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Take Home Pay (THP): Rp. <?php echo e(number_format($trx->thp, 0)); ?></td>
 						
-						<td width="45%" style="border-left: 0.5px thin black;"><?php if(in_array(9, $benefit_utama)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Cuti Setelah 1 tahun</td>
+						<td width="45%" style="border-left: 0.5px thin black;"><?php if(in_array(9, $benefit_utama)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Cuti Setelah 1 tahun</td>
                     </tr>
 					<tr>
 						
-                        <td><?php if(in_array(1, $benefit_utama)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Upah Lembur</td>
+                        <td><?php if(in_array(1, $benefit_utama)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Upah Lembur</td>
 						
-						<td style="border-left: 0.5px thin black;"><?php if(in_array(10, $benefit_utama)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Asuransi</td>
+						<td style="border-left: 0.5px thin black;"><?php if(in_array(10, $benefit_utama)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Asuransi</td>
                     </tr>
 					<tr>
 						
-                        <td><?php if(in_array(2, $benefit_utama)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Medical Reimbursement</td>
+                        <td><?php if(in_array(2, $benefit_utama)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Medical Reimbursement</td>
 						
-						<td style="border-left: 0.5px thin black;"><?php if(in_array(10, $benefit_utama)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Tunjangan Corporate</td>
-                    </tr>
-					<tr>
-						
-						
-                        <td><?php if(in_array(3, $benefit_utama)||in_array(4, $benefit_utama)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> PPh 21 <?php if(in_array(3, $benefit_utama)): ?> ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">6</span> Karyawan <?php elseif(in_array(4, $benefit_utama)): ?> ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">4</span> Karyawan <?php endif; ?></td>
-						
-						<td style="border-left: 0.5px thin black;"><?php if(in_array(12, $benefit_utama)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Tunjangan Project / Operasional</td>
+						<td style="border-left: 0.5px thin black;"><?php if(in_array(10, $benefit_utama)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Tunjangan Corporate</td>
                     </tr>
 					<tr>
 						
 						
-                        <td><?php if(in_array(5, $benefit_utama)||in_array(6, $benefit_utama)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> BPJS Ketenagakerjaan <?php if(in_array(5, $benefit_utama)): ?> ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">6</span> Karyawan <?php elseif(in_array(6, $benefit_utama)): ?> ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">4</span> Karyawan <?php endif; ?></td>
+                        <td><?php if(in_array(3, $benefit_utama)||in_array(4, $benefit_utama)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> PPh 21 <?php if(in_array(3, $benefit_utama)): ?> ditanggung: <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> Perusahaan <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> Karyawan <?php elseif(in_array(4, $benefit_utama)): ?> ditanggung: <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> Perusahaan <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> Karyawan <?php endif; ?></td>
 						
-						<td style="border-left: 0.5px thin black;"><?php if(in_array(12, $benefit_utama)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Alat kerja (laptop / notebook)</td>
+						<td style="border-left: 0.5px thin black;"><?php if(in_array(12, $benefit_utama)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Tunjangan Project / Operasional</td>
                     </tr>
 					<tr>
 						
 						
-                        <td><?php if(in_array(7, $benefit_utama)||in_array(8, $benefit_utama)): ?> <span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> BPJS Kesehatan <?php if(in_array(7, $benefit_utama)): ?> ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">6</span> Karyawan <?php elseif(in_array(8, $benefit_utama)): ?> ditanggung: <span style="font-family:zapfdingbats;">4</span> Perusahaan <span style="font-family:zapfdingbats;">4</span> Karyawan <?php endif; ?></td>
+                        <td><?php if(in_array(5, $benefit_utama)||in_array(6, $benefit_utama)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> BPJS Ketenagakerjaan <?php if(in_array(5, $benefit_utama)): ?> ditanggung: <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> Perusahaan <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> Karyawan <?php elseif(in_array(6, $benefit_utama)): ?> ditanggung: <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> Perusahaan <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> Karyawan <?php endif; ?></td>
+						
+						<td style="border-left: 0.5px thin black;"><?php if(in_array(12, $benefit_utama)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Alat kerja (laptop / notebook)</td>
+                    </tr>
+					<tr>
+						
+						
+                        <td><?php if(in_array(7, $benefit_utama)||in_array(8, $benefit_utama)): ?> <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> BPJS Kesehatan <?php if(in_array(7, $benefit_utama)): ?> ditanggung: <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> Perusahaan <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> Karyawan <?php elseif(in_array(8, $benefit_utama)): ?> ditanggung: <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> Perusahaan <img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> Karyawan <?php endif; ?></td>
 						
 						<td style="border-left: 0.5px thin black;">&nbsp;</td>
                     </tr>
@@ -185,13 +187,13 @@
                         <td>Pencatatan Kepegawaian</td>
                         <td>:</td>
                         
-						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%"><?php if($trx->id_catat_pegawai == 1): ?><span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> ALITA</td><td width="20%"><?php if($trx->id_catat_pegawai == 2): ?><span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Outsource</td></tr></table></td>
+						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%"><?php if($trx->id_catat_pegawai == 1): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> ALITA</td><td width="20%">&nbsp;&nbsp;<?php if($trx->id_catat_pegawai == 2): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Outsource</td></tr></table></td>
                     </tr>
                     <tr>
                         <td>Status Kepegawaian</td>
                         <td>:</td>
                         
-						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%"><?php if($trx->id_status_pegawai == 1): ?><span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Kontrak</td><td width="15%"><?php if($trx->id_status_pegawai == 2): ?><span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Tetap</td><td width="40%"><?php if($trx->id_status_pegawai == 3): ?><span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Tenaga Lepas Harian (TLH)</td><td width="25%"><?php if($trx->id_status_pegawai == 4): ?><span style="font-family:zapfdingbats;">4</span> <?php else: ?> <span style="font-family:zapfdingbats;">6</span> <?php endif; ?> Konsultan</td></tr></table></td>
+						<td>&nbsp;<table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%"><?php if($trx->id_status_pegawai == 1): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Kontrak</td><td width="15%"><?php if($trx->id_status_pegawai == 2): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Tetap</td><td width="40%"><?php if($trx->id_status_pegawai == 3): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Tenaga Lepas Harian (TLH)</td><td width="25%"><?php if($trx->id_status_pegawai == 4): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Konsultan</td></tr></table></td>
                     </tr>
                     <tr>
                         <td>Masa Perjanjian Kerja</td>
@@ -202,9 +204,10 @@
 				<br/><br/>
 				<table width="100%" class="border-top border-bottom border-left border-right" align="center" cellpadding="2" cellspacing="0">
 					<?php
-					// 3=Apply
-					$where = ['id_identitas' => $trx->id_identitas, 'id_status' => 3];
-					$flow1 = App\Models\TrxRecruitmentLog::where($where)->first();
+					// 17=Negotiation Deal by Candidate
+					// 18=Negotiation No Deal by Candidate
+					$where = ['id_identitas' => $trx->id_identitas];
+					$flow1 = App\Models\TrxRecruitmentLog::where($where)->whereIn('id_status', [17,18])->orderBy('id', 'desc')->first();
 					// 12=Negotiation Process
 					$where = ['id_identitas' => $trx->id_identitas, 'id_status' => 12];
 					$flow2 = App\Models\TrxRecruitmentLog::where($where)->first();
@@ -213,9 +216,21 @@
 					$flow3 = App\Models\TrxRecruitmentLog::where($where)->first();
 					?>
                     <tr>
-                        <td>Kandidat<br/><img src="<?php echo e(public_path('assets/images/matta/requested_new.png')); ?>" height="30" /><br/><?php echo e($flow1->pic); ?><br/><?php echo e($flow1->created_at); ?></td>
+                        <td>
+							Kandidat<br/>
+							<?php if(!empty($flow1)): ?>
+							<?php if($flow1->id_status == 17): ?>
+							<img src="<?php echo e(public_path('assets/images/matta/approved_new.png')); ?>" height="30" /><br/><?php echo e($flow1->pic); ?><br/><?php echo e($flow1->created_at); ?>
+
+							<?php elseif($flow1->id_status == 18): ?>
+							<img src="<?php echo e(public_path('assets/images/matta/rejected_new.png')); ?>" height="30" /><br/><?php echo e($flow1->pic); ?><br/><?php echo e($flow1->created_at); ?>
+
+							<?php endif; ?>
+							<?php endif; ?>
+						</td>
                         <?php if(!empty($flow2)): ?><td>Human Capital & Org.<br/><img src="<?php echo e(public_path('assets/images/matta/verified_new.png')); ?>" height="30" /><br/><?php echo e($flow2->pic); ?><br/><?php echo e($flow2->created_at); ?></td><?php endif; ?>
-                        <?php if(!empty($flow3)): ?><td>Mengetahui/Menyetujui<br/><img src="<?php echo e(public_path('assets/images/matta/approved_new.png')); ?>" height="30" /><br/><?php echo e($flow3->pic); ?><br/><?php echo e($flow3->created_at); ?></td><?php endif; ?>
+						
+                        
                         
                     </tr>
                 </table>

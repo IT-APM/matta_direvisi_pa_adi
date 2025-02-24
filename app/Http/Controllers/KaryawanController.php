@@ -25,6 +25,7 @@ use App\Models\MtrFindimProject;
 use App\Models\MtrFindimDivisi;
 use App\Models\MtrFindimDepartemen;
 use App\Models\MtrFindimSubdepartemen;
+use App\Models\KaryawanGrade;
 // 
 use App\Models\MtrUtility;
 use App\Mail\MattaRebornMail;
@@ -339,7 +340,8 @@ class KaryawanController extends Controller
         $findim_divisi = MtrFindimDivisi::all();
         $findim_departemen = MtrFindimDepartemen::all();
         $findim_subdepartemen = MtrFindimSubdepartemen::all();
-        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen' ) );
+        $id_grade = KaryawanGrade::all();
+        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen', 'id_grade' ) );
     }
 
     public function ImageUploadStore(Request $request)
@@ -488,6 +490,7 @@ class KaryawanController extends Controller
         $findim_divisi = MtrFindimDivisi::all();
         $findim_departemen = MtrFindimDepartemen::all();
         $findim_subdepartemen = MtrFindimSubdepartemen::all();
+        $id_grade = KaryawanGrade::all();
         // $perusahaan = Perusahaan::all();
         // $divisi = Divisi::where('kode_perusahaan', $karyawan->kode_perusahaan)->get();
         // $dep = Departemen::where('kode_divisi', $karyawan->kode_divisi)->get();
@@ -514,10 +517,10 @@ class KaryawanController extends Controller
         $history = KaryawanLog::where($where)->orderBy( 'id', 'desc' )->get();
         $no_history = 0;
         // $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan"];
-        $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama","findim_project"=>"Findim Project","findim_divisi"=>"Findim Divisi","findim_departemen"=>"Findim Departemen","findim_subdepartemen"=>"Findim Sub Departemen"];
+        $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama","findim_project"=>"Findim Project","findim_divisi"=>"Findim Divisi","findim_departemen"=>"Findim Departemen","findim_subdepartemen"=>"Findim Sub Departemen","id_grade"=>"Grade"];
         // $folder = 'matta\karyawan'.$karyawan->nik;
         // return response()->json( [ 'data' => public_path($folder) ], 200 );
-        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'pendidikan', 'no_pendidikan', 'pelatihan', 'no_pelatihan', 'sertifikasi', 'no_sertifikasi', 'anak', 'no_anak', 'history', 'no_history', 'lbl_history', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen' ) );
+        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'pendidikan', 'no_pendidikan', 'pelatihan', 'no_pelatihan', 'sertifikasi', 'no_sertifikasi', 'anak', 'no_anak', 'history', 'no_history', 'lbl_history', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen', 'id_grade' ) );
     }
 
     /**
@@ -577,12 +580,13 @@ class KaryawanController extends Controller
         $karyawan->findim_divisi = $request->findim_divisi;
         $karyawan->findim_departemen = $request->findim_departemen;
         $karyawan->findim_subdepartemen = $request->findim_subdepartemen;
+        $karyawan->id_grade = $request->id_grade;
         $karyawan->updated_by = auth()->user()->nik;
         $getOriginal = $karyawan->getOriginal();
         $karyawan->update();
         // simpan jika ada perubahan
         $getChanges = $karyawan->getChanges();
-        $_arr = ["tanggal_lahir","tempat_lahir","alamat_domisili","alamat_ktp","alamat_npwp","telepon1","telepon2","telepon3","no_ktp","no_npwp","no_bpjs","no_bpjstk","nama_pasangan","nama","telepon_darurat","nama_anak","email","alamat_kantor","layer1","layer2","layer3","is_aktif","gaji_pokok","tanggal_mulai","tanggal_bergabung","tanggal_berakhir","tanggal_karyawan_tetap","no_rek","nama_bank","nama_rek","findim_project","findim_divisi","findim_departemen","findim_subdepartemen"];
+        $_arr = ["tanggal_lahir","tempat_lahir","alamat_domisili","alamat_ktp","alamat_npwp","telepon1","telepon2","telepon3","no_ktp","no_npwp","no_bpjs","no_bpjstk","nama_pasangan","nama","telepon_darurat","nama_anak","email","alamat_kantor","layer1","layer2","layer3","is_aktif","gaji_pokok","tanggal_mulai","tanggal_bergabung","tanggal_berakhir","tanggal_karyawan_tetap","no_rek","nama_bank","nama_rek","findim_project","findim_divisi","findim_departemen","findim_subdepartemen","id_grade"];
         $arr = array();
         foreach ($_arr as $value){
             if ($karyawan->wasChanged($value)){
@@ -640,6 +644,15 @@ class KaryawanController extends Controller
         if ($karyawan->wasChanged('findim_subdepartemen')){
             $arr['findim_subdepartemen'] = ['before'=>MtrFindimSubdepartemen::find($getOriginal['findim_subdepartemen'])->subdepartemen_desc, 'after'=>MtrFindimSubdepartemen::find($getChanges['findim_subdepartemen'])->subdepartemen_desc];
         }
+        // id_grade
+        // akan diaktifkan jika sudah terisikan semua
+        if ($karyawan->wasChanged('id_grade')){
+            if(!empty(KaryawanGrade::find($getOriginal['id_grade']))){
+                $arr['id_grade'] = ['before'=>KaryawanGrade::find($getOriginal['id_grade'])->grade, 'after'=>KaryawanGrade::find($getChanges['id_grade'])->grade];
+            }else{
+                $arr['id_grade'] = ['before'=>'', 'after'=>KaryawanGrade::find($getChanges['id_grade'])->grade];
+            }
+        }
         if(!empty($getChanges)){
             $log = New KaryawanLog;
             $log->nik = $karyawan->nik;
@@ -649,7 +662,7 @@ class KaryawanController extends Controller
             // start sendEmail
             $mailData['title'] = 'Perubahan Data Karyawan';
             $mailData['filename'] = 'emails.data0';
-            $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama","findim_project"=>"Findim Project","findim_divisi"=>"Findim Divisi","findim_departemen"=>"Findim Departemen","findim_subdepartemen"=>"Findim Sub Departemen"];
+            $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama","findim_project"=>"Findim Project","findim_divisi"=>"Findim Divisi","findim_departemen"=>"Findim Departemen","findim_subdepartemen"=>"Findim Sub Departemen","id_grade"=>"Grade"];
             $mailData['data'] = ['insert_by' => $log->_insert_by->nama.' / '.$log->insert_by, 'nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);

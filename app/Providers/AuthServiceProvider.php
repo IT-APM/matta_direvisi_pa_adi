@@ -60,6 +60,14 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->nik, explode(',', MtrUtility::find(32)->informasi));
         });
         
+        Gate::define('payroll_fin', function(User $user) {
+            return in_array($user->nik, explode(',', MtrUtility::find(36)->informasi));
+        });
+        
+        Gate::define('payroll_hco_fin', function(User $user) {
+            return in_array($user->nik, explode(',', MtrUtility::find(32)->informasi)) || in_array($user->nik, explode(',', MtrUtility::find(36)->informasi));
+        });
+        
         Gate::define('bpd', function(User $user) {
             $where = ['nik' => $user->nik, 'is_active' => 1];
             $check = BpdNikPeran::where($where)->exists();

@@ -220,15 +220,17 @@ Route::resource('recap_attendance', RecapAttendanceController::class)->middlewar
 Route::resource('reminder_sp', ReminderSpController::class)->middleware('can:hc');
 Route::get('reminder_sp/reminder_sp/{id}', [ReminderSpController::class, 'reminder_sp'])->name('reminder_sp.reminder_sp');
 // 
-Route::resource('payroll', TrxPayrollController::class)->middleware('can:payroll');
+Route::resource('payroll', TrxPayrollController::class)->middleware('can:payroll_hco_fin');
 Route::get('payroll/master/{id}', [TrxPayrollController::class, 'master'])->name('payroll.master')->middleware('can:payroll');
 Route::post('payroll/master/addsub', [TrxPayrollController::class, 'upsert_master'])->name('payroll.upsert_master')->middleware('can:payroll');
-Route::post('payroll/upload_payroll', [ TrxPayrollController::class, 'upload_payroll'])->name('payroll.upload_payroll')->middleware('can:payroll');
+Route::post('payroll/upload_payroll', [ TrxPayrollController::class, 'upload_payroll'])->name('payroll.upload_payroll')->middleware('can:payroll_hco_fin');
 Route::get('payroll/bkp/{id}', [TrxPayrollController::class, 'bkp'])->name('payroll.bkp');
-Route::get('payroll/history/{id}', [TrxPayrollController::class, 'history'])->name('payroll.history')->middleware('can:payroll');
+Route::get('payroll/history/{id}', [TrxPayrollController::class, 'history'])->name('payroll.history')->middleware('can:payroll_hco_fin');
 Route::get('payroll/slip/{id}', [TrxPayrollController::class, 'slip'])->name('payroll.slip')->middleware('auth');
 Route::get('payroll/slip/detail/{id}', [TrxPayrollController::class, 'slip_detail'])->name('payroll.slip.detail')->middleware('auth');
 Route::get('payroll/employee_gap/{id}', [TrxPayrollController::class, 'employee_gap'])->name('payroll.employee_gap')->middleware('can:payroll');
+Route::get('payroll/send_email/{id}', [TrxPayrollController::class, 'send_email'])->name('payroll.send_email')->middleware('can:payroll');
+Route::post('payroll/send_email_exe', [TrxPayrollController::class, 'send_email_exe'])->name('payroll.send_email_exe')->middleware('can:payroll');
 // 
 Route::resource('recruitment', TrxRecruitmentController::class)->middleware('can:hc');
 Route::get('recruitment/apply/{id}', [TrxRecruitmentController::class, 'apply'])->name('recruitment.apply');

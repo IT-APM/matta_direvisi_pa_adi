@@ -51,6 +51,66 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <?php endif; ?>
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                        </div>
+                    </div>
+                    <div class="collapse mb-2" id="collapse_filter">
+                        <form action="<?php echo e(route('payroll.history', 0)); ?>" method="get" enctype="multipart/form-data" class="needs-validation" novalidate="">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label class="h6" for="nama">Bulan-Tahun</label>
+                                    <div>
+                                        <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="<?php echo e($bulan_tahun_dari); ?>">
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                    sampai
+                                    <div>
+                                        <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="<?php echo e($bulan_tahun_sampai); ?>">
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div>
+                                        <label class="h6 mt-2" for="nik">Karyawan</label>
+                                        <select class="form-select js-example-basic-single col-sm-12" id="nik" name="nik" required="">
+                                            <option selected="" disabled="" value="">Pilih...</option>
+                                            <option value="0" <?php if(in_array('0', $_arr_nik)): ?> selected <?php endif; ?>>Semua Karyawan</option>
+                                            <?php $__currentLoopData = $karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($data->nik); ?>" <?php if(in_array($data->nik, $_arr_nik)): ?> selected <?php endif; ?>><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="h6 mt-2">Status</label>&nbsp;<input type="checkbox" onClick="status_karyawan(this)" />&nbsp;Check All
+                                    <label class="d-block" for="status_karyawan">
+                                        <?php $__currentLoopData = $status_karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <input class="checkbox_animated" id="status_karyawan[]" name="status_karyawan[]" type="checkbox" value="<?php echo e($data->status_karyawan); ?>" <?php if(in_array($data->status_karyawan, $_arr_status_karyawan)): ?> checked <?php endif; ?>> <?php echo e($data->status_karyawan); ?><br/>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="h6 mt-2">Level</label>&nbsp;<input type="checkbox" onClick="level(this)" />&nbsp;Check All
+                                    <label class="d-block" for="level">
+                                        <?php $__currentLoopData = $level; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <input class="checkbox_animated" id="level[]" name="level[]" type="checkbox" value="<?php echo e($data->level); ?>" <?php if(in_array($data->level, $_arr_level)): ?> checked <?php endif; ?>> <?php echo e($data->level); ?><br/>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </label>
+                                    
+                                </div>
+                                
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-sm-12">
+                                    <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
                         <li class="nav-item"><a class="nav-link active" id="pills-semua-tab" data-bs-toggle="pill" href="#pills-semua" role="tab" aria-controls="pills-semua" aria-selected="true">Semua</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-potongan-tab" data-bs-toggle="pill" href="#pills-potongan" role="tab" aria-controls="pills-potongan" aria-selected="true">Potongan</a></li>
@@ -58,69 +118,16 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         <li class="nav-item"><a class="nav-link" id="pills-bpjskes-tab" data-bs-toggle="pill" href="#pills-bpjskes" role="tab" aria-controls="pills-bpjskes" aria-selected="true">BPJS Kesehatan</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-kerja-tab" data-bs-toggle="pill" href="#pills-kerja" role="tab" aria-controls="pills-kerja" aria-selected="true">PPh21</a></li>
                     </ul>
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll_fin')): ?>
+                    <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
+                        <li class="nav-item"><a class="nav-link active" id="pills-kerja-tab" data-bs-toggle="pill" href="#pills-kerja" role="tab" aria-controls="pills-kerja" aria-selected="true">PPh21</a></li>
+                    </ul>
+                    <?php endif; ?>
                     <div class="tab-content" id="pills-warningtabContent">
                         
-                        <div class="tab-pane fade show active" id="pills-semua" role="tabpanel" aria-labelledby="pills-semua-tab">
+                        <div class="tab-pane fade <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?> show active <?php endif; ?>" id="pills-semua" role="tabpanel" aria-labelledby="pills-semua-tab">
                             <p class="mb-0 m-t-10">
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
-                                    </div>
-                                </div>
-                                <div class="collapse mt-2" id="collapse_filter">
-                                    <form action="<?php echo e(route('payroll.history', 0)); ?>" method="get" enctype="multipart/form-data" class="needs-validation" novalidate="">
-                                        <div class="row">
-                                            <div class="col-sm-2">
-                                                <label class="h6" for="nama">Bulan-Tahun</label>
-                                                <div>
-                                                    <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="<?php echo e($bulan_tahun_dari); ?>">
-                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
-                                                </div>
-                                                sampai
-                                                <div>
-                                                    <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="<?php echo e($bulan_tahun_sampai); ?>">
-                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div>
-                                                    <label class="h6 mt-2" for="nik">Karyawan</label>
-                                                    <select class="form-select js-example-basic-single col-sm-12" id="nik" name="nik" required="">
-                                                        <option selected="" disabled="" value="">Pilih...</option>
-                                                        <option value="0" <?php if(in_array('0', $_arr_nik)): ?> selected <?php endif; ?>>Semua Karyawan</option>
-                                                        <?php $__currentLoopData = $karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                        <option value="<?php echo e($data->nik); ?>" <?php if(in_array($data->nik, $_arr_nik)): ?> selected <?php endif; ?>><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
-                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                    </select>
-                                                    <div class="invalid-feedback txt-danger">Field is required.</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <label class="h6 mt-2">Status</label>&nbsp;<input type="checkbox" onClick="status_karyawan(this)" />&nbsp;Check All
-                                                <label class="d-block" for="status_karyawan">
-                                                    <?php $__currentLoopData = $status_karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <input class="checkbox_animated" id="status_karyawan[]" name="status_karyawan[]" type="checkbox" value="<?php echo e($data->status_karyawan); ?>" <?php if(in_array($data->status_karyawan, $_arr_status_karyawan)): ?> checked <?php endif; ?>> <?php echo e($data->status_karyawan); ?><br/>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                </label>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <label class="h6 mt-2">Level</label>&nbsp;<input type="checkbox" onClick="level(this)" />&nbsp;Check All
-                                                <label class="d-block" for="level">
-                                                    <?php $__currentLoopData = $level; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <input class="checkbox_animated" id="level[]" name="level[]" type="checkbox" value="<?php echo e($data->level); ?>" <?php if(in_array($data->level, $_arr_level)): ?> checked <?php endif; ?>> <?php echo e($data->level); ?><br/>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                </label>
-                                                
-                                            </div>
-                                            
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="col-sm-12">
-                                                <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
                                 <div class="table-responsive">
                                     <table class="display nowrap" id="_datatable1">
                                         <thead>
@@ -473,7 +480,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                             </p>
                         </div>
                         
-                        <div class="tab-pane fade" id="pills-kerja" role="tabpanel" aria-labelledby="pills-kerja-tab">
+                        <div class="tab-pane fade <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll_fin')): ?> show active <?php endif; ?>" id="pills-kerja" role="tabpanel" aria-labelledby="pills-kerja-tab">
                             <p class="mb-0 m-t-10">
                                 <div class="row g-3 mb-2">
                                     <form action="<?php echo e(route('payroll.upload_payroll')); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
