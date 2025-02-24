@@ -49,6 +49,22 @@ use App\Models\Level;
 class TrxPayrollController extends Controller
 {
 
+    public function set_paid_date($id)
+    {
+        // cek apakah hari ini tanggal 25
+        $today = Carbon::today();
+        if ($today->day == 25) {
+            $tgl = Carbon::parse($today)->format('Y-m-d');
+            while (!(new TrxCutiController)->isWeekend($tgl)['status'] || !(new TrxCutiController)->isHoliday($tgl)['status']) {
+                $tgl = date("Y-m-d", strtotime($tgl . "-1 day"));
+            }
+            DB::update(DB::raw("UPDATE trx_tbl_payroll SET paid_at='".Carbon::parse($tgl)->format('Y-m-d')."' WHERE bulan=".$today->month." AND tahun=".$today->year));
+            // dd($tgl);
+        }else{
+            // dd(0);
+        }
+    }
+
     public function sendEmail($mailData)
     {
         $ccEmails = explode(',', $mailData['cc']);
