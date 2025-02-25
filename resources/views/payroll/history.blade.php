@@ -205,7 +205,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Perubahan Upah</th>
                                                 @php
                                                     $where = ['tipe'=>'add'];
-                                                    $arr_id = [6,7,8,9];
+                                                    $arr_id = [6,7,8,9,21];
                                                     $add = App\Models\MtrPayrollAddsub::where($where)->whereIn('id', $arr_id)->orderBy('id', 'asc')->get();
                                                 @endphp
                                                 @foreach ($add as $data)
@@ -224,7 +224,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 $arr_id = [1,2,3,4,5];
                                                 $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
                                                 $total_tunjangan = $add->sum('angka');
-                                                $arr_id = [6,7,8,9];
+                                                $arr_id = [6,7,8,9,21];
                                                 $_add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
                                                 $_total_tunjangan = $_add->sum('angka');
                                                 // membandingkan data 1 bulan sebelumnya untuk mengecek apakah ada perubahan gapok + total_tunjangan
@@ -292,7 +292,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th id="semua_{{$x}}" class="text-end">0</th>
                                                 @endfor
                                                 <th>&nbsp;</th>
-                                                @for ($x = 14; $x <= 18; $x++)
+                                                @for ($x = 14; $x <= 19; $x++)
                                                 <th id="semua_{{$x}}" class="text-end">0</th>
                                                 @endfor
                                                 <th>&nbsp;</th>
@@ -343,7 +343,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 $arr_id = [1,2,3,4,5];
                                                 $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
                                                 $total_tunjangan = $add->sum('angka');
-                                                $arr_id = [6,7,8,9];
+                                                $arr_id = [6,7,8,9,21];
                                                 $_add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
                                                 $_total_tunjangan = $_add->sum('angka');
                                                 // 
@@ -586,7 +586,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Upah</th>
                                                 @php
                                                     $where = ['tipe'=>'add'];
-                                                    $arr_id = [6,7,8,9];
+                                                    $arr_id = [6,7,8,9,21];
                                                     $add = App\Models\MtrPayrollAddsub::where($where)->whereIn('id', $arr_id)->orderBy('id', 'asc')->get();
                                                 @endphp
                                                 @foreach ($add as $data)
@@ -619,7 +619,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 $arr_id = [1,2,3,4,5];
                                                 $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
                                                 $total_tunjangan = $add->sum('angka');
-                                                $arr_id = [6,7,8,9];
+                                                $arr_id = [6,7,8,9,21];
                                                 $_add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
                                                 $_total_tunjangan = $_add->sum('angka');
                                                 $where = ['nik'=>$data->nik];
@@ -749,12 +749,12 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>&nbsp;</th>
                                                 <th>&nbsp;</th>
                                                 <th>Rekapitulasi</th>
-                                                @for ($x = 17; $x <= 29; $x++)
+                                                @for ($x = 17; $x <= 30; $x++)
                                                 <th id="kertas_{{$x}}" class="text-end">0</th>
                                                 @endfor
                                                 <th>&nbsp;</th>
                                                 <th>&nbsp;</th>
-                                                @for ($x = 32; $x <= 44; $x++)
+                                                @for ($x = 33; $x <= 45; $x++)
                                                 <th id="kertas_{{$x}}" class="text-end">0</th>
                                                 @endfor
                                             </tr>
@@ -810,7 +810,7 @@ $('#_datatable1').DataTable( {
         page_semua_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_semua_{{$x}}) + '<br/>Total: ' + nfObject.format(semua_{{$x}});
         @endfor
-        @for ($x = 14; $x <= 18; $x++)
+        @for ($x = 14; $x <= 19; $x++)
         semua_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         page_semua_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_semua_{{$x}}) + '<br/>Total: ' + nfObject.format(semua_{{$x}});
@@ -918,13 +918,13 @@ $('#_datatable5').DataTable( {
                 ? i
                 : 0;
         };
-        @for ($x = 17; $x <= 29; $x++)
+        @for ($x = 17; $x <= 30; $x++)
         kertas_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         page_kertas_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_kertas_{{$x}}) + '<br/>Total: ' + nfObject.format(kertas_{{$x}});
         @endfor
         // 
-        @for ($x = 32; $x <= 44; $x++)
+        @for ($x = 33; $x <= 45; $x++)
         kertas_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         page_kertas_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_kertas_{{$x}}) + '<br/>Total: ' + nfObject.format(kertas_{{$x}});
