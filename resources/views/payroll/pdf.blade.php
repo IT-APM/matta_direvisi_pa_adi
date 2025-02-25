@@ -192,7 +192,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                 </tr>
                                 @php
                                 $where = ['tipe'=>'add'];
-                                $arr_id = [6,7,8,9,10,11];
+                                $arr_id = [6,7,8,9,10,11,21];
                                 $add = App\Models\MtrPayrollAddsub::where($where)->whereIn('id', $arr_id)->orderBy('id', 'asc')->get();
                                 $_total_tunjangan = 0;
                                 @endphp
