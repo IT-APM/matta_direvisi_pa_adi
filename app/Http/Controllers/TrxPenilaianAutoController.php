@@ -142,7 +142,8 @@ class TrxPenilaianAutoController extends Controller
             $trx->id_tipe = $_data->id_tipe;
             $trx->id_status = $_data->id_status;
             $trx->save();
-            $this->destroy((new OpenDataController)->encryptWithKey($_data->id));
+            // $this->destroy((new OpenDataController)->encryptWithKey($_data->id));
+            $this->destroy($_data->id);
             // maker masih di hardcode 01031908799 => khatrin hco
             (new TrxPenilaianController)->insertLog($trx->id, $_data->id_status, auth()->user()->nik);
             // 
