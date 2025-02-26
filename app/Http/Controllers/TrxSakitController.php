@@ -445,10 +445,11 @@ class TrxSakitController extends Controller
 
     public function deleteToDoList($where)
     {
-        $trx = ToDoList::where($where)->first();
-        if (!empty($trx)) {
-            $trx->delete();
-        }
+        // $trx = ToDoList::where($where)->first();
+        // if (!empty($trx)) {
+        //     $trx->delete();
+        // }
+        $trx = ToDoList::where($where)->delete();
     }
 
     public function insertLog($id_trx, $id_status, $nik_pic)

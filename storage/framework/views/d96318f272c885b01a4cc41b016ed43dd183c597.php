@@ -201,7 +201,7 @@
 
                                                                 <!--  -->
                                                                 <?php if($pic != 'nik_karyawan'): ?>
-                                                                <?php if($is_kt): ?>
+                                                                <?php if($is_kt && $pic=='nik_penilai_1'): ?>
                                                                 <tr>
                                                                     <td>
                                                                         <label class="form-label mt-2">Apakah anda akan merekomendasikan karyawan ini, jika iya maka <a href="<?php echo e(route('rekomendasi.create')); ?>" target="_blank">Klik Link Rekomendasi</a> ini.</label>
