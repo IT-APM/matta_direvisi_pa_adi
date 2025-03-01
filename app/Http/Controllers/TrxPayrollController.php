@@ -49,6 +49,8 @@ use App\Models\Level;
 class TrxPayrollController extends Controller
 {
 
+    // http://localhost/matta/payroll/set_paid_date/0
+    // https://matta-reborn.alita.id/matta/payroll/set_paid_date/0
     public function set_paid_date($id)
     {
         // cek apakah hari ini tanggal 25
@@ -60,8 +62,9 @@ class TrxPayrollController extends Controller
             }
             DB::update(DB::raw("UPDATE trx_tbl_payroll SET paid_at='".Carbon::parse($tgl)->format('Y-m-d')."' WHERE bulan=".$today->month." AND tahun=".$today->year));
             // dd($tgl);
-        }else{
+        }elseif($today->day == 1) {
             // dd(0);
+            $this->bkp(0);
         }
     }
 
@@ -343,19 +346,19 @@ class TrxPayrollController extends Controller
         $angka = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
         if ($x < 12)
             return " " . $angka[$x];
-        elseif ($x < 20)
+        elseif($x < 20)
             return $this->terbilang($x - 10) . " Belas";
-        elseif ($x < 100)
+        elseif($x < 100)
             return $this->terbilang($x / 10) . " Puluh" . $this->terbilang($x % 10);
-        elseif ($x < 200)
+        elseif($x < 200)
             return " Seratus" . $this->terbilang($x - 100);
-        elseif ($x < 1000)
+        elseif($x < 1000)
             return $this->terbilang($x / 100) . " Ratus" . $this->terbilang($x % 100);
-        elseif ($x < 2000)
+        elseif($x < 2000)
             return " Seribu" . $this->terbilang($x - 1000);
-        elseif ($x < 1000000)
+        elseif($x < 1000000)
             return $this->terbilang($x / 1000) . " Ribu" . $this->terbilang($x % 1000);
-        elseif ($x < 1000000000)
+        elseif($x < 1000000000)
             return $this->terbilang($x / 1000000) . " Juta" . $this->terbilang($x % 1000000);
     }
     
@@ -626,7 +629,7 @@ class TrxPayrollController extends Controller
         TrxPayrollAddsub::truncate();
         TrxPayrollBpjstk::truncate();
         TrxPayrollBpjskes::truncate();
-        dd('done');
+        // dd('done');
     }
     public function upsert_master(Request $request)
     {
