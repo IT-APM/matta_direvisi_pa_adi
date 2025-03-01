@@ -1109,6 +1109,108 @@ class TrxPayrollController extends Controller
                 }
                 return redirect('payroll')->with('msg', 'Data is saved successfully.');
             }
+            // upload bpjstk_past
+            elseif($jenis == 'bpjstk_past'){
+                $path = $request->file('template')->getPathname();
+                $trx = Excel::toArray([], $path);
+                // data bpjstk_past
+                $data0 = $trx[0];
+                // 101=NIP
+                // 102=Bulan
+                // 103=Tahun
+                // 301=Iuran JKK
+                // 302=Iuran JKM
+                // 303=Iuran JP PRSHN
+                // 304=Iuran JP TK
+                // 305=Iuran JHT PRSHN
+                // 306=Iuran JHT TK
+                $_101 = array_search(101, $data0[0]);
+                $_102 = array_search(102, $data0[0]);
+                $_103 = array_search(103, $data0[0]);
+                $_301 = array_search(301, $data0[0]);
+                $_302 = array_search(302, $data0[0]);
+                $_303 = array_search(303, $data0[0]);
+                $_304 = array_search(304, $data0[0]);
+                $_305 = array_search(305, $data0[0]);
+                $_306 = array_search(306, $data0[0]);
+                // dimulai dari baris ke-3
+                // data bpjstk_past
+                for ($x = 2; $x < count($data0); $x++) {
+                    // 1
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>1];
+                    $trx = TrxPayrollBpjstkLog::where($where)->first();
+                    $trx->angka = $data0[$x][$_301];
+                    $trx->update();
+                    // 2
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>2];
+                    $trx = TrxPayrollBpjstkLog::where($where)->first();
+                    $trx->angka = $data0[$x][$_302];
+                    $trx->update();
+                    // 3
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>3];
+                    $trx = TrxPayrollBpjstkLog::where($where)->first();
+                    $trx->angka = $data0[$x][$_303];
+                    $trx->update();
+                    // 4
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>4];
+                    $trx = TrxPayrollBpjstkLog::where($where)->first();
+                    $trx->angka = $data0[$x][$_304];
+                    $trx->update();
+                    // 5
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>5];
+                    $trx = TrxPayrollBpjstkLog::where($where)->first();
+                    $trx->angka = $data0[$x][$_305];
+                    $trx->update();
+                    // 6
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>6];
+                    $trx = TrxPayrollBpjstkLog::where($where)->first();
+                    $trx->angka = $data0[$x][$_306];
+                    $trx->update();
+                }
+                return redirect('payroll/history/0')->with('msg', 'Data is saved successfully.');
+            }
+            // upload bpjsks_past
+            elseif($jenis == 'bpjsks_past'){
+                $path = $request->file('template')->getPathname();
+                $trx = Excel::toArray([], $path);
+                // data bpjsks_past
+                $data0 = $trx[0];
+                // 101=NIP
+                // 102=Bulan
+                // 103=Tahun
+                // 201=Iuran Perusahaan
+                // 202=Iuran Karyawan
+                // 203=Iuran Karyawan Tambahan Anggota Keluarga
+                $_101 = array_search(101, $data0[0]);
+                $_102 = array_search(102, $data0[0]);
+                $_103 = array_search(103, $data0[0]);
+                $_201 = array_search(201, $data0[0]);
+                $_202 = array_search(202, $data0[0]);
+                $_203 = array_search(203, $data0[0]);
+                // dimulai dari baris ke-3
+                // data bpjsks_past
+                for ($x = 2; $x < count($data0); $x++) {
+                    // 1
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjskes'=>1];
+                    $trx = TrxPayrollBpjskesLog::where($where)->first();
+                    if(empty($trx)){
+                        dd($where);
+                    }
+                    $trx->angka = $data0[$x][$_201];
+                    $trx->update();
+                    // 2
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjskes'=>2];
+                    $trx = TrxPayrollBpjskesLog::where($where)->first();
+                    $trx->angka = $data0[$x][$_202];
+                    $trx->update();
+                    // 3
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjskes'=>3];
+                    $trx = TrxPayrollBpjskesLog::where($where)->first();
+                    $trx->angka = $data0[$x][$_203];
+                    $trx->update();
+                }
+                return redirect('payroll/history/0')->with('msg', 'Data is saved successfully.');
+            }
             // upload pajak
             elseif($jenis == 'pajak_present'){
                 $path = $request->file('template')->getPathname();
@@ -1155,7 +1257,7 @@ class TrxPayrollController extends Controller
                     $trx->pajak = $data0[$x][$_401];
                     $trx->update();
                 }
-                return redirect('payroll')->with('msg', 'Data is saved successfully.');
+                return redirect('payroll/history/0')->with('msg', 'Data is saved successfully.');
             }
         }
         // 
