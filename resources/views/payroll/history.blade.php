@@ -396,6 +396,22 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         {{-- bpjstk --}}
                         <div class="tab-pane fade" id="pills-bpjstk" role="tabpanel" aria-labelledby="pills-bpjstk-tab">
                             <p class="mb-0 m-t-10">
+                                <div class="row g-3 mb-2">
+                                    <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                    @csrf
+                                    <input type="hidden" id="jenis" name="jenis" value="bpjstk_past">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <input name="template" id="template" class="form-control" type="file" required="">
+                                            <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                            <br/><a href="{{ asset('assets/template/template_upload_bpjstk_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                        </div>
+                                    </div>
+                                    </form>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="display nowrap" id="_datatable3">
                                         <thead>
@@ -466,6 +482,22 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         {{-- bpjsks --}}
                         <div class="tab-pane fade" id="pills-bpjskes" role="tabpanel" aria-labelledby="pills-bpjskes-tab">
                             <p class="mb-0 m-t-10">
+                                <div class="row g-3 mb-2">
+                                    <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                    @csrf
+                                    <input type="hidden" id="jenis" name="jenis" value="bpjsks_past">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <input name="template" id="template" class="form-control" type="file" required="">
+                                            <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                            <br/><a href="{{ asset('assets/template/template_upload_bpjsks_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                        </div>
+                                    </div>
+                                    </form>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="display nowrap" id="_datatable4">
                                         <thead>
