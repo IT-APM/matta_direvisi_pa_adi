@@ -184,20 +184,40 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         <div class="tab-pane fade @can('payroll') show active @endcan" id="pills-semua" role="tabpanel" aria-labelledby="pills-semua-tab">
                             <p class="mb-0 mt-2">
                                 <div class="row g-3 mb-2">
-                                    <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
-                                    @csrf
-                                    <input type="hidden" id="jenis" name="jenis" value="trx">
-                                    <div class="row g-3">
-                                        <div class="col-md-4">
-                                            <input name="template" id="template" class="form-control" type="file" required="">
-                                            <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
-                                            <br/><a href="{{ asset('assets/template/template_import_upah_vs_potongan_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                    <div class="col-sm-6">
+                                        <h6>Upload Payroll</h6>
+                                        <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                        @csrf
+                                        <input type="hidden" id="jenis" name="jenis" value="trx">
+                                        <div class="row g-3">
+                                            <div class="col-md-8">
+                                                <input name="template" id="template" class="form-control" type="file" required="">
+                                                <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                                <br/><a href="{{ asset('assets/template/template_import_upah_vs_potongan_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                            </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
-                                        </div>
+                                        </form>
                                     </div>
-                                    </form>
+                                    <div class="col-sm-6">
+                                        <h6>Upload Tunjangan Hari Raya</h6>
+                                        <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                        @csrf
+                                        <input type="hidden" id="jenis" name="jenis" value="thr">
+                                        <div class="row g-3">
+                                            <div class="col-md-8">
+                                                <input name="template" id="template" class="form-control" type="file" required="">
+                                                <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                                <br/><a href="{{ asset('assets/template/template_upload_thr_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
                                 </div>
                                 {{--  --}}
                                 @if(count($payroll)>0)
