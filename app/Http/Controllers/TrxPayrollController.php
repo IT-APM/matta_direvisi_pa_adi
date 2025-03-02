@@ -1010,6 +1010,31 @@ class TrxPayrollController extends Controller
                 }
                 return redirect('/payroll/master/0')->with('msg', 'Data is saved successfully.');
             }
+            // upload thr
+            elseif($jenis == 'thr'){
+                $path = $request->file('template')->getPathname();
+                $trx = Excel::toArray([], $path);
+                // data thr
+                $data0 = $trx[0];
+                // 101=NIP
+                // 102=Bulan
+                // 103=Tahun
+                // 21=Tunjangan Hari Raya
+                $_101 = array_search(101, $data0[0]);
+                $_102 = array_search(102, $data0[0]);
+                $_103 = array_search(103, $data0[0]);
+                $_21 = array_search(21, $data0[0]);
+                // dimulai dari baris ke-3
+                // data thr
+                for ($x = 2; $x < count($data0); $x++) {
+                    // 21
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_addsub'=>21];
+                    $trx = TrxPayrollAddsub::where($where)->first();
+                    $trx->angka = $data0[$x][$_21];
+                    $trx->update();
+                }
+                return redirect('payroll')->with('msg', 'Data is saved successfully.');
+            }
             // upload bpjstk
             elseif($jenis == 'bpjstk'){
                 $path = $request->file('template')->getPathname();
