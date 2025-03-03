@@ -166,7 +166,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                     </div>
                     @can('payroll')
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
-                        <li class="nav-item"><a class="nav-link active" id="pills-semua-tab" data-bs-toggle="pill" href="#pills-semua" role="tab" aria-controls="pills-semua" aria-selected="true">Semua</a></li>
+                        <li class="nav-item"><a class="nav-link active" id="pills-semua-tab" data-bs-toggle="pill" href="#pills-semua" role="tab" aria-controls="pills-semua" aria-selected="true">Upah</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-potongan-tab" data-bs-toggle="pill" href="#pills-potongan" role="tab" aria-controls="pills-potongan" aria-selected="true">Potongan</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-bpjstk-tab" data-bs-toggle="pill" href="#pills-bpjstk" role="tab" aria-controls="pills-bpjstk" aria-selected="true">BPJS TK</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-bpjskes-tab" data-bs-toggle="pill" href="#pills-bpjskes" role="tab" aria-controls="pills-bpjskes" aria-selected="true">BPJS Kesehatan</a></li>
@@ -179,7 +179,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                     </ul>
                     @endcan
                     <div class="tab-content" id="pills-warningtabContent">
-                        {{-- Semua --}}
+                        {{-- Upah --}}
                         <div class="tab-pane fade @can('payroll') show active @endcan" id="pills-semua" role="tabpanel" aria-labelledby="pills-semua-tab">
                             <p class="mb-0 m-t-10">
                                 <div class="table-responsive">
