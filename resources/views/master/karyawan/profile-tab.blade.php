@@ -325,24 +325,13 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="row mt-2">
-                                        <div class="col-md-4">
-                                            <label class="form-label" for="id_grade">Grade</label>
-                                            <select class="form-select id="kode_status" name="id_grade" required="">
-                                                <option selected="" disabled="" value="">Pilih...</option>
-                                                @foreach ($id_grade as $data)
-                                                <option value="{{ $data->id }}" @if ($status=='edit' ) @if($data->id == $karyawan->id_grade) selected @endif @endif >{{ $data->grade }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
                                 </p>
                             </div>
                             <div class="tab-pane fade" id="pills-emp_salary" role="tabpanel" aria-labelledby="pills-emp_salary-tab">
                                 <p class="mb-0 mt-2">
                                     <div class="row mt-2">
                                         <div class="col-md-4">
-                                            <label class="form-label" for="kode_level">Gaji Pokok</label>
+                                            <label class="form-label" for="gaji_pokok">Gaji Pokok</label>
                                             <input id="gaji_pokok" name="gaji_pokok" min="0" class="form-control numbers" type="number" @if ($status=='edit' ) value="{{ $karyawan->gaji_pokok }}" @endif required="">
                                         </div>
                                     </div>
@@ -360,7 +349,19 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-2">
+                                            <label class="form-label" for="id_grade">Grade</label>
+                                            {{-- <input name="id_grade" id="id_grade" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->id_grade }}" @endif > --}}
+                                            <select class="form-select" id="id_grade" name="id_grade" required="">
+                                                <option selected="" value="">Pilih...</option>
+                                                @if ($status=='edit' ) 
+                                                @foreach ($id_grade as $data)
+                                                <option value="{{ $data->id }}" @if($data->id == $karyawan->id_grade) selected @endif >{{ $data->grade }}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
                                             <label class="form-label" for="kode_jabatan">Jabatan</label>
                                             <select class="form-select js-example-basic-single col-sm-12" id="kode_jabatan" name="kode_jabatan" required="">
                                                 <option selected="" disabled="" value="">Pilih...</option>
@@ -370,7 +371,7 @@
                                             </select>
                                             <div class="invalid-feedback txt-danger">Field is required.</div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <label class="form-label" for="tanggal_mulai">Tanggal Mulai Bekerja</label>
                                             <input name="tanggal_mulai" id="tanggal_mulai" class="form-control" type="date" @if ($status=='edit' ) value="{{ $karyawan->tanggal_mulai }}" @endif >
                                         </div>
@@ -748,6 +749,18 @@ $(document).ready(function() {
     var _kode_divisi = 0;
     var _kode_departemen = 0;
     var _kode_sub_departemen = 0;
+    // 
+    $("#kode_level").change(function () {
+        var kode_level = $(this).val();
+        $('#id_grade').find('option').not(':first').remove();
+        @foreach ($id_grade as $data)
+            var option = "<option value={{ $data->id }}>{{ $data->grade }}</option>";
+            if(kode_level == {{ $data->id }}){
+                option = "<option value={{ $data->id }} selected>{{ $data->grade }}</option>";
+            }
+            $("#id_grade").append(option);
+        @endforeach
+    });
     // 
     $("#kode_perusahaan").change(function() {
         var _kode_perusahaan = $(this).val();
