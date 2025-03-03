@@ -400,6 +400,7 @@ class KaryawanController extends Controller
         $karyawan->is_aktif = $request->is_aktif;
         $karyawan->gaji_pokok = $request->gaji_pokok;
         $karyawan->kode_level = $request->kode_level;
+        $karyawan->id_grade = $request->id_grade;
         $karyawan->kode_jabatan = $request->kode_jabatan;
         $karyawan->tanggal_mulai = $request->tanggal_mulai;
         $karyawan->tanggal_bergabung = $request->tanggal_bergabung;
