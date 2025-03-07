@@ -42,6 +42,7 @@
                                     <th>Jabatan</th>
                                     <th>Unit Kerja</th>
                                     <th>Created at</th>
+                                    <th>Link</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,6 +56,7 @@
                                     <td>{{ $data->jabatan }}</td>
                                     <td>{{ $data->unit_kerja }}</td>
                                     <td>{{ $data->created_at }}</td>
+                                    <td><a href="{{ $data->link }}" data-toggle="tooltip" title="Link" target="_blank"><i class="icon-eye"></i></a></td>
                                 </tr>
                                 @endforeach
                             </tbody>
