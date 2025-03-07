@@ -633,6 +633,13 @@ class OvertimeApi extends Controller
         $waktuClockout = $tgl.' '.$data['clockout'];
         $waktuClockoutDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $waktuClockout);
         $startWaktu = $waktuClockoutDateTime->addHour();
+        // start
+        // khusus jam kerja karyawan reguler Bulan Ramadhan 08-16
+        // tetapi jam overtime tetap dimulai dari jam 19 jadi ditambah 1+2 jam
+        if($data['is_reguler']==1){
+            $startWaktu = $waktuClockoutDateTime->addHour(2);
+        }
+        // end
         $fromDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $from);
         $toDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $to);
         $cek = $fromDateTime >= $startWaktu || $toDateTime < $waktuClockinDateTime;
