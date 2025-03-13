@@ -129,7 +129,7 @@ class TrxReimburseController extends Controller
     public function create(Request $request)
     {
         // if(Carbon::now()->toDateString() >= '2024-12-17' && \Carbon\Carbon::now()->toDateString() <= '2025-01-02'){
-        if(Carbon::now()->toDateString() >= '2025-03-15' && \Carbon\Carbon::now()->toDateString() <= '2025-04-08'){
+        if(Carbon::now()->toDateString() >= '2025-03-17' && \Carbon\Carbon::now()->toDateString() <= '2025-04-08'){
             return redirect('reimburse')->with('msg', 'Tidak Tersedia');
         }
         // karyawan masih di hardcode
