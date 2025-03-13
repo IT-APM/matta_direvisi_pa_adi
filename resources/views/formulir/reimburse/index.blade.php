@@ -54,7 +54,7 @@
                     @endcan
                     @if($isPlafon)
                     {{-- @if(\Carbon\Carbon::now()->toDateString() >= '2024-12-16' && \Carbon\Carbon::now()->toDateString() <= '2025-01-02') --}}
-                    @if(\Carbon\Carbon::now()->toDateString() >= '2025-03-15' && \Carbon\Carbon::now()->toDateString() <= '2025-04-08')
+                    @if(\Carbon\Carbon::now()->toDateString() >= '2025-03-17' && \Carbon\Carbon::now()->toDateString() <= '2025-04-08')
                     <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#exampleModalCenter1"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button>
                     @else
                     <a class="btn btn-primary" type="button" onclick="PilihKaryawan()"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | 
@@ -73,7 +73,7 @@
                                 {{-- <h4 class="text-center pb-2">Ohh! Something went wrong!</h4> --}}
                                 <div class="alert alert-danger">
                                     {{-- <span>Dear Insan Alita,<br/>Sehubungan dengan tutup buku tahun 2024, kami informasikan bahwa pengajuan Medical Reimbursement akan ditutup sementara mulai tanggal 17 Desember 2024 - 2 Januari 2025 dan akan dibuka kembali tanggal 3 Januari 2025.<br/>Terima kasih atas perhatiannya.</span> --}}
-                                    <span>Dear Insan Alita,<br/>Sehubungan dengan Libur Hari Raya Idul Fitri 1446H, kami informasikan bahwa pengajuan Medical Reimbursement akan ditutup sementara mulai tanggal 15 Maret 2025 - 8 April 2025 dan akan dibuka kembali tanggal 9 April 2025.<br/>Terima kasih atas perhatiannya.</span>
+                                    <span>Dear Insan Alita,<br/>Sehubungan dengan Libur Hari Raya Idul Fitri 1446H, kami informasikan bahwa pengajuan Medical Reimbursement akan ditutup sementara mulai tanggal 17 Maret 2025 - 8 April 2025 dan akan dibuka kembali tanggal 9 April 2025.<br/>Terima kasih atas perhatiannya.</span>
                                 </div>
                                 <button class="btn btn-danger d-flex m-auto" type="button" data-bs-dismiss="modal">Close</button>
                               </div>
@@ -119,7 +119,7 @@
                     @if(\Carbon\Carbon::now()->toDateString() >= '2025-03-06' && \Carbon\Carbon::now()->toDateString() <= '2025-04-08')
                     <div class="mt-2 alert alert-danger">
                         {{-- <span>Dear Insan Alita,<br/>Sehubungan dengan tutup buku tahun 2024, kami informasikan bahwa pengajuan Medical Reimbursement akan ditutup sementara mulai tanggal 17 Desember 2024 - 2 Januari 2025 dan akan dibuka kembali tanggal 3 Januari 2025.<br/>Terima kasih atas perhatiannya.</span> --}}
-                        <span>Dear Insan Alita,<br/>Sehubungan dengan Libur Hari Raya Idul Fitri 1446H, kami informasikan bahwa pengajuan Medical Reimbursement akan ditutup sementara mulai tanggal 15 Maret 2025 - 8 April 2025 dan akan dibuka kembali tanggal 9 April 2025.<br/>Terima kasih atas perhatiannya.</span>
+                        <span>Dear Insan Alita,<br/>Sehubungan dengan Libur Hari Raya Idul Fitri 1446H, kami informasikan bahwa pengajuan Medical Reimbursement akan ditutup sementara mulai tanggal 17 Maret 2025 - 8 April 2025 dan akan dibuka kembali tanggal 9 April 2025.<br/>Terima kasih atas perhatiannya.</span>
                     </div>
                     @endif
                     {{-- <br/><br/> --}}
