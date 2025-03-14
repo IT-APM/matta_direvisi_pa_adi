@@ -75,12 +75,12 @@ class AttendanceController extends Controller
         $_arr_att_data_src = Attendance::distinct()->orderBy( 'att_data_src', 'asc' )->get(['att_data_src']);
         // 0=NA
         // 3=SMS Project
-        $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy( 'nama', 'asc' )->get();
+        // $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy( 'nama', 'asc' )->get();
         $wg_id = WorkingGroup::orderBy( 'id', 'asc' )->get();
         $arr_att_type = array();
         $arr_att_status = array();
         $arr_att_data_src = array();
-        $arr_perusahaan = array();
+        // $arr_perusahaan = array();
         $arr_wg_id = array();
         foreach ($_arr_att_type as $data){
             if(!in_array($data->att_type, $arr_att_type)){
@@ -97,9 +97,9 @@ class AttendanceController extends Controller
                 array_push($arr_att_data_src, $data->att_data_src);
             }
         }
-        foreach ($perusahaan as $data){
-            array_push($arr_perusahaan, $data->id);
-        }
+        // foreach ($perusahaan as $data){
+        //     array_push($arr_perusahaan, $data->id);
+        // }
         foreach ($wg_id as $data){
             array_push($arr_wg_id, $data->id);
         }
@@ -115,7 +115,7 @@ class AttendanceController extends Controller
             $_att_type = $request->input('att_type', []);
             $_att_status = $request->input('att_status', []);
             $_att_data_src = $request->input('att_data_src', []);
-            $_perusahaan = $request->input('perusahaan', []);
+            // $_perusahaan = $request->input('perusahaan', []);
             $_wg_id = $request->input('wg_id', []);
             if(count($_att_type) > 0){
                 $arr_att_type = $_att_type;
@@ -135,25 +135,27 @@ class AttendanceController extends Controller
             else{
                 $arr_att_data_src = array();
             }
-            if(count($_perusahaan) > 0){
-                $arr_perusahaan = $_perusahaan;
-            }
-            else{
-                $arr_perusahaan = array();
-            }
+            // if(count($_perusahaan) > 0){
+            //     $arr_perusahaan = $_perusahaan;
+            // }
+            // else{
+            //     $arr_perusahaan = array();
+            // }
             if(count($_wg_id) > 0){
                 $arr_wg_id = $_wg_id;
             }
             else{
                 $arr_wg_id = array();
             }
-            $att_nik = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get();
+            // $att_nik = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get();
             $nik_wg_id = Karyawan::select('nik')->whereIn('wg_id', $arr_wg_id)->get();
-            $att = Attendance::whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+            // $att = Attendance::whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+            $att = Attendance::whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
             // start hitung durasi
             $duration = array();
             $_att_data_src = 'Regular';
-            $raw = Attendance::whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            // $raw = Attendance::whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            $raw = Attendance::whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             foreach($raw as $_raw){
                 $result = Attendance::where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 // jika non reguler
@@ -167,7 +169,8 @@ class AttendanceController extends Controller
                 }
             }
             $_att_data_src = 'Overtime';
-            $raw = Attendance::whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            // $raw = Attendance::whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            $raw = Attendance::whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             foreach($raw as $_raw){
                 $result = Attendance::where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 // jika non reguler
@@ -225,12 +228,13 @@ class AttendanceController extends Controller
             $arr_att_type = array();
             $arr_att_status = array();
             $arr_att_data_src = array();
-            $arr_perusahaan = array();
+            // $arr_perusahaan = array();
             $arr_wg_id = array();
         }
         // return response()->json( [ 'att' => $att ], 200 );
         // end filter
-        return view( 'attendance.index', compact( 'att', 'duration', 'att_type', 'att_status', 'att_data_src', 'perusahaan', 'wg_id', 'arr_att_type', 'arr_att_status', 'arr_att_data_src', 'date_from', 'date_to', 'arr_perusahaan', 'arr_wg_id' ) );
+        // return view( 'attendance.index', compact( 'att', 'duration', 'att_type', 'att_status', 'att_data_src', 'perusahaan', 'wg_id', 'arr_att_type', 'arr_att_status', 'arr_att_data_src', 'date_from', 'date_to', 'arr_perusahaan', 'arr_wg_id' ) );
+        return view( 'attendance.index', compact( 'att', 'duration', 'att_type', 'att_status', 'att_data_src', 'wg_id', 'arr_att_type', 'arr_att_status', 'arr_att_data_src', 'date_from', 'date_to', 'arr_wg_id' ) );
     }
 
     /**
