@@ -41,13 +41,7 @@
                                         <label class="h6">Date</label>
                                         <br/>From <input class="form-control" name="date_from" id="date_from" type="date" required="" value="{{ $date_from }}">
                                         To <input class="form-control" name="date_to" id="date_to" type="date" required="" value="{{ $date_to }}">
-                                        <br/>
-                                        <label class="h6">Working Group</label>&nbsp;<input type="checkbox" onClick="toggle_wg_id(this)" /> Check All
-                                        <label class="d-block" for="wg_id">
-                                            @foreach ($wg_id as $data)
-                                            <input class="checkbox_animated" id="wg_id[]" name="wg_id[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_wg_id)) checked @endif> {{ $data->wg_name }}<br/>
-                                            @endforeach
-                                        </label>
+                                        {{-- <br/> --}}
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="h6">Action</label>&nbsp;<input type="checkbox" onClick="toggle_att_type(this)" /> Check All
@@ -70,12 +64,18 @@
                                         </label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="h6">Company</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
+                                        <label class="h6">Working Group</label>&nbsp;<input type="checkbox" onClick="toggle_wg_id(this)" /> Check All
+                                        <label class="d-block" for="wg_id">
+                                            @foreach ($wg_id as $data)
+                                            <input class="checkbox_animated" id="wg_id[]" name="wg_id[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_wg_id)) checked @endif> {{ $data->wg_name }}<br/>
+                                            @endforeach
+                                        </label>
+                                        {{-- <label class="h6">Company</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
                                         <label class="d-block" for="perusahaan">
                                             @foreach ($perusahaan as $data)
                                             <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_perusahaan)) checked @endif> {{ $data->nama }}<br/>
                                             @endforeach
-                                        </label>
+                                        </label> --}}
                                     </div>
                                 </div>
                                 <div class="row">
@@ -193,9 +193,9 @@
                                         @foreach ($duration as $data)
                                             <tr>
                                                 <td>{{ ++$no }}</td>
-                                                <td>{{ $data['att_date'] }}</td>
-                                                <td>{{ $data['Clock-in'] }}</td>
-                                                <td>{{ $data['Clock-out'] }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($data['att_date']) ->format('d-m-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($data['Clock-in']) ->format('d-m-Y H:i:s') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($data['Clock-out']) ->format('d-m-Y H:i:s') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse(strtotime($data['Clock-out'])-strtotime($data['Clock-in']))->format('H:i:s') }}</td>
                                                 @php
                                                 $where = ['nik' => $data['att_nik']];
