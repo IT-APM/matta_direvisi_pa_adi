@@ -112,7 +112,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                     </div>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
-                        <li class="nav-item"><a class="nav-link active" id="pills-semua-tab" data-bs-toggle="pill" href="#pills-semua" role="tab" aria-controls="pills-semua" aria-selected="true">Semua</a></li>
+                        <li class="nav-item"><a class="nav-link active" id="pills-semua-tab" data-bs-toggle="pill" href="#pills-semua" role="tab" aria-controls="pills-semua" aria-selected="true">Upah</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-potongan-tab" data-bs-toggle="pill" href="#pills-potongan" role="tab" aria-controls="pills-potongan" aria-selected="true">Potongan</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-bpjstk-tab" data-bs-toggle="pill" href="#pills-bpjstk" role="tab" aria-controls="pills-bpjstk" aria-selected="true">BPJS TK</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-bpjskes-tab" data-bs-toggle="pill" href="#pills-bpjskes" role="tab" aria-controls="pills-bpjskes" aria-selected="true">BPJS Kesehatan</a></li>
@@ -342,6 +342,22 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         
                         <div class="tab-pane fade" id="pills-bpjstk" role="tabpanel" aria-labelledby="pills-bpjstk-tab">
                             <p class="mb-0 m-t-10">
+                                <div class="row g-3 mb-2">
+                                    <form action="<?php echo e(route('payroll.upload_payroll')); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" id="jenis" name="jenis" value="bpjstk_past">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <input name="template" id="template" class="form-control" type="file" required="">
+                                            <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                            <br/><a href="<?php echo e(asset('assets/template/template_upload_bpjstk_v1.xlsx')); ?>" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                        </div>
+                                    </div>
+                                    </form>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="display nowrap" id="_datatable3">
                                         <thead>
@@ -412,6 +428,22 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         
                         <div class="tab-pane fade" id="pills-bpjskes" role="tabpanel" aria-labelledby="pills-bpjskes-tab">
                             <p class="mb-0 m-t-10">
+                                <div class="row g-3 mb-2">
+                                    <form action="<?php echo e(route('payroll.upload_payroll')); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" id="jenis" name="jenis" value="bpjsks_past">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <input name="template" id="template" class="form-control" type="file" required="">
+                                            <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                            <br/><a href="<?php echo e(asset('assets/template/template_upload_bpjsks_v1.xlsx')); ?>" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                                        </div>
+                                    </div>
+                                    </form>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="display nowrap" id="_datatable4">
                                         <thead>
@@ -517,18 +549,24 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Status Karyawan</th>
                                                 <th>Status Aktif</th>
                                                 <th>Jabatan</th>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 <th>Level</th>
                                                 <th>Grade</th>
                                                 <th>Gaji Pokok</th>
+                                                <?php endif; ?>
                                                 <?php
                                                     $where = ['tipe'=>'add'];
                                                     $arr_id = [1,2,3,4,5];
                                                     $add = App\Models\MtrPayrollAddsub::where($where)->whereIn('id', $arr_id)->orderBy('id', 'asc')->get();
                                                 ?>
                                                 <?php $__currentLoopData = $add; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 <th><?php echo e($data->nama); ?></th>
+                                                <?php endif; ?>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 <th>Total Tunjangan</th>
+                                                <?php endif; ?>
                                                 <th>Upah</th>
                                                 <?php
                                                     $where = ['tipe'=>'add'];
@@ -539,18 +577,22 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th><?php echo e($data->nama); ?></th>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 <th>Total Upah</th>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 <th>No KPJ (BPJSTK)</th>
                                                 <th>No JKN (BPJSKS)</th>
                                                 <th>THP Dilaporkan BPJSTK</th>
                                                 <th>THP Dilaporkan BPJSKS</th>
                                                 <th>Iuran BPJSTK</th>
                                                 <th>Iuran BPJSKS</th>
+                                                <?php endif; ?>
                                                 <th>Total Iuran BPJS/ASTEK</th>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 <th>Kehamilan</th>
                                                 <th>Persalinan</th>
                                                 <th>Kacamata</th>
                                                 <th>Medical Reimburse</th>
                                                 <th>Ekses</th>
+                                                <?php endif; ?>
                                                 <th>Total Medical Cost</th>
                                                 <th>Overtime</th>
                                                 <th>PPh21</th>
@@ -626,15 +668,21 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td><?php echo e($data->status_karyawan); ?></td>
                                                 <td><?php echo e($data->status_aktif); ?></td>
                                                 <td><?php echo e($data->jabatan); ?></td>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 <td><?php echo e($data->level); ?></td>
                                                 <td><?php echo e($data->grade); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($data->gapok, 0)); ?></td>
+                                                <?php endif; ?>
                                                 
                                                 <?php $__currentLoopData = $add; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 <td class="text-end"><?php echo e(number_format($_data->angka, 0)); ?></td>
+                                                <?php endif; ?>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 
                                                 <td class="text-end"><?php echo e(number_format($total_tunjangan, 0)); ?></td>
+                                                <?php endif; ?>
                                                 
                                                 <td class="text-end"><?php echo e(number_format($data->gapok + $total_tunjangan, 0)); ?></td>
                                                 
@@ -643,10 +691,12 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 
                                                 <td class="text-end"><?php echo e(number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0)); ?></td>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 <td><?php if(!empty($mtr->no_kpj)): ?><?php echo e($mtr->no_kpj); ?><?php endif; ?></td>
                                                 <td><?php if(!empty($mtr->no_jkn)): ?><?php echo e($mtr->no_jkn); ?><?php endif; ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjstk[0]->angka, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($bpjsks[0]->angka, 0)); ?></td>
+                                                <?php endif; ?>
                                                 
                                                 <?php $__currentLoopData = $bpjstk; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <?php
@@ -654,7 +704,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                     $pot_bpjstk += $angka;
                                                 ?>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 <td class="text-end"><?php echo e(number_format($pot_bpjstk, 0)); ?></td>
+                                                <?php endif; ?>
                                                 
                                                 <?php $__currentLoopData = $bpjsks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <?php
@@ -662,14 +714,18 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                     $pot_bpjsks += $angka;
                                                 ?>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 <td class="text-end"><?php echo e(number_format($pot_bpjsks, 0)); ?></td>
+                                                <?php endif; ?>
                                                 
                                                 <td class="text-end"><?php echo e(number_format($pot_bpjstk + $pot_bpjsks, 0)); ?></td>
+                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                                 <td class="text-end"><?php echo e(number_format($kehamilan, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($persalinan, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($kacamata, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($kesehatan, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($ekses, 0)); ?></td>
+                                                <?php endif; ?>
                                                 <td class="text-end"><?php echo e(number_format($total_kesehatan, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($total_overtime, 0)); ?></td>
                                                 <td class="text-end"><?php echo e(number_format($data->pajak, 0)); ?></td>
@@ -677,6 +733,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
                                         <tfoot>
+                                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                                             <tr>
                                                 <th>&nbsp;</th>
                                                 <th>&nbsp;</th>
@@ -704,6 +761,30 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th id="kertas_<?php echo e($x); ?>" class="text-end">0</th>
                                                 <?php endfor; ?>
                                             </tr>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll_fin')): ?>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                <?php for($x = 15; $x <= 25; $x++): ?>
+                                                <th id="kertas_<?php echo e($x); ?>" class="text-end">0</th>
+                                                <?php endfor; ?>
+                                            </tr>
+                                            <?php endif; ?>
                                         </tfoot>
                                     </table>
                                 </div>
@@ -864,6 +945,7 @@ $('#_datatable5').DataTable( {
                 ? i
                 : 0;
         };
+        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
         <?php for($x = 17; $x <= 30; $x++): ?>
         kertas_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         page_kertas_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
@@ -875,6 +957,14 @@ $('#_datatable5').DataTable( {
         page_kertas_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_kertas_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(kertas_<?php echo e($x); ?>);
         <?php endfor; ?>
+        <?php endif; ?>
+        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll_fin')): ?>
+        <?php for($x = 15; $x <= 25; $x++): ?>
+        kertas_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_kertas_<?php echo e($x); ?> = api.column(<?php echo e($x); ?>, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column(<?php echo e($x); ?>).footer().innerHTML = nfObject.format(page_kertas_<?php echo e($x); ?>) + '<br/>Total: ' + nfObject.format(kertas_<?php echo e($x); ?>);
+        <?php endfor; ?>
+        <?php endif; ?>
     },
 });
 function findim_subdepartemen(source) {

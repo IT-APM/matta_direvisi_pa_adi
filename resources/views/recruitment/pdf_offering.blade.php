@@ -109,6 +109,14 @@
                         <td width="2%">:</td>
                         <td width="69%">{{ $trx->posisi }}</td>
                     </tr>
+					@php
+					$atasan = json_decode($trxM->atasan_property, true);
+					@endphp
+                    <tr>
+                        <td>Atasan Langsung</td>
+                        <td>:</td>
+                        <td>@if(!empty($atasan)){{ $atasan['nama'] . '/' . $atasan['nik'] }}@endif</td>
+                    </tr>
                     <tr>
                         <td>Area Kerja</td>
                         <td>:</td>
@@ -187,13 +195,13 @@
                         <td>Pencatatan Kepegawaian</td>
                         <td>:</td>
                         {{-- <td>{{ $trx->_catat_pegawai->pencatatan }}</td> --}}
-						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%">@if($trx->id_catat_pegawai == 1)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif ALITA</td><td width="20%">&nbsp;&nbsp;@if($trx->id_catat_pegawai == 2)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Outsource</td></tr></table></td>
+						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%">@if($trx->id_catat_pegawai == 1)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px">@else<img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px">@endif ALITA</td><td width="20%">@if($trx->id_catat_pegawai == 2)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px">@else<img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px">@endif Outsource</td></tr></table></td>
                     </tr>
                     <tr>
                         <td>Status Kepegawaian</td>
                         <td>:</td>
                         {{-- <td>{{ $trx->_status_pegawai->status }}</td> --}}
-						<td>&nbsp;<table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%">@if($trx->id_status_pegawai == 1)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Kontrak</td><td width="15%">@if($trx->id_status_pegawai == 2)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Tetap</td><td width="40%">@if($trx->id_status_pegawai == 3)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Tenaga Lepas Harian (TLH)</td><td width="25%">@if($trx->id_status_pegawai == 4)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px"> @else <img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px"> @endif Konsultan</td></tr></table></td>
+						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%">@if($trx->id_status_pegawai == 1)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px">@else<img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px">@endif Kontrak</td><td width="15%">@if($trx->id_status_pegawai == 2)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px">@else<img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px">@endif Tetap</td><td width="40%">@if($trx->id_status_pegawai == 3)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px">@else<img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px">@endif Tenaga Lepas Harian (TLH)</td><td width="25%">@if($trx->id_status_pegawai == 4)<img src="{{ public_path('assets/images/matta/check.png') }}" alt="check_uncheck" width="9px">@else<img src="{{ public_path('assets/images/matta/uncheck.png') }}" alt="check_uncheck" width="9px">@endif Konsultan</td></tr></table></td>
                     </tr>
                     <tr>
                         <td>Masa Perjanjian Kerja</td>

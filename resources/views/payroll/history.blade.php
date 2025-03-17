@@ -603,18 +603,24 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Status Karyawan</th>
                                                 <th>Status Aktif</th>
                                                 <th>Jabatan</th>
+                                                @can('payroll')
                                                 <th>Level</th>
                                                 <th>Grade</th>
                                                 <th>Gaji Pokok</th>
+                                                @endcan
                                                 @php
                                                     $where = ['tipe'=>'add'];
                                                     $arr_id = [1,2,3,4,5];
                                                     $add = App\Models\MtrPayrollAddsub::where($where)->whereIn('id', $arr_id)->orderBy('id', 'asc')->get();
                                                 @endphp
                                                 @foreach ($add as $data)
+                                                @can('payroll')
                                                 <th>{{ $data->nama }}</th>
+                                                @endcan
                                                 @endforeach
+                                                @can('payroll')
                                                 <th>Total Tunjangan</th>
+                                                @endcan
                                                 <th>Upah</th>
                                                 @php
                                                     $where = ['tipe'=>'add'];
@@ -625,18 +631,22 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>{{ $data->nama }}</th>
                                                 @endforeach
                                                 <th>Total Upah</th>
+                                                @can('payroll')
                                                 <th>No KPJ (BPJSTK)</th>
                                                 <th>No JKN (BPJSKS)</th>
                                                 <th>THP Dilaporkan BPJSTK</th>
                                                 <th>THP Dilaporkan BPJSKS</th>
                                                 <th>Iuran BPJSTK</th>
                                                 <th>Iuran BPJSKS</th>
+                                                @endcan
                                                 <th>Total Iuran BPJS/ASTEK</th>
+                                                @can('payroll')
                                                 <th>Kehamilan</th>
                                                 <th>Persalinan</th>
                                                 <th>Kacamata</th>
                                                 <th>Medical Reimburse</th>
                                                 <th>Ekses</th>
+                                                @endcan
                                                 <th>Total Medical Cost</th>
                                                 <th>Overtime</th>
                                                 <th>PPh21</th>
@@ -712,15 +722,21 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>{{ $data->status_karyawan }}</td>
                                                 <td>{{ $data->status_aktif }}</td>
                                                 <td>{{ $data->jabatan }}</td>
+                                                @can('payroll')
                                                 <td>{{ $data->level }}</td>
                                                 <td>{{ $data->grade }}</td>
                                                 <td class="text-end">{{ number_format($data->gapok, 0) }}</td>
+                                                @endcan
                                                 {{--  --}}
                                                 @foreach ($add as $_data)
+                                                @can('payroll')
                                                 <td class="text-end">{{ number_format($_data->angka, 0) }}</td>
+                                                @endcan
                                                 @endforeach
+                                                @can('payroll')
                                                 {{-- total_tunjangan --}}
                                                 <td class="text-end">{{ number_format($total_tunjangan, 0) }}</td>
+                                                @endcan
                                                 {{-- upah --}}
                                                 <td class="text-end">{{ number_format($data->gapok + $total_tunjangan, 0) }}</td>
                                                 {{--  --}}
@@ -729,10 +745,12 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 @endforeach
                                                 {{-- total upah --}}
                                                 <td class="text-end">{{ number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0) }}</td>
+                                                @can('payroll')
                                                 <td>@if(!empty($mtr->no_kpj)){{ $mtr->no_kpj }}@endif</td>
                                                 <td>@if(!empty($mtr->no_jkn)){{ $mtr->no_jkn }}@endif</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->angka, 0) }}</td>
                                                 <td class="text-end">{{ number_format($bpjsks[0]->angka, 0) }}</td>
+                                                @endcan
                                                 {{--  --}}
                                                 @foreach ($bpjstk as $_data)
                                                 @php
@@ -740,7 +758,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                     $pot_bpjstk += $angka;
                                                 @endphp
                                                 @endforeach
+                                                @can('payroll')
                                                 <td class="text-end">{{ number_format($pot_bpjstk, 0) }}</td>
+                                                @endcan
                                                 {{--  --}}
                                                 @foreach ($bpjsks as $_data)
                                                 @php
@@ -748,14 +768,18 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                     $pot_bpjsks += $angka;
                                                 @endphp
                                                 @endforeach
+                                                @can('payroll')
                                                 <td class="text-end">{{ number_format($pot_bpjsks, 0) }}</td>
+                                                @endcan
                                                 {{--  --}}
                                                 <td class="text-end">{{ number_format($pot_bpjstk + $pot_bpjsks, 0) }}</td>
+                                                @can('payroll')
                                                 <td class="text-end">{{ number_format($kehamilan, 0) }}</td>
                                                 <td class="text-end">{{ number_format($persalinan, 0) }}</td>
                                                 <td class="text-end">{{ number_format($kacamata, 0) }}</td>
                                                 <td class="text-end">{{ number_format($kesehatan, 0) }}</td>
                                                 <td class="text-end">{{ number_format($ekses, 0) }}</td>
+                                                @endcan
                                                 <td class="text-end">{{ number_format($total_kesehatan, 0) }}</td>
                                                 <td class="text-end">{{ number_format($total_overtime, 0) }}</td>
                                                 <td class="text-end">{{ number_format($data->pajak, 0) }}</td>
@@ -763,6 +787,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             @endforeach
                                         </tbody>
                                         <tfoot>
+                                            @can('payroll')
                                             <tr>
                                                 <th>&nbsp;</th>
                                                 <th>&nbsp;</th>
@@ -790,6 +815,30 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th id="kertas_{{$x}}" class="text-end">0</th>
                                                 @endfor
                                             </tr>
+                                            @endcan
+                                            {{--  --}}
+                                            @can('payroll_fin')
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>&nbsp;</th>
+                                                <th>Rekapitulasi</th>
+                                                @for ($x = 15; $x <= 25; $x++)
+                                                <th id="kertas_{{$x}}" class="text-end">0</th>
+                                                @endfor
+                                            </tr>
+                                            @endcan
                                         </tfoot>
                                     </table>
                                 </div>
@@ -950,6 +999,8 @@ $('#_datatable5').DataTable( {
                 ? i
                 : 0;
         };
+        // 
+        @can('payroll')
         @for ($x = 17; $x <= 30; $x++)
         kertas_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         page_kertas_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
@@ -961,6 +1012,15 @@ $('#_datatable5').DataTable( {
         page_kertas_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_kertas_{{$x}}) + '<br/>Total: ' + nfObject.format(kertas_{{$x}});
         @endfor
+        @endcan
+        // 
+        @can('payroll_fin')
+        @for ($x = 15; $x <= 25; $x++)
+        kertas_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_kertas_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column({{$x}}).footer().innerHTML = nfObject.format(page_kertas_{{$x}}) + '<br/>Total: ' + nfObject.format(kertas_{{$x}});
+        @endfor
+        @endcan
     },
 });
 function findim_subdepartemen(source) {

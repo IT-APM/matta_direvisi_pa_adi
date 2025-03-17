@@ -40,13 +40,7 @@
                                         <label class="h6">Date</label>
                                         <br/>From <input class="form-control" name="date_from" id="date_from" type="date" required="" value="<?php echo e($date_from); ?>">
                                         To <input class="form-control" name="date_to" id="date_to" type="date" required="" value="<?php echo e($date_to); ?>">
-                                        <br/>
-                                        <label class="h6">Working Group</label>&nbsp;<input type="checkbox" onClick="toggle_wg_id(this)" /> Check All
-                                        <label class="d-block" for="wg_id">
-                                            <?php $__currentLoopData = $wg_id; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <input class="checkbox_animated" id="wg_id[]" name="wg_id[]" type="checkbox" value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, $arr_wg_id)): ?> checked <?php endif; ?>> <?php echo e($data->wg_name); ?><br/>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </label>
+                                        
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="h6">Action</label>&nbsp;<input type="checkbox" onClick="toggle_att_type(this)" /> Check All
@@ -69,12 +63,13 @@
                                         </label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="h6">Company</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
-                                        <label class="d-block" for="perusahaan">
-                                            <?php $__currentLoopData = $perusahaan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, $arr_perusahaan)): ?> checked <?php endif; ?>> <?php echo e($data->nama); ?><br/>
+                                        <label class="h6">Working Group</label>&nbsp;<input type="checkbox" onClick="toggle_wg_id(this)" /> Check All
+                                        <label class="d-block" for="wg_id">
+                                            <?php $__currentLoopData = $wg_id; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <input class="checkbox_animated" id="wg_id[]" name="wg_id[]" type="checkbox" value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, $arr_wg_id)): ?> checked <?php endif; ?>> <?php echo e($data->wg_name); ?><br/>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </label>
+                                        
                                     </div>
                                 </div>
                                 <div class="row">
@@ -192,9 +187,9 @@
                                         <?php $__currentLoopData = $duration; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <tr>
                                                 <td><?php echo e(++$no); ?></td>
-                                                <td><?php echo e($data['att_date']); ?></td>
-                                                <td><?php echo e($data['Clock-in']); ?></td>
-                                                <td><?php echo e($data['Clock-out']); ?></td>
+                                                <td><?php echo e(\Carbon\Carbon::parse($data['att_date']) ->format('d-m-Y')); ?></td>
+                                                <td><?php echo e(\Carbon\Carbon::parse($data['Clock-in']) ->format('d-m-Y H:i:s')); ?></td>
+                                                <td><?php echo e(\Carbon\Carbon::parse($data['Clock-out']) ->format('d-m-Y H:i:s')); ?></td>
                                                 <td><?php echo e(\Carbon\Carbon::parse(strtotime($data['Clock-out'])-strtotime($data['Clock-in']))->format('H:i:s')); ?></td>
                                                 <?php
                                                 $where = ['nik' => $data['att_nik']];

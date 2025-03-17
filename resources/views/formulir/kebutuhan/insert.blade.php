@@ -45,11 +45,21 @@
                                                 ({{ $data->_bidang->bidang }})</option>
                                             @endforeach
                                         </select>
-                                        <div class="invalid-feedback txt-danger">Nama Jabatan is required.</div>
+                                        <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
                                     <div class="col-md-2 pb-2 text-end">
                                         <a class="btn btn-primary" href="{{ route('pekerjaan_master.index') }}" data-toggle="tooltip" title="Add new"><i class="fa fa-plus"></i></a>
                                     </div>
+                                </div>
+                                <div class="col-md-12 pb-2">
+                                    <label class="form-label" for="atasan">Atasan Langsung*</label>
+                                    <select class="form-select js-example-basic-single col-sm-12" id="atasan" name="atasan" required="">
+                                        <option selected="" disabled="" value="">Pilih...</option>
+                                        @foreach ($atasan as $data)
+                                        <option value="{{ $data->nik }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="invalid-feedback txt-danger">This field is required.</div>
                                 </div>
                                 <div class="col-md-12 pb-2">
                                     <label class="form-label" for="tugas">Tugas*</label>
@@ -130,7 +140,7 @@
                                         <option value="{{ $data->nik }}">{{ $data->nama }} - {{ $data->nik }}</option>
                                         @endforeach
                                     </select>
-                                    <div class="invalid-feedback txt-danger">Karyawan Penggantian is required.</div>
+                                    <div class="invalid-feedback txt-danger">This field is required.</div>
                                 </div>
                                 <div class="col-md-12 pb-2">
                                     <label class="form-label" for="id_rencana">Apakah sudah masuk dalam rencana <span id="str_jenis_permintaan" name="str_jenis_permintaan">penambahan</span> pegawai?*</label>
@@ -271,7 +281,7 @@
                                             <option value="{{ $data->id }}">{{ $data->project_id }} - {{ $data->project_desc }}</option>
                                             @endforeach
                                         </select>
-                                        <div class="invalid-feedback txt-danger">Project is required.</div>
+                                        <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label" for="findim_divisi">Divisi</label>
@@ -281,7 +291,7 @@
                                             <option value="{{ $data->id }}">{{ $data->divisi_id }} - {{ $data->divisi_desc }}</option>
                                             @endforeach
                                         </select>
-                                        <div class="invalid-feedback txt-danger">Divisi is required.</div>
+                                        <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label" for="findim_departemen">Departemen</label>
@@ -291,7 +301,7 @@
                                             <option value="{{ $data->id }}">{{ $data->departemen_id }} - {{ $data->departemen_desc }}</option>
                                             @endforeach
                                         </select>
-                                        <div class="invalid-feedback txt-danger">Departemen is required.</div>
+                                        <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label" for="findim_subdepartemen">Sub Departemen</label>
@@ -301,7 +311,7 @@
                                             <option value="{{ $data->id }}">{{ $data->subdepartemen_id }} - {{ $data->subdepartemen_desc }}</option>
                                             @endforeach
                                         </select>
-                                        <div class="invalid-feedback txt-danger">Sub Departemen is required.</div>
+                                        <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
                                 </div>
                             </div>
@@ -318,14 +328,14 @@
                                         <select class="form-select js-example-basic-single col-sm-12" id="layer1" name="layer1" required="">
                                             <option selected="" disabled="" value="">Pilih...</option>
                                         </select>
-                                        <div class="invalid-feedback txt-danger">Layer 1 is required.</div>
+                                        <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
                                     <div class="col-md-6 pb-2">
                                         <label class="form-label" for="layer2">Layer 2*</label>
                                         <select class="form-select js-example-basic-single col-sm-12" id="layer2" name="layer2" required="">
                                             <option selected="" disabled="" value="">Pilih...</option>
                                         </select>
-                                        <div class="invalid-feedback txt-danger">Layer 2 is required.</div>
+                                        <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
                                 </div>
                             </div>

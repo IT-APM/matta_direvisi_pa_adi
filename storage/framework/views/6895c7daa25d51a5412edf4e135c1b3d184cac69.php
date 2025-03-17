@@ -39,22 +39,44 @@
                                     <th>#ID</th>
                                     <th>Formulir</th>
                                     <th>Nama</th>
+                                    <?php if(in_array($trx[0]->filename, ['emails.penilaian0','emails.penilaian0_outsourcing'])): ?>
+                                    <th>NIP</th>
+                                    <?php endif; ?>
                                     <th>Jabatan</th>
                                     <th>Unit Kerja</th>
+                                    <?php if(in_array($trx[0]->filename, ['emails.penilaian0','emails.penilaian0_outsourcing'])): ?>
+                                    <th>Nilai Total Penilai 1</th>
+                                    <?php endif; ?>
                                     <th>Created at</th>
+                                    <th>Link</th>
+                                    <th>#</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php $no=0 ?>
                                 <?php $__currentLoopData = $trx; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php
+                                    $penilaian = App\Models\TrxPenilaian::find($data->id_trx);
+                                    // Nilai Total Penilai 1
+                                    $_where = ['id_trx' => $data->id_trx];
+                                    $skor_penilai_1 = App\Models\TrxPenilaianSkor::where($_where)->sum('skor_penilai_1');
+                                ?>
                                 <tr>
                                     <td><?php echo e(++$no); ?></td>
                                     <td><?php echo e($data->id_trx); ?></td>
                                     <td><?php echo e($data->title); ?></td>
                                     <td><?php echo e($data->nama); ?></td>
+                                    <?php if(in_array($data->filename, ['emails.penilaian0','emails.penilaian0_outsourcing'])): ?>
+                                    <td><?php echo e($penilaian->nik_karyawan); ?></td>
+                                    <?php endif; ?>
                                     <td><?php echo e($data->jabatan); ?></td>
                                     <td><?php echo e($data->unit_kerja); ?></td>
+                                    <?php if(in_array($data->filename, ['emails.penilaian0','emails.penilaian0_outsourcing'])): ?>
+                                    <td><?php echo e($skor_penilai_1); ?></td>
+                                    <?php endif; ?>
                                     <td><?php echo e($data->created_at); ?></td>
+                                    <td><a href="<?php echo e($data->link); ?>" data-toggle="tooltip" title="Link" target="_blank"><i class="icon-eye"></i></a></td>
+                                    <td><?php echo e($data->link); ?></td>
                                 </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>

@@ -74,6 +74,7 @@
                         // 17=Negotiation Deal by Candidate
                         // 18=Negotiation No Deal by Candidate
                         $nego_log = App\Models\TrxRecruitmentNegosiasiLog::where(['id_identitas'=>$nego->id_identitas])->whereIn('id_status', [17,18])->orderBy('id', 'desc')->first();
+                        $atasan = json_decode($trxM->atasan_property, true);
                         ?>
                         <?php if(!empty($nego_log)): ?>
                         <div class="col-12 col-md-12">
@@ -81,19 +82,27 @@
                         </div>
                         <hr class="mt-2 mb-2" />
                         <div class="row">
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-6">
                                 <div class="col-12 mb-2">
                                     <label class="form-label" for="posisi">Posisi / Jabatan</label>
                                     <input class="form-control" type="text" readonly="" value="<?php echo e($nego_log->posisi); ?>">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-6">
                                 <div class="col-12 mb-2">
                                     <label class="form-label" for="area_kerja">Area Kerja</label>
                                     <input class="form-control" type="text" readonly="" value="<?php echo e($nego_log->area_kerja); ?>">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4">
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="col-12 mb-2">
+                                    <label class="form-label" for="atasan">Atasan Langsung</label>
+                                    <input class="form-control" type="text" readonly="" <?php if(!empty($atasan)): ?>value="<?php echo e($atasan['nama'] . '/' . $atasan['nik']); ?>"<?php endif; ?>>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <div class="col-12 mb-2">
                                     <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
                                     <input class="form-control" type="text" readonly="" value="<?php echo e($nego_log->divisi); ?>">
@@ -105,7 +114,7 @@
                         </div>
                         <hr class="mt-2 mb-2" />
                         <div class="row">
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-6">
                                 <div class="col-12 mb-2">
                                     <label class="form-label" for="thp">Take Home Pay (THP)</label>
                                     <input class="form-control" type="text" readonly="" value="Rp. <?php echo e(number_format($nego_log->thp, 0)); ?>">
@@ -115,13 +124,13 @@
                             $benefit_utama = App\Models\MtrRecruitmentBenefit::whereIn('id', explode(',', $nego_log->benefit_utama))->orderBy('benefit', 'asc')->pluck('benefit')->toArray();
                             $benefit_utama = implode('&#13;&#10;', $benefit_utama);
                             ?>
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-6">
                                 <div class="col-12 mb-2">
                                     <label class="form-label" for="benefit_utama">Benefit</label>
                                     <textarea class="form-control" rows="5" readonly=""><?php echo $benefit_utama; ?></textarea>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-12">
                                 <div class="col-12 mb-2">
                                     <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
                                     <input class="form-control" type="text" readonly="" value="<?php echo e($nego_log->benefit_lainnya); ?>">
@@ -460,6 +469,7 @@
                             <div class="row">
                                 <?php
                                 $pengaju = json_decode($trxM->pengaju_property, true);
+                                $atasan = json_decode($trxM->atasan_property, true);
                                 ?>
                                 <div class="col-12 col-md-12">
                                     <h6 class="text-center">ORGANISASI</h6>
@@ -476,7 +486,13 @@
                                         <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="<?php echo e($trxM->_area->propinsi); ?>">
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-12">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="atasan">Atasan Langsung</label>
+                                        <input class="form-control" name="atasan" id="atasan" type="text" readonly="" <?php if(!empty($atasan)): ?>value="<?php echo e($atasan['nama'] . '/' . $atasan['nik']); ?>"<?php endif; ?>>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
                                         <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
                                         <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="<?php echo e($pengaju['divisi'] . '/' . $pengaju['dep'] . '/' . $pengaju['sub_dep']); ?>">
@@ -799,7 +815,7 @@
                             <input type="hidden" id="id_status" name="id_status" value="24">
                             <input type="hidden" id="back_url" name="back_url" value="<?php echo e(URL::full()); ?>">
                             <div class="row">
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-12">
                                     <div class="col-12 mb-2">
                                         <label class="form-label" for="id_join">Status</label>
                                         <select class="js-example-basic-multiple col-sm-12" id="id_join[]" name="id_join[]" required="" multiple="multiple">
@@ -842,7 +858,7 @@
                             <input type="hidden" id="id_status" name="id_status" value="25">
                             <input type="hidden" id="back_url" name="back_url" value="<?php echo e(URL::full()); ?>">
                             <div class="row">
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-12">
                                     <div class="col-12 mb-2">
                                         <label class="form-label" for="id_join">Status</label>
                                         <select class="js-example-basic-multiple col-sm-12" id="id_join[]" name="id_join[]" required="" multiple="multiple">

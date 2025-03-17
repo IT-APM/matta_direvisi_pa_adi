@@ -325,24 +325,13 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="row mt-2">
-                                        <div class="col-md-4">
-                                            <label class="form-label" for="id_grade">Grade</label>
-                                            <select class="form-select id="kode_status" name="id_grade" required="">
-                                                <option selected="" disabled="" value="">Pilih...</option>
-                                                <?php $__currentLoopData = $id_grade; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($data->id); ?>" <?php if($status=='edit' ): ?> <?php if($data->id == $karyawan->id_grade): ?> selected <?php endif; ?> <?php endif; ?> ><?php echo e($data->grade); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-                                        </div>
-                                    </div>
                                 </p>
                             </div>
                             <div class="tab-pane fade" id="pills-emp_salary" role="tabpanel" aria-labelledby="pills-emp_salary-tab">
                                 <p class="mb-0 mt-2">
                                     <div class="row mt-2">
                                         <div class="col-md-4">
-                                            <label class="form-label" for="kode_level">Gaji Pokok</label>
+                                            <label class="form-label" for="gaji_pokok">Gaji Pokok</label>
                                             <input id="gaji_pokok" name="gaji_pokok" min="0" class="form-control numbers" type="number" <?php if($status=='edit' ): ?> value="<?php echo e($karyawan->gaji_pokok); ?>" <?php endif; ?> required="">
                                         </div>
                                     </div>
@@ -360,7 +349,19 @@
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-2">
+                                            <label class="form-label" for="id_grade">Grade</label>
+                                            
+                                            <select class="form-select" id="id_grade" name="id_grade" required="">
+                                                <option selected="" value="">Pilih...</option>
+                                                <?php if($status=='edit' ): ?> 
+                                                <?php $__currentLoopData = $id_grade; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($data->id); ?>" <?php if($data->id == $karyawan->id_grade): ?> selected <?php endif; ?> ><?php echo e($data->grade); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php endif; ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
                                             <label class="form-label" for="kode_jabatan">Jabatan</label>
                                             <select class="form-select js-example-basic-single col-sm-12" id="kode_jabatan" name="kode_jabatan" required="">
                                                 <option selected="" disabled="" value="">Pilih...</option>
@@ -370,7 +371,7 @@
                                             </select>
                                             <div class="invalid-feedback txt-danger">Field is required.</div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <label class="form-label" for="tanggal_mulai">Tanggal Mulai Bekerja</label>
                                             <input name="tanggal_mulai" id="tanggal_mulai" class="form-control" type="date" <?php if($status=='edit' ): ?> value="<?php echo e($karyawan->tanggal_mulai); ?>" <?php endif; ?> >
                                         </div>
@@ -748,6 +749,18 @@ $(document).ready(function() {
     var _kode_divisi = 0;
     var _kode_departemen = 0;
     var _kode_sub_departemen = 0;
+    // 
+    $("#kode_level").change(function () {
+        var kode_level = $(this).val();
+        $('#id_grade').find('option').not(':first').remove();
+        <?php $__currentLoopData = $id_grade; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            var option = "<option value=<?php echo e($data->id); ?>><?php echo e($data->grade); ?></option>";
+            if(kode_level == <?php echo e($data->id); ?>){
+                option = "<option value=<?php echo e($data->id); ?> selected><?php echo e($data->grade); ?></option>";
+            }
+            $("#id_grade").append(option);
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    });
     // 
     $("#kode_perusahaan").change(function() {
         var _kode_perusahaan = $(this).val();

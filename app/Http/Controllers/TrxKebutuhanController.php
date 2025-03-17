@@ -148,7 +148,9 @@ class TrxKebutuhanController extends Controller
         $findim_divisi = MtrFindimDivisi::all();
         $findim_departemen = MtrFindimDepartemen::all();
         $findim_subdepartemen = MtrFindimSubdepartemen::all();
-        return view('formulir.kebutuhan.insert', compact('karyawan', 'pekerjaan', 'level', 'status_kerja', 'kelamin', 'area', 'kota', 'jenis_permintaan', 'jenjang_pendidikan', 'jurusan_pendidikan', 'pengalaman_kerja', 'pelatihan', 'sertifikasi', 'keterampilan', 'kepribadian', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen'));
+        // atasan langsung dengan level minimal 3 = Supervisor (SPV)
+        $atasan = Karyawan::select('nik', 'nama')->where(['is_aktif' => 1])->where('kode_level','>=',3)->orderBy('nama', 'asc')->get();
+        return view('formulir.kebutuhan.insert', compact('karyawan', 'pekerjaan', 'level', 'status_kerja', 'kelamin', 'area', 'kota', 'jenis_permintaan', 'jenjang_pendidikan', 'jurusan_pendidikan', 'pengalaman_kerja', 'pelatihan', 'sertifikasi', 'keterampilan', 'kepribadian', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen', 'atasan'));
     }
 
     /**
@@ -166,18 +168,22 @@ class TrxKebutuhanController extends Controller
         $pengaju = auth()->user()->nik;
         $layer1 = $request->layer1;
         $layer2 = $request->layer2;
+        $atasan = $request->atasan;
         // 
         $pengaju_property = $this->getNikProperty($pengaju);
         $layer1_property = $this->getNikProperty($layer1);
         $layer2_property = $this->getNikProperty($layer2);
+        $atasan_property = $this->getNikProperty($atasan);
         // 
         $trxM = new TrxKebutuhanMaster;
         $trxM->pengaju = $pengaju;
         $trxM->layer1 = $layer1;
         $trxM->layer2 = $layer2;
+        $trxM->atasan = $atasan;
         $trxM->pengaju_property = $pengaju_property;
         $trxM->layer1_property = $layer1_property;
         $trxM->layer2_property = $layer2_property;
+        $trxM->atasan_property = $atasan_property;
         // 
         $id_pekerjaan = $request->id_pekerjaan;
         $trxM->id_pekerjaan = $id_pekerjaan;

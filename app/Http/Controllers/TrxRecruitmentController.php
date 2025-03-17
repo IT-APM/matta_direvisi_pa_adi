@@ -530,12 +530,13 @@ class TrxRecruitmentController extends Controller
         $id = Crypt::decrypt($id)[0];
         // dd($id);
         $_trx = TrxRecruitmentIdentitas::find($id);
+        $trxM = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
         // 12=Negotiation Process
         // 21=Re-Negotiation Process
         if(in_array($_trx->id_status, [12,21])){
             $trx = TrxRecruitmentNegosiasi::where(['id_identitas'=>$id])->first();
             $log = TrxRecruitmentNegosiasiLog::where(['id_identitas'=>$id])->whereIn('id_status', [12,21])->orderBy('id', 'desc')->first();
-            return view('recruitment.negotiation_process', compact('trx', 'log', '_trx'));
+            return view('recruitment.negotiation_process', compact('trx', 'log', '_trx', 'trxM'));
         }else{
             $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan Hormat,</p>
             <p>Proses saat ini tidak/belum tersedia.</p>
@@ -785,8 +786,9 @@ class TrxRecruitmentController extends Controller
     {
         $id = Crypt::decrypt($id)[0];
         $_trx = TrxRecruitmentIdentitas::find($id);
+        $trxM = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
         $trx = TrxRecruitmentNegosiasi::where(['id_identitas'=>$id])->first();
-        return view('recruitment.get_offering', compact('trx', '_trx'));
+        return view('recruitment.get_offering', compact('trx', '_trx', 'trxM'));
     }
 
     public function download_offering($id)
@@ -794,13 +796,14 @@ class TrxRecruitmentController extends Controller
         $id = Crypt::decrypt($id);
         // dd($id);
         $_trx = TrxRecruitmentIdentitas::find($id);
+        $trxM = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
         $trx = TrxRecruitmentNegosiasi::where(['id_identitas'=>$id])->first();
         $filename = $id . '_offering.pdf';
         $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf::SetTitle('Offering Letter');
         $pdf::SetFont('times', '', 10, '', true);
         $pdf::AddPage();
-        $html = \View::make('recruitment.pdf_offering', compact('trx', '_trx'))->render();
+        $html = \View::make('recruitment.pdf_offering', compact('trx', '_trx', 'trxM'))->render();
         $pdf::writeHTML($html, true, false, true, false, '');
         $pdf::Output(public_path($filename), 'I');
         return response()->download(public_path($filename));
@@ -1050,6 +1053,7 @@ class TrxRecruitmentController extends Controller
             $_trx->id_status = $id_status;
             $_trx->update();
             $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
+            $atasan = json_decode($_trx_->atasan_property, true);
             $posisi = $_trx_->_pekerjaan->pekerjaan;
             $bagian = json_decode($_trx_->pengaju_property, true);
             $bagian = $bagian['divisi'].'/'.$bagian['dep'].'/'.$bagian['sub_dep'];
@@ -1068,6 +1072,40 @@ class TrxRecruitmentController extends Controller
                 $mailData['filename'] = 'emails.recruitment0';
                 $mailData['to'] = $_trx->email;
                 $this->sendEmail($mailData);
+                // kirim email ke atasan langsung jika ada
+                // <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut dan klik link berikut untuk melakukan persetujuan<br/><a href="'.$link.'" data-toggle="tooltip" title="Link Persetujuan">Link Persetujuan</a>.</p>
+                if(!empty($atasan)){
+                    $link = route('recruitment.get_offering', [Crypt::encrypt([$_trx->id, 'view'])]);
+                    $msg = '<p>Yth. '.$atasan['nama'].',<br/>Dengan hormat,</p>
+                    <p>Kami informasikan bahwa proses negosiasi atas Formulir Kebutuhan Karyawan nomor '.$_trx->id.' telah dilakukan dan disetujui oleh calon karyawan atas nama berikut:</p>
+                    <table border="0" cellpadding="1" cellspacing="1">	
+                        <tr>
+                            <td width="150">Nama</td>
+                            <td width="5">:</td>
+                            <td>'.$_trx->nama.'</td>
+                        </tr>
+                        <tr>
+                            <td>Posisi</td>
+                            <td>:</td>
+                            <td>'.$posisi.'</td>
+                        </tr>
+                        <tr>
+                            <td>Tanggal Bergabung</td>
+                            <td>:</td>
+                            <td>'.Carbon::parse($nego->tgl_bergabung)->format('d-m-Y').'</td>
+                        </tr>
+                </table>
+                    <p>Calon karyawan tersebut telah melalui seluruh tahapan seleksi, termasuk seleksi CV, wawancara HC, wawancara user, Psikotest, dll., dan dinyatakan memenuhi kualifikasi yang dibutuhkan.</p>
+                    <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut.</p>
+                    <p>Demikian informasi ini kami sampaikan untuk diketahui. Jika terdapat perkembangan lebih lanjut, kami akan memberikan pembaruan.<br/>Terima kasih.</p>
+                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                    // parameter yang dipassing ke sendemail
+                    $mailData['title'] = 'Pemberitahuan Proses Seleksi Penerimaan Karyawan';
+                    $mailData['data'] = ['msg'=>$msg];
+                    $mailData['filename'] = 'emails.recruitment0';
+                    $mailData['to'] = $atasan['email'];
+                    $this->sendEmail($mailData);
+                }
             }
             // 25=Not Join
             elseif($id_status == 25){

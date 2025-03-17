@@ -78,19 +78,28 @@
                     </div>
                     <hr class="mt-2 mb-2" />
                     <div class="row">
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-3">
                             <div class="col-12 mb-2">
                                 <label class="form-label" for="posisi">Posisi / Jabatan</label>
                                 <input class="form-control" name="posisi" id="posisi" type="text" readonly="" value="<?php echo e($trx->posisi); ?>">
                             </div>
                         </div>
-                        <div class="col-12 col-md-4">
+                        <?php
+                        $atasan = json_decode($trxM->atasan_property, true);
+                        ?>
+                        <div class="col-12 col-md-3">
+                            <div class="col-12 mb-2">
+                                <label class="form-label" for="atasan">Atasan Langsung</label>
+                                <input class="form-control" name="atasan" id="atasan" type="text" readonly="" <?php if(!empty($atasan)): ?>value="<?php echo e($atasan['nama'] . '/' . $atasan['nik']); ?>"<?php endif; ?>>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3">
                             <div class="col-12 mb-2">
                                 <label class="form-label" for="area_kerja">Area Kerja</label>
                                 <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="<?php echo e($trx->area_kerja); ?>">
                             </div>
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-3">
                             <div class="col-12 mb-2">
                                 <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
                                 <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="<?php echo e($trx->divisi); ?>">

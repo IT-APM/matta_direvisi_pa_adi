@@ -109,6 +109,14 @@
                         <td width="2%">:</td>
                         <td width="69%"><?php echo e($trx->posisi); ?></td>
                     </tr>
+					<?php
+					$atasan = json_decode($trxM->atasan_property, true);
+					?>
+                    <tr>
+                        <td>Atasan Langsung</td>
+                        <td>:</td>
+                        <td><?php if(!empty($atasan)): ?><?php echo e($atasan['nama'] . '/' . $atasan['nik']); ?><?php endif; ?></td>
+                    </tr>
                     <tr>
                         <td>Area Kerja</td>
                         <td>:</td>
@@ -187,13 +195,13 @@
                         <td>Pencatatan Kepegawaian</td>
                         <td>:</td>
                         
-						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%"><?php if($trx->id_catat_pegawai == 1): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> ALITA</td><td width="20%">&nbsp;&nbsp;<?php if($trx->id_catat_pegawai == 2): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Outsource</td></tr></table></td>
+						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%"><?php if($trx->id_catat_pegawai == 1): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"><?php else: ?><img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"><?php endif; ?> ALITA</td><td width="20%"><?php if($trx->id_catat_pegawai == 2): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"><?php else: ?><img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"><?php endif; ?> Outsource</td></tr></table></td>
                     </tr>
                     <tr>
                         <td>Status Kepegawaian</td>
                         <td>:</td>
                         
-						<td>&nbsp;<table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%"><?php if($trx->id_status_pegawai == 1): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Kontrak</td><td width="15%"><?php if($trx->id_status_pegawai == 2): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Tetap</td><td width="40%"><?php if($trx->id_status_pegawai == 3): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Tenaga Lepas Harian (TLH)</td><td width="25%"><?php if($trx->id_status_pegawai == 4): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"> <?php else: ?> <img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"> <?php endif; ?> Konsultan</td></tr></table></td>
+						<td><table width="100%" cellspacing="0" cellpadding="0"><tr><td width="20%"><?php if($trx->id_status_pegawai == 1): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"><?php else: ?><img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"><?php endif; ?> Kontrak</td><td width="15%"><?php if($trx->id_status_pegawai == 2): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"><?php else: ?><img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"><?php endif; ?> Tetap</td><td width="40%"><?php if($trx->id_status_pegawai == 3): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"><?php else: ?><img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"><?php endif; ?> Tenaga Lepas Harian (TLH)</td><td width="25%"><?php if($trx->id_status_pegawai == 4): ?><img src="<?php echo e(public_path('assets/images/matta/check.png')); ?>" alt="check_uncheck" width="9px"><?php else: ?><img src="<?php echo e(public_path('assets/images/matta/uncheck.png')); ?>" alt="check_uncheck" width="9px"><?php endif; ?> Konsultan</td></tr></table></td>
                     </tr>
                     <tr>
                         <td>Masa Perjanjian Kerja</td>
