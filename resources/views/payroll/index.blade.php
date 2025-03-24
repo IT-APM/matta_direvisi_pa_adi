@@ -275,12 +275,14 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 @endforeach
                                                 <th>Total Upah</th>
                                                 <th>Dibayarkan Tanggal</th>
+                                                <th>Slip Gaji</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @php
                                                 $no=0;
+                                                $hco = explode(',', App\Models\MtrUtility::find(32)->informasi);
                                             @endphp
                                             @foreach ($payroll as $data)
                                             @php
@@ -341,6 +343,11 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 {{-- total upah --}}
                                                 <td class="text-end">{{ number_format($data->gapok + $total_tunjangan + $_total_tunjangan, 0) }}</td>
                                                 <td>@if(!empty($data->paid_at)){{ Carbon\Carbon::parse($data->paid_at)->format("d-m-Y") }}@endif</td>
+                                                @if(in_array(auth()->user()->nik, $hco))
+                                                <td><a href="{{ route('payroll.slip.detail', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => 'pdf']) }}" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>
+                                                @else
+                                                <td>&nbsp;</td>
+                                                @endif
                                                 <td>
                                                     <form action="{{ route('payroll.destroy',[6, 'tipe'=>'del_trxpayroll', 'id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" method="POST">
                                                         @csrf
@@ -495,9 +502,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Upah Sekarang</th>
-                                                <th>Upah Maksimum</th>
-                                                <th>Upah Perhitungan</th>
+                                                <th>Upah</th>
+                                                <th>Upah Dilaporkan BPJS TK</th>
+                                                <th>Upah JP Maksimum</th>
                                                 @php
                                                     $arr = App\Models\MtrPayrollBpjstk::orderBy('id', 'asc')->get();
                                                 @endphp
@@ -522,8 +529,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->upah, 0) }}</td>
-                                                <td class="text-end">{{ number_format($bpjstk[0]->maksimal, 0) }}</td>
-                                                <td class="text-end">@if($bpjstk[0]->upah > $bpjstk[0]->maksimal){{ number_format($bpjstk[0]->maksimal, 0) }}@else{{ number_format($bpjstk[0]->upah, 0) }}@endif</td>
+                                                <td class="text-end">{{ number_format($bpjstk[0]->thp_dilaporkan, 0) }}</td>
+                                                <td class="text-end">@if($bpjstk[0]->thp_dilaporkan > $bpjstk[0]->maksimal){{ number_format($bpjstk[0]->maksimal, 0) }}@else{{ number_format($bpjstk[0]->thp_dilaporkan, 0) }}@endif</td>
                                                 @foreach ($bpjstk as $_data)
                                                 @php
                                                     // tidak digunakan, menjadi upload angka bpjstk
@@ -581,9 +588,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Upah Sekarang</th>
+                                                <th>Upah</th>
+                                                <th>Upah Dilaporkan BPJS KS</th>
                                                 <th>Upah Maksimum</th>
-                                                <th>Upah Perhitungan</th>
                                                 @php
                                                     $arr = App\Models\MtrPayrollBpjskes::orderBy('id', 'asc')->get();
                                                 @endphp
@@ -608,8 +615,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($bpjskes[0]->upah, 0) }}</td>
-                                                <td class="text-end">{{ number_format($bpjskes[0]->maksimal, 0) }}</td>
-                                                <td class="text-end">@if($bpjskes[0]->upah > $bpjskes[0]->maksimal){{ number_format($bpjskes[0]->maksimal, 0) }}@else{{ number_format($bpjskes[0]->upah, 0) }}@endif</td>
+                                                <td class="text-end">{{ number_format($bpjskes[0]->thp_dilaporkan, 0) }}</td>
+                                                <td class="text-end">@if($bpjskes[0]->thp_dilaporkan > $bpjskes[0]->maksimal){{ number_format($bpjskes[0]->maksimal, 0) }}@else{{ number_format($bpjskes[0]->thp_dilaporkan, 0) }}@endif</td>
                                                 @foreach ($bpjskes as $_data)
                                                 @php
                                                     // tidak digunakan, menjadi upload angka bpjsks
@@ -708,10 +715,10 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 @can('payroll')
                                                 <th>No KPJ (BPJSTK)</th>
                                                 <th>No JKN (BPJSKS)</th>
-                                                <th>THP Dilaporkan BPJSTK</th>
-                                                <th>THP Dilaporkan BPJSKS</th>
-                                                <th>Iuran BPJSTK</th>
-                                                <th>Iuran BPJSKS</th>
+                                                <th>Upah Dilaporkan BPJS TK</th>
+                                                <th>Upah Dilaporkan BPJS KS</th>
+                                                <th>Iuran BPJS TK</th>
+                                                <th>Iuran BPJS KS</th>
                                                 @endcan
                                                 <th>Total Iuran BPJS/ASTEK</th>
                                                 @can('payroll')
@@ -818,9 +825,11 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>@if(!empty($mtr->no_kpj)){{ $mtr->no_kpj }}@endif</td>
                                                 <td>@if(!empty($mtr->no_jkn)){{ $mtr->no_jkn }}@endif</td>
                                                 {{-- <td class="text-end">{{ number_format($bpjstk[0]->angka, 0) }}</td> --}}
-                                                <td class="text-end">@if($bpjstk[0]->upah > $bpjstk[0]->maksimal){{ number_format($bpjstk[0]->maksimal, 0) }}@else{{ number_format($bpjstk[0]->upah, 0) }}@endif</td>
+                                                {{-- <td class="text-end">@if($bpjstk[0]->thp_dilaporkan > $bpjstk[0]->maksimal){{ number_format($bpjstk[0]->maksimal, 0) }}@else{{ number_format($bpjstk[0]->thp_dilaporkan, 0) }}@endif</td> --}}
+                                                <td class="text-end">{{ number_format($bpjstk[0]->thp_dilaporkan, 0) }}</td>
                                                 {{-- <td class="text-end">{{ number_format($bpjsks[0]->angka, 0) }}</td> --}}
-                                                <td class="text-end">@if($bpjsks[0]->upah > $bpjsks[0]->maksimal){{ number_format($bpjsks[0]->maksimal, 0) }}@else{{ number_format($bpjsks[0]->upah, 0) }}@endif</td>
+                                                {{-- <td class="text-end">@if($bpjsks[0]->thp_dilaporkan > $bpjsks[0]->maksimal){{ number_format($bpjsks[0]->maksimal, 0) }}@else{{ number_format($bpjsks[0]->thp_dilaporkan, 0) }}@endif</td> --}}
+                                                <td class="text-end">{{ number_format($bpjsks[0]->thp_dilaporkan, 0) }}</td>
                                                 @endcan
                                                 {{--  --}}
                                                 @foreach ($bpjstk as $_data)
