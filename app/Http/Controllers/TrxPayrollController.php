@@ -631,6 +631,7 @@ class TrxPayrollController extends Controller
         TrxPayrollBpjskes::truncate();
         // dd('done');
     }
+
     public function upsert_master(Request $request)
     {
         // dd($request->all());
@@ -783,7 +784,7 @@ class TrxPayrollController extends Controller
             $request->validate([
                 'template'=>'required|file|mimes:xls,xlsx|max:2048',
             ]);
-            // upload transaksi
+            // upload transaksi present
             if($jenis == 'trx'){
                 $path = $request->file('template')->getPathname();
                 $trx = Excel::toArray([], $path);
@@ -800,7 +801,7 @@ class TrxPayrollController extends Controller
                 $_103 = array_search(103, $data0[0]);
                 $_104 = array_search(104, $data0[0]);
                 // delete data existing
-                $where = ['bulan'=>$data0[2][$_102], 'tahun'=>$data0[2][$_103]];
+                $where = ['nik'=>$data0[2][$_101], 'bulan'=>$data0[2][$_102], 'tahun'=>$data0[2][$_103]];
                 TrxPayroll::where($where)->delete();
                 TrxPayrollAddsub::where($where)->delete();
                 TrxPayrollBpjstk::where($where)->delete();
@@ -829,6 +830,7 @@ class TrxPayrollController extends Controller
                     $trx->status_aktif = 'Aktif';
                     $trx->jabatan = $karyawan->_jabatan->jabatan;
                     $trx->level = $karyawan->_level->level;
+                    $trx->grade = $karyawan->_grade->grade;
                     $trx->created_by = auth()->user()->nik;
                     $trx->updated_by = auth()->user()->nik;
                     $trx->save();
@@ -894,6 +896,10 @@ class TrxPayrollController extends Controller
                     }
                     // insert into payroll_email
                     if($is_insentif && $is_kompensasi){
+                        // delete data existing
+                        $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                        TrxPayrollEmail::where($where)->delete();
+                        // insert new data
                         $trx = New TrxPayrollEmail;
                         $trx->nik = $data0[$x][$_101];
                         $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
@@ -904,6 +910,10 @@ class TrxPayrollController extends Controller
                         $trx->id_addsub = '6,9';
                         $trx->save();
                     }elseif($is_insentif){
+                        // delete data existing
+                        $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                        TrxPayrollEmail::where($where)->delete();
+                        // insert new data
                         $trx = New TrxPayrollEmail;
                         $trx->nik = $data0[$x][$_101];
                         $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
@@ -914,6 +924,10 @@ class TrxPayrollController extends Controller
                         $trx->id_addsub = '6';
                         $trx->save();
                     }elseif($is_kompensasi){
+                        // delete data existing
+                        $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                        TrxPayrollEmail::where($where)->delete();
+                        // insert new data
                         $trx = New TrxPayrollEmail;
                         $trx->nik = $data0[$x][$_101];
                         $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
@@ -955,6 +969,90 @@ class TrxPayrollController extends Controller
                 //     }
                 // }
                 return redirect('payroll')->with('msg', 'Data is saved successfully.');
+            }
+            // upload transaksi past
+            elseif($jenis == 'trx_past'){
+                $path = $request->file('template')->getPathname();
+                $trx = Excel::toArray([], $path);
+                // data payroll dan penambahan
+                $data0 = $trx[0];
+                // data potongan
+                // $data1 = $trx[1];
+                // 101=NIP
+                // 102=Bulan
+                // 103=Tahun
+                // 104=Gaji Pokok
+                $_101 = array_search(101, $data0[0]);
+                $_102 = array_search(102, $data0[0]);
+                $_103 = array_search(103, $data0[0]);
+                $_104 = array_search(104, $data0[0]);
+                // delete data existing
+                $where = ['nik'=>$data0[2][$_101], 'bulan'=>$data0[2][$_102], 'tahun'=>$data0[2][$_103]];
+                TrxPayrollLog::where($where)->delete();
+                TrxPayrollAddsubLog::where($where)->delete();
+                TrxPayrollBpjstkLog::where($where)->delete();
+                TrxPayrollBpjskesLog::where($where)->delete();
+                // dimulai dari baris ke-3
+                // data payroll
+                for ($x = 2; $x < count($data0); $x++) {
+                    $where = ['nik' => $data0[$x][$_101]];
+                    $karyawan = Karyawan::where($where)->first();
+                    // $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                    // TrxPayroll::where($where)->delete();
+                    $trx = New TrxPayrollLog;
+                    $trx->nik = $data0[$x][$_101];
+                    $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
+                    $trx->bulan = $data0[$x][$_102];
+                    $trx->tahun = $data0[$x][$_103];
+                    $trx->gapok = $data0[$x][$_104];
+                    $trx->findim_subdepartemen = $karyawan->_findim_subdepartemen->subdepartemen_id.'/'.$karyawan->_findim_subdepartemen->subdepartemen_desc;
+                    $trx->findim_departemen = $karyawan->_findim_departemen->departemen_id.'/'.$karyawan->_findim_departemen->departemen_desc;
+                    $trx->findim_divisi = $karyawan->_findim_divisi->divisi_id.'/'.$karyawan->_findim_divisi->divisi_desc;
+                    $trx->findim_project = $karyawan->_findim_project->project_id.'/'.$karyawan->_findim_project->project_desc;
+                    $trx->divisi = $karyawan->_divisi->nama;
+                    $trx->departemen = $karyawan->_departemen->nama;
+                    $trx->subdepartemen = $karyawan->_subdepartemen->nama;
+                    $trx->status_karyawan = $karyawan->_status->status_karyawan;
+                    $trx->status_aktif = 'Aktif';
+                    $trx->jabatan = $karyawan->_jabatan->jabatan;
+                    $trx->level = $karyawan->_level->level;
+                    $trx->grade = $karyawan->_grade->grade;
+                    $trx->created_by = auth()->user()->nik;
+                    $trx->updated_by = auth()->user()->nik;
+                    $trx->save();
+                }
+                // data tambahan
+                $addsub = MtrPayrollAddsub::whereIn('id', $data0[0])->orderBy('id', 'asc')->get();
+                $arr = [];
+                foreach($addsub as $_addsub){
+                    if(in_array($_addsub->id, $data0[0])){
+                        $_arr = [];
+                        array_push($_arr, array_search($_addsub->id, $data0[0]), $_addsub->id, $_addsub->tipe);
+                    }
+                    array_push($arr, $_arr);
+                }
+                for ($x = 2; $x < count($data0); $x++) {
+                    foreach($arr as $_arr){
+                        $trx = New TrxPayrollAddsubLog;
+                        $trx->nik = $data0[$x][$_101];
+                        $trx->bulan = $data0[$x][$_102];
+                        $trx->tahun = $data0[$x][$_103];
+                        // 0=index data
+                        $trx->angka = $data0[$x][$_arr[0]];
+                        // 1=id_addsub
+                        $trx->id_addsub = $_arr[1];
+                        // 2=tipe
+                        $trx->tipe = $_arr[2];
+                        $trx->created_by = auth()->user()->nik;
+                        $trx->updated_by = auth()->user()->nik;
+                        $trx->save();
+                    }
+                    // insert into bpjs
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                    $payroll = TrxPayrollLog::where($where)->orderBy('id', 'asc')->get();
+                    $this->insertBpjsPast($payroll);
+                }
+                return redirect('payroll/history/0')->with('msg', 'Data is saved successfully.');
             }
             // upload master
             elseif($jenis == 'mtr'){
@@ -1010,7 +1108,7 @@ class TrxPayrollController extends Controller
                 }
                 return redirect('/payroll/master/0')->with('msg', 'Data is saved successfully.');
             }
-            // upload thr
+            // upload thr present
             elseif($jenis == 'thr'){
                 $path = $request->file('template')->getPathname();
                 $trx = Excel::toArray([], $path);
@@ -1035,6 +1133,31 @@ class TrxPayrollController extends Controller
                 }
                 return redirect('payroll')->with('msg', 'Data is saved successfully.');
             }
+            // upload thr past
+            elseif($jenis == 'thr_past'){
+                $path = $request->file('template')->getPathname();
+                $trx = Excel::toArray([], $path);
+                // data thr
+                $data0 = $trx[0];
+                // 101=NIP
+                // 102=Bulan
+                // 103=Tahun
+                // 21=Tunjangan Hari Raya
+                $_101 = array_search(101, $data0[0]);
+                $_102 = array_search(102, $data0[0]);
+                $_103 = array_search(103, $data0[0]);
+                $_21 = array_search(21, $data0[0]);
+                // dimulai dari baris ke-3
+                // data thr
+                for ($x = 2; $x < count($data0); $x++) {
+                    // 21
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_addsub'=>21];
+                    $trx = TrxPayrollAddsubLog::where($where)->first();
+                    $trx->angka = $data0[$x][$_21];
+                    $trx->update();
+                }
+                return redirect('payroll/history/0')->with('msg', 'Data is saved successfully.');
+            }
             // upload bpjstk
             elseif($jenis == 'bpjstk'){
                 $path = $request->file('template')->getPathname();
@@ -1044,6 +1167,7 @@ class TrxPayrollController extends Controller
                 // 101=NIP
                 // 102=Bulan
                 // 103=Tahun
+                // 300=Upah Dilaporkan BPJS TK
                 // 301=Iuran JKK
                 // 302=Iuran JKM
                 // 303=Iuran JP PRSHN
@@ -1053,6 +1177,7 @@ class TrxPayrollController extends Controller
                 $_101 = array_search(101, $data0[0]);
                 $_102 = array_search(102, $data0[0]);
                 $_103 = array_search(103, $data0[0]);
+                $_300 = array_search(300, $data0[0]);
                 $_301 = array_search(301, $data0[0]);
                 $_302 = array_search(302, $data0[0]);
                 $_303 = array_search(303, $data0[0]);
@@ -1062,36 +1187,27 @@ class TrxPayrollController extends Controller
                 // dimulai dari baris ke-3
                 // data bpjstk
                 for ($x = 2; $x < count($data0); $x++) {
+                    // 300
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                    TrxPayrollBpjstk::where($where)->update(['thp_dilaporkan' => $data0[$x][$_300]]);
                     // 1
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>1];
-                    $trx = TrxPayrollBpjstk::where($where)->first();
-                    $trx->angka = $data0[$x][$_301];
-                    $trx->update();
+                    TrxPayrollBpjstk::where($where)->update(['angka' => $data0[$x][$_301]]);
                     // 2
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>2];
-                    $trx = TrxPayrollBpjstk::where($where)->first();
-                    $trx->angka = $data0[$x][$_302];
-                    $trx->update();
+                    TrxPayrollBpjstk::where($where)->update(['angka' => $data0[$x][$_302]]);
                     // 3
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>3];
-                    $trx = TrxPayrollBpjstk::where($where)->first();
-                    $trx->angka = $data0[$x][$_303];
-                    $trx->update();
+                    TrxPayrollBpjstk::where($where)->update(['angka' => $data0[$x][$_303]]);
                     // 4
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>4];
-                    $trx = TrxPayrollBpjstk::where($where)->first();
-                    $trx->angka = $data0[$x][$_304];
-                    $trx->update();
+                    TrxPayrollBpjstk::where($where)->update(['angka' => $data0[$x][$_304]]);
                     // 5
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>5];
-                    $trx = TrxPayrollBpjstk::where($where)->first();
-                    $trx->angka = $data0[$x][$_305];
-                    $trx->update();
+                    TrxPayrollBpjstk::where($where)->update(['angka' => $data0[$x][$_305]]);
                     // 6
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>6];
-                    $trx = TrxPayrollBpjstk::where($where)->first();
-                    $trx->angka = $data0[$x][$_306];
-                    $trx->update();
+                    TrxPayrollBpjstk::where($where)->update(['angka' => $data0[$x][$_306]]);
                 }
                 return redirect('payroll')->with('msg', 'Data is saved successfully.');
             }
@@ -1104,33 +1220,32 @@ class TrxPayrollController extends Controller
                 // 101=NIP
                 // 102=Bulan
                 // 103=Tahun
+                // 200=Upah Dilaporkan BPJS KS
                 // 201=Iuran Perusahaan
                 // 202=Iuran Karyawan
                 // 203=Iuran Karyawan Tambahan Anggota Keluarga
                 $_101 = array_search(101, $data0[0]);
                 $_102 = array_search(102, $data0[0]);
                 $_103 = array_search(103, $data0[0]);
+                $_200 = array_search(200, $data0[0]);
                 $_201 = array_search(201, $data0[0]);
                 $_202 = array_search(202, $data0[0]);
                 $_203 = array_search(203, $data0[0]);
                 // dimulai dari baris ke-3
                 // data bpjsks
                 for ($x = 2; $x < count($data0); $x++) {
+                    // 200
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                    TrxPayrollBpjskes::where($where)->update(['thp_dilaporkan' => $data0[$x][$_200]]);
                     // 1
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjskes'=>1];
-                    $trx = TrxPayrollBpjskes::where($where)->first();
-                    $trx->angka = $data0[$x][$_201];
-                    $trx->update();
+                    TrxPayrollBpjskes::where($where)->update(['angka' => $data0[$x][$_201]]);
                     // 2
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjskes'=>2];
-                    $trx = TrxPayrollBpjskes::where($where)->first();
-                    $trx->angka = $data0[$x][$_202];
-                    $trx->update();
+                    TrxPayrollBpjskes::where($where)->update(['angka' => $data0[$x][$_202]]);
                     // 3
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjskes'=>3];
-                    $trx = TrxPayrollBpjskes::where($where)->first();
-                    $trx->angka = $data0[$x][$_203];
-                    $trx->update();
+                    TrxPayrollBpjskes::where($where)->update(['angka' => $data0[$x][$_203]]);
                 }
                 return redirect('payroll')->with('msg', 'Data is saved successfully.');
             }
@@ -1143,6 +1258,7 @@ class TrxPayrollController extends Controller
                 // 101=NIP
                 // 102=Bulan
                 // 103=Tahun
+                // 300=Upah Dilaporkan BPJS TK
                 // 301=Iuran JKK
                 // 302=Iuran JKM
                 // 303=Iuran JP PRSHN
@@ -1152,6 +1268,7 @@ class TrxPayrollController extends Controller
                 $_101 = array_search(101, $data0[0]);
                 $_102 = array_search(102, $data0[0]);
                 $_103 = array_search(103, $data0[0]);
+                $_300 = array_search(300, $data0[0]);
                 $_301 = array_search(301, $data0[0]);
                 $_302 = array_search(302, $data0[0]);
                 $_303 = array_search(303, $data0[0]);
@@ -1161,36 +1278,27 @@ class TrxPayrollController extends Controller
                 // dimulai dari baris ke-3
                 // data bpjstk_past
                 for ($x = 2; $x < count($data0); $x++) {
+                    // 300
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                    TrxPayrollBpjstkLog::where($where)->update(['thp_dilaporkan' => $data0[$x][$_300]]);
                     // 1
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>1];
-                    $trx = TrxPayrollBpjstkLog::where($where)->first();
-                    $trx->angka = $data0[$x][$_301];
-                    $trx->update();
+                    TrxPayrollBpjstkLog::where($where)->update(['angka' => $data0[$x][$_301]]);
                     // 2
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>2];
-                    $trx = TrxPayrollBpjstkLog::where($where)->first();
-                    $trx->angka = $data0[$x][$_302];
-                    $trx->update();
+                    TrxPayrollBpjstkLog::where($where)->update(['angka' => $data0[$x][$_302]]);
                     // 3
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>3];
-                    $trx = TrxPayrollBpjstkLog::where($where)->first();
-                    $trx->angka = $data0[$x][$_303];
-                    $trx->update();
+                    TrxPayrollBpjstkLog::where($where)->update(['angka' => $data0[$x][$_303]]);
                     // 4
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>4];
-                    $trx = TrxPayrollBpjstkLog::where($where)->first();
-                    $trx->angka = $data0[$x][$_304];
-                    $trx->update();
+                    TrxPayrollBpjstkLog::where($where)->update(['angka' => $data0[$x][$_304]]);
                     // 5
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>5];
-                    $trx = TrxPayrollBpjstkLog::where($where)->first();
-                    $trx->angka = $data0[$x][$_305];
-                    $trx->update();
+                    TrxPayrollBpjstkLog::where($where)->update(['angka' => $data0[$x][$_305]]);
                     // 6
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjstk'=>6];
-                    $trx = TrxPayrollBpjstkLog::where($where)->first();
-                    $trx->angka = $data0[$x][$_306];
-                    $trx->update();
+                    TrxPayrollBpjstkLog::where($where)->update(['angka' => $data0[$x][$_306]]);
                 }
                 return redirect('payroll/history/0')->with('msg', 'Data is saved successfully.');
             }
@@ -1203,36 +1311,32 @@ class TrxPayrollController extends Controller
                 // 101=NIP
                 // 102=Bulan
                 // 103=Tahun
+                // 200=Upah Dilaporkan BPJS KS
                 // 201=Iuran Perusahaan
                 // 202=Iuran Karyawan
                 // 203=Iuran Karyawan Tambahan Anggota Keluarga
                 $_101 = array_search(101, $data0[0]);
                 $_102 = array_search(102, $data0[0]);
                 $_103 = array_search(103, $data0[0]);
+                $_200 = array_search(200, $data0[0]);
                 $_201 = array_search(201, $data0[0]);
                 $_202 = array_search(202, $data0[0]);
                 $_203 = array_search(203, $data0[0]);
                 // dimulai dari baris ke-3
                 // data bpjsks_past
                 for ($x = 2; $x < count($data0); $x++) {
+                    // 200
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                    TrxPayrollBpjskesLog::where($where)->update(['thp_dilaporkan' => $data0[$x][$_200]]);
                     // 1
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjskes'=>1];
-                    $trx = TrxPayrollBpjskesLog::where($where)->first();
-                    if(empty($trx)){
-                        dd($where);
-                    }
-                    $trx->angka = $data0[$x][$_201];
-                    $trx->update();
+                    TrxPayrollBpjskesLog::where($where)->update(['angka' => $data0[$x][$_201]]);
                     // 2
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjskes'=>2];
-                    $trx = TrxPayrollBpjskesLog::where($where)->first();
-                    $trx->angka = $data0[$x][$_202];
-                    $trx->update();
+                    TrxPayrollBpjskesLog::where($where)->update(['angka' => $data0[$x][$_202]]);
                     // 3
                     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_bpjskes'=>3];
-                    $trx = TrxPayrollBpjskesLog::where($where)->first();
-                    $trx->angka = $data0[$x][$_203];
-                    $trx->update();
+                    TrxPayrollBpjskesLog::where($where)->update(['angka' => $data0[$x][$_203]]);
                 }
                 return redirect('payroll/history/0')->with('msg', 'Data is saved successfully.');
             }
@@ -1433,6 +1537,85 @@ class TrxPayrollController extends Controller
                 $where = ['nik'=>$data->nik, 'tipe'=>'add'];
                 $arr_id = [1,2,3,4,5];
                 $add = TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                $total_tunjangan = $add->sum('angka');
+                // 
+                $upah = $data->gapok + $total_tunjangan;
+                $trx->upah = $upah;
+                // 
+                $trx->maksimal = $bpjsmax[1]->angka;
+                // tidak digunakan, menjadi upload angka bpjstk
+                // $trx->angka = $upah;
+                // if($upah > $bpjsmax[1]->angka){
+                //     $trx->angka = $bpjsmax[1]->angka;
+                // }
+                $trx->angka = 0;
+                // 
+                $trx->persen = $_data->persen;
+                $trx->id_bpjskes = $_data->id;
+                $trx->created_by = auth()->user()->nik;
+                $trx->updated_by = auth()->user()->nik;
+                $trx->save();
+            }
+
+        }
+    }
+    
+    public function insertBpjsPast($payroll)
+    {
+        $bpjstk = MtrPayrollBpjstk::orderBy('id', 'asc')->get();
+        $bpjskes = MtrPayrollBpjskes::orderBy('id', 'asc')->get();
+        // 1=Upah Max BPJS TK
+        // 2=Upah Max BPJS KS
+        // 3=Anggota Keluarga BPJS KS
+        $bpjsmax = MtrPayrollBpjsMax::orderBy('id', 'asc')->get();
+        foreach ($payroll as $data){
+            // TK
+            foreach ($bpjstk as $_data){
+                $trx = new TrxPayrollBpjstkLog;
+                $trx->nik = $data->nik;
+                $trx->bulan = $data->bulan;
+                $trx->tahun = $data->tahun;
+                // 
+                $where = ['nik'=>$data->nik, 'tipe'=>'add'];
+                $arr_id = [1,2,3,4,5];
+                $add = TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                $total_tunjangan = $add->sum('angka');
+                // 
+                $upah = $data->gapok + $total_tunjangan;
+                $trx->upah = $upah;
+                // 
+                $trx->maksimal = $bpjsmax[0]->angka;
+                // tidak digunakan, menjadi upload angka bpjstk
+                // $trx->angka = $upah;
+                // if($upah > $bpjsmax[0]->angka){
+                //     $trx->angka = $bpjsmax[0]->angka;
+                // }
+                $trx->angka = 0;
+                // 
+                $trx->persen = $_data->persen;
+                $trx->id_bpjstk = $_data->id;
+                $trx->created_by = auth()->user()->nik;
+                $trx->updated_by = auth()->user()->nik;
+                $trx->save();
+            }
+            // KS
+            foreach ($bpjskes as $_data){
+                $trx = new TrxPayrollBpjskesLog;
+                $trx->nik = $data->nik;
+                $trx->bulan = $data->bulan;
+                $trx->tahun = $data->tahun;
+                // 
+                $where = ['nik'=>$data->nik, 'bulan'=>$data->bulan, 'tahun'=>$data->tahun];
+                $mtr = MtrPayroll::where($where)->orderBy('id', 'asc')->first();
+                if(!empty($mtr)){
+                    $trx->pasangan = $mtr->pasangan;
+                    $trx->anak = $mtr->anak;
+                    $trx->tambahan = $mtr->tambahan;
+                }
+                // 
+                $where = ['nik'=>$data->nik, 'tipe'=>'add'];
+                $arr_id = [1,2,3,4,5];
+                $add = TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
                 $total_tunjangan = $add->sum('angka');
                 // 
                 $upah = $data->gapok + $total_tunjangan;
