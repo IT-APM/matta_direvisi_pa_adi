@@ -90,6 +90,10 @@ class Karyawan extends Model
         return $this->belongsTo('App\Models\MtrFindimSubdepartemen', 'findim_subdepartemen', 'id');
     }
 
+    public function _grade(){
+        return $this->belongsTo('App\Models\KaryawanGrade', 'id_grade', 'id');
+    }
+
     public function getCreatedAtAttribute()
     {
         return \Carbon\Carbon::parse($this->attributes['created_at']) ->format('d-m-Y H:i:s');
