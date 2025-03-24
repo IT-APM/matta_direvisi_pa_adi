@@ -79,7 +79,10 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                 </tr>
                             </thead>
                             <tbody>
-                                @php $no=0; @endphp
+                                @php
+                                    $no=0;
+                                    $hco = explode(',', App\Models\MtrUtility::find(32)->informasi);
+                                @endphp
                                 @foreach ($payroll as $data)
                                 <tr>
                                     <td>{{ ++$no }}</td>
@@ -87,7 +90,11 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     <td>{{ $bulan[$data->bulan - 1] }}</td>
                                     <td>{{ $data->_nik->nama }}</td>
                                     <td>{{ $data->nik }}</td>
+                                    @if(in_array(auth()->user()->nik, $hco))
+                                    <td><a href="{{ route('payroll.slip.detail', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => 'pdf']) }}" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>
+                                    @else
                                     <td>@if((!empty($data->paid_at)) && (Carbon\Carbon::parse($data->paid_at)->isPast() || Carbon\Carbon::parse($data->paid_at)->isToday()))<a href="{{ route('payroll.slip.detail', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => 'pdf']) }}" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a>@endif</td>
+                                    @endif
                                 </tr>
                                 @endforeach
                                 @foreach ($payroll_h as $data)
@@ -97,7 +104,11 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     <td>{{ $bulan[$data->bulan - 1] }}</td>
                                     <td>{{ $data->_nik->nama }}</td>
                                     <td>{{ $data->nik }}</td>
+                                    @if(in_array(auth()->user()->nik, $hco))
+                                    <td><a href="{{ route('payroll.slip.detail', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => 'pdf_h']) }}" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>
+                                    @else
                                     <td>@if((!empty($data->paid_at)) && (Carbon\Carbon::parse($data->paid_at)->isPast() || Carbon\Carbon::parse($data->paid_at)->isToday()))<a href="{{ route('payroll.slip.detail', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => 'pdf_h']) }}" data-toggle="tooltip" title="Slip Gaji" target="_blank"><i class="fa fa-file-pdf-o"></i></a>@endif</td>
+                                    @endif
                                 </tr>
                                 @endforeach
                             </tbody>
