@@ -421,9 +421,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Upah Sekarang</th>
-                                                <th>Upah Maksimum</th>
-                                                <th>Upah Perhitungan</th>
+                                                <th>Upah</th>
+                                                <th>Upah Dilaporkan BPJS TK</th>
+                                                <th>Upah JP Maksimum</th>
                                                 @php
                                                     $arr = App\Models\MtrPayrollBpjstk::orderBy('id', 'asc')->get();
                                                 @endphp
@@ -448,8 +448,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($bpjstk[0]->upah, 0) }}</td>
-                                                <td class="text-end">{{ number_format($bpjstk[0]->maksimal, 0) }}</td>
-                                                <td class="text-end">@if($bpjstk[0]->upah > $bpjstk[0]->maksimal){{ number_format($bpjstk[0]->maksimal, 0) }}@else{{ number_format($bpjstk[0]->upah, 0) }}@endif</td>
+                                                <td class="text-end">{{ number_format($bpjstk[0]->thp_dilaporkan, 0) }}</td>
+                                                <td class="text-end">@if($bpjstk[0]->thp_dilaporkan > $bpjstk[0]->maksimal){{ number_format($bpjstk[0]->maksimal, 0) }}@else{{ number_format($bpjstk[0]->thp_dilaporkan, 0) }}@endif</td>
                                                 @foreach ($bpjstk as $_data)
                                                 @php
                                                     // tidak digunakan, menjadi upload angka bpjstk
@@ -507,9 +507,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Bulan</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
-                                                <th>Upah Sekarang</th>
+                                                <th>Upah</th>
+                                                <th>Upah Dilaporkan BPJS KS</th>
                                                 <th>Upah Maksimum</th>
-                                                <th>Upah Perhitungan</th>
                                                 @php
                                                     $arr = App\Models\MtrPayrollBpjskes::orderBy('id', 'asc')->get();
                                                 @endphp
@@ -534,8 +534,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>{{ $data->_nik->nama }}</td>
                                                 <td>{{ $data->nik }}</td>
                                                 <td class="text-end">{{ number_format($bpjskes[0]->upah, 0) }}</td>
-                                                <td class="text-end">{{ number_format($bpjskes[0]->maksimal, 0) }}</td>
-                                                <td class="text-end">@if($bpjskes[0]->upah > $bpjskes[0]->maksimal){{ number_format($bpjskes[0]->maksimal, 0) }}@else{{ number_format($bpjskes[0]->upah, 0) }}@endif</td>
+                                                <td class="text-end">{{ number_format($bpjskes[0]->thp_dilaporkan, 0) }}</td>
+                                                <td class="text-end">@if($bpjskes[0]->thp_dilaporkan > $bpjskes[0]->maksimal){{ number_format($bpjskes[0]->maksimal, 0) }}@else{{ number_format($bpjskes[0]->thp_dilaporkan, 0) }}@endif</td>
                                                 @foreach ($bpjskes as $_data)
                                                 @php
                                                     // tidak digunakan, menjadi upload angka bpjsks
@@ -634,8 +634,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 @can('payroll')
                                                 <th>No KPJ (BPJSTK)</th>
                                                 <th>No JKN (BPJSKS)</th>
-                                                <th>THP Dilaporkan BPJSTK</th>
-                                                <th>THP Dilaporkan BPJSKS</th>
+                                                <th>Upah Dilaporkan BPJS TK</th>
+                                                <th>Upah Dilaporkan BPJS KS</th>
                                                 <th>Iuran BPJSTK</th>
                                                 <th>Iuran BPJSKS</th>
                                                 @endcan
@@ -749,9 +749,11 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>@if(!empty($mtr->no_kpj)){{ $mtr->no_kpj }}@endif</td>
                                                 <td>@if(!empty($mtr->no_jkn)){{ $mtr->no_jkn }}@endif</td>
                                                 {{-- <td class="text-end">{{ number_format($bpjstk[0]->angka, 0) }}</td> --}}
-                                                <td class="text-end">@if($bpjstk[0]->upah > $bpjstk[0]->maksimal){{ number_format($bpjstk[0]->maksimal, 0) }}@else{{ number_format($bpjstk[0]->upah, 0) }}@endif</td>
+                                                {{-- <td class="text-end">@if($bpjstk[0]->upah > $bpjstk[0]->maksimal){{ number_format($bpjstk[0]->maksimal, 0) }}@else{{ number_format($bpjstk[0]->upah, 0) }}@endif</td> --}}
+                                                <td class="text-end">{{ number_format($bpjstk[0]->thp_dilaporkan, 0) }}</td>
                                                 {{-- <td class="text-end">{{ number_format($bpjsks[0]->angka, 0) }}</td> --}}
-                                                <td class="text-end">@if($bpjsks[0]->upah > $bpjsks[0]->maksimal){{ number_format($bpjsks[0]->maksimal, 0) }}@else{{ number_format($bpjsks[0]->upah, 0) }}@endif</td>
+                                                {{-- <td class="text-end">@if($bpjsks[0]->upah > $bpjsks[0]->maksimal){{ number_format($bpjsks[0]->maksimal, 0) }}@else{{ number_format($bpjsks[0]->upah, 0) }}@endif</td> --}}
+                                                <td class="text-end">{{ number_format($bpjsks[0]->thp_dilaporkan, 0) }}</td>
                                                 @endcan
                                                 {{--  --}}
                                                 @foreach ($bpjstk as $_data)
