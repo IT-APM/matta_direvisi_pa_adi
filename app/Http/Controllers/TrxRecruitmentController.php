@@ -41,6 +41,8 @@ use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Elibyy\TCPDF\Facades\TCPDF;
 use App\Models\TrxRecruitmentPedoman;
+use App\Models\StatusKerja;
+use App\Models\PekerjaanSub;
 
 class TrxRecruitmentController extends Controller
 {
@@ -49,7 +51,7 @@ class TrxRecruitmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $id_trx = [];
         $trx = TrxKebutuhanMaster::orderBy('id', 'desc')->get();
@@ -63,7 +65,61 @@ class TrxRecruitmentController extends Controller
         // $trx = TrxKebutuhanMaster::whereIn('id', $id_trx)->orderBy('id', 'desc')->get();
         // terposting adalah pengajuan yang statusnya 9=Approved by L2 to HC dan bukan 7=Magang
         $trx = TrxKebutuhanMaster::whereIn('id', $id_trx)->whereNotIn('id_status_kerja', [7])->orderBy('id', 'desc')->get();
-        return view('recruitment.index', compact('trx'));
+        $pengaju = array();
+        $id_pekerjaan = array();
+        $id_status_kerja = array();
+        foreach($trx as $data){
+            array_push($pengaju, $data->pengaju);
+            array_push($id_pekerjaan, $data->id_pekerjaan);
+            array_push($id_status_kerja, $data->id_status_kerja);
+        }
+        $arr_pengaju = $pengaju;
+        $pengaju = Karyawan::select('nik', 'nama')->whereIn('nik', $pengaju)->orderBy('nama', 'asc')->get();
+        $arr_id_pekerjaan = array();
+        $arr_id_status_kerja = array();
+        $pekerjaan = PekerjaanSub::whereIn('id', $id_pekerjaan)->orderBy('pekerjaan', 'asc')->get();
+        $status_kerja = StatusKerja::whereIn('id', $id_status_kerja)->orderBy('status_kerja', 'asc')->get();
+        // start filter
+        if($request->filter == true){
+            // $_pengaju = $request->input('pengaju', []);
+            $_pengaju = [$request->pengaju];
+            // $_id_pekerjaan = $request->input('id_pekerjaan', []);
+            $_id_pekerjaan = [$request->id_pekerjaan];
+            $_id_status_kerja = $request->input('id_status_kerja', []);
+            if(count($_pengaju) > 0){
+                $arr_pengaju = $_pengaju;
+            }
+            else{
+                $arr_pengaju = array();
+            }
+            if(count($_id_pekerjaan) > 0){
+                $arr_id_pekerjaan = $_id_pekerjaan;
+            }
+            else{
+                $arr_id_pekerjaan = array();
+            }
+            if(count($_id_status_kerja) > 0){
+                $arr_id_status_kerja = $_id_status_kerja;
+            }
+            else{
+                $arr_id_status_kerja = array();
+            }
+            // dd($arr_pengaju, $arr_id_pekerjaan);
+            $trx = TrxKebutuhanMaster::whereIn('pengaju', $arr_pengaju)->whereIn('id_pekerjaan', $arr_id_pekerjaan)->whereIn('id_status_kerja', $arr_id_status_kerja)->whereIn('id', $id_trx)->whereNotIn('id_status_kerja', [7])->orderBy('id', 'desc')->get();
+            if(in_array('0', $arr_pengaju) && in_array('0', $arr_id_pekerjaan)){
+                $trx = TrxKebutuhanMaster::whereIn('id_status_kerja', $arr_id_status_kerja)->whereIn('id', $id_trx)->whereNotIn('id_status_kerja', [7])->orderBy('id', 'desc')->get();
+            }elseif(in_array('0', $arr_pengaju)){
+                $trx = TrxKebutuhanMaster::whereIn('id_pekerjaan', $arr_id_pekerjaan)->whereIn('id_status_kerja', $arr_id_status_kerja)->whereIn('id', $id_trx)->whereNotIn('id_status_kerja', [7])->orderBy('id', 'desc')->get();
+            }elseif(in_array('0', $arr_id_pekerjaan)){
+                $trx = TrxKebutuhanMaster::whereIn('pengaju', $arr_pengaju)->whereIn('id_status_kerja', $arr_id_status_kerja)->whereIn('id', $id_trx)->whereNotIn('id_status_kerja', [7])->orderBy('id', 'desc')->get();
+            }
+        }else{
+            $arr_pengaju = array();
+            $arr_id_pekerjaan = array();
+            $arr_id_status_kerja = array();
+        }
+        // end filter
+        return view('recruitment.index', compact('trx', 'pengaju', 'pekerjaan', 'status_kerja', 'arr_id_pekerjaan', 'arr_id_status_kerja', 'arr_pengaju'));
     }
 
     /**
@@ -296,13 +352,75 @@ class TrxRecruitmentController extends Controller
         }
     }
 
-    public function applicant_list($id)
+    public function applicant_list(Request $request, $id)
     {
         // dd($id);
         $trx = TrxRecruitmentIdentitas::orderBy('updated_at', 'desc')->get();
         $trx1 = TrxRecruitmentInterview::orderBy('updated_at', 'desc')->get();
         $trx2 = TrxRecruitmentNegosiasiLog::orderBy('updated_at', 'desc')->get();
-        return view('recruitment.applicant_list', compact('trx', 'trx1', 'trx2'));
+        $nama = TrxRecruitmentIdentitas::distinct()->orderBy('nama', 'asc')->get(['nama']);
+        $arr_nama = array();
+        $id_kebutuhan = array();
+        $id_status = array();
+        foreach($trx as $data){
+            array_push($id_kebutuhan, $data->id_kebutuhan);
+            array_push($id_status, $data->id_status);
+        }
+        $trx0 = TrxKebutuhanMaster::whereIn('id', $id_kebutuhan)->orderBy('id', 'desc')->get();
+        $id_pekerjaan = array();
+        foreach($trx0 as $data){
+            array_push($id_pekerjaan, $data->id_pekerjaan);
+        }
+        $pekerjaan = PekerjaanSub::whereIn('id', $id_pekerjaan)->orderBy('pekerjaan', 'asc')->get();
+        $status = MtrRecruitmentStatus::whereIn('id', $id_status)->orderBy('id', 'asc')->get();
+        $arr_id_pekerjaan = array();
+        $arr_id_status = array();
+        // start filter
+        if($request->filter == true){
+            // $_nama = $request->input('nama', []);
+            $_nama = [$request->nama];
+            $_id_pekerjaan = $request->input('id_pekerjaan', []);
+            $_id_status = $request->input('id_status', []);
+            if(count($_nama) > 0){
+                $arr_nama = $_nama;
+            }
+            else{
+                $arr_nama = array();
+            }
+            if(count($_id_pekerjaan) > 0){
+                $arr_id_pekerjaan = $_id_pekerjaan;
+            }
+            else{
+                $arr_id_pekerjaan = array();
+            }
+            if(count($_id_status) > 0){
+                $arr_id_status = $_id_status;
+            }
+            else{
+                $arr_id_status = array();
+            }
+            $trx0 = TrxKebutuhanMaster::whereIn('id_pekerjaan', $arr_id_pekerjaan)->orderBy('id', 'desc')->get();
+            $id_kebutuhan = array();
+            foreach($trx0 as $data){
+                array_push($id_kebutuhan, $data->id);
+            }
+            $trx = TrxRecruitmentIdentitas::whereIn('nama', $arr_nama)->whereIn('id_kebutuhan', $id_kebutuhan)->whereIn('id_status', $arr_id_status)->orderBy('updated_at', 'desc')->get();
+            if(in_array('0', $arr_nama)){
+                $trx = TrxRecruitmentIdentitas::whereIn('id_kebutuhan', $id_kebutuhan)->whereIn('id_status', $arr_id_status)->orderBy('updated_at', 'desc')->get();
+            }
+            $id_identitas = array();
+            foreach($trx as $data){
+                array_push($id_identitas, $data->id);
+            }
+            $trx1 = TrxRecruitmentInterview::whereIn('id_identitas', $id_identitas)->orderBy('updated_at', 'desc')->get();
+            $trx2 = TrxRecruitmentNegosiasiLog::whereIn('id_identitas', $id_identitas)->orderBy('updated_at', 'desc')->get();
+        }else{
+            $arr_nama = array();
+            $arr_id_pekerjaan = array();
+            $arr_id_status = array();
+        }
+        // end filter
+        return view('recruitment.applicant_list', compact('trx', 'trx1', 'trx2', 'nama', 'pekerjaan', 'status', 'arr_nama', 'arr_id_pekerjaan', 'arr_id_status'));
     }
 
     public function applicant_item($id)
