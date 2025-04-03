@@ -5,6 +5,7 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatable-extension.css') }}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
 @endsection
 
 @section('style')
@@ -39,6 +40,51 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
+                    <button class="btn btn-warning mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                    <div class="collapse" id="collapse_filter">
+                        <form class="mb-2" action="{{ route('recruitment.applicant_list', 0) }}" method="get" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    {{-- <label class="h6">Nama</label>&nbsp;<input type="checkbox" onClick="toggle_nama(this)" /> Check All
+                                    <label class="d-block" for="nama">
+                                        @foreach ($nama as $data)
+                                        <input class="checkbox_animated" id="nama[]" name="nama[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $arr_nama)) checked @endif> {{ $data->nama }}<br/>
+                                        @endforeach
+                                    </label> --}}
+                                    <label class="h6" for="nama">Nama</label>
+                                    <select class="form-select js-example-basic-single col-sm-12" id="nama" name="nama" required="">
+                                        {{-- <option selected="" disabled="" value="">Pilih...</option> --}}
+                                        <option value="0" @if(in_array('0', $arr_nama)) selected @endif>Semua</option>
+                                        @foreach ($nama as $data)
+                                        <option value="{{ $data->nama }}" @if(in_array($data->nama, $arr_nama)) selected @endif>{{ $data->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="invalid-feedback txt-danger">Field is required.</div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="h6">Posisi</label>&nbsp;<input type="checkbox" onClick="toggle_id_pekerjaan(this)" /> Check All
+                                    <label class="d-block" for="id_pekerjaan">
+                                        @foreach ($pekerjaan as $data)
+                                        <input class="checkbox_animated" id="id_pekerjaan[]" name="id_pekerjaan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_id_pekerjaan)) checked @endif> {{ $data->pekerjaan }}<br/>
+                                        @endforeach
+                                    </label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="h6">Status</label>&nbsp;<input type="checkbox" onClick="toggle_id_status(this)" /> Check All
+                                    <label class="d-block" for="id_status">
+                                        @foreach ($status as $data)
+                                        <input class="checkbox_animated" id="id_status[]" name="id_status[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_id_status)) checked @endif> {{ $data->status }}<br/>
+                                        @endforeach
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-sm-12">
+                                    <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="{{ route('recruitment.applicant_list', 0) }}" class="btn btn-info" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
                         <li class="nav-item"><a class="nav-link active" id="pills-psychotest-tab" data-bs-toggle="pill" href="#pills-psychotest" role="tab" aria-controls="pills-psychotest" aria-selected="false">Psychotest</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-interview-tab" data-bs-toggle="pill" href="#pills-interview" role="tab" aria-controls="pills-interview" aria-selected="true">Interview</a></li>
@@ -57,7 +103,7 @@
                                                 <th>Action</th>
                                                 <th>&nbsp;Hasil&nbsp;</th>
                                                 <th>Posisi</th>
-                                                <th>Nama</th>
+                                                <th>Nama/Email</th>
                                                 {{-- <th>Email</th> --}}
                                                 <th>CV</th>
                                                 <th>Check_in</th>
@@ -108,7 +154,7 @@
                                                     @endif
                                                 </td>
                                                 <td>{{ $recruitment->_pekerjaan->pekerjaan }}</td>
-                                                <td>{{ $data->nama }}</td>
+                                                <td>{{ $data->nama }}<br/>{{ $data->email }}</td>
                                                 {{-- <td>{{ $data->email }}</td> --}}
                                                 <td><a href="{{ asset('assets/recruitment/upload/'.$data->cv) }}" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></td>
                                                 <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }}@endif</td>
@@ -265,8 +311,11 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/vfs_fonts.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
+<script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
+<script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
+<script src="{{ asset('assets/js/form-validation-custom.js') }}"></script>
 <script type="text/javascript">
-$('#_datatable').DataTable( {
+$('#_datatable').DataTable({
 	// dom: 'lBfrtip',
     dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
       "<'row'<'col-sm-12'rt>>" +
@@ -275,9 +324,9 @@ $('#_datatable').DataTable( {
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
-} );
+});
 // 
-$('#_datatable1').DataTable( {
+$('#_datatable1').DataTable({
 	// dom: 'lBfrtip',
     dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
       "<'row'<'col-sm-12'rt>>" +
@@ -286,9 +335,9 @@ $('#_datatable1').DataTable( {
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
-} );
+});
 // 
-$('#_datatable2').DataTable( {
+$('#_datatable2').DataTable({
 	// dom: 'lBfrtip',
     dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
       "<'row'<'col-sm-12'rt>>" +
@@ -297,6 +346,24 @@ $('#_datatable2').DataTable( {
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
-} );
+});
+function toggle_nama(source) {
+    checkboxes = document.getElementsByName('nama[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_id_pekerjaan(source) {
+    checkboxes = document.getElementsByName('id_pekerjaan[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_id_status(source) {
+    checkboxes = document.getElementsByName('id_status[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
 </script>
 @endsection
