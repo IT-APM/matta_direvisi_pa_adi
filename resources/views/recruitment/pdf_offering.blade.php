@@ -219,8 +219,8 @@
 					// 12=Negotiation Process
 					$where = ['id_identitas' => $trx->id_identitas, 'id_status' => 12];
 					$flow2 = App\Models\TrxRecruitmentLog::where($where)->first();
-					// 13=Negotiation Deal by HCO
-					$where = ['id_identitas' => $trx->id_identitas, 'id_status' => 13];
+					// 26=Approval By Leader
+					$where = ['id_identitas' => $trx->id_identitas, 'id_status' => 26];
 					$flow3 = App\Models\TrxRecruitmentLog::where($where)->first();
 					@endphp
                     <tr>
@@ -236,7 +236,7 @@
 						</td>
                         @if(!empty($flow2))<td>Human Capital & Org.<br/><img src="{{ public_path('assets/images/matta/verified_new.png') }}" height="30" /><br/>{{ $flow2->pic }}<br/>{{ $flow2->created_at }}</td>@endif
 						{{-- atasan kandidat --}}
-                        {{-- @if(!empty($flow3))<td>Mengetahui/Menyetujui<br/><img src="{{ public_path('assets/images/matta/approved_new.png') }}" height="30" /><br/>{{ $flow3->pic }}<br/>{{ $flow3->created_at }}</td>@endif --}}
+                        @if(!empty($flow3))<td>Mengetahui/Menyetujui<br/><img src="{{ public_path('assets/images/matta/approved_new.png') }}" height="30" /><br/>{{ $flow3->pic }}<br/>{{ $flow3->created_at }}</td>@endif
                         {{-- <td>Diarsip oleh<br/><img src="{{ public_path('assets/images/matta/informed_new.png') }}" height="30" /><br/>{{ $kandidat->pic }}<br/>{{ $kandidat->created_at }}</td> --}}
                     </tr>
                 </table>
