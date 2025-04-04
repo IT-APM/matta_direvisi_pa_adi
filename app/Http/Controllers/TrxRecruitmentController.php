@@ -462,6 +462,56 @@ class TrxRecruitmentController extends Controller
         return view('recruitment.interview_item', compact('trx', '_trx', 'karyawan'));
     }
 
+    public function atasan_save(Request $request)
+    {
+        $id_identitas = Crypt::decrypt($request->id_identitas);
+        // dd($id_identitas, $request->all());
+        $id_status = $request->id_status;
+        $_trx = TrxRecruitmentIdentitas::find($id_identitas);
+        $_trx->id_status = $id_status;
+        $_trx->update();
+        $trx = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
+        $posisi = $trx->_pekerjaan->pekerjaan;
+        $nego = TrxRecruitmentNegosiasi::where(['id_identitas' => $id_identitas])->orderBy('id', 'desc')->first();
+        $atasan = json_decode($trx->atasan_property, true);
+        $nama = $atasan['nama'].'/'.$atasan['nik'];
+        // 26=Approval By Leader
+        $arr = [$id_identitas,$id_status,$nama,'','Approval By Leader',''];
+        $this->insertLog($arr);
+        // kirim email
+        // 26=Approval By Leader
+        if(in_array($id_status, [26])){
+            $msg = '<p>Yth. '.$atasan['nama'].',<br/>Dengan hormat,</p>
+            <p>Kami informasikan bahwa Proses Seleksi Penerimaan Karyawan untuk Formulir Kebutuhan Karyawan nomor '.$_trx->id_kebutuhan.' telah disetujui oleh atasan untuk calon karyawan atas nama berikut:</p>
+            <p><table border="0" cellpadding="1" cellspacing="1">	
+                <tr>
+                    <td width="150">Nama</td>
+                    <td width="5">:</td>
+                    <td>'.$_trx->nama.'</td>
+                </tr>
+                <tr>
+                    <td>Posisi</td>
+                    <td>:</td>
+                    <td>'.$posisi.'</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Bergabung</td>
+                    <td>:</td>
+                    <td>'.Carbon::parse($nego->tgl_bergabung)->format('d-m-Y').'</td>
+                </tr>
+            </table></p>
+            <p>Demikian informasi ini kami sampaikan untuk diketahui. Jika terdapat perkembangan lebih lanjut, kami akan memberikan pembaruan.<br/>Terima kasih.</p>
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            // parameter yang dipassing ke sendemail
+            $mailData['title'] = 'Atasan Menyetujui Proses Seleksi Penerimaan Karyawan';
+            $mailData['data'] = ['msg'=>$msg];
+            $mailData['filename'] = 'emails.recruitment0';
+            $mailData['to'] = $atasan['email'];
+            $this->sendEmail($mailData);
+            return view('recruitment.thank', compact('msg'));
+        }
+    }
+
     public function negotiation_save(Request $request)
     {
         $id = Crypt::decrypt($request->id);
@@ -513,6 +563,7 @@ class TrxRecruitmentController extends Controller
         //     $data = array_replace($data, array(0=>$_trx->nama, 1=>0));
         //     $arr = array_replace($arr, array(2=>$_trx->nama));
         // }
+        // 15=Recruitment Done
         if($id_status != 15){
             $this->insertNegotiationLog($trx, $data);
         }
@@ -902,11 +953,39 @@ class TrxRecruitmentController extends Controller
 
     public function get_offering($id)
     {
-        $id = Crypt::decrypt($id)[0];
+        $_id = Crypt::decrypt($id);
+        // dd($_id);
+        $id = $_id[0];
         $_trx = TrxRecruitmentIdentitas::find($id);
         $trxM = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
-        $trx = TrxRecruitmentNegosiasi::where(['id_identitas'=>$id])->first();
-        return view('recruitment.get_offering', compact('trx', '_trx', 'trxM'));
+        $trx = TrxRecruitmentNegosiasi::where(['id_identitas'=>$id])->orderBy('id', 'desc')->first();
+        if($_trx->id_status == 26 && !empty($_id[2])){
+            $posisi = $trxM->_pekerjaan->pekerjaan;
+            $atasan = json_decode($trxM->atasan_property, true);
+            $msg = '<p>Yth. '.$atasan['nama'].',<br/>Dengan hormat,</p>
+            <p>Kami informasikan bahwa Proses Seleksi Penerimaan Karyawan untuk Formulir Kebutuhan Karyawan nomor '.$_trx->id_kebutuhan.' telah disetujui oleh atasan untuk calon karyawan atas nama berikut:</p>
+            <p><table border="0" cellpadding="1" cellspacing="1">	
+                <tr>
+                    <td width="150">Nama</td>
+                    <td width="5">:</td>
+                    <td>'.$_trx->nama.'</td>
+                </tr>
+                <tr>
+                    <td>Posisi</td>
+                    <td>:</td>
+                    <td>'.$posisi.'</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Bergabung</td>
+                    <td>:</td>
+                    <td>'.Carbon::parse($trx->tgl_bergabung)->format('d-m-Y').'</td>
+                </tr>
+            </table></p>
+            <p>Demikian informasi ini kami sampaikan untuk diketahui. Jika terdapat perkembangan lebih lanjut, kami akan memberikan pembaruan.<br/>Terima kasih.</p>
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            return view('recruitment.thank', compact('msg'));
+        }
+        return view('recruitment.get_offering', compact('trx', '_trx', 'trxM', '_id'));
     }
 
     public function download_offering($id)
@@ -1193,10 +1272,10 @@ class TrxRecruitmentController extends Controller
                 // kirim email ke atasan langsung jika ada
                 // <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut dan klik link berikut untuk melakukan persetujuan<br/><a href="'.$link.'" data-toggle="tooltip" title="Link Persetujuan">Link Persetujuan</a>.</p>
                 if(!empty($atasan)){
-                    $link = route('recruitment.get_offering', [Crypt::encrypt([$_trx->id, 'view'])]);
+                    $link = route('recruitment.get_offering', [Crypt::encrypt([$_trx->id, 'view', 'atasan'])]);
                     $msg = '<p>Yth. '.$atasan['nama'].',<br/>Dengan hormat,</p>
-                    <p>Kami informasikan bahwa proses negosiasi atas Formulir Kebutuhan Karyawan nomor '.$_trx->id.' telah dilakukan dan disetujui oleh calon karyawan atas nama berikut:</p>
-                    <table border="0" cellpadding="1" cellspacing="1">	
+                    <p>Kami informasikan bahwa proses negosiasi atas Formulir Kebutuhan Karyawan nomor '.$_trx->id_kebutuhan.' telah dilakukan dan disetujui oleh calon karyawan atas nama berikut:</p>
+                    <p><table border="0" cellpadding="1" cellspacing="1">	
                         <tr>
                             <td width="150">Nama</td>
                             <td width="5">:</td>
@@ -1212,9 +1291,9 @@ class TrxRecruitmentController extends Controller
                             <td>:</td>
                             <td>'.Carbon::parse($nego->tgl_bergabung)->format('d-m-Y').'</td>
                         </tr>
-                </table>
+                    </table></p>
                     <p>Calon karyawan tersebut telah melalui seluruh tahapan seleksi, termasuk seleksi CV, wawancara HC, wawancara user, Psikotest, dll., dan dinyatakan memenuhi kualifikasi yang dibutuhkan.</p>
-                    <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut.</p>
+                    <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut. Klik link dibawah ini untuk melakukan persetujuan terhadap Formulir Kebutuhan Karyawan tersebut.<br/><a href="'.$link.'" data-toggle="tooltip" title="LINK">LINK</a></p>
                     <p>Demikian informasi ini kami sampaikan untuk diketahui. Jika terdapat perkembangan lebih lanjut, kami akan memberikan pembaruan.<br/>Terima kasih.</p>
                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
                     // parameter yang dipassing ke sendemail
