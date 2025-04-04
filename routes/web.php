@@ -249,11 +249,12 @@ Route::get('recruitment/psychotestexcel/{id}', [TrxRecruitmentController::class,
 Route::post('recruitment/negotiation_send', [ TrxRecruitmentController::class, 'negotiation_send'])->name('recruitment.negotiation_send')->middleware('can:hc');
 Route::get('recruitment/negotiation_process/{id}', [TrxRecruitmentController::class, 'negotiation_process'])->name('recruitment.negotiation_process');
 Route::post('recruitment/negotiation_save', [ TrxRecruitmentController::class, 'negotiation_save'])->name('recruitment.negotiation_save');
+Route::post('recruitment/atasan_save', [ TrxRecruitmentController::class, 'atasan_save'])->name('recruitment.atasan_save');
 Route::get('recruitment/upload_dokumen_get/{id}', [TrxRecruitmentController::class, 'upload_dokumen_get'])->name('recruitment.upload_dokumen_get');
 Route::get('recruitment/get_interpretation/{id}', [TrxRecruitmentController::class, 'get_interpretation'])->name('recruitment.get_interpretation')->middleware('can:hc');
 Route::get('recruitment/interpretation/download/{id}', [TrxRecruitmentController::class, 'download_interpretation'])->name('recruitment.download_interpretation')->middleware('can:hc');
-Route::get('recruitment/get_offering/{id}', [TrxRecruitmentController::class, 'get_offering'])->name('recruitment.get_offering')->middleware('can:hc');
-Route::get('recruitment/get_offering/download/{id}', [TrxRecruitmentController::class, 'download_offering'])->name('recruitment.download_offering')->middleware('can:hc');
+Route::get('recruitment/get_offering/{id}', [TrxRecruitmentController::class, 'get_offering'])->name('recruitment.get_offering');
+Route::get('recruitment/get_offering/download/{id}', [TrxRecruitmentController::class, 'download_offering'])->name('recruitment.download_offering');
 Route::post('recruitment/upload_dokumen_post', [ TrxRecruitmentController::class, 'upload_dokumen_post'])->name('recruitment.upload_dokumen_post');
 Route::post('recruitment/pedoman_post', [ TrxRecruitmentController::class, 'pedoman_post'])->name('recruitment.pedoman_post');
 Route::resource('noattendance', NoAttendanceController::class)->middleware('can:hc');
