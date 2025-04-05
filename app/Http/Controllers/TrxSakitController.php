@@ -10,6 +10,7 @@ use App\Models\TrxSakitLog;
 use App\Models\SakitStatus;
 use App\Models\Holiday;
 use App\Models\WorkingDay;
+use App\Models\TrxCuti;
 // 
 use App\Models\ToDoList;
 use App\Models\ToDoListLog;
@@ -125,15 +126,6 @@ class TrxSakitController extends Controller
         return view( 'formulir.sakit.index', compact('trx', 'no', 'status_sakit', 'arr_status_sakit', 'date_from', 'date_to', 'nama', 'karyawan'));
     }
 
-    // fungsi untuk cek apakah masuk window
-    public function checkIfExist($from, $input)
-    {
-        $fromDateTime = Carbon::createFromFormat('Y-m-d', $from);
-        $inputDateTime = Carbon::createFromFormat('Y-m-d', $input);
-        $cek = $fromDateTime > $inputDateTime;
-        return ['status' => $cek, 'message' => 'Tanggal Mulai tidak CURRENTDATE atau BACKDATE'];
-    }
-
     // cek apakah hari ini sabtu minggu
     public function isWeekend($date)
     {
@@ -152,30 +144,6 @@ class TrxSakitController extends Controller
             $cek = true;
         }
         return ['status' => $cek, 'message' => 'Tanggal Mulai tidak di HARI LIBUR NASIONAL'];
-    }
-
-    // cek apakah jumlah sakit tanggungan perusahaan sudah pernah diambil
-    public function isPerusahaanOver($periode_sakit, $nik_karyawan, $tipe_sakit)
-    {
-        $cek = true;
-        $where = ['periode_sakit' => $periode_sakit, 'nik_karyawan' => $nik_karyawan, 'tipe_sakit' => $tipe_sakit];
-        $jumlah = TrxSakit::where($where)->whereNotIn('status_sakit', [5,7])->count();
-        if ($jumlah > 0) {
-            $cek = false;
-        }
-        return ['status' => $cek, 'message' => 'Izin Sakit Tanggungan Perusahaan Belum Pernah diambil'];
-    }
-
-    // cek apakah jumlah sakit sudah lebih dari 12
-    public function isSakitTahunanOver($periode_sakit, $nik_karyawan, $jumlah_hari)
-    {
-        $cek = false;
-        $where = ['periode_sakit' => $periode_sakit, 'nik_karyawan' => $nik_karyawan, 'tipe_sakit' => 0];
-        $jumlah = TrxSakit::where($where)->whereNotIn('status_sakit', [5,7])->sum('jumlah_hari');
-        if ($jumlah + $jumlah_hari < 13) {
-            $cek = true;
-        }
-        return ['status' => $cek, 'message' => 'Izin Sakit Tahunan tidak melebihi BATAS'];
     }
 
     // ambil tanggal tanggal sakit reguler
@@ -203,16 +171,35 @@ class TrxSakitController extends Controller
     }
 
     // fungsi ambil sakit yang ada sesuai NIK dan waktu pengajuan
-    public function isSakitExisting($nik_karyawan, $from, $to, $periode_sakit)
+    public function isSakitExisting($nik_karyawan, $from, $to)
     {
         $cek = true;
-        $where = ['periode_sakit' => $periode_sakit, 'nik_karyawan' => $nik_karyawan];
+        $where = ['nik_karyawan' => $nik_karyawan];
         $data = TrxSakit::where($where)->where('tanggal_mulai', '<=', $from)->where('tanggal_akhir', '>=', $from)->whereNotIn('status_sakit', [5,7])->count();
-        $data += TrxSakit::where($where)->where('tanggal_mulai', '<=', $to)->where('tanggal_akhir', '>=', $to)->whereNotIn('status_sakit', [5,7])->count();
+        while (strtotime($from) < strtotime($to)){
+            $from = date("Y-m-d", strtotime($from . "+1 day"));
+            $data += TrxSakit::where($where)->where('tanggal_mulai', '<=', $from)->where('tanggal_akhir', '>=', $from)->whereNotIn('status_sakit', [5,7])->count();
+        }
         if ($data > 0) {
             $cek = false;
         }
-        return ['status' => $cek, 'message' => 'Pengajuan Izin Sakit tidak beririsan dengan Izin Sakit lainnya'];
+        return ['status' => $cek, 'message' => 'Pengajuan Izin Sakit tidak beririsan dengan Pengajuan Izin Sakit lainnya'];
+    }
+
+    // fungsi ambil cuti yang ada sesuai NIK dan waktu pengajuan
+    public function isCutiExisting($nik_karyawan, $from, $to)
+    {
+        $cek = true;
+        $where = ['nik_karyawan' => $nik_karyawan];
+        $data = TrxCuti::where($where)->where('tanggal_mulai', '<=', $from)->where('tanggal_akhir', '>=', $from)->whereNotIn('status_cuti', [5,7,8])->count();
+        while (strtotime($from) < strtotime($to)){
+            $from = date("Y-m-d", strtotime($from . "+1 day"));
+            $data += TrxCuti::where($where)->where('tanggal_mulai', '<=', $from)->where('tanggal_akhir', '>=', $from)->whereNotIn('status_cuti', [5,7,8])->count();
+        }
+        if ($data > 0) {
+            $cek = false;
+        }
+        return ['status' => $cek, 'message' => 'Pengajuan Izin Sakit tidak beririsan dengan Pengajuan Cuti'];
     }
 
     // fungsi cek boleh sakit yang sudah setahun dari tanggal_mulai untuk kode_status KT=1 dan KKWT=2
@@ -265,62 +252,13 @@ class TrxSakitController extends Controller
         $tanggal_mulai = $request->tanggal_mulai;
         $tanggal_akhir = $request->tanggal_akhir;
         $periode_sakit = date('Y', strtotime($tanggal_mulai));
-        // $is_reguler = Karyawan::where('nik', $nik_karyawan)->first()->_wg->is_reguler;
-        // // echo 'is_reguler='.$is_reguler;die;
-        // // cek semua kemungkinan pengajuan sakit
-        // $arr = array();
-        // $data1 = $this->isWeekend($tanggal_mulai);
-        // // jika karyawan non reguler maka bisa sakit di hari sabtu minggu
-        // if ($is_reguler == 0) {
-        //     $data1 = ['status' => true, 'message' => 'Tanggal Mulai boleh di HARI SABTU atau MINGGU'];
-        // }
-        // $data2 = $this->checkIfExist($tanggal_mulai, $waktu);
-        // // sakit tanggungan perusahaan boleh current date / backdate
-        // if ($tipe_sakit > 0) {
-        //     $data2 = ['status' => true, 'message' => 'Tanggal Mulai boleh CURRENTDATE atau BACKDATE'];
-        // }
-        // $data3 = $this->isHoliday($tanggal_mulai);
-        // // jika karyawan non reguler maka bisa sakit di hari libur
-        // if ($is_reguler == 0) {
-        //     $data3 = ['status' => true, 'message' => 'Tanggal Mulai boleh di HARI LIBUR NASIONAL'];
-        // }
-        // $data4 = $this->isSakitTahunanOver($periode_sakit, $nik_karyawan, $jumlah_hari);
-        // // cek apakah sakit tanggungan perusahaan sudah pernah diambil atau belum
-        // if ($tipe_sakit > 0) {
-        //     $data4 = $this->isPerusahaanOver($periode_sakit, $nik_karyawan, $tipe_sakit);
-        // }
-        // // 
-        // $arr1 = array();
-        // $str = $tanggal_mulai;
-        // for ($x = 0; $x < $jumlah_hari; $x++) {
-        //     // 8 = Melahirkan-Karyawati (90 hari)
-        //     // 12 = Ibadah Umroh (7 hari)
-        //     // 13 = Ibadah Haji (30 hari)
-        //     // untuk sakit tersebut Hari Sabtu Minggu dan libur nasional tetap dihitung
-        //     if($tipe_sakit == 8 || $tipe_sakit == 12 || $tipe_sakit == 13){
-        //         array_push($arr1, $str);
-        //         $str = date("Y-m-d", strtotime($str . "+1 day"));
-        //     }
-        //     else{
-        //         // jika karyawan reguler maka Hari Sabtu dan Minggu dan hari libur tidak dihitung
-        //         if ($is_reguler == 1) {
-        //             $str = $this->getTanggalSakit($str);
-        //         }else{
-        //             $str = $this->getTanggalSakitNonReguler($str, $nik_karyawan);
-        //         }
-        //         array_push($arr1, $str);
-        //         $str = date("Y-m-d", strtotime($str . "+1 day"));
-        //     }
-        // }
-        // $tanggal_akhir = $arr1[$jumlah_hari - 1];
-        // $tanggal_sakit = implode(";", $arr1);
+        // cek semua kemungkinan pengajuan sakit
+        $arr = array();
         $tanggal_sakit = implode(";", $this->getDatesFromRange($tanggal_mulai, $tanggal_akhir));
-        // echo $tanggal_sakit;die;
-        // 
-        // $data5 = $this->isSakitExisting($nik_karyawan, $tanggal_mulai, $tanggal_akhir, $periode_sakit);
-        // $data6 = $this->isSetahun($nik_karyawan, $tanggal_mulai);
-        // array_push($arr, $data1, $data2, $data3, $data4, $data5, $data6);
-        // $cek = $data1['status'] && $data2['status'] && $data3['status'] && $data4['status'] && $data5['status'] && $data6['status'];
+        $data1 = $this->isSakitExisting($nik_karyawan, $tanggal_mulai, $tanggal_akhir);
+        $data2 = $this->isCutiExisting($nik_karyawan, $tanggal_mulai, $tanggal_akhir);
+        array_push($arr, $data1, $data2);
+        $cek = $data1['status'] && $data2['status'];
         // finish
         // 
         $trx = new TrxSakit;
@@ -359,7 +297,7 @@ class TrxSakitController extends Controller
         $lampiran->move('public/assets/sakit/', $namafile);
         $trx->lampiran = $namafile;
         // 
-        // if ($cek) {
+        if ($cek) {
             $trx->save();
             $this->insertLog($trx->id, $trx->status_sakit, $nik_karyawan);
             // start
@@ -379,10 +317,10 @@ class TrxSakitController extends Controller
             // finish
             // 
             return redirect('sakit')->with('msg', 'Data is saved successfully.');
-        // } else {
-        //     // return view('formulir.sakit.error', compact(['arr']));
-        //     return redirect()->back()->with('error', $arr);
-        // }
+        } else {
+            // return view('formulir.sakit.error', compact(['arr']));
+            return redirect()->back()->with('error', $arr);
+        }
     }
 
     public function getDatesFromRange($start, $end)
