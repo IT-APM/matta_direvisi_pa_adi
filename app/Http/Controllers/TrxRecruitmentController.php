@@ -1872,6 +1872,7 @@ class TrxRecruitmentController extends Controller
         $id_kebutuhan = $trx->id_kebutuhan;
         $trx = TrxKebutuhanMaster::find($id_kebutuhan);
         $posisi = $trx->_pekerjaan->pekerjaan;
+        $id_status_kerja = $trx->id_status_kerja;
         // dd($id);
         $trx = new TrxRecruitmentIdentitas;
         $trx->id_recruitment = $id_recruitment;
@@ -2047,7 +2048,37 @@ class TrxRecruitmentController extends Controller
         $mailData['filename'] = 'emails.recruitment0';
         $mailData['to'] = $trx->email;
         $this->sendEmail($mailData);
-        // 
+        // start
+        // CM 320
+        // 8=Konsultan
+        // jika id_status_kerja=8 maka Menghilangkan tahapan psikotest dan wawancara pada list of Applicant untuk kebutuhan karyawan dengan status kerja Konsultan
+        // langsung ke isian 16=Interpretation
+        if($id_status_kerja == 8){
+            // 37=PIC Recruitment
+            $nik = MtrUtility::find(37)->informasi;
+            $pic_hco = Karyawan::where(['nik'=>$nik])->first()->nama.'/'.$nik;
+            // 11=Interview HCO Done
+            // 22=Psychotest and Interview Pass
+            $trx->id_status = 22;
+            $trx->save();
+            // id_identitas,id_status,pic,pic_property,aktifitas,catatan
+            // 4=Psychotest Send
+            $arr = [$trx->id,4,$pic_hco,'','internal','NA'];
+            $this->insertLog($arr);
+            // 5=Psychotest Done
+            $arr = [$trx->id,5,$trx->nama,'','external','NA'];
+            $this->insertLog($arr);
+            // 10=Interview HCO Send
+            $arr = [$trx->id,10,$pic_hco,'','internal','NA'];
+            $this->insertLog($arr);
+            // 11=Interview HCO Done
+            $arr = [$trx->id,11,$pic_hco,'','internal','NA'];
+            $this->insertLog($arr);
+            // 22=Psychotest and Interview Pass
+            $arr = [$trx->id,22,$pic_hco,'','internal','NA'];
+            $this->insertLog($arr);
+        }
+        // end
         // return redirect()->view('recruitment.thank', compact('msg'))->withInput();
         // return back()->with(['message' => $msg]);
         return view('recruitment.thank', compact('msg'));
