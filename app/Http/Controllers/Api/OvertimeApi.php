@@ -81,15 +81,15 @@ class OvertimeApi extends Controller
         // masukkan ke dalam kumpulan array
         $arrWeekDay = array();
         $arrWeekEnd = array();
-        // weekday dan weekend reguler adalah senin sd jumat & sabtu minggu,
-        // jika ada hari libur nasional di weekday maka akan masuk ke weekend
+        // weekday reguler adalah senin sd jumat dan weekend adalah sabtu & minggu,
+        // jika ada hari libur nasional/cuti bersama di weekday maka akan masuk ke weekend
         if($data['is_reguler'] == 1){
             while (strtotime($start_date) <= strtotime($end_date)) {
                 $_dayOfWeek = Carbon::createFromFormat('Y-m-d', $start_date)->dayOfWeek;
                 if($_dayOfWeek == 0 || $_dayOfWeek == 6){
                     array_push($arrWeekEnd, $start_date);
                 }else{
-                    // hari libur masuk kategori weekend
+                    // hari libur nasional/cuti bersama masuk kategori weekend
                     if($this->isHoliday($start_date)){
                         array_push($arrWeekEnd, $start_date);
                     }else{
@@ -100,6 +100,7 @@ class OvertimeApi extends Controller
             }
         }
         // weekday dan weekend non reguler diambil dari WorkingDay
+        // jika ada hari libur nasional/cuti bersama di WorkingDay maka akan masuk ke weekday
         else{
             while (strtotime($start_date) <= strtotime($end_date)) {
                 $cek = false;
@@ -596,6 +597,8 @@ class OvertimeApi extends Controller
 
     // fungsi ambil OT yang ada sesuai NIK dan waktu pengajuan
     public function isOTExisting($nik, $from, $to) {
+        $_from = $from;
+        $_to = $to;
         $cek = true;
         $where = [ 'ot_maker_by' => $nik ];
         // $data = Overtime::where($where)->whereBetween('ot_start_at', [$from, $to])->whereIn('ot_approver_status', ['Waiting', 'Approve'])->count();
@@ -611,7 +614,7 @@ class OvertimeApi extends Controller
             $cek = false;
         }
         // return [ 'status' => $cek, 'message' => 'Pengajuan OT tidak beririsan dengan OT lainnya' ];
-        return [ 'status' => $cek, 'message' => $nik.'#'.$from.' sd '.$to.'. Pengajuan OT tidak beririsan dengan OT lainnya' ];
+        return [ 'status' => $cek, 'message' => $nik.'#'.$_from.' sd '.$_to.'. Pengajuan OT tidak beririsan dengan OT lainnya' ];
     }
 
     // fungsi get layer 1
@@ -632,13 +635,14 @@ class OvertimeApi extends Controller
         $waktuClockinDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $waktuClockin);
         $waktuClockout = $tgl.' '.$data['clockout'];
         $waktuClockoutDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $waktuClockout);
+        // hanya untuk reguler, 1 jam setelah window-out
         $startWaktu = $waktuClockoutDateTime->addHour();
         // start
         // khusus jam kerja karyawan reguler Bulan Ramadhan 08-16
         // tetapi jam overtime tetap dimulai dari jam 19 jadi ditambah 1+2 jam
-        if($data['is_reguler']==1){
-            $startWaktu = $waktuClockoutDateTime->addHour(2);
-        }
+        // if($data['is_reguler']==1){
+        //     $startWaktu = $waktuClockoutDateTime->addHour(2);
+        // }
         // end
         $fromDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $from);
         $toDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $to);
@@ -648,19 +652,27 @@ class OvertimeApi extends Controller
         $isLibur2 = $this->isHoliday(date($tgl));
         //
         $isClock = false;
+        // jika weekend
         if($isLibur1){
             $isClock = false;
-        }else{
+        }
+        // jika bukan weekend maka weekday
+        else{
+            // jika libur nasional/cuti bersama
             if($isLibur2){
                 $isClock = false;
-            }else{
+            }
+            // jika bukan libur nasional/cuti bersama
+            else{
                 $isClock = true;
             }
         }
-        //
+        // untuk non reguler
         if($data['is_reguler']==0){
+            // jika di jadwal kerja
             if($this->isWorkingDay($nik, $from, $to)){
-                // khusus grup security bisa OT di hari libur nasional walaupun di jadwal kerjanya
+                // khusus grup security bisa OT di hari libur nasional/cuti bersama walaupun di jadwal kerjanya
+                // ada perubahan tidak hanya untuk grup security melainkan untuk semua non reguler
 				// if($data['wg_id']==2){
 					if($isLibur2){
 						return [ 'status' => true, 'message' => 'Non Reguler, Datetime OT bukan waktu kerja' ];
@@ -670,10 +682,14 @@ class OvertimeApi extends Controller
 				// }else{
 				// 	return [ 'status' => false, 'message' => 'Non Reguler, Datetime OT bukan waktu kerja' ];
 				// }
-            }else{
+            }
+            // jika bukan di jadwal kerja
+            else{
                 return [ 'status' => true, 'message' => 'Non Reguler, Datetime OT bukan waktu kerja' ];
             }
-        }else{
+        }
+        // untuk reguler
+        else{
             if($isClock){
                 return [ 'status' => $cek, 'message' => 'Reguler, Datetime OT diajukan setelah 1 jam Datetime akhir kerja atau sebelum Datetime mulai kerja' ];
             }else{
