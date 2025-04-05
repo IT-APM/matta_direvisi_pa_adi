@@ -34,7 +34,7 @@
                         @if (session('error')[1]['status']) <h5>
                             {{ session('error')[1]['message'] }} - OK</h5>
                         @else <h5>{{ session('error')[1]['message'] }} - NOK</h5> @endif
-                        @if (session('error')[2]['status']) <h5>
+                        {{-- @if (session('error')[2]['status']) <h5>
                             {{ session('error')[2]['message'] }} - OK</h5>
                         @else <h5>{{ session('error')[2]['message'] }} - NOK</h5> @endif
                         @if (session('error')[3]['status']) <h5>
@@ -45,7 +45,7 @@
                         @else <h5>{{ session('error')[4]['message'] }} - NOK</h5> @endif
                         @if (session('error')[5]['status']) <h5>
                             {{ session('error')[5]['message'] }} - OK</h5>
-                        @else <h5>{{ session('error')[5]['message'] }} - NOK</h5> @endif
+                        @else <h5>{{ session('error')[5]['message'] }} - NOK</h5> @endif --}}
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
