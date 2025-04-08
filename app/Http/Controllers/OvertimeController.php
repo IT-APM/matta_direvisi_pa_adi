@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Overtime;
 use App\Models\OvertimeLog;
+use App\Models\OvertimeHistory;
 use App\Models\OvertimeType;
 use App\Models\Karyawan;
 use App\Models\Perusahaan;
@@ -88,7 +89,7 @@ class OvertimeController extends Controller
         //
         $type_code = OvertimeType::orderBy( 'ot_type', 'asc' )->get();
         $status = 'edit';
-        $overtime = Overtime::find( $id );
+        $overtime = Overtime::find($id);
         $karyawan = Karyawan::where('nik', $overtime->ot_maker_by)->first();
         $history = OvertimeLog::where('id_ot', $id)->orderBy( 'id', 'desc' )->get();
         // return response()->json( [ 'OT log' => $log ], 200 );
@@ -99,7 +100,7 @@ class OvertimeController extends Controller
     {
         //
         $linkAction = route('approval-appject-todolist', $id);
-        $overtime = Overtime::find( $id );
+        $overtime = Overtime::find($id);
         $karyawan = json_decode($overtime->ot_maker_property, true);
         $data = ['nik' => $karyawan['nik'], 'nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep']];
         if ($overtime->ot_approver_status == 'Waiting') {
@@ -116,7 +117,7 @@ class OvertimeController extends Controller
         // tidak digunakan, karena sudah menggunakan rest-api
         // start
         // $now = date("Y-m-d H:i:s");
-        // $ot = Overtime::find( $id );
+        // $ot = Overtime::find($id);
         // $ot->ot_approver_status = $request->res;
         // $ot->ot_approver_at = $now;
         // $ot->update();
@@ -334,7 +335,7 @@ class OvertimeController extends Controller
     {
         //
         $this->authorize('spv');
-        $data = Overtime::find( $id );
+        $data = Overtime::find($id);
         $init = $data->ot_length_adj;
         $hours = floor($init / 3600);
         $minutes = floor(($init / 60) % 60);
@@ -598,7 +599,7 @@ class OvertimeController extends Controller
         //
         $type_code = OvertimeType::orderBy( 'ot_type', 'asc' )->get();
         $status = 'edit';
-        $overtime = Overtime::find( $id );
+        $overtime = Overtime::find($id);
         $history = OvertimeLog::where('id_ot', $id)->orderBy( 'id', 'desc' )->get();
         return view( 'overtime.propose.upsert', compact( 'type_code', 'overtime', 'status', 'history' ) );
     }
@@ -612,18 +613,26 @@ class OvertimeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // dd($request->all(), $id);
         // return response()->json( [ 'msg' => $request->all(), 'id'=>$id ] );
         // return redirect( 'adj_ot',  [$id] )->with( ['msg', 'Data is saved successfully.'] );
         // return redirect()->route('adj_ot', $id)->with( ['msg', 'Data is saved successfully.'] );
         // $this->authorize('hc');
         $ot_length_adj = ($request->hours * 3600) + ($request->minutes * 60) + $request->seconds;
-        $ot = Overtime::find( $id );
+        $ot = Overtime::find($id);
+        // jika di history belum ada maka insert before
+        if(OvertimeHistory::where('id_ot', $id)->doesntExist()){
+            $this->save_ot_history($ot);
+        }
         $arr = json_decode($ot->ot_maker_property, true);
         $ot->ot_length_adj = $ot_length_adj;
         $ot_length_rp_adj = $this->getOTSalary($ot->ot_start_at, $ot->ot_maker_by, $arr['is_reguler'], $arr['wg_id'], $arr['gaji_pokok'], $ot_length_adj, $arr['status_karyawan'], $ot->ot_freelance_property);
         $ot->ot_length_rp_adj = $ot_length_rp_adj;
         $ot->update();
+        $ot = Overtime::find($id);
+        // insert after
+        $this->save_ot_history($ot);
+        // 
         // $init = $data->ot_length_adj;
         // $hours = floor($init / 3600);
         // $minutes = floor(($init / 60) % 60);
@@ -633,6 +642,46 @@ class OvertimeController extends Controller
         // return view( 'overtime.reporting.view', compact( 'data', 'duration' ) );
         // return redirect( 'adj_ot',  $id)->with( 'msg', 'Data is saved successfully.' );
         return redirect()->back()->with( 'msg', 'Data is saved successfully.' );
+    }
+    
+    public function save_ot_history($ot)
+    {
+        $nik = auth()->user()->nik;
+        $ot_history = new OvertimeHistory;
+        $ot_history->ot_maker_at = $ot->ot_maker_at;
+        $ot_history->ot_approver_at = $ot->ot_approver_at;
+        $ot_history->ot_maker_by = $ot->ot_maker_by;
+        $ot_history->ot_maker_property = $ot->ot_maker_property;
+        $ot_history->ot_freelance_property = $ot->ot_freelance_property;
+        $ot_history->ot_approver_by = $ot->ot_approver_by;
+        $ot_history->ot_approver_property = $ot->ot_approver_property;
+        $ot_history->ot_maker_status = $ot->ot_maker_status;
+        $ot_history->ot_approver_status = $ot->ot_approver_status;
+        $ot_history->ot_start_at = $ot->ot_start_at;
+        $ot_history->ot_end_at = $ot->ot_end_at;
+        $ot_history->ot_length = $ot->ot_length;
+        $ot_history->ot_start_clockin = $ot->ot_start_clockin;
+        $ot_history->ot_end_clockin = $ot->ot_end_clockin;
+        $ot_history->ot_start_clockout = $ot->ot_start_clockout;
+        $ot_history->ot_end_clockout = $ot->ot_end_clockout;
+        $ot_history->ot_title = $ot->ot_title;
+        $ot_history->ot_desc = $ot->ot_desc;
+        $ot_history->ot_type_code = $ot->ot_type_code;
+        $ot_history->ot_start_at_real = $ot->ot_start_at_real;
+        $ot_history->ot_end_at_real = $ot->ot_end_at_real;
+        $ot_history->ot_length_real = $ot->ot_length_real;
+        $ot_history->ot_start_at_rev = $ot->ot_start_at_rev;
+        $ot_history->ot_end_at_rev = $ot->ot_end_at_rev;
+        $ot_history->ot_length_rev = $ot->ot_length_rev;
+        $ot_history->ot_length_adj = $ot->ot_length_adj;
+        $ot_history->ot_length_rp = $ot->ot_length_rp;
+        $ot_history->ot_length_rp_adj = $ot->ot_length_rp_adj;
+        $ot_history->created_at = $ot->created_at;
+        $ot_history->updated_at = $ot->updated_at;
+        $ot_history->id_ot = $ot->id;
+        $ot_history->ot_edit_by = $nik;
+        $ot_history->ot_edit_property = $this->getNikProperty($nik);
+        $ot_history->save();
     }
 
     /**
