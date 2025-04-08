@@ -303,6 +303,39 @@
                     </div>
                 </div>
                 <!--  -->
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body typography">
+                            <h6>History</h6>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Length Adj</th>
+                                        <th>Rp Adj</th>
+                                        <th>Rp Adj (Round)</th>
+                                        <th>Edit By</th>
+                                        <th>Edit At</th>
+                                    </tr>
+                                </thead>
+                                @php
+                                    // dd($data->id);
+                                    $ot_history = App\Models\OvertimeHistory::where(['id_ot' => $data->id])->orderBy( 'updated_at', 'desc' )->get();
+                                @endphp
+                                <tbody>
+                                    @foreach ($ot_history as $_data)
+                                    <tr>
+                                        <td>@if(!empty($_data->ot_length_adj)) {{ gmdate('H:i:s', $_data->ot_length_adj) }} @endif</td>
+                                        <td>Rp. {{ number_format($_data->ot_length_rp_adj) }}</td>
+                                        <td>Rp. {{ number_format(round($_data->ot_length_rp_adj, -3)) }}</td>
+                                        <td>@if(!empty($_data->ot_edit_property)) {{ json_decode($_data->ot_edit_property, true)['nama'] }}/{{ json_decode($_data->ot_edit_property, true)['nik'] }} @endif</td>
+                                        <td>@if(!empty($_data->updated_at)) {{ \Carbon\Carbon::parse($_data->updated_at)->format('d-m-Y H:i:s') }} @endif</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
                 <!-- <div class="col-12">
                     <div class="appointment">
                         <a href="{{ URL::previous() }}" class="btn btn-warning" type="button">Back</a>
