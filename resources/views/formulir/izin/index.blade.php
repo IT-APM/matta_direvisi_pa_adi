@@ -97,7 +97,8 @@
                                     <th>Approval 1</th>
                                     <th>Approval 2</th>
                                     <th>Tipe</th>
-                                    <th>Hari, Tanggal</th>
+                                    <th>Hari</th>
+                                    <th>Tanggal</th>
                                     <th>Alasan</th>
                                     <th>Status</th>
                                     <th>Created at</th>
@@ -131,7 +132,12 @@
                                         <br/>Jam {{ $data->jam_awal }} s/d {{ $data->jam_akhir }}
                                         @endif
                                     </td>
-                                    <td>{{ App\Http\Controllers\TrxIjinController::getTanggalIndonesia($data->tanggal) }}</td>
+                                    {{-- <td>{{ App\Http\Controllers\TrxIjinController::getTanggalIndonesia($data->tanggal) }}</td> --}}
+                                    @php
+                                        $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                                    @endphp
+                                    <td>{{ $hari[\Carbon\Carbon::parse($data->tanggal)->dayOfWeek] }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
                                     <td>{!! $data->alasan !!}</td>
                                     <td>{{ $data->_status->status }}</td>
                                     <td>{{ $data->created_at }}</td>
