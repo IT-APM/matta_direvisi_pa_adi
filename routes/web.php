@@ -232,6 +232,8 @@ Route::get('payroll/employee_gap/{id}', [TrxPayrollController::class, 'employee_
 Route::get('payroll/send_email/{id}', [TrxPayrollController::class, 'send_email'])->name('payroll.send_email')->middleware('can:payroll');
 Route::post('payroll/send_email_exe', [TrxPayrollController::class, 'send_email_exe'])->name('payroll.send_email_exe')->middleware('can:payroll');
 Route::get('payroll/set_paid_date/{id}', [TrxPayrollController::class, 'set_paid_date'])->name('payroll.set_paid_date');
+Route::get('payroll/edit_payroll/{id}', [TrxPayrollController::class, 'edit_payroll'])->name('payroll.edit_payroll')->middleware('can:payroll');
+Route::post('payroll/save_edit_payroll', [TrxPayrollController::class, 'save_edit_payroll'])->name('payroll.save_edit_payroll')->middleware('can:payroll');
 // 
 Route::resource('recruitment', TrxRecruitmentController::class)->middleware('can:hc');
 Route::get('recruitment/apply/{id}', [TrxRecruitmentController::class, 'apply'])->name('recruitment.apply');
