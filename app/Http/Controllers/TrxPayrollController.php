@@ -264,6 +264,28 @@ class TrxPayrollController extends Controller
         return ['bulan'=>$bulan, 'tahun'=>$tahun, 'after'=>$payroll, 'before'=>$payroll_h];
     }
     
+    public function edit_payroll(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+        $back_url = $request->back_url;
+        $trx = TrxPayrollLog::find($id);
+        return view('payroll.edit_payroll', compact('trx', 'back_url'));
+    }
+    
+    public function save_edit_payroll(Request $request)
+    {
+        // dd($request->all());
+        $trx = TrxPayrollLog::find($request->id);
+        $trx->overtime = str_replace(',', '', $request->overtime);
+        $trx->update();
+        $back_url = $request->back_url;
+        $tab = $request->tab;
+        $msg = 'Overtime Payroll Value Data is saved successfully.';
+        return redirect($back_url)->with(compact('msg','tab'));
+        // return redirect($back_url, compact('msg','tab'));
+        // return redirect($back_url)->with(['msg'=>$tab, 'tab'=>$tab]);
+    }
+    
     public function slip(Request $request, $id)
     {
         // fungsi untuk set paid_at default pada trx_tbl_payroll_log
@@ -599,6 +621,7 @@ class TrxPayrollController extends Controller
                 'updated_by' => $_trx->updated_by,
                 'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
                 'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+                'thp_dilaporkan' => $_trx->thp_dilaporkan,
             ));
         }
         // bkp TrxPayrollBpjskes
@@ -621,6 +644,7 @@ class TrxPayrollController extends Controller
                 'updated_by' => $_trx->updated_by,
                 'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
                 'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+                'thp_dilaporkan' => $_trx->thp_dilaporkan,
             ));
         }
         // menjadi bulan dan tahun berjalan
