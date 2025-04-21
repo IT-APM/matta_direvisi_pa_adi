@@ -102,6 +102,8 @@
                                                 <th>#ID</th>
                                                 <th>Action</th>
                                                 <th>&nbsp;Hasil&nbsp;</th>
+                                                <th>Area Kerja</th>
+                                                <th>Area Kerja Kota</th>
                                                 <th>Posisi</th>
                                                 <th>Nama/Email</th>
                                                 {{-- <th>Email</th> --}}
@@ -153,6 +155,8 @@
                                                     @if(!empty($manusia[0]->jawaban1))&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$manusia[0]->jawaban1) }}" target="_blank" data-toggle="tooltip" title="DAP"><i class="fa fa-file-image-o"></i></a>@endif
                                                     @endif
                                                 </td>
+                                                <td>{{ $recruitment->_area->propinsi }}</td>
+                                                <td>@if (!empty($recruitment->id_kota)) {{ $recruitment->_kota->kota }} @endif</td>
                                                 <td>{{ $recruitment->_pekerjaan->pekerjaan }}</td>
                                                 <td>{{ $data->nama }}<br/>{{ $data->email }}</td>
                                                 {{-- <td>{{ $data->email }}</td> --}}
