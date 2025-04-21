@@ -101,6 +101,8 @@
                                     <th>No</th>
                                     <th>#ID</th>
                                     <th>Action</th>
+                                    <th>Area Kerja</th>
+                                    <th>Area Kerja Kota</th>
                                     <th>Pengaju</th>
                                     <th>Posisi</th>
                                     <th>Jenis</th>
@@ -123,6 +125,8 @@
                                         &nbsp;<a href="{{ route('kebutuhan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         @if(!empty($recruitment))<br/><a href="{{ route('recruitment.apply', [Crypt::encrypt(array($recruitment->id, 'apply'))]) }}" data-toggle="tooltip" title="Apply" target="_blank"><i class="icon-eye"></i></a>@endif
                                     </td>
+                                    <td>{{ $data->_area->propinsi }}</td>
+                                    <td>@if (!empty($data->id_kota)) {{ $data->_kota->kota }} @endif</td>
                                     <td>{{ $data->_pengaju->nama }} / {{ $data->_pengaju->nik }}</td>
                                     <td>{{ $data->_pekerjaan->pekerjaan }}</td>
                                     <td>{{ $data->_status_kerja->status_kerja }}</td>
