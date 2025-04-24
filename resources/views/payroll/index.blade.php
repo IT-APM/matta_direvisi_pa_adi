@@ -731,6 +731,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Total Medical Cost</th>
                                                 <th>Overtime</th>
                                                 <th>PPh21</th>
+                                                @can('payroll')
+                                                <th>Action</th>
+                                                @endcan
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -775,11 +778,12 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 $ekses = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$data->nik."' AND DATE(b.updated_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (7)"))[0]->jumlah_klaim;
                                                 $total_kesehatan += $ekses;
                                                 // overtime data bulan lalu
-                                                $date_from = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth()->startOfMonth()->format('Y-m-d');
-                                                $date_to = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth()->endOfMonth()->format('Y-m-d');
-                                                $where = ['ot_maker_by'=>$data->nik, 'ot_approver_status'=>'Approve'];
-                                                $overtime = App\Models\Overtime::select(DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
-                                                $total_overtime = $overtime->sum('ot_length_rp_adj');
+                                                // $date_from = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth()->startOfMonth()->format('Y-m-d');
+                                                // $date_to = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->subMonth()->endOfMonth()->format('Y-m-d');
+                                                // $where = ['ot_maker_by'=>$data->nik, 'ot_approver_status'=>'Approve'];
+                                                // $overtime = App\Models\Overtime::select(DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
+                                                // $total_overtime = $overtime->sum('ot_length_rp_adj');
+                                                $total_overtime = $data->overtime;
                                                 // dd($total_overtime);
                                             @endphp
                                             <tr>
@@ -867,6 +871,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td class="text-end">{{ number_format($total_kesehatan, 0) }}</td>
                                                 <td class="text-end">{{ number_format($total_overtime, 0) }}</td>
                                                 <td class="text-end">{{ number_format($data->pajak, 0) }}</td>
+                                                @can('payroll')
+                                                <td><a href="{{ route('payroll.edit_payroll', [Crypt::encrypt($data->id), 'back_url'=>URL::full(), 'type'=>'overtime_present']) }}" data-toggle="tooltip" title='Adjustment'> <i class="icon-pencil-alt"></i></a></td>
+                                                @endcan
                                             </tr>
                                             @endforeach
                                         </tbody>
@@ -898,6 +905,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 @for ($x = 33; $x <= 45; $x++)
                                                 <th id="kertas_{{$x}}" class="text-end">0</th>
                                                 @endfor
+                                                <th>&nbsp;</th>
                                             </tr>
                                             @endcan
                                             {{--  --}}
