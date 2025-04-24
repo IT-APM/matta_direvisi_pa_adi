@@ -268,18 +268,26 @@ class TrxPayrollController extends Controller
     {
         $id = Crypt::decrypt($id);
         $back_url = $request->back_url;
+        $type = $request->type;
         $trx = TrxPayrollLog::find($id);
-        return view('payroll.edit_payroll', compact('trx', 'back_url'));
+        if($type=='overtime_present'){
+            $trx = TrxPayroll::find($id);
+        }
+        return view('payroll.edit_payroll', compact('trx', 'back_url', 'type'));
     }
     
     public function save_edit_payroll(Request $request)
     {
         // dd($request->all());
+        $back_url = $request->back_url;
+        $type = $request->type;
+        $tab = $request->tab;
         $trx = TrxPayrollLog::find($request->id);
+        if($type=='overtime_present'){
+            $trx = TrxPayroll::find($request->id);
+        }
         $trx->overtime = str_replace(',', '', $request->overtime);
         $trx->update();
-        $back_url = $request->back_url;
-        $tab = $request->tab;
         $msg = 'Overtime Payroll Value Data is saved successfully.';
         return redirect($back_url)->with(compact('msg','tab'));
         // return redirect($back_url, compact('msg','tab'));
@@ -513,8 +521,8 @@ class TrxPayrollController extends Controller
         //         'nama_rek' => $_trx->nama_rek,
         //         'nama_bank' => $_trx->nama_bank,
         //         'no_rek' => $_trx->no_rek,
-        //         'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
-        //         'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+        //         'created_at' => $_trx->created_at,
+        //         'updated_at' => $_trx->updated_at,
         //     ));
         // }
         // bkp TrxPayroll
@@ -539,13 +547,15 @@ class TrxPayrollController extends Controller
             // 7 = Ekses
             $ekses = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$_trx->nik."' AND DATE(b.updated_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (7)"))[0]->jumlah_klaim;
             // $total_kesehatan += $ekses;
+            // tidak digunakan lagi karena sudah diambil dari trx_tbl_payroll
             // overtime data bulan lalu
-            $date_from = Carbon::createFromFormat('Y-m-d', "{$_trx->tahun}-{$_trx->bulan}-01")->subMonth()->startOfMonth()->format('Y-m-d');
-            $date_to = Carbon::createFromFormat('Y-m-d', "{$_trx->tahun}-{$_trx->bulan}-01")->subMonth()->endOfMonth()->format('Y-m-d');
-            $where = ['ot_maker_by'=>$_trx->nik, 'ot_approver_status'=>'Approve'];
-            // $overtime = Overtime::where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy('id', 'asc')->get();
-            $overtime = Overtime::select(DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
-            $overtime = $overtime->sum('ot_length_rp_adj');
+            // start
+            // $date_from = Carbon::createFromFormat('Y-m-d', "{$_trx->tahun}-{$_trx->bulan}-01")->subMonth()->startOfMonth()->format('Y-m-d');
+            // $date_to = Carbon::createFromFormat('Y-m-d', "{$_trx->tahun}-{$_trx->bulan}-01")->subMonth()->endOfMonth()->format('Y-m-d');
+            // $where = ['ot_maker_by'=>$_trx->nik, 'ot_approver_status'=>'Approve'];
+            // $overtime = Overtime::select(DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
+            // $overtime = $overtime->sum('ot_length_rp_adj');
+            // end
             // if($_trx->gapok == 0){
             //     $kehamilan = 0;
             //     $persalinan = 0;
@@ -566,11 +576,13 @@ class TrxPayrollController extends Controller
                 'kacamata' => $kacamata,
                 'kesehatan' => $kesehatan,
                 'ekses' => $ekses,
-                'overtime' => $overtime,
+                'overtime' => $_trx->overtime,
+                'overtime_max' => $_trx->overtime_max,
+                'overtime_ori' => $_trx->overtime_ori,
                 'created_by' => $_trx->created_by,
                 'updated_by' => $_trx->updated_by,
-                'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
-                'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+                'created_at' => $_trx->created_at,
+                'updated_at' => $_trx->updated_at,
                 'findim_subdepartemen' => $_trx->findim_subdepartemen,
                 'findim_departemen' => $_trx->findim_departemen,
                 'findim_divisi' => $_trx->findim_divisi,
@@ -600,8 +612,8 @@ class TrxPayrollController extends Controller
                 'status' => $_trx->status,
                 'created_by' => $_trx->created_by,
                 'updated_by' => $_trx->updated_by,
-                'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
-                'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+                'created_at' => $_trx->created_at,
+                'updated_at' => $_trx->updated_at,
             ));
         }
         // bkp TrxPayrollBpjstk
@@ -619,8 +631,8 @@ class TrxPayrollController extends Controller
                 'status' => $_trx->status,
                 'created_by' => $_trx->created_by,
                 'updated_by' => $_trx->updated_by,
-                'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
-                'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+                'created_at' => $_trx->created_at,
+                'updated_at' => $_trx->updated_at,
                 'thp_dilaporkan' => $_trx->thp_dilaporkan,
             ));
         }
@@ -642,8 +654,8 @@ class TrxPayrollController extends Controller
                 'status' => $_trx->status,
                 'created_by' => $_trx->created_by,
                 'updated_by' => $_trx->updated_by,
-                'created_at' => Carbon::parse($_trx->created_at)->format("Y-m-d H:i:s"),
-                'updated_at' => Carbon::parse($_trx->updated_at)->format("Y-m-d H:i:s"),
+                'created_at' => $_trx->created_at,
+                'updated_at' => $_trx->updated_at,
                 'thp_dilaporkan' => $_trx->thp_dilaporkan,
             ));
         }
@@ -824,15 +836,17 @@ class TrxPayrollController extends Controller
                 $_102 = array_search(102, $data0[0]);
                 $_103 = array_search(103, $data0[0]);
                 $_104 = array_search(104, $data0[0]);
-                // delete data existing
-                $where = ['nik'=>$data0[2][$_101], 'bulan'=>$data0[2][$_102], 'tahun'=>$data0[2][$_103]];
-                TrxPayroll::where($where)->delete();
-                TrxPayrollAddsub::where($where)->delete();
-                TrxPayrollBpjstk::where($where)->delete();
-                TrxPayrollBpjskes::where($where)->delete();
                 // dimulai dari baris ke-3
                 // data payroll
                 for ($x = 2; $x < count($data0); $x++) {
+                    // delete data existing
+                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                    TrxPayroll::where($where)->delete();
+                    TrxPayrollAddsub::where($where)->delete();
+                    TrxPayrollBpjstk::where($where)->delete();
+                    TrxPayrollBpjskes::where($where)->delete();
+                    TrxPayrollEmail::where($where)->delete();
+                    // 
                     $where = ['nik' => $data0[$x][$_101]];
                     $karyawan = Karyawan::where($where)->first();
                     // $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
@@ -857,6 +871,18 @@ class TrxPayrollController extends Controller
                     $trx->grade = $karyawan->_grade->grade;
                     $trx->created_by = auth()->user()->nik;
                     $trx->updated_by = auth()->user()->nik;
+                    // overtime data bulan lalu
+                    // start
+                    $date_from = Carbon::createFromFormat('Y-m-d', "{$data0[$x][$_103]}-{$data0[$x][$_102]}-01")->subMonth()->startOfMonth()->format('Y-m-d');
+                    $date_to = Carbon::createFromFormat('Y-m-d', "{$data0[$x][$_103]}-{$data0[$x][$_102]}-01")->subMonth()->endOfMonth()->format('Y-m-d');
+                    $where = ['ot_maker_by'=>$data0[$x][$_101], 'ot_approver_status'=>'Approve'];
+                    $overtime = Overtime::select(DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
+                    $overtime = $overtime->sum('ot_length_rp_adj');
+                    // end
+                    $trx->overtime = $overtime;
+                    $trx->overtime_max = MtrUtility::find(33)->informasi;
+                    // overtime_ori sama dengan overtime
+                    $trx->overtime_ori = $overtime;
                     $trx->save();
                 }
                 // data tambahan
