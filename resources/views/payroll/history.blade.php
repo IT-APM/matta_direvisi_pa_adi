@@ -166,11 +166,13 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                     </div>
                     @can('payroll')
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
-                        <li class="nav-item"><a class="nav-link @if(!Session::has('tab')) active @endif" id="pills-semua-tab" data-bs-toggle="pill" href="#pills-semua" role="tab" aria-controls="pills-semua" aria-selected="true">Upah</a></li>
+                        {{-- @if(!Session::has('tab')) active @endif --}}
+                        <li class="nav-item"><a class="nav-link active" id="pills-semua-tab" data-bs-toggle="pill" href="#pills-semua" role="tab" aria-controls="pills-semua" aria-selected="true">Upah</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-potongan-tab" data-bs-toggle="pill" href="#pills-potongan" role="tab" aria-controls="pills-potongan" aria-selected="true">Potongan</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-bpjstk-tab" data-bs-toggle="pill" href="#pills-bpjstk" role="tab" aria-controls="pills-bpjstk" aria-selected="true">BPJS TK</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-bpjskes-tab" data-bs-toggle="pill" href="#pills-bpjskes" role="tab" aria-controls="pills-bpjskes" aria-selected="true">BPJS Kesehatan</a></li>
-                        <li class="nav-item"><a class="nav-link @if(Session::has('tab') && Session::has('tab')=='kerja') active @endif" id="pills-kerja-tab" data-bs-toggle="pill" href="#pills-kerja" role="tab" aria-controls="pills-kerja" aria-selected="true">PPh21</a></li>
+                         {{-- @if(Session::has('tab') && Session::has('tab')=='kerja') active @endif --}}
+                        <li class="nav-item"><a class="nav-link" id="pills-kerja-tab" data-bs-toggle="pill" href="#pills-kerja" role="tab" aria-controls="pills-kerja" aria-selected="true">PPh21</a></li>
                     </ul>
                     @endcan
                     @can('payroll_fin')
@@ -180,7 +182,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                     @endcan
                     <div class="tab-content" id="pills-warningtabContent">
                         {{-- Upah --}}
-                        <div class="tab-pane fade @can('payroll') @if(!Session::has('tab')) show active @endif @endcan" id="pills-semua" role="tabpanel" aria-labelledby="pills-semua-tab">
+                        {{-- @if(!Session::has('tab')) show active @endif --}}
+                        <div class="tab-pane fade @can('payroll') show active @endcan" id="pills-semua" role="tabpanel" aria-labelledby="pills-semua-tab">
                             <p class="mb-0 m-t-10">
                                 <div class="table-responsive">
                                     <table class="display nowrap" id="_datatable1">
@@ -566,7 +569,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                             </p>
                         </div>
                         {{-- PPh21 --}}
-                        <div class="tab-pane fade @can('payroll_fin') show active @endcan @if(Session::has('tab') && Session::has('tab')=='kerja') show active @endif" id="pills-kerja" role="tabpanel" aria-labelledby="pills-kerja-tab">
+                         {{-- @if(Session::has('tab') && Session::has('tab')=='kerja') show active @endif --}}
+                        <div class="tab-pane fade @can('payroll_fin') show active @endcan" id="pills-kerja" role="tabpanel" aria-labelledby="pills-kerja-tab">
                             <p class="mb-0 m-t-10">
                                 <div class="row g-3 mb-2">
                                     <form action="{{ route('payroll.upload_payroll') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
@@ -795,7 +799,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td class="text-end">{{ number_format($total_overtime, 0) }}</td>
                                                 <td class="text-end">{{ number_format($data->pajak, 0) }}</td>
                                                 @can('payroll')
-                                                <td><a href="{{ route('payroll.edit_payroll', [Crypt::encrypt($data->id), 'back_url'=>URL::full()]) }}" data-toggle="tooltip" title='Adjustment'> <i class="icon-pencil-alt"></i></a></td>
+                                                <td><a href="{{ route('payroll.edit_payroll', [Crypt::encrypt($data->id), 'back_url'=>URL::full(), 'type'=>'overtime_past']) }}" data-toggle="tooltip" title='Adjustment'> <i class="icon-pencil-alt"></i></a></td>
                                                 @endcan
                                             </tr>
                                             @endforeach
