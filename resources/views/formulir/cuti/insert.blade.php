@@ -82,7 +82,7 @@
                             <div class="col-md-4">&nbsp;</div>
                             <div class="col-md-8">
                                 <div class="form-label">
-                                    <span class="text-danger">Catatan:<br/>1. Diberikan cuti 5 hari kerja sebelum keberangkatan.<br/>2. Diberikan cuti 3 hari kerja setelah kepulangan.<br/>3. Tanggal mulai yang dimasukkan adalah tanggal keberangkatan.</span>
+                                    <span class="text-danger">Catatan:<br/>1. Diberikan cuti 2 hari kerja sebelum keberangkatan.<br/>2. Diberikan cuti 2 hari kerja setelah kepulangan.<br/>3. Tanggal mulai yang dimasukkan adalah tanggal keberangkatan.</span>
                                 </div>
                             </div>
                         </div>
@@ -149,7 +149,7 @@ $(document).ready(function() {
             $("#jumlah_hari").prop('disabled', false);
             $('#div_jumlah_hari').show();
             $('#div_umroh').hide();
-        } else if (selectedValue == 12) {
+        } else if (selectedValue == 13 || selectedValue == 14 || selectedValue == 15) {
             $("#jumlah_hari").prop('disabled', true);
             $('#div_jumlah_hari').hide();
             $('#div_umroh').show();
