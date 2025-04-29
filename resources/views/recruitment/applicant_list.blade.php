@@ -136,6 +136,8 @@
                                                 // $status = App\Models\TrxRecruitmentIdentitas::find($data->id);
                                                 $log = App\Models\TrxRecruitmentLog::where(['id_identitas'=>$data->id])->pluck('id_status')->toArray();
                                                 // dd($log);
+                                                // check apakah sudah mulai psikotes, jika sudah maka tidak bisa reschedule psikotes
+                                                $check3 = App\Models\TrxRecruitmentPsychotest::where(['id_identitas' => $data->id, 'jenis' => 0, 'nomor' => 0])->whereNull('check_out')->exists();
                                             @endphp
                                             <tr>
                                                 <td>{{ ++$no }}</td>
@@ -161,7 +163,8 @@
                                                 <td>{{ $data->nama }}<br/>{{ $data->email }}</td>
                                                 {{-- <td>{{ $data->email }}</td> --}}
                                                 <td><a href="{{ asset('assets/recruitment/upload/'.$data->cv) }}" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></td>
-                                                <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }}@endif</td>
+                                                {{-- $check3 adalah pengecekan apakah psikotes sudah berjalan, jika belum maka bisa reschedule --}}
+                                                <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }} <a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'process'=>'psikotest_reschedule']) }}" data-toggle="tooltip" title="Reschedule"><i class="fa fa-calendar" aria-hidden="true"></i></a> @endif</td>
                                                 <td>@if(!empty($data->check_out)){{ \Carbon\Carbon::parse($data->check_out) ->format('d-m-Y H:i:s') }}@endif</td>
                                                 <td>
                                                     {{-- 16=Interpretation --}}
