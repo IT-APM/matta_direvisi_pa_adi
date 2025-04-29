@@ -200,6 +200,7 @@
                     <hr class="mt-2 mb-2" />
                     <div class="row">
                         <div class="col-12 col-md-6">
+                            @if(empty($process))
                             <div class="col-12 mb-2">
                                 <label class="form-label" for="id_process">Process</label>
                                 <select class="form-select col-sm-12" id="id_process" name="id_process" required="">
@@ -209,6 +210,7 @@
                                     @endforeach
                                 </select>
                             </div>
+                            @endif
                             <a href="{{ route('recruitment.applicant_list', 0) }}" class="btn btn-warning" type="button">Back</a>
                         </div>
                     </div>
@@ -237,6 +239,42 @@
                             </div>
                         </form>
                     </div>
+                    {{-- reschedule Psycotest --}}
+                    @if($process == 'psikotest_reschedule')
+                        <form action="{{ route('recruitment.applicant_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                        @csrf
+                            <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($trx->id) }}">
+                            <input type="hidden" id="id_status" name="id_status" value="4">
+                            <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                            <h5>Psychotest Reschedule</h5>
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Check_in</label>
+                                    <input class="form-control" value="{{ \Carbon\Carbon::parse($trx->check_in) ->format('d-m-Y H:i:s') }}">
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Check_out</label>
+                                    <input class="form-control" value="{{ \Carbon\Carbon::parse($trx->check_out) ->format('d-m-Y H:i:s') }}">
+                                </div>
+                            </div>
+                            <h5>After</h5>
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="check_in">Check_in</label>
+                                    <input class="form-control" name="check_in" id="check_in" type="datetime-local" required="">
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="check_out">Check_out</label>
+                                    <input class="form-control" name="check_out" id="check_out" type="datetime-local" required="" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-4">
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    @endif
                     {{-- 6=Interview User and HCO Send --}}
                     <div id="row_6">
                         <form action="{{ route('recruitment.interview_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
