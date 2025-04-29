@@ -222,10 +222,12 @@ class TrxRecruitmentController extends Controller
         }
     }
 
-    public function applicant_process($id)
+    public function applicant_process(Request $request, $id)
     {
+        // psikotest_reschedule
+        $process = $request->process;
         $id = Crypt::decrypt($id);
-        // dd($id);
+        // dd($request->all(), $id);
         $where = ['id_identitas' => $id];
         $history = TrxRecruitmentLog::where($where)->orderBy('id', 'desc')->get();
         $resume = TrxRecruitmentResume::where($where)->orderBy('id', 'asc')->get();
@@ -315,7 +317,7 @@ class TrxRecruitmentController extends Controller
         $karyawan_user_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
         $where = ['is_aktif' => 1, 'kode_sub_departemen' => 263];
         $karyawan_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
-        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume', 'status_join', 'status_not_join'));
+        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume', 'status_join', 'status_not_join', 'process'));
         
     }
 
