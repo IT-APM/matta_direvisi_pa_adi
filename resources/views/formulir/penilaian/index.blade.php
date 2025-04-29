@@ -113,6 +113,7 @@
                                         <th>Penilai 2</th>
                                         <th>Penilai 3</th>
                                         <th>Penilaian ke</th>
+                                        <th>Nilai Total Karyawan</th>
                                         <th>Nilai Total Penilai 1</th>
                                         <th>Status Perpanjangan Penilai 1</th>
                                         <th>Status Perpanjangan Penilai 2</th>
@@ -173,6 +174,12 @@
                                                 $urutan = App\Models\TrxPenilaian::where('nik_karyawan', $_karyawan_property['nik'])->where('id', '<=', $data->id)->count();
                                             @endphp
                                             <td>{{ $urutan }}</td>
+                                            <!-- Nilai Total Karyawan -->
+                                            @php
+                                                $_where = ['id_trx' => $data->id];
+                                                $skor_karyawan = App\Models\TrxPenilaianSkor::where($_where)->sum('skor_karyawan');
+                                            @endphp
+                                            <td>@if($skor_karyawan > 0){{ $skor_karyawan }}@endif</td>
                                             <!-- Nilai Total Penilai 1 -->
                                             @php
                                                 $_where = ['id_trx' => $data->id];
