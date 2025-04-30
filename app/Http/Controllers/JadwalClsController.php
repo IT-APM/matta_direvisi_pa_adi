@@ -52,6 +52,62 @@ class JadwalClsController extends Controller
             $arr_nik_karyawan = array();
         }
         // end filter
+        if($request->kecuali == 'true'){
+            // dd($request->all());
+            $wn_id = 1;
+            $startP = '00:00:00';
+            $endP = '08:00:00';
+            $startS = '08:00:00';
+            $endS = '16:00:00';
+            $startM = '16:00:00';
+            $endM = '00:00:00';
+            $arr_tanggal = array();
+            $tanggal_awal = $request->tanggal_awal;
+            $tanggal_akhir = $request->tanggal_akhir;
+            array_push($arr_tanggal, $tanggal_awal);
+            $arr_wg_id = explode(',', $request->wg_id);
+            $arr_nik = explode(',', $request->nik);
+            while (strtotime($tanggal_awal) < strtotime($tanggal_akhir)) {
+                $tanggal_awal = date ("Y-m-d", strtotime("+1 days", strtotime($tanggal_awal)));
+                array_push($arr_tanggal, $tanggal_awal);
+            }
+            $data = $request->all();
+            $arr_data = array();
+            $_arr_data = array();
+            foreach($arr_tanggal as $_tanggal){
+                foreach($data as $_id => $value){
+                    if($_id == intval(explode('-', $_tanggal)[2])){
+                        array_push($arr_data, $value);
+                    }
+                }
+            }
+            // dd($arr_data);
+            for ($x = 0; $x < sizeof($arr_tanggal); $x++) {
+                $_arr_data = explode(',', $arr_data[$x]);
+                for ($y = 0; $y < sizeof($_arr_data); $y++) {
+                    $this->deleteData($arr_nik[$y], $arr_tanggal[$x], $arr_tanggal[$x]);
+                    $wd_start_datetime = '';
+                    $wd_finish_datetime = '';
+                    if($_arr_data[$y]=='P'){
+                        $wd_start_datetime = $arr_tanggal[$x].' '.$startP;
+                        $wd_finish_datetime = $arr_tanggal[$x].' '.$endP;
+                    }elseif($_arr_data[$y]=='S'){
+                        $wd_start_datetime = $arr_tanggal[$x].' '.$startS;
+                        $wd_finish_datetime = $arr_tanggal[$x].' '.$endS;
+                    }elseif($_arr_data[$y]=='M'){
+                        $wd_start_datetime = $arr_tanggal[$x].' '.$startM;
+                        $wd_finish_datetime = date ("Y-m-d", strtotime("+1 days", strtotime($arr_tanggal[$x]))).' '.$endM;
+                    }
+                    $wd_bookout_closing = date ("Y-m-d H:i:s", strtotime("+3 hours", strtotime($wd_finish_datetime)));
+                    $wd_bookin_prepare = date ("Y-m-d H:i:s", strtotime("-1 hours", strtotime($wd_start_datetime)));
+                    // dd($wg_id, $wn_id, $arr_tanggal[$x], $arr_nik[$y], $wd_start_datetime, $wd_finish_datetime, $wd_bookout_closing, $wd_bookin_prepare);
+                    if($_arr_data[$y]!='L'){
+                        $this->insertData($arr_wg_id[$y], $wn_id, $arr_tanggal[$x], $arr_nik[$y], $wd_start_datetime, $wd_finish_datetime, $wd_bookout_closing, $wd_bookin_prepare);
+                    }
+                }
+            }
+            return view( 'master.jadwal.cls.index', compact( 'trx', 'no', 'date_from', 'date_to', 'nik_karyawan', 'arr_nik_karyawan' ) );
+        }
         return view( 'master.jadwal.cls.index', compact( 'trx', 'no', 'date_from', 'date_to', 'nik_karyawan', 'arr_nik_karyawan' ) );
     }
 
