@@ -106,7 +106,6 @@ class JadwalClsController extends Controller
                     }
                 }
             }
-            return view( 'master.jadwal.cls.index', compact( 'trx', 'no', 'date_from', 'date_to', 'nik_karyawan', 'arr_nik_karyawan' ) );
         }
         return view( 'master.jadwal.cls.index', compact( 'trx', 'no', 'date_from', 'date_to', 'nik_karyawan', 'arr_nik_karyawan' ) );
     }
