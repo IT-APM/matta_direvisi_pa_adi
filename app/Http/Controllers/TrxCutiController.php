@@ -369,16 +369,20 @@ class TrxCutiController extends Controller
         // jika selain Bulan Januari maka gunakan tahun ini
         else{
             $periode_cuti = Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->year;
-            $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan, 'tipe_cuti' => 0];
-            $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
-            $where = ['is_cuti' => 1];
-            $cuti_bersama = Holiday::whereYear('tanggal', $periode_cuti)->where($where)->count();
-            $jumlah += $cuti_bersama;
-            if ($jumlah + $jumlah_hari < 13) {
+            // $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan, 'tipe_cuti' => 0];
+            // $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
+            // $where = ['is_cuti' => 1];
+            // $cuti_bersama = Holiday::whereYear('tanggal', $periode_cuti)->where($where)->count();
+            // $jumlah += $cuti_bersama;
+            // if ($jumlah + $jumlah_hari < 13) {
+            //     $cek = true;
+            // }
+            $sisa_cuti = $this->getSisaFormCuti($nik_karyawan, $periode_cuti);
+            if($sisa_cuti >= $jumlah_hari){
                 $cek = true;
             }
-        }
         // dd($cek);
+        }
         return ['status' => $cek, 'message' => 'Cuti Tahunan tidak melebihi BATAS', 'periode_cuti' => $periode_cuti];
     }
 
