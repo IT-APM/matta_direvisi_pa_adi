@@ -113,7 +113,7 @@
 					$atasan = json_decode($trxM->atasan_property, true);
 					@endphp
                     <tr>
-                        <td>Atasan Langsung</td>
+                        <td>Atasan Langsung Kandidat</td>
                         <td>:</td>
                         <td>@if(!empty($atasan)){{ $atasan['nama'] . '/' . $atasan['nik'] }}@endif</td>
                     </tr>
