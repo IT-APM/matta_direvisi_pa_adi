@@ -106,7 +106,7 @@
                                                 <th>Area Kerja Kota</th>
                                                 <th>Posisi</th>
                                                 <th>Nama/Email</th>
-                                                {{-- <th>Email</th> --}}
+                                                <th>Telepon</th>
                                                 <th>CV</th>
                                                 <th>Check_in</th>
                                                 <th>Check_out</th>
@@ -161,7 +161,7 @@
                                                 <td>@if (!empty($recruitment->id_kota)) {{ $recruitment->_kota->kota }} @endif</td>
                                                 <td>{{ $recruitment->_pekerjaan->pekerjaan }}</td>
                                                 <td>{{ $data->nama }}<br/>{{ $data->email }}</td>
-                                                {{-- <td>{{ $data->email }}</td> --}}
+                                                <td>{{ $data->telepon }}</td>
                                                 <td><a href="{{ asset('assets/recruitment/upload/'.$data->cv) }}" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></td>
                                                 {{-- $check3 adalah pengecekan apakah psikotes sudah berjalan, jika belum maka bisa reschedule --}}
                                                 <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }} <a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'process'=>'psikotest_reschedule']) }}" data-toggle="tooltip" title="Reschedule"><i class="fa fa-calendar" aria-hidden="true"></i></a> @endif</td>
