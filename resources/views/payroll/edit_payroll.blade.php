@@ -34,7 +34,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                             <input type="hidden" id="id" name="id" value="{{ $trx->id }}">
                             <input type="hidden" id="back_url" name="back_url" value="{{ $back_url }}">
                             <input type="hidden" id="type" name="type" value="{{ $type }}">
-                            <input type="hidden" id="tab" name="tab" value="kerja">
+                            {{-- <input type="hidden" id="tab" name="tab" value="kerja"> --}}
                             <table class="table table-striped">
                                 <tbody>
                                     <tr>
