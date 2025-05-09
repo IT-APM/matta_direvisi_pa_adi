@@ -48,6 +48,14 @@
                         <td width="30%">Nama Jabatan/posisi</td>
                         <td width="70%">: {{ $trxM->_pekerjaan->pekerjaan }}</td>
                     </tr>
+                    @php
+                        $atasan_property = $trxM->atasan_property;
+                        $atasan_property = json_decode($atasan_property, true);
+                    @endphp
+                    <tr>
+                        <td>Atasan Langsung Kandidat</td>
+                        <td>: @if(!empty($atasan_property)) {{ $atasan_property['nama'] }}/{{ $atasan_property['nik'] }} @endif</td>
+                    </tr>
                     <tr>
                         <td>Level</td>
                         <td>: {{ $trxM->_level->level }}</td>
