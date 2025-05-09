@@ -165,6 +165,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                             </div>
                         </form>
                     </div>
+                    <h4>Alita</h4>
                     @can('payroll')
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
                         <li class="nav-item"><a class="nav-link active" id="pills-semua-tab" data-bs-toggle="pill" href="#pills-semua" role="tab" aria-controls="pills-semua" aria-selected="true">Upah</a></li>
@@ -193,7 +194,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <div class="col-md-8">
                                                 <input name="template" id="template" class="form-control" type="file" required="">
                                                 <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
-                                                <br/><a href="{{ asset('assets/template/template_import_upah_vs_potongan_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                                <br/><a href="{{ asset('assets/template/template_import_payroll_alita_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template Alita</a>
+                                                <br/><a href="{{ asset('assets/template/template_import_payroll_outsource_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template Out Source</a>
                                             </div>
                                             <div class="col-md-4">
                                                 <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
@@ -506,7 +508,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Upah Dilaporkan BPJS TK</th>
                                                 <th>Upah JP Maksimum</th>
                                                 @php
-                                                    $arr = App\Models\MtrPayrollBpjstk::orderBy('id', 'asc')->get();
+                                                    $arr_id = [1,2,3,4,5,6];
+                                                    $arr = App\Models\MtrPayrollBpjstk::whereIn('id', $arr_id)->orderBy('id', 'asc')->get();
                                                 @endphp
                                                 @foreach ($arr as $_arr)
                                                 <th>{{ $_arr->nama }}<br/>{{ $_arr->persen }}%</th>
@@ -592,7 +595,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Upah Dilaporkan BPJS KS</th>
                                                 <th>Upah Maksimum</th>
                                                 @php
-                                                    $arr = App\Models\MtrPayrollBpjskes::orderBy('id', 'asc')->get();
+                                                    $arr_id = [1,2,3];
+                                                    $arr = App\Models\MtrPayrollBpjskes::whereIn('id', $arr_id)->orderBy('id', 'asc')->get();
                                                 @endphp
                                                 @foreach ($arr as $_arr)
                                                 <th>{{ $_arr->nama }}<br/>{{ $_arr->persen }}%</th>
@@ -725,7 +729,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <th>Kehamilan</th>
                                                 <th>Persalinan</th>
                                                 <th>Kacamata</th>
-                                                <th>Medical Reimburse</th>
+                                                <th>Medical Reimbursement</th>
                                                 <th>Ekses</th>
                                                 @endcan
                                                 <th>Total Medical Cost</th>
@@ -938,6 +942,213 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         </div>
                         {{--  --}}
                     </div>
+                    @can('payroll')
+                    <hr class="mt-4 mb-2" />
+                    <h4>Out Source</h4>
+                    <p class="mb-0 m-t-10">
+                        <div class="table-responsive">
+                            <table class="display nowrap" id="_datatable6">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Tahun</th>
+                                        <th>Bulan</th>
+                                        <th>Nama</th>
+                                        <th>NIP</th>
+                                        <th>Gaji Pokok</th>
+                                        {{-- 5=Tunjangan Lainnya --}}
+                                        @php
+                                            $add = App\Models\MtrPayrollAddsub::find(5);
+                                        @endphp
+                                        <th>{{ $add->nama }}</th>
+                                        <th>Total Upah</th>
+                                        {{-- 22=Tunjangan Telekomunikasi Tambahan --}}
+                                        @php
+                                            $add = App\Models\MtrPayrollAddsub::find(22);
+                                        @endphp
+                                        <th>{{ $add->nama }}</th>
+                                        {{-- 6=Insentif --}}
+                                        {{-- 7=Kekurangan Upah --}}
+                                        {{-- 8=Sewa Laptop --}}
+                                        @php
+                                            $where = ['tipe'=>'add'];
+                                            $arr_id = [6,7,8];
+                                            $add = App\Models\MtrPayrollAddsub::where($where)->whereIn('id', $arr_id)->orderBy('id', 'asc')->get();
+                                        @endphp
+                                        @foreach ($add as $data)
+                                        <th>{{ $data->nama }}</th>
+                                        @endforeach
+                                        {{-- 12=Overtime --}}
+                                        @php
+                                            $add = App\Models\MtrPayrollAddsub::find(12);
+                                        @endphp
+                                        <th>{{ $add->nama }}</th>
+                                        <th>PPh 21</th>
+                                        {{-- 4=BPJS Kesehatan --}}
+                                        @php
+                                            $add = App\Models\MtrPayrollBpjskes::find(4);
+                                        @endphp
+                                        <th>{{ $add->nama }}</th>
+                                        {{-- 7=BPJS Ketenagakerjaan --}}
+                                        @php
+                                            $add = App\Models\MtrPayrollBpjstk::find(7);
+                                        @endphp
+                                        <th>{{ $add->nama }}</th>
+                                        <th>Total Biaya Tenaga Kerja</th>
+                                        {{-- 4=Management Fee(%) --}}
+                                        @php
+                                            $add = App\Models\MtrPayrollBpjsMax::find(4);
+                                        @endphp
+                                        <th>{{ $add->nama }}</th>
+                                        <th>Management Fee (Rp)</th>
+                                        <th>Total Tagihan Upah Outsource</th>
+                                        {{-- 9=Kompensasi KKWT --}}
+                                        @php
+                                            $add = App\Models\MtrPayrollAddsub::find(9);
+                                        @endphp
+                                        <th>{{ $add->nama }}</th>
+                                        {{-- 5=Management Fee Kompensasi KKWT(%) --}}
+                                        @php
+                                            $add = App\Models\MtrPayrollBpjsMax::find(5);
+                                        @endphp
+                                        <th>{{ $add->nama }}</th>
+                                        <th>Management Fee Kompensasi KKWT (Rp)</th>
+                                        <th>Total Tagihan Kompensasi KKWT Outsource</th>
+                                        <th>Total Biaya Outsource</th>
+                                        <th>Medical Reimbursement</th>
+                                        @can('payroll')
+                                        <th>Action</th>
+                                        @endcan
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php $no=0; @endphp
+                                    @foreach ($payroll_out as $data)
+                                    <tr>
+                                        <td>{{ ++$no }}</td>
+                                        <td>{{ $data->tahun }}</td>
+                                        <td>{{ $bulan[$data->bulan - 1] }}</td>
+                                        <td>{{ $data->_nik->nama }}</td>
+                                        <td>{{ $data->nik }}</td>
+                                        <td class="text-end">{{ number_format($data->gapok, 0) }}</td>
+                                        {{-- 5=Tunjangan Lainnya --}}
+                                        @php
+                                            $where = ['nik'=>$data->nik, 'bulan'=>$data->bulan, 'tahun'=>$data->tahun];
+                                            $arr_id = [5];
+                                            $add = App\Models\TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                                            $total_tunjangan = $add->sum('angka');
+                                            $total_upah = $data->gapok + $total_tunjangan;
+                                            $total_biaya = $total_upah;
+                                        @endphp
+                                        <td class="text-end">{{ number_format($total_tunjangan, 0) }}</td>
+                                        <td class="text-end">{{ number_format($total_upah, 0) }}</td>
+                                        {{-- 22=Tunjangan Telekomunikasi Tambahan --}}
+                                        @php
+                                            $arr_id = [22];
+                                            $add = App\Models\TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                                            $angka_22 = $add->sum('angka');
+                                            $total_biaya += $angka_22;
+                                        @endphp
+                                        <td class="text-end">{{ number_format($angka_22, 0) }}</td>
+                                        {{-- 6=Insentif --}}
+                                        {{-- 7=Kekurangan Upah --}}
+                                        {{-- 8=Sewa Laptop --}}
+                                        @php
+                                            $arr_id = [6,7,8];
+                                            $add = App\Models\TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                                            $total_biaya += $add->sum('angka');
+                                        @endphp
+                                        @foreach ($add as $_data)
+                                        <td class="text-end">{{ number_format($_data->angka, 0) }}</td>
+                                        @endforeach
+                                        <td class="text-end">{{ number_format($data->overtime, 0) }}</td>
+                                        <td class="text-end">{{ number_format($data->pajak, 0) }}</td>
+                                        {{-- bpjskes --}}
+                                        @php
+                                            $arr_id = [4];
+                                            $bpjskes = App\Models\TrxPayrollBpjskes::where($where)->whereIn('id_bpjskes', $arr_id)->orderBy('id_bpjskes', 'asc')->get();
+                                            $bpjskes = $bpjskes->sum('angka');
+                                            $total_biaya += $data->overtime + $data->pajak + $bpjskes;
+                                        @endphp
+                                        <td class="text-end">{{ number_format($bpjskes, 0) }}</td>
+                                        {{-- bpjstk --}}
+                                        @php
+                                            $arr_id = [7];
+                                            $bpjstk = App\Models\TrxPayrollBpjstk::where($where)->whereIn('id_bpjstk', $arr_id)->orderBy('id_bpjstk', 'asc')->get();
+                                            $bpjstk = $bpjstk->sum('angka');
+                                            $total_biaya += $bpjstk;
+                                        @endphp
+                                        <td class="text-end">{{ number_format($bpjstk, 0) }}</td>
+                                        {{-- Total Biaya Tenaga Kerja --}}
+                                        <td class="text-end">{{ number_format($total_biaya, 0) }}</td>
+                                        {{-- mgt_fee --}}
+                                        <td class="text-end">{{ number_format($data->mgt_fee, 2) }} %</td>
+                                        @php
+                                            $mgt_fee = $total_biaya * $data->mgt_fee / 100;
+                                            $total_biaya += $mgt_fee;
+                                        @endphp
+                                        <td class="text-end">{{ number_format($mgt_fee, 0) }}</td>
+                                        {{-- Total Tagihan Upah Outsource --}}
+                                        <td class="text-end">{{ number_format($total_biaya, 0) }}</td>
+                                        {{-- 9=Kompensasi KKWT --}}
+                                        @php
+                                            $arr_id = [9];
+                                            $add = App\Models\TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                                            $angka_9 = $add->sum('angka');
+                                        @endphp
+                                        <td class="text-end">{{ number_format($angka_9, 0) }}</td>
+                                        {{-- mgt_fee_kkwt --}}
+                                        <td class="text-end">{{ number_format($data->mgt_fee_kkwt, 2) }} %</td>
+                                        @php
+                                            $mgt_fee_kkwt = $angka_9 * $data->mgt_fee_kkwt / 100;
+                                        @endphp
+                                        <td class="text-end">{{ number_format($mgt_fee_kkwt, 0) }}</td>
+                                        @php
+                                            $mgt_fee_kkwt += $angka_9;
+                                        @endphp
+                                        <td class="text-end">{{ number_format($mgt_fee_kkwt, 0) }}</td>
+                                        @php
+                                            $total_biaya += $mgt_fee_kkwt;
+                                        @endphp
+                                        {{-- Total Biaya Outsource --}}
+                                        <td class="text-end">{{ number_format($total_biaya, 0) }}</td>
+                                        @php
+                                            // kesehatan data bulan berjalan
+                                            $date_from = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->startOfMonth()->format('Y-m-d');
+                                            $date_to = Carbon\Carbon::createFromFormat('Y-m-d', "{$data->tahun}-{$data->bulan}-01")->endOfMonth()->format('Y-m-d');
+                                            $kesehatan = DB::select(DB::raw("SELECT CASE WHEN SUM(a.jumlah_klaim) IS NULL THEN 0 ELSE SUM(a.jumlah_klaim) END AS jumlah_klaim FROM trx_tbl_reimburse_detail AS a LEFT JOIN trx_tbl_reimburse_master AS b ON a.id_reimburse=b.id WHERE b.nik_karyawan='".$data->nik."' AND DATE(b.updated_at) BETWEEN '".$date_from."' AND '".$date_to."' AND b.status_pengajuan=2 AND a.id_layanan IN (1)"))[0]->jumlah_klaim;
+                                        @endphp
+                                        <td class="text-end">{{ number_format($kesehatan, 0) }}</td>
+                                        @can('payroll')
+                                        <td><a href="{{ route('payroll.edit_payroll', [Crypt::encrypt($data->id), 'back_url'=>URL::full(), 'type'=>'overtime_present']) }}" data-toggle="tooltip" title='Adjustment'> <i class="icon-pencil-alt"></i></a></td>
+                                        @endcan
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th>Rekapitulasi</th>
+                                        @for ($x = 5; $x <= 16; $x++)
+                                        <th id="outsource_{{$x}}" class="text-end">0</th>
+                                        @endfor
+                                        <th>&nbsp;</th>
+                                        @for ($x = 18; $x <= 20; $x++)
+                                        <th id="outsource_{{$x}}" class="text-end">0</th>
+                                        @endfor
+                                        <th>&nbsp;</th>
+                                        @for ($x = 22; $x <= 25; $x++)
+                                        <th id="outsource_{{$x}}" class="text-end">0</th>
+                                        @endfor
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </p>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -1116,6 +1327,45 @@ $('#_datatable5').DataTable( {
         api.column({{$x}}).footer().innerHTML = nfObject.format(page_kertas_{{$x}}) + '<br/>Total: ' + nfObject.format(kertas_{{$x}});
         @endfor
         @endcan
+    },
+});
+// outsource
+$('#_datatable6').DataTable( {
+	// dom: 'lBfrtip',
+    dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
+      "<'row'<'col-sm-12'rt>>" +
+      "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+	buttons: [
+		'copy', 'csv', 'excel', 'pdf', 'print'
+	],
+    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    footerCallback: function (row, data, start, end, display) {
+        nfObject = new Intl.NumberFormat('en-US');
+        let api = this.api();
+        let intVal = function (i) {
+            return typeof i === 'string'
+                ? i.replace(/[\$,]/g, '') * 1
+                : typeof i === 'number'
+                ? i
+                : 0;
+        };
+        @for ($x = 5; $x <= 16; $x++)
+        outsource_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_outsource_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column({{$x}}).footer().innerHTML = nfObject.format(page_outsource_{{$x}}) + '<br/>Total: ' + nfObject.format(outsource_{{$x}});
+        @endfor
+        // 
+        @for ($x = 18; $x <= 20; $x++)
+        outsource_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_outsource_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column({{$x}}).footer().innerHTML = nfObject.format(page_outsource_{{$x}}) + '<br/>Total: ' + nfObject.format(outsource_{{$x}});
+        @endfor
+        // 
+        @for ($x = 22; $x <= 25; $x++)
+        outsource_{{$x}} = api.column({{$x}}).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        page_outsource_{{$x}} = api.column({{$x}}, { page: 'current' }).data().reduce((a, b) => intVal(a) + intVal(b), 0);
+        api.column({{$x}}).footer().innerHTML = nfObject.format(page_outsource_{{$x}}) + '<br/>Total: ' + nfObject.format(outsource_{{$x}});
+        @endfor
     },
 });
 // 
