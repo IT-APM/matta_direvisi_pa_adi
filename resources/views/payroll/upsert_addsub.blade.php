@@ -36,7 +36,17 @@
                                 <label class="form-label" for="nama">Komponen</label>
                                 <input name="nama" id="nama" class="form-control" type="text" required="" @if ($status=='edit' ) value="{{ $addsub->nama }}" @endif>
                             </div>
-                            <div class="col-md-4">
+                            @php $arr_status=['apm','osc','apm_osc'] @endphp
+                            <div class="col-md-2">
+                                <label class="form-label" for="status">Sumber</label>
+                                <select class="form-select" id="status" name="status" required="">
+                                    <option selected="" value="">Pilih...</option>
+                                    @foreach ($arr_status as $_status)
+                                    <option value="{{ $_status }}" @if ($status=='edit' ) @if($addsub->status == $_status) selected @endif @endif >{{ $_status }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
                                 <label class="form-label" for="bulanan">Bulanan</label>
                                 <div class="media-body text-start icon-state switch-outline">
                                     <label class="switch">
