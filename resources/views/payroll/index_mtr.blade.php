@@ -56,7 +56,7 @@
                         <li class="nav-item"><a class="nav-link @if($id == 2) active @endif" id="pills-kurang-tab" data-bs-toggle="pill" href="#pills-kurang" role="tab" aria-controls="pills-kurang" aria-selected="true">Pengurangan</a></li>
                         <li class="nav-item"><a class="nav-link @if($id == 3) active @endif" id="pills-bpjstk-tab" data-bs-toggle="pill" href="#pills-bpjstk" role="tab" aria-controls="pills-bpjstk" aria-selected="true">BPJS TK</a></li>
                         <li class="nav-item"><a class="nav-link @if($id == 4) active @endif" id="pills-bpjskes-tab" data-bs-toggle="pill" href="#pills-bpjskes" role="tab" aria-controls="pills-bpjskes" aria-selected="true">BPJS Kesehatan</a></li>
-                        <li class="nav-item"><a class="nav-link @if($id == 5) active @endif" id="pills-bpjsmax-tab" data-bs-toggle="pill" href="#pills-bpjsmax" role="tab" aria-controls="pills-bpjsmax" aria-selected="true">BPJS Maksimal</a></li>
+                        <li class="nav-item"><a class="nav-link @if($id == 5) active @endif" id="pills-bpjsmax-tab" data-bs-toggle="pill" href="#pills-bpjsmax" role="tab" aria-controls="pills-bpjsmax" aria-selected="true">Parameter</a></li>
                     </ul>
                     <div class="tab-content" id="pills-warningtabContent">
                         {{-- Karyawan --}}
@@ -151,6 +151,7 @@
                                                 <th>#ID</th>
                                                 <th>Komponen</th>
                                                 <th>Bulanan</th>
+                                                <th>Sumber</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -161,6 +162,7 @@
                                                 <td>{{ $data->id }}</td>
                                                 <td>{{ $data->nama }}</td>
                                                 <td>@if($data->bulanan == 1) Iya @else Tidak @endif</td>
+                                                <td>{{ $data->status }}</td>
                                                 <td>
                                                     <form action="{{ route('payroll.destroy',[1, 'tipe'=>'del', 'id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" method="POST">
                                                         @csrf
@@ -189,6 +191,7 @@
                                                 <th>#ID</th>
                                                 <th>Komponen</th>
                                                 <th>Bulanan</th>
+                                                <th>Sumber</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -199,6 +202,7 @@
                                                 <td>{{ $data->id }}</td>
                                                 <td>{{ $data->nama }}</td>
                                                 <td>@if($data->bulanan == 1) Iya @else Tidak @endif</td>
+                                                <td>{{ $data->status }}</td>
                                                 <td>
                                                     <form action="{{ route('payroll.destroy',[2, 'tipe'=>'del', 'id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" method="POST">
                                                         @csrf
@@ -292,7 +296,7 @@
                                 </div>
                             </p>
                         </div>
-                        {{-- BPJS Maksimal --}}
+                        {{-- Parameter --}}
                         <div class="tab-pane fade @if($id == 5) show active @endif" id="pills-bpjsmax" role="tabpanel" aria-labelledby="pills-bpjsmax-tab">
                             <p class="mb-0 m-t-10">
                                 <a href="{{ route('payroll.master',[5, 'tipe'=>'bpjsmx']) }}" class="btn btn-primary  mb-2" type="button"><i class="fa fa-plus"></i> Add new</a>
