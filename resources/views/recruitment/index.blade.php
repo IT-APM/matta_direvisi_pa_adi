@@ -105,6 +105,7 @@
                                     <th>Area Kerja Kota</th>
                                     <th>Pengaju</th>
                                     <th>Posisi</th>
+                                    <th>Atasan Langsung Kandidat</th>
                                     <th>Jenis</th>
                                     <th>Tanggal Mulai Kerja</th>
                                     <th>Status</th>
@@ -114,6 +115,10 @@
                                 @php $no=0; @endphp
                                 @foreach ($trx as $data)
                                 @php
+                                    $trxM = App\Models\TrxKebutuhanMaster::find($data->id);
+                                    $atasan_property = $trxM->atasan_property;
+                                    $atasan_property = json_decode($atasan_property, true);
+                                    // 
                                     $where = ['id_kebutuhan' => $data->id];
                                     $recruitment = App\Models\TrxRecruitment::where($where)->orderBy('id', 'desc')->first();
                                 @endphp
@@ -129,6 +134,7 @@
                                     <td>@if (!empty($data->id_kota)) {{ $data->_kota->kota }} @endif</td>
                                     <td>{{ $data->_pengaju->nama }} / {{ $data->_pengaju->nik }}</td>
                                     <td>{{ $data->_pekerjaan->pekerjaan }}</td>
+                                    <td>@if(!empty($atasan_property)) {{ $atasan_property['nama'] }}/{{ $atasan_property['nik'] }} @endif</td>
                                     <td>{{ $data->_status_kerja->status_kerja }}</td>
                                     <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $data->tanggal)->format('d-m-Y') }}</td>
                                     <td>
