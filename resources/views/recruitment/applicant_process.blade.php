@@ -966,7 +966,20 @@
                             <div class="ms-3">
                                 <p class="d-flex justify-content-between mb-2"><span class="date-content light-background">{{ $_history->created_at }}</span></p>
                                 <h6>{{ $_history->_status->status }}<span class="dot-notification"></span></h6>
-                                <p class="f-light">{{ $_history->pic }}</p>
+                                <p class="f-light">{{ $_history->pic }}
+                                    @php
+                                        $catatan = json_decode($_history->catatan, true);
+                                    @endphp
+                                    @if($_history->id_status == 4)
+                                        @if(!empty($catatan))
+                                            @if($catatan['no']==1)
+                                            <span class="f-light"><br/>Send ({{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
+                                            @else
+                                            <span class="f-light"><br/>Reschedule ({{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
+                                            @endif
+                                        @endif
+                                    @endif
+                                </p>
                             </div>
                         </li>
                         @endforeach
