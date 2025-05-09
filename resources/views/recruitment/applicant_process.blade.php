@@ -100,7 +100,7 @@
                         <div class="row">
                             <div class="col-12 col-md-6">
                                 <div class="col-12 mb-2">
-                                    <label class="form-label" for="atasan">Atasan Langsung</label>
+                                    <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
                                     <input class="form-control" type="text" readonly="" @if(!empty($atasan))value="{{ $atasan['nama'] . '/' . $atasan['nik'] }}"@endif>
                                 </div>
                             </div>
@@ -537,7 +537,7 @@
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="atasan">Atasan Langsung</label>
+                                        <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
                                         <input class="form-control" name="atasan" id="atasan" type="text" readonly="" @if(!empty($atasan))value="{{ $atasan['nama'] . '/' . $atasan['nik'] }}"@endif>
                                     </div>
                                 </div>
