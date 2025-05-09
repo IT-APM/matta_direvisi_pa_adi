@@ -52,11 +52,11 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12 pb-2">
-                                    <label class="form-label" for="atasan">Atasan Langsung*</label>
+                                    <label class="form-label" for="atasan">Atasan Langsung Kandidat*</label>
                                     <select class="form-select js-example-basic-single col-sm-12" id="atasan" name="atasan" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
                                         @foreach ($atasan as $data)
-                                        <option value="{{ $data->nik }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                        <option value="{{ $data->nik }}" @if($data->nik == auth()->user()->nik) selected @endif>{{ $data->nama }} - {{ $data->nik }}</option>
                                         @endforeach
                                     </select>
                                     <div class="invalid-feedback txt-danger">This field is required.</div>
