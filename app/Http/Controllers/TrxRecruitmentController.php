@@ -1474,6 +1474,15 @@ class TrxRecruitmentController extends Controller
         $trx->pic_property = $id[3];
         $trx->aktifitas = $id[4];
         $trx->catatan = $id[5];
+        // jika 4=Psychotest Send
+        if($id[1] == 4){
+            $_trx = TrxRecruitmentIdentitas::find($id[0]);
+            // count
+            $where = ['id_identitas' => $id[0], 'id_status' => $id[1]];
+            $count = TrxRecruitmentLog::where($where)->count();
+            $catatan = json_encode(['no'=>$count+1, 'check_in'=>$_trx->check_in, 'check_out'=>$_trx->check_out]);
+            $trx->catatan = $catatan;
+        }
         if(!empty($id[6])){
             $trx->lampiran = $id[6];
         }
@@ -2132,9 +2141,14 @@ class TrxRecruitmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        //
+        $id = Crypt::decrypt($id);
+        $type = $request->type;
+        $back_url = $request->back_url;
+        $trx = TrxRecruitmentIdentitas::find($id);
+        // dd($id, $type, $back_url, $trx);
+        return view('recruitment.edit_page', compact('trx', 'type', 'back_url'));
     }
 
     /**
@@ -2146,7 +2160,15 @@ class TrxRecruitmentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // dd($request->all(), $id);
+        $id = Crypt::decrypt($id);
+        $type = $request->type;
+        $back_url = $request->back_url;
+        $trx = TrxRecruitmentIdentitas::find($id);
+        $trx->email = $request->email;
+        $trx->update();
+        // dd($id, $type, $back_url, $trx);
+        return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
     }
 
     /**
