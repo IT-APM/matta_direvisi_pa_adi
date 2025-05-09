@@ -88,6 +88,7 @@
                                     <th>{{ __('lang.Pengaju') }}</th>
                                     <th>{{ __('lang.NIP') }}</th>
                                     <th>{{ __('lang.Nama Jabatan') }}</th>
+                                    <th>Atasan Langsung Kandidat</th>
                                     <th>{{ __('lang.Status Kerja') }}</th>
                                     <th>{{ __('lang.Tanggal Mulai Bekerja') }}</th>
                                     <th>{{ __('lang.Jenis Permintaan') }}</th>
@@ -117,6 +118,11 @@
                                     <td>{{ $data->_pengaju->nama }}</td>
                                     <td>{{ $data->_pengaju->nik }}</td>
                                     <td>{{ $data->_pekerjaan->pekerjaan }}</td>
+                                    @php
+                                        $atasan_property = $data->atasan_property;
+                                        $atasan_property = json_decode($atasan_property, true);
+                                    @endphp
+                                    <td>@if(!empty($atasan_property)) {{ $atasan_property['nama'] }}/{{ $atasan_property['nik'] }} @endif</td>
                                     <td>{{ $data->_status_kerja->status_kerja }}</td>
                                     <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $data->tanggal)->format('d-m-Y') }}</td>
                                     <td>{{ $data->_jenis_permintaan->jenis }}</td>
