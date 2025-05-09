@@ -160,7 +160,7 @@
                                                 <td>{{ $recruitment->_area->propinsi }}</td>
                                                 <td>@if (!empty($recruitment->id_kota)) {{ $recruitment->_kota->kota }} @endif</td>
                                                 <td>{{ $recruitment->_pekerjaan->pekerjaan }}</td>
-                                                <td>{{ $data->nama }}<br/>{{ $data->email }}</td>
+                                                <td>{{ $data->nama }}<br/>{{ $data->email }}&nbsp;<a href="{{ route('recruitment.edit', [Crypt::encrypt($data->id), 'type'=>'email', 'back_url'=>URL::full()]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt" style="color:green"></i></a></td>
                                                 <td>{{ $data->telepon }}</td>
                                                 <td><a href="{{ asset('assets/recruitment/upload/'.$data->cv) }}" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></td>
                                                 {{-- $check3 adalah pengecekan apakah psikotes sudah berjalan, jika belum maka bisa reschedule --}}
