@@ -307,6 +307,7 @@ class DataCleansingController extends Controller
         $trx->nik_karyawan = $value->nik;
         $trx->nik_penilai_1 = $value->layer1;
         $trx->nik_penilai_2 = $value->layer2;
+        $trx->nik_penilai_3 = $value->layer3;
         // 6 = Penilaian Outsourcing
         $trx->id_tipe = 6;
         // 16 = Send to Reviewer 1
