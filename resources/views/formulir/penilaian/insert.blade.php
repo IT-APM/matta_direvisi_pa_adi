@@ -115,6 +115,9 @@
             var selectedValue = $(this).val();
             var id = $('#nik_karyawan').val();
             // alert("Selected Text: " + selectedText + " Value: " + selectedValue);
+            // 1=Penilaian 180
+            // 4=Penilaian 180-Reguler
+            // 5=Penilaian 180-Assesment
             if (selectedValue == 1 || selectedValue == 4 || selectedValue == 5) {
                 $("#div_penilai_1").show();
                 $('#div_penilai_2').hide();
@@ -151,7 +154,10 @@
                         }
                     }
                 });
-            } else if (selectedValue == 2 || selectedValue == 3) {
+            }
+            // 2=Penilaian 360-Reguler
+            // 3=Penilaian 360-Assesment
+            else if (selectedValue == 2 || selectedValue == 3) {
                 $("#penilai_1").prop('disabled', false);
                 $("#penilai_2").prop('disabled', false);
                 $("#penilai_3").prop('disabled', false);
@@ -242,13 +248,15 @@
                         }
                     }
                 });
-            } else if (selectedValue == 6) {
+            }
+            // Penilaian Outsourcing
+            else if (selectedValue == 6) {
                 $("#penilai_1").prop('disabled', false);
                 $("#penilai_2").prop('disabled', false);
-                $("#penilai_3").prop('disabled', true);
+                $("#penilai_3").prop('disabled', false);
                 $('#div_penilai_1').show();
                 $('#div_penilai_2').show();
-                $('#div_penilai_3').hide();
+                $('#div_penilai_3').show();
                 // penilai 1
                 $('#penilai_1').find('option').not(':first').remove();
                 $.ajax({
@@ -301,6 +309,34 @@
                                     var option = "<option value='" + nik + "'>" + nama + " - " + nik + "</option>";
                                 }
                                 $("#penilai_2").append(option);
+                            }
+                        }
+                    }
+                });
+                // penilai 3
+                $('#penilai_3').find('option').not(':first').remove();
+                $.ajax({
+                    // url: _url + '/matta/penilaian/layer/' + id,
+                    url: "{{ route('penilaian_layer') }}" + "/" + id,
+                    type: 'get',
+                    dataType: 'json',
+                    success: function(response) {
+                        var layer = response['layer'].layer3;
+                        var len = 0;
+                        if (response['karyawan'] != null) {
+                            len = response['karyawan'].length;
+                        }
+                        if (len > 0) {
+                            // Read data and create <option >
+                            for (var i = 0; i < len; i++) {
+                                var nik = response['karyawan'][i].nik;
+                                var nama = response['karyawan'][i].nama;
+                                if (layer == nik) {
+                                    var option = "<option value='" + nik + "' selected>" + nama + " - " + nik + "</option>";
+                                } else {
+                                    var option = "<option value='" + nik + "'>" + nama + " - " + nik + "</option>";
+                                }
+                                $("#penilai_3").append(option);
                             }
                         }
                     }
