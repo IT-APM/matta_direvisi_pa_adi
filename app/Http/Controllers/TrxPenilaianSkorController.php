@@ -71,6 +71,9 @@ class TrxPenilaianSkorController extends Controller
         $id_status = (new OpenDataController)->decryptWithKey($request->id_status);
         $pic = (new OpenDataController)->decryptWithKey($request->pic);
         // dd($id_trx, $nik, $id_status, $pic);
+        if(!ToDoList::where(['id_trx'=>$id_trx, 'nik'=>$nik, 'id_status'=>$id_status, 'pic'=>$pic])->exists()){
+            return view( 'emails.penilaian_ok' );
+        }
         $penilaian = TrxPenilaian::find( $id_trx );
         $is_kt = Karyawan::where(['kode_status'=>1, 'nik'=>$penilaian->nik_karyawan])->exists();
         // dd($is_kt);
