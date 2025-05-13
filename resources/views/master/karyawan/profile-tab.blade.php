@@ -340,7 +340,7 @@
                             <div class="tab-pane fade" id="pills-emp_level" role="tabpanel" aria-labelledby="pills-emp_level-tab">
                                 <p class="mb-0 mt-2">
                                     <div class="row mt-2">
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <label class="form-label" for="kode_level">Level</label>
                                             <select class="form-select" id="kode_level" name="kode_level" required="">
                                                 <option selected="" disabled="" value="">Pilih...</option>
@@ -349,7 +349,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <label class="form-label" for="id_grade">Grade</label>
                                             {{-- <input name="id_grade" id="id_grade" class="form-control" type="text" @if ($status=='edit' ) value="{{ $karyawan->id_grade }}" @endif > --}}
                                             <select class="form-select" id="id_grade" name="id_grade" required="">
@@ -377,17 +377,21 @@
                                         </div>
                                     </div>
                                     <div class="row mt-2">
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <label class="form-label" for="tanggal_bergabung">Tanggal Bergabung</label>
                                             <input name="tanggal_bergabung" id="tanggal_bergabung" class="form-control" type="date" @if ($status=='edit' ) value="{{ $karyawan->tanggal_bergabung }}" @endif >
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <label class="form-label" for="tanggal_berakhir">Tanggal Berakhir</label>
                                             <input name="tanggal_berakhir" id="tanggal_berakhir" class="form-control" type="date" @if ($status=='edit' ) value="{{ $karyawan->tanggal_berakhir }}" @endif >
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <label class="form-label" for="tanggal_karyawan_tetap">Tanggal Karyawan Tetap</label>
                                             <input name="tanggal_karyawan_tetap" id="tanggal_karyawan_tetap" class="form-control" type="date" @if ($status=='edit' ) value="{{ $karyawan->tanggal_karyawan_tetap }}" @endif >
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="tanggal_tidak_aktif">Tanggal Tidak Aktif</label>
+                                            <input name="tanggal_tidak_aktif" id="tanggal_tidak_aktif" class="form-control" type="date" @if ($status=='edit' ) value="{{ $karyawan->tanggal_tidak_aktif }}" @endif >
                                         </div>
                                     </div>
                                 </p>
