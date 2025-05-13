@@ -88,6 +88,7 @@ class KaryawanCopyController extends Controller
         $karyawan->tanggal_bergabung = $_karyawan->tanggal_bergabung;
         $karyawan->tanggal_berakhir = $_karyawan->tanggal_berakhir;
         $karyawan->tanggal_karyawan_tetap = $_karyawan->tanggal_karyawan_tetap;
+        $karyawan->tanggal_tidak_aktif = $_karyawan->tanggal_tidak_aktif;
         $karyawan->kode_agama = $_karyawan->kode_agama;
         $karyawan->kode_kelamin = $_karyawan->kode_kelamin;
         $karyawan->kode_warga = $_karyawan->kode_warga;
