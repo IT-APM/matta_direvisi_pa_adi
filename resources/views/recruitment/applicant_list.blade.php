@@ -94,10 +94,25 @@
                         {{-- Psychotest --}}
                         <div class="tab-pane fade show active" id="pills-psychotest" role="tabpanel" aria-labelledby="pills-psychotest-tab">
                             <p class="mb-0 m-t-10">
+                                <form action="{{ route('recruitment.applicant_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                @csrf
+                                <input type="hidden" id="id_status" name="id_status" value="4">
+                                <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                <div class="row mb-2">
+                                    <div class="col-12 col-md-3">
+                                        <input class="form-control" name="check_in" id="check_in" type="datetime-local" required="">
+                                        <label class="form-label" for="check_in">Check In</label>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        {{-- <label class="form-label" for="check_in">Check_in</label> --}}
+                                        <button class="btn btn-success" type="submit" name="submit" id="submit" value="psychotest_bulk"><i class="fa fa-plus-circle" aria-hidden="true"></i> Psychotest Bulk</button>
+                                    </div>
+                                </div>
                                 <div class="table-responsive text-nowrap">
                                     <table class="display" id="_datatable">
                                         <thead>
                                             <tr>
+                                                <th><input type="checkbox" onClick="toggle_identitas(this)" /></th>
                                                 <th>No</th>
                                                 <th>#ID</th>
                                                 <th>Action</th>
@@ -105,6 +120,7 @@
                                                 <th>Area Kerja</th>
                                                 <th>Area Kerja Kota</th>
                                                 <th>Posisi</th>
+                                                <th>Atasan Langsung Kandidat</th>
                                                 <th>Nama/Email</th>
                                                 <th>Telepon</th>
                                                 <th>CV</th>
@@ -122,6 +138,8 @@
                                             @foreach ($trx as $data)
                                             @php
                                                 $recruitment = App\Models\TrxKebutuhanMaster::find($data->id_kebutuhan);
+                                                $atasan_property = $recruitment->atasan_property;
+                                                $atasan_property = json_decode($atasan_property, true);
                                                 $nomor = $data->id_kebutuhan.'/'.$data->id;
                                                 $where = ['id_identitas' => $data->id, 'jenis' => 4];
                                                 $pohon = App\Models\TrxRecruitmentPsychotest::where($where)->where('nomor', '>', 0)->get();
@@ -140,6 +158,8 @@
                                                 $check3 = App\Models\TrxRecruitmentPsychotest::where(['id_identitas' => $data->id, 'jenis' => 0, 'nomor' => 0])->whereNull('check_out')->exists();
                                             @endphp
                                             <tr>
+                                                {{-- 3=Apply --}}
+                                                <td>@if($data->id_status == 3) <input id="id_identitas[]" name="id_identitas[]" type="checkbox" value="{{ $data->id }}"> @endif</td>
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ $nomor }}</td>
                                                 <td>
@@ -160,6 +180,7 @@
                                                 <td>{{ $recruitment->_area->propinsi }}</td>
                                                 <td>@if (!empty($recruitment->id_kota)) {{ $recruitment->_kota->kota }} @endif</td>
                                                 <td>{{ $recruitment->_pekerjaan->pekerjaan }}</td>
+                                                <td>@if(!empty($atasan_property)) {{ $atasan_property['nama'] }}<br/>{{ $atasan_property['nik'] }} @endif</td>
                                                 <td>{{ $data->nama }}<br/>{{ $data->email }}&nbsp;<a href="{{ route('recruitment.edit', [Crypt::encrypt($data->id), 'type'=>'email', 'back_url'=>URL::full()]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt" style="color:green"></i></a></td>
                                                 <td>{{ $data->telepon }}</td>
                                                 <td><a href="{{ asset('assets/recruitment/upload/'.$data->cv) }}" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></td>
@@ -187,6 +208,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                </form>
                             </p>
                         </div>
                         {{-- Interview --}}
@@ -234,9 +256,9 @@
                                                     @endforeach
                                                 </td>
                                                 <td>{{ $data->metode }}</td>
-                                                <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }}@endif</td>
-                                                <td>@if(!empty($data->check_out)){{ \Carbon\Carbon::parse($data->check_out) ->format('d-m-Y H:i:s') }}@endif</td>
-                                                <td>@if(!empty($data->file_interview))<a href="{{ asset('assets/recruitment/upload/'.$data->file_interview) }}" target="_blank" data-toggle="tooltip" title="File Interview"><i class="fa fa-file-text-o"></i></a>@endif</td>
+                                                <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }} <a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id_identitas), 'process'=>'interview_'.$data->jenis.'_reschedule', 'id_interview'=>Crypt::encrypt($data->id)]) }}" data-toggle="tooltip" title="Reschedule"><i class="fa fa-calendar" aria-hidden="true"></i></a> @endif</td>
+                                                <td>@if(!empty($data->check_out)){{ \Carbon\Carbon::parse($data->check_out) ->format('d-m-Y H:i:s') }} @endif</td>
+                                                <td>@if(!empty($data->file_interview))<a href="{{ asset('assets/recruitment/upload/'.$data->file_interview) }}" target="_blank" data-toggle="tooltip" title="File Interview"><i class="fa fa-file-text-o"></i></a> @endif</td>
                                                 <td>{{ $data->_status->status }}</td>
                                                 <td>{{ $data->created_at }}</td>
                                             </tr>
@@ -322,6 +344,14 @@
 <script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 <script src="{{ asset('assets/js/form-validation-custom.js') }}"></script>
 <script type="text/javascript">
+// 
+function toggle_identitas(source) {
+    checkboxes = document.getElementsByName('id_identitas[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+// 
 $('#_datatable').DataTable({
 	// dom: 'lBfrtip',
     dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
