@@ -239,25 +239,26 @@
                             </div>
                         </form>
                     </div>
-                    {{-- reschedule Psycotest --}}
-                    @if($process == 'psikotest_reschedule')
+                    {{-- psikotest_reschedule --}}
+                    @if(!empty($process) && $process=='psikotest_reschedule')
                         <form action="{{ route('recruitment.applicant_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @csrf
                             <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($trx->id) }}">
                             <input type="hidden" id="id_status" name="id_status" value="4">
                             <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
                             <h5>Psychotest Reschedule</h5>
+                            <h6>Before</h6>
                             <div class="row mb-2">
                                 <div class="col-12 col-md-6">
                                     <label class="form-label">Check_in</label>
-                                    <input class="form-control" value="{{ \Carbon\Carbon::parse($trx->check_in) ->format('d-m-Y H:i:s') }}">
+                                    <input class="form-control" value="{{ \Carbon\Carbon::parse($trx->check_in) ->format('d-m-Y H:i:s') }}" disabled>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="form-label">Check_out</label>
-                                    <input class="form-control" value="{{ \Carbon\Carbon::parse($trx->check_out) ->format('d-m-Y H:i:s') }}">
+                                    <input class="form-control" value="{{ \Carbon\Carbon::parse($trx->check_out) ->format('d-m-Y H:i:s') }}" disabled>
                                 </div>
                             </div>
-                            <h5>After</h5>
+                            <h6>After</h6>
                             <div class="row mb-2">
                                 <div class="col-12 col-md-6">
                                     <label class="form-label" for="check_in">Check_in</label>
@@ -416,6 +417,111 @@
                             </div>
                         </form>
                     </div>
+                    {{-- interview reschedule --}}
+                    @if(!empty($process) && in_array($process, ['interview_user_hco_reschedule','interview_hco_reschedule','interview_user_reschedule']))
+                        <form action="{{ route('recruitment.interview_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                            @csrf
+                            <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($trx->id) }}">
+                            <input type="hidden" id="id_interview" name="id_interview" value="{{ Crypt::encrypt($interview->id) }}">
+                            <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                            <input type="hidden" id="process" name="process" value={{ $process }}>
+                            @if($process=='interview_user_hco_reschedule')
+                                <h5>Interview User and HCO Reschedule</h5>
+                                {{-- 6=Interview User and HCO Send --}}
+                                <input type="hidden" id="id_status" name="id_status" value="6">
+                            @elseif($process=='interview_user_reschedule')
+                                <h5>Interview User Reschedule</h5>
+                                {{-- 8=Interview User Send --}}
+                                <input type="hidden" id="id_status" name="id_status" value="8">
+                            @elseif($process=='interview_hco_reschedule')
+                                <h5>Interview HCO Reschedule</h5>
+                                {{-- 10=Interview HCO Send --}}
+                                <input type="hidden" id="id_status" name="id_status" value="10">
+                            @endif
+                            <h6>Before</h6>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="interviewer">Pewawancara</label>
+                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" disabled>
+                                            @foreach ($karyawan_user_hco as $data)
+                                            <option value="{{ $data->nik }}" @if(in_array($data->nik, explode(';', $interview->interviewer))) selected @endif>{{ $data->nama }} - {{ $data->nik }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="metode">Metode</label>
+                                        <input class="form-control" value="{{ $interview->metode }}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="check_in">Check_in</label>
+                                        <input class="form-control" value="{{ \Carbon\Carbon::parse($interview->check_in) ->format('d-m-Y H:i:s') }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="check_out">Check_out</label>
+                                        <input class="form-control" value="{{ \Carbon\Carbon::parse($interview->check_out) ->format('d-m-Y H:i:s') }}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <h6>After</h6>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="interviewer">Pewawancara</label>
+                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="interviewer[]" name="interviewer[]" required="">
+                                            {{-- <option selected="" disabled="" value="">Pilih...</option> --}}
+                                            @if($process=='interview_user_hco_reschedule')
+                                                @foreach ($karyawan_user_hco as $data)
+                                                <option value="{{ $data->nik }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                                @endforeach
+                                            @elseif($process=='interview_user_reschedule')
+                                                @foreach ($karyawan as $data)
+                                                <option value="{{ $data->nik }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                                @endforeach
+                                            @elseif($process=='interview_hco_reschedule')
+                                                @foreach ($karyawan_hco as $data)
+                                                <option value="{{ $data->nik }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="metode">Metode</label>
+                                        <select class="form-select col-sm-12" id="metode" name="metode" required="">
+                                            <option selected="" disabled="" value="">Pilih...</option>
+                                            <option value="Offline">Offline</option>
+                                            <option value="Online">Online</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="check_in">Check_in</label>
+                                        <input class="form-control" name="check_in" id="check_in" type="datetime-local" required="">
+                                    </div>
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="check_out">Check_out</label>
+                                        <input class="form-control" name="check_out" id="check_out" type="datetime-local" required="">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    @endif
                     {{-- 16=Interpretation --}}
                     <div id="row_16">
                         <form action="{{ route('recruitment.interview_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
@@ -970,12 +1076,34 @@
                                     @php
                                         $catatan = json_decode($_history->catatan, true);
                                     @endphp
+                                    {{-- 4=Psychotest Send --}}
                                     @if($_history->id_status == 4)
                                         @if(!empty($catatan))
                                             @if($catatan['no']==1)
                                             <span class="f-light"><br/>Send ({{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
                                             @else
                                             <span class="f-light"><br/>Reschedule ({{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
+                                            @endif
+                                        @endif
+                                    {{-- 6=Interview User and HCO Send --}}
+                                    {{-- 8=Interview User Send --}}
+                                    {{-- 10=Interview HCO Send --}}
+                                    @elseif(in_array($_history->id_status, [6,8,10]))
+                                        @if(!empty($catatan))
+                                            @php
+                                                if(!empty($catatan['interviewer'])){
+                                                    $arr = App\Models\Karyawan::select('nik', 'nama')->whereIn('nik', explode(';', $catatan['interviewer']))->get();
+                                                    $interviewer = array();
+                                                    foreach($arr as $_arr){
+                                                        array_push($interviewer, $_arr->nama.'/'.$_arr->nik);
+                                                    }
+                                                    $interviewer = implode(', ', $interviewer);
+                                                }
+                                            @endphp
+                                            @if($catatan['no']==1)
+                                            <span class="f-light"><br/>Send (Metode: {{ $catatan['metode'] }}, Pewawancara: {{ $interviewer }}, Waktu: {{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
+                                            @else
+                                            <span class="f-light"><br/>Reschedule (Metode: {{ $catatan['metode'] }}, Pewawancara: {{ $interviewer }}, Waktu: {{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
                                             @endif
                                         @endif
                                     @endif
