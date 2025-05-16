@@ -34,13 +34,16 @@ class DashboardController extends Controller
         // }
         //
         $data_kelamin = DB::select("SELECT b.kelamin AS kelamin,COUNT(a.kode_kelamin) AS jumlah,SUM(COUNT(a.kode_kelamin)) OVER() AS total FROM mtr_tbl_karyawan AS a LEFT JOIN mtr_tbl_kelamin AS b ON b.id=a.kode_kelamin WHERE a.is_aktif=1 AND a.nik NOT IN ('IT.BM','Hco.all') GROUP BY a.kode_kelamin");
+        // dd($data_kelamin);
         $kelamin = array();
         $jumlah_kelamin = array();
         $total_kelamin = 0;
         foreach($data_kelamin as $_data){
-            array_push($kelamin, $_data->kelamin);
-            array_push($jumlah_kelamin, $_data->jumlah);
-            $total_kelamin += $_data->jumlah;
+            if(!empty($_data->kelamin)){
+                array_push($kelamin, $_data->kelamin);
+                array_push($jumlah_kelamin, $_data->jumlah);
+                $total_kelamin += $_data->jumlah;
+            }
         }
         // //
         // $data_level = DB::select("SELECT b.level AS level,COUNT(a.kode_level) AS jumlah,SUM(COUNT(a.kode_level)) OVER() AS total FROM mtr_tbl_karyawan AS a LEFT JOIN mtr_tbl_level AS b ON b.id=a.kode_level WHERE a.is_aktif=1 AND a.nik NOT IN ('IT.BM','Hco.all')GROUP BY a.kode_level");
