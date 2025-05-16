@@ -24,6 +24,7 @@
             <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
+                        <h5>Jumlah Karyawan</h5>
                         <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                         <div class="collapse" id="collapse_filter">
                         <div class="row">
@@ -48,7 +49,7 @@
                                 <button class="btn btn-warning" id="getKaryawanPerusahaan" name="getKaryawanPerusahaan"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
                             </div>
                         </div>
-                        </div>
+                        {{-- </div> --}}
                         {{-- <h5>Karyawan Aktif: {{ $total_aktif }}</h5> --}}
                     </div>
                     <div id="karyawan_aktif" style="height:400px;"></div>
@@ -143,12 +144,12 @@
                                     },
                                 }
                             },
-                            colors: ['#FFA500'],
+                            colors: ['#f57b20'],
                             dataLabels: {
                                 enabled: true,
                                 offsetY: -20,
                                 style: {
-                                    colors: ["#FFA500"]
+                                    colors: ["#f57b20"]
                                 },
                                 formatter: function(val) {
                                     return val;
@@ -199,12 +200,12 @@
                     },
                 }
             },
-            colors: ['#FFA500'],
+            colors: ['#f57b20'],
             dataLabels: {
                 enabled: true,
                 offsetY: -20,
                 style: {
-                    colors: ["#FFA500"]
+                    colors: ["#f57b20"]
                 },
                 formatter: function(val) {
                     return val;
@@ -247,12 +248,12 @@
                     },
                 }
             },
-            colors: ['#FFA500'],
+            colors: ['#f57b20'],
             dataLabels: {
                 enabled: true,
                 offsetY: -20,
                 style: {
-                    colors: ["#FFA500"]
+                    colors: ["#f57b20"]
                 },
                 formatter: function(val) {
                     return val;
@@ -295,12 +296,12 @@
                     },
                 }
             },
-            colors: ['#FFA500'],
+            colors: ['#f57b20'],
             dataLabels: {
                 enabled: true,
                 offsetY: -20,
                 style: {
-                    colors: ["#FFA500"]
+                    colors: ["#f57b20"]
                 },
                 formatter: function(val) {
                     return val;
@@ -343,12 +344,12 @@
                     },
                 }
             },
-            colors: ['#FFA500'],
+            colors: ['#f57b20'],
             dataLabels: {
                 enabled: true,
                 offsetY: -20,
                 style: {
-                    colors: ["#FFA500"]
+                    colors: ["#f57b20"]
                 },
                 formatter: function(val) {
                     return val;
@@ -391,12 +392,12 @@
                     },
                 }
             },
-            colors: ['#FFA500'],
+            colors: ['#f57b20'],
             dataLabels: {
                 enabled: true,
                 offsetY: -20,
                 style: {
-                    colors: ["#FFA500"]
+                    colors: ["#f57b20"]
                 },
                 formatter: function(val) {
                     return val;
@@ -439,12 +440,12 @@
                     },
                 }
             },
-            colors: ['#FFA500'],
+            colors: ['#f57b20'],
             dataLabels: {
                 enabled: true,
                 offsetY: -20,
                 style: {
-                    colors: ["#FFA500"]
+                    colors: ["#f57b20"]
                 },
                 formatter: function(val) {
                     return val;
