@@ -125,7 +125,7 @@
                         {{-- start upload file --}}
                         <div class="col-12 col-md-12 text-center">
                             <h4>Upload<span class="text-danger">*</span></h4>
-                            @if($_trx->id_status == 19)
+                            @if($_trx->id_status == 19 || (Auth::check() && auth()->user()->userrole == 'hc'))
                             <label class="form-label">*Maksimal 5 MB dengan format pdf/image(jpg, jpeg, png)</label>
                             @endif
                         </div>
@@ -134,6 +134,7 @@
                             <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                                 @csrf
                                 <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
                                 {{--  --}}
                                 <div class="row">
                                     <div class="col-12 col-md-4">
@@ -143,6 +144,16 @@
                                             <input name="file_sertifikat_keahlian" id="file_sertifikat_keahlian" class="form-control" type="file" >
                                             @endif
                                             @if(!empty($_trx->file_sertifikat_keahlian))<br/><i class="fa fa-file-text-o"></i></i>&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$_trx->file_sertifikat_keahlian) }}" target="_blank">Download Sertifikat Keahlian</a> @else <br/>-Tidak Ada- @endif
+                                            @if(Auth::check() && auth()->user()->userrole == 'hc')
+                                                <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                                    @csrf
+                                                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                                    <input type="hidden" id="filename" name="filename" value="file_sertifikat_keahlian">
+                                                    <input name="file_sertifikat_keahlian" id="file_sertifikat_keahlian" class="form-control" type="file" required="">
+                                                    <button type="submit" name="upload_by" id="upload_by" value="hco" class="btn btn-primary mt-1">Upload</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-4">
@@ -152,6 +163,16 @@
                                             <input name="file_ktp" id="file_ktp" class="form-control" type="file" required="">
                                             @endif
                                             @if(!empty($_trx->file_ktp))<br/><i class="fa fa-file-text-o"></i></i>&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$_trx->file_ktp) }}" target="_blank">Download KTP</a> @else <br/>-Tidak Ada- @endif
+                                            @if(Auth::check() && auth()->user()->userrole == 'hc')
+                                                <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                                    @csrf
+                                                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                                    <input type="hidden" id="filename" name="filename" value="file_ktp">
+                                                    <input name="file_ktp" id="file_ktp" class="form-control" type="file" required="">
+                                                    <button type="submit" name="upload_by" id="upload_by" value="hco" class="btn btn-primary mt-1">Upload</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-4">
@@ -161,6 +182,16 @@
                                             <input name="file_kk" id="file_kk" class="form-control" type="file" required="">
                                             @endif
                                             @if(!empty($_trx->file_kk))<br/><i class="fa fa-file-text-o"></i></i>&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$_trx->file_kk) }}" target="_blank">Download Kartu Keluarga</a> @else <br/>-Tidak Ada- @endif
+                                            @if(Auth::check() && auth()->user()->userrole == 'hc')
+                                                <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                                    @csrf
+                                                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                                    <input type="hidden" id="filename" name="filename" value="file_kk">
+                                                    <input name="file_kk" id="file_kk" class="form-control" type="file" required="">
+                                                    <button type="submit" name="upload_by" id="upload_by" value="hco" class="btn btn-primary mt-1">Upload</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -173,6 +204,16 @@
                                             <input name="file_npwp" id="file_npwp" class="form-control" type="file">
                                             @endif
                                             @if(!empty($_trx->file_npwp))<br/><i class="fa fa-file-text-o"></i></i>&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$_trx->file_npwp) }}" target="_blank">Download NPWP</a> @else <br/>-Tidak Ada- @endif
+                                            @if(Auth::check() && auth()->user()->userrole == 'hc')
+                                                <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                                    @csrf
+                                                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                                    <input type="hidden" id="filename" name="filename" value="file_npwp">
+                                                    <input name="file_npwp" id="file_npwp" class="form-control" type="file" required="">
+                                                    <button type="submit" name="upload_by" id="upload_by" value="hco" class="btn btn-primary mt-1">Upload</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-4">
@@ -182,6 +223,16 @@
                                             <input name="file_bpjs_tk" id="file_bpjs_tk" class="form-control" type="file">
                                             @endif
                                             @if(!empty($_trx->file_bpjs_tk))<br/><i class="fa fa-file-text-o"></i></i>&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$_trx->file_bpjs_tk) }}" target="_blank">Download BPJS Ketenagakerjaan</a> @else <br/>-Tidak Ada- @endif
+                                            @if(Auth::check() && auth()->user()->userrole == 'hc')
+                                                <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                                    @csrf
+                                                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                                    <input type="hidden" id="filename" name="filename" value="file_bpjs_tk">
+                                                    <input name="file_bpjs_tk" id="file_bpjs_tk" class="form-control" type="file" required="">
+                                                    <button type="submit" name="upload_by" id="upload_by" value="hco" class="btn btn-primary mt-1">Upload</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-4">
@@ -191,6 +242,16 @@
                                             <input name="file_bpjs_kes" id="file_bpjs_kes" class="form-control" type="file">
                                             @endif
                                             @if(!empty($_trx->file_bpjs_kes))<br/><i class="fa fa-file-text-o"></i></i>&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$_trx->file_bpjs_kes) }}" target="_blank">Download BPJS Kesehatan</a> @else <br/>-Tidak Ada- @endif
+                                            @if(Auth::check() && auth()->user()->userrole == 'hc')
+                                                <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                                    @csrf
+                                                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                                    <input type="hidden" id="filename" name="filename" value="file_bpjs_kes">
+                                                    <input name="file_bpjs_kes" id="file_bpjs_kes" class="form-control" type="file" required="">
+                                                    <button type="submit" name="upload_by" id="upload_by" value="hco" class="btn btn-primary mt-1">Upload</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -203,6 +264,16 @@
                                             <input name="file_buku_tabungan" id="file_buku_tabungan" class="form-control" type="file" required="">
                                             @endif
                                             @if(!empty($_trx->file_buku_tabungan))<br/><i class="fa fa-file-text-o"></i></i>&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$_trx->file_buku_tabungan) }}" target="_blank">Download Buku Tabungan</a> @else <br/>-Tidak Ada- @endif
+                                            @if(Auth::check() && auth()->user()->userrole == 'hc')
+                                                <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                                    @csrf
+                                                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                                    <input type="hidden" id="filename" name="filename" value="file_buku_tabungan">
+                                                    <input name="file_buku_tabungan" id="file_buku_tabungan" class="form-control" type="file" required="">
+                                                    <button type="submit" name="upload_by" id="upload_by" value="hco" class="btn btn-primary mt-1">Upload</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-4">
@@ -212,6 +283,16 @@
                                             <input name="file_ket_sehat" id="file_ket_sehat" class="form-control" type="file" required="">
                                             @endif
                                             @if(!empty($_trx->file_ket_sehat))<br/><i class="fa fa-file-text-o"></i></i>&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$_trx->file_ket_sehat) }}" target="_blank">Download Keterangan Sehat</a> @else <br/>-Tidak Ada- @endif
+                                            @if(Auth::check() && auth()->user()->userrole == 'hc')
+                                                <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                                    @csrf
+                                                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                                    <input type="hidden" id="filename" name="filename" value="file_ket_sehat">
+                                                    <input name="file_ket_sehat" id="file_ket_sehat" class="form-control" type="file" required="">
+                                                    <button type="submit" name="upload_by" id="upload_by" value="hco" class="btn btn-primary mt-1">Upload</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-4">
@@ -221,6 +302,16 @@
                                             <input name="file_skck" id="file_skck" class="form-control" type="file" required="">
                                             @endif
                                             @if(!empty($_trx->file_skck))<br/><i class="fa fa-file-text-o"></i></i>&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$_trx->file_skck) }}" target="_blank">Download SKCK</a> @else <br/>-Tidak Ada- @endif
+                                            @if(Auth::check() && auth()->user()->userrole == 'hc')
+                                                <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                                    @csrf
+                                                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                                    <input type="hidden" id="filename" name="filename" value="file_skck">
+                                                    <input name="file_skck" id="file_skck" class="form-control" type="file" required="">
+                                                    <button type="submit" name="upload_by" id="upload_by" value="hco" class="btn btn-primary mt-1">Upload</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -233,6 +324,16 @@
                                             <input name="file_ijazah" id="file_ijazah" class="form-control" type="file" required="">
                                             @endif
                                             @if(!empty($_trx->file_ijazah))<br/><i class="fa fa-file-text-o"></i></i>&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$_trx->file_ijazah) }}" target="_blank">Download Ijazah</a> @else <br/>-Tidak Ada- @endif
+                                            @if(Auth::check() && auth()->user()->userrole == 'hc')
+                                                <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                                    @csrf
+                                                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                                    <input type="hidden" id="filename" name="filename" value="file_ijazah">
+                                                    <input name="file_ijazah" id="file_ijazah" class="form-control" type="file" required="">
+                                                    <button type="submit" name="upload_by" id="upload_by" value="hco" class="btn btn-primary mt-1">Upload</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-4">
@@ -242,6 +343,16 @@
                                             <input name="file_covid" id="file_covid" class="form-control" type="file">
                                             @endif
                                             @if(!empty($_trx->file_covid))<br/><i class="fa fa-file-text-o"></i></i>&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$_trx->file_covid) }}" target="_blank">Download Sertifikat Vaksin Covid 19</a> @else <br/>-Tidak Ada- @endif
+                                            @if(Auth::check() && auth()->user()->userrole == 'hc')
+                                                <form action="{{ route('recruitment.upload_dokumen_post') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                                                    @csrf
+                                                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($_trx->id) }}">
+                                                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                                                    <input type="hidden" id="filename" name="filename" value="file_covid">
+                                                    <input name="file_covid" id="file_covid" class="form-control" type="file" required="">
+                                                    <button type="submit" name="upload_by" id="upload_by" value="hco" class="btn btn-primary mt-1">Upload</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                     {{-- tidak digunakan, diganti dengan dibuat persetujuan dalam setiap halaman setelah kandidat membaca --}}
@@ -267,7 +378,7 @@
                                     <div class="col-12 col-md-4">
                                         <div class="col-12 mb-2">
                                             {{-- 20=COC and File Upload Done --}}
-                                            <button type="submit" name="id_status" value="20" class="btn btn-primary">Submit</button>
+                                            <button type="submit" name="id_status" id="id_status" value="20" class="btn btn-primary">Submit</button>
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-4">&nbsp;</div>
