@@ -224,15 +224,25 @@ class TrxRecruitmentController extends Controller
 
     public function applicant_process(Request $request, $id)
     {
+        // dd($request->all(), $id);
         // psikotest_reschedule
         $process = $request->process;
         $id = Crypt::decrypt($id);
+        $id_interview = $request->id_interview;
+        if(!empty($id_interview)){
+            $id_interview = Crypt::decrypt($request->id_interview);
+        }
+        // dd($id_interview);
         // dd($request->all(), $id);
         $where = ['id_identitas' => $id];
         $history = TrxRecruitmentLog::where($where)->orderBy('id', 'desc')->get();
         $resume = TrxRecruitmentResume::where($where)->orderBy('id', 'asc')->get();
         $trx = TrxRecruitmentIdentitas::find($id);
         $trxM = TrxKebutuhanMaster::find($trx->id_kebutuhan);
+        $interview = array();
+        if(!empty($id_interview)){
+            $interview = TrxRecruitmentInterview::find($id_interview);
+        }
         $nego = TrxRecruitmentNegosiasi::where($where)->orderBy('id', 'desc')->first();
         $benefit = MtrRecruitmentBenefit::orderBy('benefit', 'asc')->get();
         $catat_pegawai = MtrRecruitmentCatatPegawai::orderBy('pencatatan', 'asc')->get();
@@ -317,7 +327,7 @@ class TrxRecruitmentController extends Controller
         $karyawan_user_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
         $where = ['is_aktif' => 1, 'kode_sub_departemen' => 263];
         $karyawan_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
-        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume', 'status_join', 'status_not_join', 'process'));
+        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume', 'status_join', 'status_not_join', 'process', 'interview'));
         
     }
 
@@ -761,6 +771,14 @@ class TrxRecruitmentController extends Controller
             $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
             $file_sertifikat_keahlian->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_sertifikat_keahlian = $namafile;
+            if($request->upload_by == 'hco'){
+                $_trx->update();
+                $filename = $request->filename;
+                // 20=COC and File Upload Done
+                $arr = [$_trx->id,20,auth()->user()->name.'/'.auth()->user()->nik,'',$filename,''];
+                $this->insertLog($arr);
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
         }
         if($request->hasFile('file_ktp')){
             $file_ktp = $request->file('file_ktp');
@@ -771,6 +789,14 @@ class TrxRecruitmentController extends Controller
             $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
             $file_ktp->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_ktp = $namafile;
+            if($request->upload_by == 'hco'){
+                $_trx->update();
+                $filename = $request->filename;
+                // 20=COC and File Upload Done
+                $arr = [$_trx->id,20,auth()->user()->name.'/'.auth()->user()->nik,'',$filename,''];
+                $this->insertLog($arr);
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
         }
         if($request->hasFile('file_kk')){
             $file_kk = $request->file('file_kk');
@@ -781,6 +807,14 @@ class TrxRecruitmentController extends Controller
             $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
             $file_kk->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_kk = $namafile;
+            if($request->upload_by == 'hco'){
+                $_trx->update();
+                $filename = $request->filename;
+                // 20=COC and File Upload Done
+                $arr = [$_trx->id,20,auth()->user()->name.'/'.auth()->user()->nik,'',$filename,''];
+                $this->insertLog($arr);
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
         }
         if($request->hasFile('file_npwp')){
             $file_npwp = $request->file('file_npwp');
@@ -791,6 +825,14 @@ class TrxRecruitmentController extends Controller
             $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
             $file_npwp->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_npwp = $namafile;
+            if($request->upload_by == 'hco'){
+                $_trx->update();
+                $filename = $request->filename;
+                // 20=COC and File Upload Done
+                $arr = [$_trx->id,20,auth()->user()->name.'/'.auth()->user()->nik,'',$filename,''];
+                $this->insertLog($arr);
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
         }
         if($request->hasFile('file_bpjs_tk')){
             $file_bpjs_tk = $request->file('file_bpjs_tk');
@@ -801,6 +843,14 @@ class TrxRecruitmentController extends Controller
             $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
             $file_bpjs_tk->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_bpjs_tk = $namafile;
+            if($request->upload_by == 'hco'){
+                $_trx->update();
+                $filename = $request->filename;
+                // 20=COC and File Upload Done
+                $arr = [$_trx->id,20,auth()->user()->name.'/'.auth()->user()->nik,'',$filename,''];
+                $this->insertLog($arr);
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
         }
         if($request->hasFile('file_bpjs_kes')){
             $file_bpjs_kes = $request->file('file_bpjs_kes');
@@ -811,6 +861,14 @@ class TrxRecruitmentController extends Controller
             $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
             $file_bpjs_kes->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_bpjs_kes = $namafile;
+            if($request->upload_by == 'hco'){
+                $_trx->update();
+                $filename = $request->filename;
+                // 20=COC and File Upload Done
+                $arr = [$_trx->id,20,auth()->user()->name.'/'.auth()->user()->nik,'',$filename,''];
+                $this->insertLog($arr);
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
         }
         if($request->hasFile('file_buku_tabungan')){
             $file_buku_tabungan = $request->file('file_buku_tabungan');
@@ -821,6 +879,14 @@ class TrxRecruitmentController extends Controller
             $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
             $file_buku_tabungan->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_buku_tabungan = $namafile;
+            if($request->upload_by == 'hco'){
+                $_trx->update();
+                $filename = $request->filename;
+                // 20=COC and File Upload Done
+                $arr = [$_trx->id,20,auth()->user()->name.'/'.auth()->user()->nik,'',$filename,''];
+                $this->insertLog($arr);
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
         }
         if($request->hasFile('file_ket_sehat')){
             $file_ket_sehat = $request->file('file_ket_sehat');
@@ -831,6 +897,14 @@ class TrxRecruitmentController extends Controller
             $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
             $file_ket_sehat->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_ket_sehat = $namafile;
+            if($request->upload_by == 'hco'){
+                $_trx->update();
+                $filename = $request->filename;
+                // 20=COC and File Upload Done
+                $arr = [$_trx->id,20,auth()->user()->name.'/'.auth()->user()->nik,'',$filename,''];
+                $this->insertLog($arr);
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
         }
         if($request->hasFile('file_skck')){
             $file_skck = $request->file('file_skck');
@@ -841,6 +915,14 @@ class TrxRecruitmentController extends Controller
             $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
             $file_skck->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_skck = $namafile;
+            if($request->upload_by == 'hco'){
+                $_trx->update();
+                $filename = $request->filename;
+                // 20=COC and File Upload Done
+                $arr = [$_trx->id,20,auth()->user()->name.'/'.auth()->user()->nik,'',$filename,''];
+                $this->insertLog($arr);
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
         }
         if($request->hasFile('file_ijazah')){
             $file_ijazah = $request->file('file_ijazah');
@@ -851,6 +933,14 @@ class TrxRecruitmentController extends Controller
             $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
             $file_ijazah->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_ijazah = $namafile;
+            if($request->upload_by == 'hco'){
+                $_trx->update();
+                $filename = $request->filename;
+                // 20=COC and File Upload Done
+                $arr = [$_trx->id,20,auth()->user()->name.'/'.auth()->user()->nik,'',$filename,''];
+                $this->insertLog($arr);
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
         }
         if($request->hasFile('file_covid')){
             $file_covid = $request->file('file_covid');
@@ -861,6 +951,14 @@ class TrxRecruitmentController extends Controller
             $namafile = $id.'_'.now()->getTimestampMs().'.'.$extension;
             $file_covid->move('public/assets/recruitment/upload/', $namafile);
             $_trx->file_covid = $namafile;
+            if($request->upload_by == 'hco'){
+                $_trx->update();
+                $filename = $request->filename;
+                // 20=COC and File Upload Done
+                $arr = [$_trx->id,20,auth()->user()->name.'/'.auth()->user()->nik,'',$filename,''];
+                $this->insertLog($arr);
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
         }
         // tidak digunakan, diganti dengan dibuat persetujuan dalam setiap halaman setelah kandidat membaca
         // if($request->hasFile('file_dokumen_ttd')){
@@ -1145,14 +1243,21 @@ class TrxRecruitmentController extends Controller
 
     public function interview_save(Request $request)
     {
+        // dd($request->all());
         $nik = auth()->user()->nik;
         $nama = Karyawan::where(['nik'=>$nik])->first()->nama;
         $id = Crypt::decrypt($request->id);
         // dd($id, $request->all());
         $id_status = $request->id_status;
+        $process = $request->process;
+        $id_interview = $request->id_interview;
+        if(!empty($id_interview)){
+            $id_interview = Crypt::decrypt($request->id_interview);
+        }
         // 6=Interview User and HCO Send
         // 8=Interview User Send
         // 10=Interview HCO Send
+        $catatan = '';
         if($id_status == 6 || $id_status == 8 || $id_status == 10){
             $_trx = TrxRecruitmentIdentitas::find($id);
             $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
@@ -1161,11 +1266,15 @@ class TrxRecruitmentController extends Controller
             $_trx->update();
             $metode = $request->metode;
             $trx = new TrxRecruitmentInterview;
+            if(!empty($process)){
+                $trx = TrxRecruitmentInterview::find($id_interview);
+            }
             $trx->id_identitas = $id;
             $trx->id_status = $id_status;
-            $trx->jenis = 'user';
             if($id_status == 10){
                 $trx->jenis = 'hco';
+            }elseif($id_status == 8){
+                $trx->jenis = 'user';
             }elseif($id_status == 6){
                 $trx->jenis = 'user_hco';
             }
@@ -1173,7 +1282,15 @@ class TrxRecruitmentController extends Controller
             $trx->metode = $metode;
             $trx->check_in = $request->check_in;
             $trx->check_out = $request->check_out;
-            $trx->save();
+            if(!empty($process)){
+                $trx->update();
+            }else{
+                $trx->save();
+            }
+            // 
+            $where = ['id_identitas' => $trx->id_identitas, 'id_status' => $trx->id_status];
+            $count = TrxRecruitmentLog::where($where)->count();
+            $catatan = json_encode(['no'=>$count+1, 'jenis'=>$trx->jenis, 'metode'=>$trx->metode, 'interviewer'=>$trx->interviewer, 'check_in'=>$trx->check_in, 'check_out'=>$trx->check_out]);
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Undangan Interview '.$metode;
             $mailData['filename'] = 'emails.recruitment2';
@@ -1415,6 +1532,16 @@ class TrxRecruitmentController extends Controller
         // start
         // id_identitas,id_status,pic,pic_property,aktifitas,catatan
         $arr = [$_trx->id,$id_status,$nama.'/'.$nik,'','internal',''];
+        // jika ada $catatan
+        if(!empty($catatan)){
+            // $_trx_ = TrxRecruitmentInterview::find($id_interview);
+            // // count
+            // $where = ['id_identitas' => $_trx_->id_identitas, 'id_status' => $_trx_->id_status];
+            // $count = TrxRecruitmentLog::where($where)->count();
+            // $catatan = json_encode(['no'=>$count+1, 'jenis'=>$_trx_->jenis, 'metode'=>$_trx_->metode, 'interviewer'=>$_trx_->interviewer, 'check_in'=>$_trx_->check_in, 'check_out'=>$_trx_->check_out]);
+            $arr = [$_trx->id,$id_status,$nama.'/'.$nik,'','internal',$catatan];
+        }
+        // 
         $this->insertLog($arr);
         return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
     }
@@ -1422,6 +1549,100 @@ class TrxRecruitmentController extends Controller
     public function applicant_save(Request $request)
     {
         // dd($request->all());
+        // psychotest_bulk
+        if($request->submit == 'psychotest_bulk'){
+            $id_identitas = $request->input('id_identitas');
+            if(!empty($id_identitas)){
+                foreach($id_identitas as $data){
+                    // dd($data);
+                    $trx = TrxRecruitmentIdentitas::find($data);
+                    $_trx = TrxKebutuhanMaster::find($trx->id_kebutuhan);
+                    // $posisi = $_trx->_pekerjaan->pekerjaan;
+                    // dd($trx);
+                    $trx->id_status = $request->id_status;
+                    $trx->check_in = $request->check_in;
+                    // default durasi pengerjaan adalah 150 menit (2.5 jam)
+                    $trx->check_out = Carbon::parse($request->check_in)->addMinutes(150);
+                    // dan jika belum terisi karena sudah dikerjakan
+                    if(empty($trx->remain)){
+                        $trx->remain = Carbon::parse($trx->check_out)->diffInSeconds(Carbon::parse($trx->check_in));
+                    }
+                    $trx->update();
+                    // start
+                    // id_identitas,id_status,pic,pic_property,aktifitas,catatan
+                    $nik = auth()->user()->nik;
+                    $nama = Karyawan::where(['nik'=>$nik])->first()->nama;
+                    $arr = [$trx->id,$trx->id_status,$nama.'/'.$nik,'','internal',''];
+                    $this->insertLog($arr);
+                    // end
+                    // jika belum psychotest
+                    $where = ['id_identitas'=>$trx->id];
+                    if(!TrxRecruitmentPsychotest::where($where)->exists()){
+                        $this->insertPsychotest($trx);
+                    }
+                    // source: https://ziixon93.blogspot.com/2020/07/cara-memasang-imagemagick-di-xampp.html
+                    $qr = QrCode::format('png')->size(500)->generate(route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest'))]));
+                    $qrImageName = base64_encode($trx->id) . '.png';
+                    // dd($qrImageName);
+                    // simpan ke local storage
+                    Storage::put('public/qr/' . $qrImageName, $qr);
+                    // Storage::disk('public')->put('qr/'.$qrImageName, File::get(public_path($qrImageName)));
+                    // 
+                    // parameter yang dipassing ke sendemail
+                    $mailData['title'] = 'Undangan Psikotes';
+                    $mailData['data'] = ['trx' => $trx];
+                    $mailData['filename'] = 'emails.recruitment1';
+                    $mailData['to'] = $trx->email;
+                    $this->sendEmail($mailData);
+                }
+                return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            }
+            // jika tidak ada id_identitas yang dipilih
+            else{
+                return redirect()->to($request->back_url)->with('msg', 'No Data is executed.' );
+            }
+            $trx = TrxRecruitmentIdentitas::find(Crypt::decrypt($request->id));
+            $_trx = TrxKebutuhanMaster::find($trx->id_kebutuhan);
+            // $posisi = $_trx->_pekerjaan->pekerjaan;
+            // dd($trx);
+            $trx->id_status = $request->id_status;
+            $trx->check_in = $request->check_in;
+            // default durasi pengerjaan adalah 150 menit (2.5 jam)
+            $trx->check_out = Carbon::parse($request->check_in)->addMinutes(150);
+            // dan jika belum terisi karena sudah dikerjakan
+            if(empty($trx->remain)){
+                $trx->remain = Carbon::parse($trx->check_out)->diffInSeconds(Carbon::parse($trx->check_in));
+            }
+            $trx->update();
+            // start
+            // id_identitas,id_status,pic,pic_property,aktifitas,catatan
+            $nik = auth()->user()->nik;
+            $nama = Karyawan::where(['nik'=>$nik])->first()->nama;
+            $arr = [$trx->id,$trx->id_status,$nama.'/'.$nik,'','internal',''];
+            $this->insertLog($arr);
+            // end
+            // jika belum psychotest
+            $where = ['id_identitas'=>$trx->id];
+            if(!TrxRecruitmentPsychotest::where($where)->exists()){
+                $this->insertPsychotest($trx);
+            }
+            // source: https://ziixon93.blogspot.com/2020/07/cara-memasang-imagemagick-di-xampp.html
+            $qr = QrCode::format('png')->size(500)->generate(route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest'))]));
+            $qrImageName = base64_encode($trx->id) . '.png';
+            // dd($qrImageName);
+            // simpan ke local storage
+            Storage::put('public/qr/' . $qrImageName, $qr);
+            // Storage::disk('public')->put('qr/'.$qrImageName, File::get(public_path($qrImageName)));
+            // 
+            // parameter yang dipassing ke sendemail
+            $mailData['title'] = 'Undangan Psikotes';
+            $mailData['data'] = ['trx' => $trx];
+            $mailData['filename'] = 'emails.recruitment1';
+            $mailData['to'] = $trx->email;
+            $this->sendEmail($mailData);
+            // return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+            return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
+        }
         $trx = TrxRecruitmentIdentitas::find(Crypt::decrypt($request->id));
         $_trx = TrxKebutuhanMaster::find($trx->id_kebutuhan);
         // $posisi = $_trx->_pekerjaan->pekerjaan;
@@ -2168,7 +2389,8 @@ class TrxRecruitmentController extends Controller
         $trx->email = $request->email;
         $trx->update();
         // dd($id, $type, $back_url, $trx);
-        return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
+        // return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
+        return redirect()->to($back_url)->with('msg', 'Data is saved successfully.');
     }
 
     /**
