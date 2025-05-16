@@ -37,13 +37,13 @@
                         <div class="collapse" id="collapse_filter">
                             <form class="mt-2" action="{{ route('attendance.index') }}" method="get" enctype="multipart/form-data">
                                 <div class="row">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <label class="h6">Date</label>
                                         <br/>From <input class="form-control" name="date_from" id="date_from" type="date" required="" value="{{ $date_from }}">
                                         To <input class="form-control" name="date_to" id="date_to" type="date" required="" value="{{ $date_to }}">
                                         {{-- <br/> --}}
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <label class="h6">Action</label>&nbsp;<input type="checkbox" onClick="toggle_att_type(this)" /> Check All
                                         <label class="d-block" for="att_type">
                                             @foreach ($att_type as $data)
@@ -63,7 +63,7 @@
                                             @endforeach
                                         </label>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <label class="h6">Working Group</label>&nbsp;<input type="checkbox" onClick="toggle_wg_id(this)" /> Check All
                                         <label class="d-block" for="wg_id">
                                             @foreach ($wg_id as $data)
@@ -76,6 +76,20 @@
                                             <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_perusahaan)) checked @endif> {{ $data->nama }}<br/>
                                             @endforeach
                                         </label> --}}
+                                    </div>
+                                    <div class="col-sm-3">
+                                        {{-- <label class="h6">Working Group</label>&nbsp;<input type="checkbox" onClick="toggle_wg_id(this)" /> Check All
+                                        <label class="d-block" for="wg_id">
+                                            @foreach ($wg_id as $data)
+                                            <input class="checkbox_animated" id="wg_id[]" name="wg_id[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_wg_id)) checked @endif> {{ $data->wg_name }}<br/>
+                                            @endforeach
+                                        </label> --}}
+                                        <label class="h6">Company</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
+                                        <label class="d-block" for="perusahaan">
+                                            @foreach ($perusahaan as $data)
+                                            <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_perusahaan)) checked @endif> {{ $data->nama }}<br/>
+                                            @endforeach
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="row">
