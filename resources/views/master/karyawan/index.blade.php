@@ -126,6 +126,7 @@
                                     <th>Status Kerja</th>
                                     <th>Tanggal Bergabung</th>
                                     <th>Tanggal Berakhir</th>
+                                    <th>Project</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -167,6 +168,7 @@
                                     <!-- <td>{{ $layer_1::getLayer1($data->layer1) }}</td>
                                         <td>{{ $layer_1::getLayer2($data->layer2) }}</td>
                                         <td>{{ $layer_1::getLayer3($data->layer3) }}</td> -->
+                                    <td>{{ $data->_findim_project->project_id }}-{{ $data->_findim_project->project_desc }}</td>
                                     <td>
                                         <!-- <a href="#" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>&nbsp; -->
                                         <form action="{{ route('karyawan.destroy', $data->id) }}" method="POST">
