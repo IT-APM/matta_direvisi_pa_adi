@@ -43,6 +43,8 @@ use Elibyy\TCPDF\Facades\TCPDF;
 use App\Models\TrxRecruitmentPedoman;
 use App\Models\StatusKerja;
 use App\Models\PekerjaanSub;
+use App\Models\ToDoList;
+use App\Models\ToDoListLog;
 
 class TrxRecruitmentController extends Controller
 {
@@ -519,6 +521,7 @@ class TrxRecruitmentController extends Controller
             $mailData['data'] = ['msg'=>$msg];
             $mailData['filename'] = 'emails.recruitment0';
             $mailData['to'] = $atasan['email'];
+            $this->deleteToDoList(['id_trx'=>$id_identitas, 'nik'=>$atasan['nik'], 'pic'=>'atasan', 'filename'=>'emails.recruitment0']);
             $this->sendEmail($mailData);
             return view('recruitment.thank', compact('msg'));
         }
@@ -1417,9 +1420,12 @@ class TrxRecruitmentController extends Controller
                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
                     // parameter yang dipassing ke sendemail
                     $mailData['title'] = 'Pemberitahuan Proses Seleksi Penerimaan Karyawan';
-                    $mailData['data'] = ['msg'=>$msg];
+                    // $mailData['data'] = ['msg'=>$msg];
                     $mailData['filename'] = 'emails.recruitment0';
                     $mailData['to'] = $atasan['email'];
+                    $todolist = ['id_trx' => $_trx->id, 'nik' => $atasan['nik'], 'id_status' => $id_status, 'pic' => 'atasan'];
+                    $mailData['data'] = ['msg'=>$msg, 'nama' => $atasan['nama'].'/'.$atasan['nik'], 'jabatan' => $atasan['jabatan'], 'unit_kerja' => $atasan['divisi'] . '/' . $atasan['dep'] . '/' . $atasan['sub_dep'], 'link' => $link];
+                    $this->insertToDoList($todolist, $mailData);
                     $this->sendEmail($mailData);
                 }
             }
@@ -2402,5 +2408,45 @@ class TrxRecruitmentController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function insertToDoList($todolist, $mailData)
+    {
+        $data = New ToDoList;
+        $data->id_trx = $todolist['id_trx'];
+        $data->id_status = $todolist['id_status'];
+        $data->nik = $todolist['nik'];
+        $data->pic = $todolist['pic'];
+        $data->title = $mailData['title'];
+        $data->nama = $mailData['data']['nama'];
+        $data->jabatan = $mailData['data']['jabatan'];
+        $data->unit_kerja = $mailData['data']['unit_kerja'];
+        $data->link = $mailData['data']['link'];
+        $data->filename = $mailData['filename'];
+        $data->email = $mailData['to'];
+        $data->save();
+        $this->insertToDoListLog($todolist, $mailData);
+    }
+
+    public function insertToDoListLog($todolist, $mailData)
+    {
+        $data = New ToDoListLog;
+        $data->id_trx = $todolist['id_trx'];
+        $data->id_status = $todolist['id_status'];
+        $data->nik = $todolist['nik'];
+        $data->pic = $todolist['pic'];
+        $data->title = $mailData['title'];
+        $data->nama = $mailData['data']['nama'];
+        $data->jabatan = $mailData['data']['jabatan'];
+        $data->unit_kerja = $mailData['data']['unit_kerja'];
+        $data->link = $mailData['data']['link'];
+        $data->filename = $mailData['filename'];
+        $data->email = $mailData['to'];
+        $data->save();
+    }
+
+    public function deleteToDoList($where)
+    {
+        $trx = ToDoList::where($where)->delete();
     }
 }
