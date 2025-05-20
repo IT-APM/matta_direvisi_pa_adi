@@ -887,8 +887,14 @@ class TrxPenilaianController extends Controller
         $trx->id_tipe = $id_tipe;
         $trx->id_status = $id_status;
         $trx->update();
-        // maker masih di hardcode 01031908799 => khatrin hco
-        $this->deleteToDoList(['id_trx'=>$id, 'nik'=>auth()->user()->nik, 'pic'=>'hco', 'filename'=>'emails.penilaian0_outsourcing']);
+        // 6=Penilaian Outsourcing
+        if($id_tipe == 6){
+            $this->deleteToDoList(['id_trx'=>$id, 'nik'=>auth()->user()->nik, 'pic'=>'hco', 'filename'=>'emails.penilaian0_outsourcing']);
+        }
+        // selain Penilaian Outsourcing
+        else{
+            $this->deleteToDoList(['id_trx'=>$id, 'nik'=>auth()->user()->nik, 'pic'=>'hco', 'filename'=>'emails.penilaian0']);
+        }
         $this->insertLog($trx->id, $trx->id_status, auth()->user()->nik);
         // simpan history perubahan
         if($id_status==4 || $id_status==8){
