@@ -222,6 +222,21 @@
                 </div>
             </div>
         </div>
+        @can('spv')
+        <div class="col-xl-4 col-sm-4">
+            <div class="card bg-warning">
+                <div class="card-body">
+                    <div class="media faq-widgets">
+                        <div class="media-body text-center">
+                            <a href="{{ route('todolist.show', [0, 'filename' => 'emails.recruitment0']) }}" style="color: #FFFFFF;">
+                                <h5><span @if (count($recruitment)>0) class="badge bg-danger" @else class="badge bg-warning" @endif>{{ count($recruitment) }}</span><br/><i class="fa fa-file-text-o"></i> RECRUITMENT</h5>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endcan
     </div>
     <!--  -->
 </div>
