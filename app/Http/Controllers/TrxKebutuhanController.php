@@ -80,7 +80,7 @@ class TrxKebutuhanController extends Controller
             array_push($arr_id_jenis_permintaan, $data->id_jenis_permintaan);
         }
         $status_pengajuan = KebutuhanStatus::whereIn('id', $arr_status_pengajuan)->orderBy('id', 'asc')->get();
-        $id_area = Propinsi::whereIn('id', $arr_id_area)->orderBy('id', 'asc')->get();
+        $id_area = Propinsi::whereIn('id', $arr_id_area)->orderBy('order_by', 'asc')->get();
         $id_jenis_permintaan = JenisPermintaan::whereIn('id', $arr_id_jenis_permintaan)->orderBy('id', 'asc')->get();
         // start filter
         if($request->filter == true){
@@ -132,7 +132,7 @@ class TrxKebutuhanController extends Controller
         $level = Level::orderBy('id', 'asc')->get();
         $status_kerja = StatusKerja::orderBy('status_kerja', 'asc')->get();
         $kelamin = Kelamin::orderBy('id', 'asc')->get();
-        $area = Propinsi::orderBy('id', 'asc')->get();
+        $area = Propinsi::orderBy('order_by', 'asc')->get();
         $kota = PropinsiKota::orderBy('kota', 'asc')->get();
         $jenis_permintaan = JenisPermintaan::orderBy('jenis', 'asc')->get();
         $jenjang_pendidikan = PendidikanJenjang::orderBy('id', 'asc')->get();
