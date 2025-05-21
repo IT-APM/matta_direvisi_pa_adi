@@ -194,7 +194,7 @@
                                                                 {!! $kes_rek !!}
                                                                 <!--  -->
                                                                 @if($pic != 'nik_karyawan')
-                                                                @if($is_kt && $pic=='nik_penilai_1')
+                                                                @if($is_kt && ($pic=='nik_penilai_1' || $pic=='nik_penilai_2' || $pic=='nik_penilai_3'))
                                                                 <tr>
                                                                     <td>
                                                                         <label class="form-label mt-2">Apakah anda akan merekomendasikan karyawan ini, jika iya maka <a href="{{ route('rekomendasi.create') }}" target="_blank">Klik Link Rekomendasi</a> ini.</label>
