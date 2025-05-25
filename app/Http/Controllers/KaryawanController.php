@@ -332,14 +332,14 @@ class KaryawanController extends Controller
         $alamat_kantor = [['key'=>'HQ', 'value'=>'HQ'], ['key'=>'Region', 'value'=>'Region']];
         $level = Level::all();
         $jabatan = Jabatan::orderBy( 'jabatan', 'asc' )->get();
-        // $findim_project = MtrFindimProject::orderBy( 'project_id', 'asc' )->get();
-        // $findim_divisi = MtrFindimDivisi::orderBy( 'divisi_id', 'asc' )->get();
-        // $findim_departemen = MtrFindimDepartemen::orderBy( 'departemen_id', 'asc' )->get();
-        // $findim_subdepartemen = MtrFindimSubdepartemen::orderBy( 'subdepartemen_id', 'asc' )->get();
-        $findim_project = MtrFindimProject::all();
-        $findim_divisi = MtrFindimDivisi::all();
-        $findim_departemen = MtrFindimDepartemen::all();
-        $findim_subdepartemen = MtrFindimSubdepartemen::all();
+        $findim_project = MtrFindimProject::orderBy( 'project_id', 'asc' )->get();
+        $findim_divisi = MtrFindimDivisi::orderBy( 'divisi_id', 'asc' )->get();
+        $findim_departemen = MtrFindimDepartemen::orderBy( 'departemen_id', 'asc' )->get();
+        $findim_subdepartemen = MtrFindimSubdepartemen::orderBy( 'subdepartemen_id', 'asc' )->get();
+        // $findim_project = MtrFindimProject::all();
+        // $findim_divisi = MtrFindimDivisi::all();
+        // $findim_departemen = MtrFindimDepartemen::all();
+        // $findim_subdepartemen = MtrFindimSubdepartemen::all();
         $id_grade = KaryawanGrade::all();
         return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen', 'id_grade' ) );
     }
@@ -400,7 +400,6 @@ class KaryawanController extends Controller
         $karyawan->is_aktif = $request->is_aktif;
         $karyawan->gaji_pokok = $request->gaji_pokok;
         $karyawan->kode_level = $request->kode_level;
-        $karyawan->id_grade = $request->id_grade;
         $karyawan->kode_jabatan = $request->kode_jabatan;
         $karyawan->tanggal_mulai = $request->tanggal_mulai;
         $karyawan->tanggal_bergabung = $request->tanggal_bergabung;
@@ -414,6 +413,11 @@ class KaryawanController extends Controller
         $karyawan->no_rek = $request->no_rek;
         $karyawan->nama_bank = $request->nama_bank;
         $karyawan->nama_rek = $request->nama_rek;
+        $karyawan->findim_project = $request->findim_project;
+        $karyawan->findim_divisi = $request->findim_divisi;
+        $karyawan->findim_departemen = $request->findim_departemen;
+        $karyawan->findim_subdepartemen = $request->findim_subdepartemen;
+        $karyawan->id_grade = $request->id_grade;
         $karyawan->created_by = auth()->user()->nik;
         $karyawan->save();
         // 
@@ -484,14 +488,14 @@ class KaryawanController extends Controller
         $agama = Agama::all();
         $warga = Warga::all();
         $kawin = Kawin::all();
-        // $findim_project = MtrFindimProject::orderBy( 'project_id', 'asc' )->get();
-        // $findim_divisi = MtrFindimDivisi::orderBy( 'divisi_id', 'asc' )->get();
-        // $findim_departemen = MtrFindimDepartemen::orderBy( 'departemen_id', 'asc' )->get();
-        // $findim_subdepartemen = MtrFindimSubdepartemen::orderBy( 'subdepartemen_id', 'asc' )->get();
-        $findim_project = MtrFindimProject::all();
-        $findim_divisi = MtrFindimDivisi::all();
-        $findim_departemen = MtrFindimDepartemen::all();
-        $findim_subdepartemen = MtrFindimSubdepartemen::all();
+        $findim_project = MtrFindimProject::orderBy( 'project_id', 'asc' )->get();
+        $findim_divisi = MtrFindimDivisi::orderBy( 'divisi_id', 'asc' )->get();
+        $findim_departemen = MtrFindimDepartemen::orderBy( 'departemen_id', 'asc' )->get();
+        $findim_subdepartemen = MtrFindimSubdepartemen::orderBy( 'subdepartemen_id', 'asc' )->get();
+        // $findim_project = MtrFindimProject::all();
+        // $findim_divisi = MtrFindimDivisi::all();
+        // $findim_departemen = MtrFindimDepartemen::all();
+        // $findim_subdepartemen = MtrFindimSubdepartemen::all();
         $id_grade = KaryawanGrade::all();
         // $perusahaan = Perusahaan::all();
         // $divisi = Divisi::where('kode_perusahaan', $karyawan->kode_perusahaan)->get();
