@@ -243,7 +243,8 @@ Route::post('recruitment/apply_save', [ TrxRecruitmentController::class, 'apply_
 Route::post('recruitment/applicant_save', [ TrxRecruitmentController::class, 'applicant_save'])->name('recruitment.applicant_save')->middleware('can:hc');
 Route::get('recruitment/applicant_list/{id}', [TrxRecruitmentController::class, 'applicant_list'])->name('recruitment.applicant_list')->middleware('can:hc');
 Route::get('recruitment/applicant_item/{id}', [TrxRecruitmentController::class, 'applicant_item'])->name('recruitment.applicant_item')->middleware('can:hc');
-Route::get('recruitment/applicant_item/download/{id}', [TrxRecruitmentController::class, 'download_applicant'])->name('recruitment.download_applicant')->middleware('can:hc');
+Route::get('recruitment/download_cv/{id}', [TrxRecruitmentController::class, 'download_cv'])->name('recruitment.download_cv')->middleware('can:hc');
+Route::get('recruitment/download_cv/{id}', [TrxRecruitmentController::class, 'download_cv'])->name('recruitment.download_cv')->middleware('can:hc');
 Route::get('recruitment/applicant_process/{id}', [TrxRecruitmentController::class, 'applicant_process'])->name('recruitment.applicant_process')->middleware('can:hc');
 Route::get('recruitment/interview_item/{id}', [TrxRecruitmentController::class, 'interview_item'])->name('recruitment.interview_item')->middleware('can:hc');
 Route::post('recruitment/interview_save', [ TrxRecruitmentController::class, 'interview_save'])->name('recruitment.interview_save')->middleware('can:hc');
@@ -387,6 +388,8 @@ Route::get('lang/{locale}', function ($locale) {
     return redirect()->back();
 })->name('lang');
 Route::resource('dashboard', DashboardController::class)->middleware('can:hc');
+Route::get('dashboard/biaya/{id}', [DashboardController::class, 'biaya'])->name('dashboard.biaya')->middleware('can:hc');
+// 
 Route::get('lang/{locale}', [LocalizationController::class , 'lang']);
 // 
 Route::prefix('dashboard')->middleware('auth')->group(function () {
