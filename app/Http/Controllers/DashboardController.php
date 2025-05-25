@@ -5,9 +5,84 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Karyawan;
 use DB;
+use App\Models\Perusahaan;
+use App\Models\Divisi;
+use App\Models\Departemen;
+use App\Models\SubDepartemen;
+use App\Models\ToDoList;
+use App\Models\TrxPayrollLog;
+use App\Models\KaryawanStatus;
 
 class DashboardController extends Controller
 {
+    public function biaya(Request $request)
+    {
+        // dd($request->all());
+        $tahun = TrxPayrollLog::distinct()->orderBy('tahun', 'asc')->get(['tahun'])->toArray();
+        $bulan = [['bulan'=>'Januari','angka'=>1],['bulan'=>'Februari','angka'=>2],['bulan'=>'Maret','angka'=>3],['bulan'=>'April','angka'=>4],['bulan'=>'Mei','angka'=>5],['bulan'=>'Juni','angka'=>6],['bulan'=>'Juli','angka'=>7],['bulan'=>'Agustus','angka'=>8],['bulan'=>'September','angka'=>9],['bulan'=>'Oktober','angka'=>10],['bulan'=>'November','angka'=>11],['bulan'=>'Desember','angka'=>12]];
+        // dd($tahun);
+        $status_karyawan = KaryawanStatus::orderBy('status_karyawan', 'asc')->get();
+        $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy('nama', 'asc')->get();
+        $divisi = [];
+        $departemen = [];
+        $sub_departemen = [];
+        //
+        $arr_perusahaan = [];
+        $arr_divisi = [];
+        $arr_departemen = [];
+        $arr_sub_departemen = [];
+        $arr_tahun = [];
+        $arr_bulan = [];
+        $arr_status_karyawan = [];
+        // 
+        $payroll = [];
+        // dd($payroll);
+        // start filter
+        if ($request->filter == true) {
+            $_tahun = $request->input('tahun', []);
+            $_bulan = $request->input('bulan', []);
+            $_status_karyawan = $request->input('status_karyawan', []);
+            $_perusahaan = $request->input('kode_perusahaan', []);
+            $_divisi = $request->input('kode_divisi', []);
+            $_departemen = $request->input('kode_departemen', []);
+            $_sub_departemen = $request->input('kode_sub_departemen', []);
+            if (count($_perusahaan) > 0) {
+                $arr_perusahaan = $_perusahaan;
+            }
+            if (count($_divisi) > 0) {
+                $arr_divisi = $_divisi;
+            }
+            if (count($_departemen) > 0) {
+                $arr_departemen = $_departemen;
+            }
+            if (count($_sub_departemen) > 0) {
+                $arr_sub_departemen = $_sub_departemen;
+            }
+            if (count($_tahun) > 0) {
+                $arr_tahun = $_tahun;
+            }
+            if (count($_bulan) > 0) {
+                $arr_bulan = $_bulan;
+            }
+            if (count($_status_karyawan) > 0) {
+                $arr_status_karyawan = $_status_karyawan;
+            }
+            $divisi = Divisi::whereIn('kode_perusahaan', $arr_perusahaan)->get();
+            $departemen = Departemen::whereIn('kode_divisi', $arr_divisi)->get();
+            $sub_departemen = SubDepartemen::whereIn('kode_departemen', $arr_departemen)->get();
+            // 
+            $payroll = TrxPayrollLog::whereIn('tahun', $arr_tahun)
+            ->whereIn('bulan', $arr_bulan)
+            ->whereIn('status_karyawan', KaryawanStatus::whereIn('id', $arr_status_karyawan)->get('status_karyawan')->toArray())
+            ->whereIn('perusahaan', Perusahaan::whereIn('id', $arr_perusahaan)->get('nama')->toArray())
+            ->whereIn('divisi', Divisi::whereIn('id', $arr_divisi)->get('nama')->toArray())
+            ->whereIn('departemen', Departemen::whereIn('id', $arr_departemen)->get('nama')->toArray())
+            ->whereIn('subdepartemen', SubDepartemen::whereIn('id', $arr_sub_departemen)->get('nama')->toArray())
+            ->get();
+            // dd($payroll);
+        }
+        return view( 'dashboard.biaya', compact('payroll', 'perusahaan', 'divisi', 'departemen', 'sub_departemen', 'tahun', 'bulan', 'status_karyawan', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_sub_departemen', 'arr_tahun', 'arr_bulan', 'arr_status_karyawan'));
+    }
     /**
      * Display a listing of the resource.
      *
