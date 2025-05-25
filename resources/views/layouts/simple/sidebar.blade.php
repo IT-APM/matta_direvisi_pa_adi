@@ -37,7 +37,13 @@
                             </svg><span>Home</span></a>
                         <ul class="sidebar-submenu">
                             @can('hc')
-                            <li><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
+                            <li><a class="submenu-title" href="#">Dashboard<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                <ul class="nav-sub-childmenu submenu-content">
+                                    <li><a href="{{ route('dashboard.biaya', 0) }}">Biaya Gaji</a></li>
+                                    <li><a href="{{ route('dashboard.index') }}">Infografis Karyawan</a></li>
+                                </ul>
+                            </li>
+                            {{-- <li><a href="{{ route('dashboard.index') }}">Dashboard</a></li> --}}
                             @endcan
                             <li><a href="{{ route('todolist.index') }}">To Do List</a></li>
                             @can('hc')
@@ -557,8 +563,7 @@
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"> </use>
                             </svg><span>Forms</span></a>
                         <ul class="sidebar-submenu">
-                            <li><a class="submenu-title" href="#">Form Controls<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Form Controls<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="{{ route('form-validation') }}">Form Validation</a></li>
                                     <li><a href="{{ route('base-input') }}">Base Inputs</a></li>
@@ -567,8 +572,7 @@
                                     <li><a href="{{ route('megaoptions') }}">Mega Options</a></li>
                                 </ul>
                             </li>
-                            <li><a class="submenu-title" href="#">Form Widgets<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Form Widgets<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="{{ route('datepicker') }}">Datepicker</a></li>
                                     <li><a href="{{ route('time-picker') }}">Timepicker</a></li>
@@ -581,8 +585,7 @@
                                     <li><a href="{{ route('clipboard') }}">Clipboard</a></li>
                                 </ul>
                             </li>
-                            <li><a class="submenu-title" href="#">Form layout<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Form layout<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="{{ route('default-form') }}">Default Forms</a></li>
                                     <li><a href="{{ route('form-wizard') }}">Form Wizard 1</a></li>
@@ -600,15 +603,13 @@
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
                             </svg><span>Tables</span></a>
                         <ul class="sidebar-submenu">
-                            <li><a class="submenu-title" href="#">Bootstrap Tables<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Bootstrap Tables<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="{{ route('bootstrap-basic-table') }}">Basic Tables</a></li>
                                     <li><a href="{{ route('table-components') }}">Table components</a></li>
                                 </ul>
                             </li>
-                            <li><a class="submenu-title" href="#">Data Tables<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Data Tables<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="{{ route('datatable-basic-init') }}">Basic Init</a></li>
                                     <li><a href="{{ route('datatable-api') }}">API</a></li>
@@ -645,8 +646,7 @@
                             <li><a href="{{ route('loader') }}">Spinners</a></li>
                             <li><a href="{{ route('dropdown') }}">Dropdown</a></li>
                             <li><a href="{{ route('accordion') }}">Accordion</a></li>
-                            <li><a class="submenu-title" href="#">Tabs<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Tabs<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="{{ route('tab-bootstrap') }}">Bootstrap Tabs</a></li>
                                     <li><a href="{{ route('tab-material') }}">Line Tabs</a></li>
