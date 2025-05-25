@@ -53,19 +53,32 @@ class TrxPayrollController extends Controller
     // https://matta-reborn.alita.id/matta/payroll/set_paid_date/0
     public function set_paid_date($id)
     {
-        // cek apakah hari ini tanggal 25
+        // cek tanggal
         $today = Carbon::today();
-        if ($today->day == 25) {
-            $tgl = Carbon::parse($today)->format('Y-m-d');
-            while (!(new TrxCutiController)->isWeekend($tgl)['status'] || !(new TrxCutiController)->isHoliday($tgl)['status']) {
-                $tgl = date("Y-m-d", strtotime($tgl . "-1 day"));
-            }
-            DB::update(DB::raw("UPDATE trx_tbl_payroll SET paid_at='".Carbon::parse($tgl)->format('Y-m-d')."' WHERE bulan=".$today->month." AND tahun=".$today->year));
-            // dd($tgl);
-        }elseif($today->day == 1) {
-            // dd(0);
+        // setiap tanggal 1 memindahkan trx_tbl_payroll ke trx_tbl_payroll_log
+        if($today->day == 1) {
             $this->bkp(0);
         }
+        $check = TrxPayroll::whereNull('paid_at')->exists();
+        $arr = [];
+        if($check){
+            $trx = TrxPayroll::whereNull('paid_at')->get();
+            foreach($trx as $_trx){
+                $tgl = Carbon::parse("{$_trx->tahun}-{$_trx->bulan}-25")->format('Y-m-d');
+                while(!(new TrxCutiController)->isWeekend($tgl)['status'] || !(new TrxCutiController)->isHoliday($tgl)['status']) {
+                    $tgl = date("Y-m-d", strtotime($tgl . "-1 day"));
+                }
+                TrxPayroll::whereNull('paid_at')->where(['id'=>$_trx->id])->update(['paid_at' => $tgl]);
+                array_push($arr, $tgl);
+            }
+        }
+        // $tgl = Carbon::parse($today)->format('Y-m-d');
+        // while(!(new TrxCutiController)->isWeekend($tgl)['status'] || !(new TrxCutiController)->isHoliday($tgl)['status']) {
+        //     $tgl = date("Y-m-d", strtotime($tgl . "-1 day"));
+        // }
+        // dd($arr);
+        // TrxPayroll::whereNull('paid_at')->where(['bulan'=>$today->month, 'tahun'=>$today->year])->update(['paid_at' => $tgl]);
+        // DB::update(DB::raw("UPDATE trx_tbl_payroll SET paid_at='".Carbon::parse($tgl)->format('Y-m-d')."' WHERE bulan=".$today->month." AND tahun=".$today->year));
     }
 
     public function sendEmail($mailData)
@@ -540,8 +553,8 @@ class TrxPayrollController extends Controller
         //         'nama_rek' => $_trx->nama_rek,
         //         'nama_bank' => $_trx->nama_bank,
         //         'no_rek' => $_trx->no_rek,
-        //         'created_at' => $_trx->created_at,
-        //         'updated_at' => $_trx->updated_at,
+        //         'created_at' => Carbon::parse($_trx->created_at) ->format('Y-m-d H:i:s'),
+        //         'updated_at' => Carbon::parse($_trx->updated_at) ->format('Y-m-d H:i:s'),
         //     ));
         // }
         // bkp TrxPayroll
@@ -600,12 +613,13 @@ class TrxPayrollController extends Controller
                 'overtime_ori' => $_trx->overtime_ori,
                 'created_by' => $_trx->created_by,
                 'updated_by' => $_trx->updated_by,
-                'created_at' => $_trx->created_at,
-                'updated_at' => $_trx->updated_at,
+                'created_at' => Carbon::parse($_trx->created_at) ->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::parse($_trx->updated_at) ->format('Y-m-d H:i:s'),
                 'findim_subdepartemen' => $_trx->findim_subdepartemen,
                 'findim_departemen' => $_trx->findim_departemen,
                 'findim_divisi' => $_trx->findim_divisi,
                 'findim_project' => $_trx->findim_project,
+                'perusahaan' => $_trx->perusahaan,
                 'divisi' => $_trx->divisi,
                 'departemen' => $_trx->departemen,
                 'subdepartemen' => $_trx->subdepartemen,
@@ -633,8 +647,8 @@ class TrxPayrollController extends Controller
                 'status' => $_trx->status,
                 'created_by' => $_trx->created_by,
                 'updated_by' => $_trx->updated_by,
-                'created_at' => $_trx->created_at,
-                'updated_at' => $_trx->updated_at,
+                'created_at' => Carbon::parse($_trx->created_at) ->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::parse($_trx->updated_at) ->format('Y-m-d H:i:s'),
             ));
         }
         // bkp TrxPayrollBpjstk
@@ -652,8 +666,8 @@ class TrxPayrollController extends Controller
                 'status' => $_trx->status,
                 'created_by' => $_trx->created_by,
                 'updated_by' => $_trx->updated_by,
-                'created_at' => $_trx->created_at,
-                'updated_at' => $_trx->updated_at,
+                'created_at' => Carbon::parse($_trx->created_at) ->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::parse($_trx->updated_at) ->format('Y-m-d H:i:s'),
                 'thp_dilaporkan' => $_trx->thp_dilaporkan,
             ));
         }
@@ -675,8 +689,8 @@ class TrxPayrollController extends Controller
                 'status' => $_trx->status,
                 'created_by' => $_trx->created_by,
                 'updated_by' => $_trx->updated_by,
-                'created_at' => $_trx->created_at,
-                'updated_at' => $_trx->updated_at,
+                'created_at' => Carbon::parse($_trx->created_at) ->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::parse($_trx->updated_at) ->format('Y-m-d H:i:s'),
                 'thp_dilaporkan' => $_trx->thp_dilaporkan,
             ));
         }
@@ -895,6 +909,7 @@ class TrxPayrollController extends Controller
                     $trx->findim_departemen = $karyawan->_findim_departemen->departemen_id.'/'.$karyawan->_findim_departemen->departemen_desc;
                     $trx->findim_divisi = $karyawan->_findim_divisi->divisi_id.'/'.$karyawan->_findim_divisi->divisi_desc;
                     $trx->findim_project = $karyawan->_findim_project->project_id.'/'.$karyawan->_findim_project->project_desc;
+                    $trx->perusahaan = $karyawan->_perusahaan->nama;
                     $trx->divisi = $karyawan->_divisi->nama;
                     $trx->departemen = $karyawan->_departemen->nama;
                     $trx->subdepartemen = $karyawan->_subdepartemen->nama;
@@ -1122,6 +1137,7 @@ class TrxPayrollController extends Controller
                     $trx->findim_departemen = $karyawan->_findim_departemen->departemen_id.'/'.$karyawan->_findim_departemen->departemen_desc;
                     $trx->findim_divisi = $karyawan->_findim_divisi->divisi_id.'/'.$karyawan->_findim_divisi->divisi_desc;
                     $trx->findim_project = $karyawan->_findim_project->project_id.'/'.$karyawan->_findim_project->project_desc;
+                    $trx->perusahaan = $karyawan->_perusahaan->nama;
                     $trx->divisi = $karyawan->_divisi->nama;
                     $trx->departemen = $karyawan->_departemen->nama;
                     $trx->subdepartemen = $karyawan->_subdepartemen->nama;
@@ -1796,6 +1812,22 @@ class TrxPayrollController extends Controller
      */
     public function index(Request $request)
     {
+        // $trx = TrxPayroll::get();
+        // foreach($trx as $_trx){
+        //     $nik_property = json_decode($_trx->nik_property, true);
+        //     $_trx_ = TrxPayroll::find($_trx->id);
+        //     $_trx_->perusahaan = $nik_property['perusahaan'];
+        //     $_trx_->update();
+        // }
+        // 
+        // $trx = TrxPayrollLog::get();
+        // foreach($trx as $_trx){
+        //     $nik_property = json_decode($_trx->nik_property, true);
+        //     $_trx_ = TrxPayrollLog::find($_trx->id);
+        //     $_trx_->perusahaan = $nik_property['perusahaan'];
+        //     $_trx_->update();
+        // }
+        // dd($trx);
         // dd($request->all());
         // $month = '11';
         // $year = '2024';
