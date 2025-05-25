@@ -26,6 +26,8 @@ class TrxToDoListController extends Controller
     public function recap(Request $request)
     {
         // dd($request->all());
+        $title = ToDoList::groupBy('title')->orderBy('title', 'asc')->get();
+        // dd($title);
         // 0=NA
         // 3=SMS Project
         $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy('nama', 'asc')->get();
@@ -33,6 +35,7 @@ class TrxToDoListController extends Controller
         $departemen = [];
         $sub_departemen = [];
         //
+        $arr_title = [];
         $arr_perusahaan = [];
         $arr_divisi = [];
         $arr_departemen = [];
@@ -41,10 +44,14 @@ class TrxToDoListController extends Controller
         $trx = ToDoList::select('*', DB::raw('COUNT(nik) AS jumlah'))->groupBy('nik', 'title')->orderBy('jumlah', 'desc')->get();
         // start filter
         if ($request->filter == true) {
+            $_title = $request->input('title', []);
             $_perusahaan = $request->input('kode_perusahaan', []);
             $_divisi = $request->input('kode_divisi', []);
             $_departemen = $request->input('kode_departemen', []);
             $_sub_departemen = $request->input('kode_sub_departemen', []);
+            if (count($_title) > 0) {
+                $arr_title = $_title;
+            }
             if (count($_perusahaan) > 0) {
                 $arr_perusahaan = $_perusahaan;
             }
@@ -65,9 +72,9 @@ class TrxToDoListController extends Controller
             foreach($karyawan as $data){
                 array_push($_karyawan, $data->nik);
             }
-            $trx = ToDoList::select('*', DB::raw('COUNT(nik) AS jumlah'))->whereIn('nik', $_karyawan)->groupBy('nik', 'title')->orderBy('jumlah', 'desc')->get();
+            $trx = ToDoList::select('*', DB::raw('COUNT(nik) AS jumlah'))->whereIn('nik', $_karyawan)->whereIn('title', $arr_title)->groupBy('nik', 'title')->orderBy('jumlah', 'desc')->get();
         }
-        return view( 'todolist.recap', compact('trx', 'perusahaan', 'divisi', 'departemen', 'sub_departemen', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_sub_departemen'));
+        return view( 'todolist.recap', compact('trx', 'perusahaan', 'divisi', 'departemen', 'sub_departemen', 'title', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_sub_departemen', 'arr_title'));
     }
     /**
      * Display a listing of the resource.
