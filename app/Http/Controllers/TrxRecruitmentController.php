@@ -45,6 +45,7 @@ use App\Models\StatusKerja;
 use App\Models\PekerjaanSub;
 use App\Models\ToDoList;
 use App\Models\ToDoListLog;
+use ZipArchive;
 
 class TrxRecruitmentController extends Controller
 {
@@ -445,6 +446,30 @@ class TrxRecruitmentController extends Controller
         $_trx = TrxKebutuhanMaster::find($trx->id_kebutuhan);
         // $posisi = $_trx->_pekerjaan->pekerjaan;
         return view('recruitment.applicant_item', compact('trx'));
+    }
+
+    public function download_cv(Request $request, $id)
+    {
+        // dd($request->all(), $id);
+        $download_cv = $request->download_cv;
+        $download_cv = explode(',', $download_cv);
+        $zipFileName = 'download_cv_' . Carbon::parse(now())->format('YmdHis') . '.zip';
+        $zipPath = public_path('assets/recruitment/upload/' . $zipFileName);
+        $zip = new ZipArchive;
+        foreach($download_cv as $_id){
+            $trx = TrxRecruitmentIdentitas::find($_id);
+            if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+                $filePath = public_path('assets/recruitment/upload/' . $trx->cv);
+                $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+                if (file_exists($filePath)) {
+                    $zip->addFile($filePath, $trx->id_kebutuhan.'_'.$trx->id.'_'.$trx->nama.'.'.$extension); // path di dalam zip
+                }
+            } else {
+                return response()->json(['error' => 'Gagal membuat ZIP.'], 500);
+            }
+        }
+        $zip->close();
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
     public function download_applicant($id)
