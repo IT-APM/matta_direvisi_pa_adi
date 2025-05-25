@@ -112,8 +112,8 @@
                                     <table class="display" id="_datatable">
                                         <thead>
                                             <tr>
-                                                <th><input type="checkbox" onClick="toggle_identitas(this)" /></th>
                                                 <th>No</th>
+                                                <th><input type="checkbox" onClick="toggle_identitas(this)" /></th>
                                                 <th>#ID</th>
                                                 <th>Action</th>
                                                 <th>&nbsp;Hasil&nbsp;</th>
@@ -123,7 +123,7 @@
                                                 <th>Atasan Langsung Kandidat</th>
                                                 <th>Nama/Email</th>
                                                 <th>Telepon</th>
-                                                <th>CV</th>
+                                                <th><div class="d-flex align-items-center"><input type="checkbox" onClick="toggle_cv(this)" />&nbsp; CV &nbsp;<a href="#" onClick="download_cv()" data-toggle="tooltip" title="Download"><i class="fa fa-file-pdf-o"></i></a></div></th>
                                                 <th>Check_in</th>
                                                 <th>Check_out</th>
                                                 <th>Interpretasi</th>
@@ -159,8 +159,8 @@
                                             @endphp
                                             <tr>
                                                 {{-- 3=Apply --}}
-                                                <td>@if($data->id_status == 3) <input id="id_identitas[]" name="id_identitas[]" type="checkbox" value="{{ $data->id }}"> @endif</td>
                                                 <td>{{ ++$no }}</td>
+                                                <td>@if($data->id_status == 3) <input id="id_identitas[]" name="id_identitas[]" type="checkbox" value="{{ $data->id }}"> @endif</td>
                                                 <td>{{ $nomor }}</td>
                                                 <td>
                                                     <a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id)]) }}" data-toggle="tooltip" title='Process'><i class="icon-pencil-alt"></i></a>
@@ -183,7 +183,7 @@
                                                 <td>@if(!empty($atasan_property)) {{ $atasan_property['nama'] }}<br/>{{ $atasan_property['nik'] }} @endif</td>
                                                 <td>{{ $data->nama }}<br/>{{ $data->email }}&nbsp;<a href="{{ route('recruitment.edit', [Crypt::encrypt($data->id), 'type'=>'email', 'back_url'=>URL::full()]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt" style="color:green"></i></a></td>
                                                 <td>{{ $data->telepon }}</td>
-                                                <td><a href="{{ asset('assets/recruitment/upload/'.$data->cv) }}" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></td>
+                                                <td><div class="d-flex align-items-center"><input id="id_cv[]" name="id_cv[]" type="checkbox" value="{{ $data->id }}">&nbsp;&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$data->cv) }}" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></div></td>
                                                 {{-- $check3 adalah pengecekan apakah psikotes sudah berjalan, jika belum maka bisa reschedule --}}
                                                 <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }} <a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'process'=>'psikotest_reschedule']) }}" data-toggle="tooltip" title="Reschedule"><i class="fa fa-calendar" aria-hidden="true"></i></a> @endif</td>
                                                 <td>@if(!empty($data->check_out)){{ \Carbon\Carbon::parse($data->check_out) ->format('d-m-Y H:i:s') }}@endif</td>
@@ -350,6 +350,27 @@ function toggle_identitas(source) {
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         checkboxes[i].checked = source.checked;
     }
+}
+// 
+function toggle_cv(source) {
+    checkboxes = document.getElementsByName('id_cv[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+// 
+var arr_id_cv = [];
+function download_cv() {
+    $('input[name="id_cv[]"]:checked').each(function() {
+        // alert('Terpilih: ' + $(this).val());
+        arr_id_cv.push($(this).val());
+    });
+    if(arr_id_cv.length > 0){
+        window.location.href = "{{ route('recruitment.download_cv', 0) }}"+"?download_cv="+arr_id_cv;
+    }else{
+        alert('No CV is selected!');
+    }
+    arr_id_cv = [];
 }
 // 
 $('#_datatable').DataTable({
