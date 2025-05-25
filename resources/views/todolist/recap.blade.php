@@ -37,6 +37,18 @@
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="{{ route('todolist.recap', 0) }}" method="get" enctype="multipart/form-data">
                             <div class="row mt-2">
+                                <div class="col-sm-6">
+                                    <label class="h6">Formulir</label>&nbsp;<input type="checkbox"
+                                        onClick="toggle_title(this)" /> Check All
+                                    <label class="d-block" for="title">
+                                        @foreach ($title as $data)
+                                            <input class="checkbox_animated" id="title[]" name="title[]" type="checkbox" value="{{ $data->title }}" @if (in_array($data->title, $arr_title)) checked @endif>
+                                            {{ $data->title }}<br />
+                                        @endforeach
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
                                 <div class="col-sm-3">
                                     <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox"
                                         onClick="toggle_perusahaan(this)" /> Check All
@@ -154,6 +166,13 @@ function get_kode_divisi() {
 // 
 function get_kode_departemen() {
     getSubDepartemen();
+}
+// 
+function toggle_title(source) {
+    checkboxes = document.getElementsByName('title[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
 }
 // 
 function toggle_perusahaan(source) {
