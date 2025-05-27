@@ -1084,7 +1084,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         {{-- mgt_fee --}}
                                         <td class="text-end">{{ number_format($data->mgt_fee, 2) }} %</td>
                                         @php
-                                            $mgt_fee = $total_biaya * $data->mgt_fee / 100;
+                                            $mgt_fee = round($total_biaya * $data->mgt_fee / 100, 2);
                                             $total_biaya += $mgt_fee;
                                         @endphp
                                         <td class="text-end">{{ number_format($mgt_fee, 0) }}</td>
@@ -1100,7 +1100,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         {{-- mgt_fee_kkwt --}}
                                         <td class="text-end">{{ number_format($data->mgt_fee_kkwt, 2) }} %</td>
                                         @php
-                                            $mgt_fee_kkwt = $angka_9 * $data->mgt_fee_kkwt / 100;
+                                            $mgt_fee_kkwt = round($angka_9 * $data->mgt_fee_kkwt / 100, 2);
                                         @endphp
                                         <td class="text-end">{{ number_format($mgt_fee_kkwt, 0) }}</td>
                                         @php
