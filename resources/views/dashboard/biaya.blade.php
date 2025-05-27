@@ -39,6 +39,18 @@
                             <form class="mt-2" action="{{ route('dashboard.biaya', 0) }}" method="get" enctype="multipart/form-data">
                                 <div class="row mt-2">
                                     <div class="col-sm-3">
+                                        <label class="h6" for="nama">Bulan-Tahun</label>
+                                        <div>
+                                            <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_dari }}">
+                                            <div class="invalid-feedback txt-danger">Field is required.</div>
+                                        </div>
+                                        sampai
+                                        <div>
+                                            <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_sampai }}">
+                                            <div class="invalid-feedback txt-danger">Field is required.</div>
+                                        </div>
+                                    </div>
+                                    {{-- <div class="col-sm-3">
                                         <label class="h6">Tahun</label>&nbsp;<input type="checkbox" onClick="toggle_tahun(this)" /> Check All
                                         <label class="d-block" for="tahun">
                                             @foreach ($tahun as $data)
@@ -55,12 +67,12 @@
                                                 {{ $data['bulan'] }}<br />
                                             @endforeach
                                         </label>
-                                    </div>
+                                    </div> --}}
                                     <div class="col-sm-3">
                                         <label class="h6">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_status_karyawan(this)" /> Check All
                                         <label class="d-block" for="status_karyawan">
                                             @foreach ($status_karyawan as $data)
-                                                <input class="checkbox_animated" id="status_karyawan[]" name="status_karyawan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_status_karyawan)) checked @endif>
+                                                <input class="checkbox_animated" id="status_karyawan[]" name="status_karyawan[]" type="checkbox" value="{{ $data->status_karyawan }}" @if (in_array($data->status_karyawan, $arr_status_karyawan)) checked @endif>
                                                 {{ $data->status_karyawan }}<br />
                                             @endforeach
                                         </label>
@@ -69,42 +81,42 @@
                                 <div class="row mt-2">
                                     <div class="col-sm-3">
                                         <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
-                                        <label class="d-block" for="kode_perusahaan">
+                                        <label class="d-block" for="perusahaan">
                                             @foreach ($perusahaan as $data)
-                                                <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan()" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>
-                                                {{ $data->nama }}<br />
+                                                <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" onClick="get_perusahaan()" value="{{ $data['id'] }}" @if (in_array($data['nama'], $arr_perusahaan)) checked @endif>
+                                                {{ $data['nama'] }}<br />
                                             @endforeach
                                         </label>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="h6">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi(this)" /> Check All
-                                        <label class="d-block" for="kode_divisi">
-                                            <div id="div_kode_divisi">
+                                        <label class="d-block" for="divisi">
+                                            <div id="div_divisi">
                                                 @foreach ($divisi as $data)
-                                                    <input class="checkbox_animated" id="kode_divisi[]" name="kode_divisi[]" type="checkbox" onClick="get_kode_divisi()" value="{{ $data->id }}" @if (in_array($data->id, $arr_divisi)) checked @endif>
-                                                    {{ $data->nama }}<br />
+                                                    <input class="checkbox_animated" id="divisi[]" name="divisi[]" type="checkbox" onClick="get_divisi()" value="{{ $data['id'] }}" @if (in_array($data['nama'], $arr_divisi)) checked @endif>
+                                                    {{ $data['nama'] }}<br />
                                                 @endforeach
                                             </div>
                                         </label>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen(this)" /> Check All
-                                        <label class="d-block" for="kode_departemen">
-                                            <div id="div_kode_departemen">
+                                        <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_departemen(this)" /> Check All
+                                        <label class="d-block" for="departemen">
+                                            <div id="div_departemen">
                                                 @foreach ($departemen as $data)
-                                                    <input class="checkbox_animated" id="kode_departemen[]" name="kode_departemen[]" type="checkbox" onClick="get_kode_departemen()" value="{{ $data->id }}" @if (in_array($data->id, $arr_departemen)) checked @endif>
-                                                    {{ $data->nama }}<br />
+                                                    <input class="checkbox_animated" id="departemen[]" name="departemen[]" type="checkbox" onClick="get_departemen()" value="{{ $data['id'] }}" @if (in_array($data['nama'], $arr_departemen)) checked @endif>
+                                                    {{ $data['nama'] }}<br />
                                                 @endforeach
                                             </div>
                                         </label>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen(this)" /> Check All
-                                        <label class="d-block" for="kode_sub_departemen">
-                                            <div id="div_kode_sub_departemen">
-                                                @foreach ($sub_departemen as $data)
-                                                    <input class="checkbox_animated" id="kode_sub_departemen[]" name="kode_sub_departemen[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_sub_departemen)) checked @endif>
-                                                    {{ $data->nama }}<br />
+                                        <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_subdepartemen(this)" /> Check All
+                                        <label class="d-block" for="subdepartemen">
+                                            <div id="div_subdepartemen">
+                                                @foreach ($subdepartemen as $data)
+                                                    <input class="checkbox_animated" id="subdepartemen[]" name="subdepartemen[]" type="checkbox" value="{{ $data['id'] }}" @if (in_array($data['nama'], $arr_subdepartemen)) checked @endif>
+                                                    {{ $data['nama'] }}<br />
                                                 @endforeach
                                             </div>
                                         </label>
@@ -119,30 +131,99 @@
                         </div>
                         {{--  --}}
                         @php
-                            $total_biaya_gaji = 0;
+                            $biaya_gaji = 0;
+                            $_biaya_gaji = 0;
                             $kompensasi_kkwt = 0;
+                            $total_biaya_gaji = 0;
                             $group_by = [];
                         @endphp
                         @foreach ($payroll as $data)
                         @php
-                            $where = ['nik'=>$data->nik, 'tipe'=>'add', 'bulan'=>$data->bulan, 'tahun'=>$data->tahun];
-                            $arr_id = [1,2,3,4,5];
-                            $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
-                            $total_tunjangan = $add->sum('angka');
-                            $arr_id = [6,7,8,9,21];
-                            $_add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
-                            $_total_tunjangan = $_add->sum('angka');
-                            $total_biaya_gaji += $data->gapok + $total_tunjangan + $_total_tunjangan;
-                            // 9=Kompensasi KKWT
-                            $arr_id = [9];
-                            $_add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
-                            $kompensasi_kkwt += round($_add->sum('angka'));
+                            $where = ['nik'=>$data->nik, 'bulan'=>$data->bulan, 'tahun'=>$data->tahun];
+                            // status = apm
+                            if($data->status == 'apm'){
+                                $biaya_gaji += round($data->gapok, 0);
+                                $_biaya_gaji = round($data->gapok, 0);
+                                // 1=Tunjangan Makan
+                                // 2=Tunjangan Transportasi
+                                // 3=Tunjangan Jabatan
+                                // 4=Tunjangan Telekomunikasi
+                                // 5=Tunjangan Lainnya
+                                // 6=Insentif
+                                // 7=Kekurangan Upah
+                                // 8=Sewa Laptop
+                                // 21=Tunjangan Hari Raya
+                                $arr_id = [1,2,3,4,5,6,7,8,21];
+                                $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                                $biaya_gaji += round($add->sum('angka'), 0);
+                                $_biaya_gaji += round($add->sum('angka'), 0);
+                                // 9=Kompensasi KKWT
+                                $arr_id = [9];
+                                $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                                $kompensasi_kkwt += round($add->sum('angka'), 0);
+                                $_biaya_gaji += round($add->sum('angka'), 0);
+                                // 
+                                $total_biaya_gaji = $biaya_gaji + $kompensasi_kkwt;
+                            }
+                            // status = osc
+                            elseif($data->status == 'osc'){
+                                $biaya_gaji += round($data->gapok, 0);
+                                $_biaya_gaji = round($data->gapok, 0);
+                                // 5=Tunjangan Lainnya
+                                // 6=Insentif
+                                // 7=Kekurangan Upah
+                                // 8=Sewa Laptop
+                                // 22=Tunjangan Telekomunikasi Tambahan
+                                $arr_id = [5,6,7,8,22];
+                                $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                                $biaya_gaji += round($add->sum('angka'), 0);
+                                $_biaya_gaji += round($add->sum('angka'), 0);
+                                // 
+                                $biaya_gaji += round($data->overtime, 0) + round($data->pajak, 0);
+                                $_biaya_gaji += round($data->overtime, 0) + round($data->pajak, 0);
+                                // bpjskes
+                                $arr_id = [4];
+                                $bpjskes = App\Models\TrxPayrollBpjskesLog::where($where)->whereIn('id_bpjskes', $arr_id)->orderBy('id_bpjskes', 'asc')->get();
+                                $biaya_gaji += round($bpjskes->sum('angka'), 0);
+                                $_biaya_gaji += round($bpjskes->sum('angka'), 0);
+                                // bpjstk
+                                $arr_id = [7];
+                                $bpjstk = App\Models\TrxPayrollBpjstkLog::where($where)->whereIn('id_bpjstk', $arr_id)->orderBy('id_bpjstk', 'asc')->get();
+                                $biaya_gaji += round($bpjstk->sum('angka'), 0);
+                                $_biaya_gaji += round($bpjstk->sum('angka'), 0);
+                                // 
+                                $mgt_fee = $_biaya_gaji * $data->mgt_fee / 100;
+                                $biaya_gaji += round($mgt_fee, 0);
+                                $_biaya_gaji += round($mgt_fee, 0);
+                                // 9=Kompensasi KKWT
+                                $arr_id = [9];
+                                $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
+                                $angka_9 = $add->sum('angka');
+                                $angka_9 += $angka_9 * $data->mgt_fee_kkwt / 100;
+                                $kompensasi_kkwt += round($angka_9, 0);
+                                $_biaya_gaji += round($angka_9, 0);
+                                $total_biaya_gaji = $biaya_gaji + $kompensasi_kkwt;
+                            }
                             // 
-                            array_push($group_by, ['perusahaan'=>$data->perusahaan, 'divisi'=>$data->divisi, 'departemen'=>$data->departemen, 'subdepartemen'=>$data->subdepartemen, 'status_karyawan'=>$data->status_karyawan, 'total_biaya_gaji'=>$data->gapok + $total_tunjangan + $_total_tunjangan]);
+                            array_push($group_by, ['bulan_tahun'=>$data->bulan.'-'.$data->tahun, 'perusahaan'=>$data->perusahaan, 'divisi'=>$data->divisi, 'departemen'=>$data->departemen, 'subdepartemen'=>$data->subdepartemen, 'status_karyawan'=>$data->status_karyawan, 'total_biaya_gaji'=>$_biaya_gaji]);
                         @endphp
                         @endforeach
                         @php
-                            $biaya_gaji = $total_biaya_gaji - $kompensasi_kkwt;
+                            $data = collect($group_by)->groupBy('bulan_tahun');
+                            $waktu = [];
+                            $jumlah_data = [];
+                            $nominal = [];
+                            foreach($data as $key => $value){
+                                // dd($value);
+                                array_push($waktu, $key);
+                                array_push($jumlah_data, $value->count());
+                                $_nominal = 0;
+                                foreach($value as $_value){
+                                    $_nominal += $_value['total_biaya_gaji'];
+                                }
+                                array_push($nominal, $_nominal);
+                            }
+                            // dd($waktu, $jumlah_data, $nominal);
                         @endphp
                         {{--  --}}
                         <div class="row mt-2">
@@ -163,8 +244,9 @@
                                     <div class="card-body">
                                         <div class="media faq-widgets">
                                             <div class="media-body text-center">
+                                                {{-- Biaya Gaji =  Total Biaya Gaji (-) Kompensasi KKWT --}}
                                                 <h5>Biaya Gaji</h5>
-                                                <h5>Rp. @if(!empty($payroll)) {{ number_format($biaya_gaji, 0) }} @else 0 @endif</h5>
+                                                <h5>@if(!empty($payroll)) {{ number_format($biaya_gaji, 0) }} @else 0 @endif</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -175,8 +257,10 @@
                                     <div class="card-body">
                                         <div class="media faq-widgets">
                                             <div class="media-body text-center">
+                                                {{-- apm => Kompensasi KKWT = Kompensasi KKWT --}}
+                                                {{-- osc => Kompensasi KKWT = Total Tagihan Kompensasi KKWT Outsource --}}
                                                 <h5>Kompensasi KKWT</h5>
-                                                <h5>Rp. @if(!empty($payroll)) {{ number_format($kompensasi_kkwt, 0) }} @else 0 @endif</h5>
+                                                <h5>@if(!empty($payroll)) {{ number_format($kompensasi_kkwt, 0) }} @else 0 @endif</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -187,8 +271,10 @@
                                     <div class="card-body">
                                         <div class="media faq-widgets">
                                             <div class="media-body text-center">
+                                                {{-- apm => Total Biaya Gaji = Total Upah --}}
+                                                {{-- osc => Total Biaya Gaji = Total Biaya Outsource --}}
                                                 <h5>Total Biaya Gaji</h5>
-                                                <h5>Rp. @if(!empty($payroll)) {{ number_format($total_biaya_gaji, 0) }} @else 0 @endif</h5>
+                                                <h5>@if(!empty($payroll)) {{ number_format($total_biaya_gaji, 0) }} @else 0 @endif</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -211,22 +297,23 @@
                                         <tbody>
                                             @php
                                                 $no=0;
-                                                $perusahaan = App\Models\Perusahaan::whereIn('id', $arr_perusahaan)->orderBy('nama', 'asc')->groupBy('nama')->get();
+                                                $data = App\Models\TrxPayrollLog::select('perusahaan')->whereIn('perusahaan', $arr_perusahaan)->orderBy('perusahaan', 'asc')->groupBy('perusahaan')->get();
                                                 $grouped = collect($group_by)->groupBy('perusahaan');
+                                                // dd($data, $grouped);
                                             @endphp
-                                            @foreach ($perusahaan as $data)
+                                            @foreach ($data as $_data)
                                             @php
-                                                $total_biaya_gaji = $grouped->get($data->nama);
+                                                $total_biaya_gaji = $grouped->get($_data->perusahaan);
                                                 $jumlah = 0;
                                                 if(!empty($total_biaya_gaji)){
                                                     $total_biaya_gaji = $total_biaya_gaji->sum('total_biaya_gaji');
-                                                    $jumlah = $grouped->get($data->nama)->count();
+                                                    $jumlah = $grouped->get($_data->perusahaan)->count();
                                                 }
                                             @endphp
                                             @if($jumlah>0)
                                             <tr>
                                                 <td>{{ ++$no }}</td>
-                                                <td>{{ $data->nama }}</td>
+                                                <td>{{ $_data->perusahaan }}</td>
                                                 <td class="text-end">{{ number_format($total_biaya_gaji, 0) }}</td>
                                                 <td class="text-end">{{ number_format($jumlah, 0) }}</td>
                                             </tr>
@@ -251,22 +338,22 @@
                                         <tbody>
                                             @php
                                                 $no=0;
-                                                $divisi = App\Models\Divisi::whereIn('id', $arr_divisi)->orderBy('nama', 'asc')->groupBy('nama')->get();
+                                                $data = App\Models\TrxPayrollLog::select('divisi')->whereIn('divisi', $arr_divisi)->orderBy('divisi', 'asc')->groupBy('divisi')->get();
                                                 $grouped = collect($group_by)->groupBy('divisi');
                                             @endphp
-                                            @foreach ($divisi as $data)
+                                            @foreach ($data as $_data)
                                             @php
-                                                $total_biaya_gaji = $grouped->get($data->nama);
+                                                $total_biaya_gaji = $grouped->get($_data->divisi);
                                                 $jumlah = 0;
                                                 if(!empty($total_biaya_gaji)){
                                                     $total_biaya_gaji = $total_biaya_gaji->sum('total_biaya_gaji');
-                                                    $jumlah = $grouped->get($data->nama)->count();
+                                                    $jumlah = $grouped->get($_data->divisi)->count();
                                                 }
                                             @endphp
                                             @if($jumlah>0)
                                             <tr>
                                                 <td>{{ ++$no }}</td>
-                                                <td>{{ $data->nama }}</td>
+                                                <td>{{ $_data->divisi }}</td>
                                                 <td class="text-end">{{ number_format($total_biaya_gaji, 0) }}</td>
                                                 <td class="text-end">{{ number_format($jumlah, 0) }}</td>
                                             </tr>
@@ -293,22 +380,22 @@
                                         <tbody>
                                             @php
                                                 $no=0;
-                                                $departemen = App\Models\Departemen::whereIn('id', $arr_departemen)->orderBy('nama', 'asc')->groupBy('nama')->get();
+                                                $data = App\Models\TrxPayrollLog::select('departemen')->whereIn('departemen', $arr_departemen)->orderBy('departemen', 'asc')->groupBy('departemen')->get();
                                                 $grouped = collect($group_by)->groupBy('departemen');
                                             @endphp
-                                            @foreach ($departemen as $data)
+                                            @foreach ($data as $_data)
                                             @php
-                                                $total_biaya_gaji = $grouped->get($data->nama);
+                                                $total_biaya_gaji = $grouped->get($_data->departemen);
                                                 $jumlah = 0;
                                                 if(!empty($total_biaya_gaji)){
                                                     $total_biaya_gaji = $total_biaya_gaji->sum('total_biaya_gaji');
-                                                    $jumlah = $grouped->get($data->nama)->count();
+                                                    $jumlah = $grouped->get($_data->departemen)->count();
                                                 }
                                             @endphp
                                             @if($jumlah>0)
                                             <tr>
                                                 <td>{{ ++$no }}</td>
-                                                <td>{{ $data->nama }}</td>
+                                                <td>{{ $_data->departemen }}</td>
                                                 <td class="text-end">{{ number_format($total_biaya_gaji, 0) }}</td>
                                                 <td class="text-end">{{ number_format($jumlah, 0) }}</td>
                                             </tr>
@@ -333,22 +420,22 @@
                                         <tbody>
                                             @php
                                                 $no=0;
-                                                $subdepartemen = App\Models\SubDepartemen::whereIn('id', $arr_sub_departemen)->orderBy('nama', 'asc')->groupBy('nama')->get();
+                                                $data = App\Models\TrxPayrollLog::select('subdepartemen')->whereIn('subdepartemen', $arr_subdepartemen)->orderBy('subdepartemen', 'asc')->groupBy('subdepartemen')->get();
                                                 $grouped = collect($group_by)->groupBy('subdepartemen');
                                             @endphp
-                                            @foreach ($subdepartemen as $data)
+                                            @foreach ($data as $_data)
                                             @php
-                                                $total_biaya_gaji = $grouped->get($data->nama);
+                                                $total_biaya_gaji = $grouped->get($_data->subdepartemen);
                                                 $jumlah = 0;
                                                 if(!empty($total_biaya_gaji)){
                                                     $total_biaya_gaji = $total_biaya_gaji->sum('total_biaya_gaji');
-                                                    $jumlah = $grouped->get($data->nama)->count();
+                                                    $jumlah = $grouped->get($_data->subdepartemen)->count();
                                                 }
                                             @endphp
                                             @if($jumlah>0)
                                             <tr>
                                                 <td>{{ ++$no }}</td>
-                                                <td>{{ $data->nama }}</td>
+                                                <td>{{ $_data->subdepartemen }}</td>
                                                 <td class="text-end">{{ number_format($total_biaya_gaji, 0) }}</td>
                                                 <td class="text-end">{{ number_format($jumlah, 0) }}</td>
                                             </tr>
@@ -375,23 +462,23 @@
                                         <tbody>
                                             @php
                                                 $no=0;
-                                                $status_karyawan = App\Models\KaryawanStatus::whereIn('id', $arr_status_karyawan)->orderBy('status_karyawan', 'asc')->groupBy('status_karyawan')->get();
+                                                $data = App\Models\TrxPayrollLog::select('status_karyawan')->whereIn('status_karyawan', $arr_status_karyawan)->orderBy('status_karyawan', 'asc')->groupBy('status_karyawan')->get();
                                                 $grouped = collect($group_by)->groupBy('status_karyawan');
                                                 // dd($status_karyawan);
                                             @endphp
-                                            @foreach ($status_karyawan as $data)
+                                            @foreach ($data as $_data)
                                             @php
-                                                $total_biaya_gaji = $grouped->get($data->status_karyawan);
+                                                $total_biaya_gaji = $grouped->get($_data->status_karyawan);
                                                 $jumlah = 0;
                                                 if(!empty($total_biaya_gaji)){
                                                     $total_biaya_gaji = $total_biaya_gaji->sum('total_biaya_gaji');
-                                                    $jumlah = $grouped->get($data->status_karyawan)->count();
+                                                    $jumlah = $grouped->get($_data->status_karyawan)->count();
                                                 }
                                             @endphp
                                             @if($jumlah>0)
                                             <tr>
                                                 <td>{{ ++$no }}</td>
-                                                <td>{{ $data->status_karyawan }}</td>
+                                                <td>{{ $_data->status_karyawan }}</td>
                                                 <td class="text-end">{{ number_format($total_biaya_gaji, 0) }}</td>
                                                 <td class="text-end">{{ number_format($jumlah, 0) }}</td>
                                             </tr>
@@ -401,7 +488,22 @@
                                     </table>
                                 </div>
                             </div>
+                            <div class="col-xl-6 col-sm-6">&nbsp;</div>
                             {{--  --}}
+                            <hr class="mt-2 mb-2" />
+                            {{--  --}}
+                            <div class="col-xl-6 col-sm-6">
+                                <div class="card">
+                                    <h5 class="text-center mt-2">Total Biaya Gaji</h5>
+                                    <div id="chart_total_biaya_gaji"></div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-sm-6">
+                                <div class="card">
+                                    <h5 class="text-center mt-2">Jumlah Karyawan</h5>
+                                    <div id="chart_jumlah_karyawan"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -442,15 +544,15 @@ $('#_datatable5').DataTable({
 	dom: 'lfrtip',
 });
 // 
-function get_kode_perusahaan() {
+function get_perusahaan() {
     getDivisi();
 }
 // 
-function get_kode_divisi() {
+function get_divisi() {
     getDepartemen();
 }
 // 
-function get_kode_departemen() {
+function get_departemen() {
     getSubDepartemen();
 }
 // 
@@ -468,7 +570,7 @@ function toggle_bulan(source) {
 }
 // 
 function toggle_perusahaan(source) {
-    checkboxes = document.getElementsByName('kode_perusahaan[]');
+    checkboxes = document.getElementsByName('perusahaan[]');
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         checkboxes[i].checked = source.checked;
     }
@@ -476,23 +578,23 @@ function toggle_perusahaan(source) {
 }
 // 
 function toggle_divisi(source) {
-    checkboxes = document.getElementsByName('kode_divisi[]');
+    checkboxes = document.getElementsByName('divisi[]');
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         checkboxes[i].checked = source.checked;
     }
     getDepartemen();
 }
 // 
-function toggle_kode_departemen(source) {
-    checkboxes = document.getElementsByName('kode_departemen[]');
+function toggle_departemen(source) {
+    checkboxes = document.getElementsByName('departemen[]');
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         checkboxes[i].checked = source.checked;
     }
     getSubDepartemen();
 }
 // 
-function toggle_kode_sub_departemen(source) {
-    checkboxes = document.getElementsByName('kode_sub_departemen[]');
+function toggle_subdepartemen(source) {
+    checkboxes = document.getElementsByName('subdepartemen[]');
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         checkboxes[i].checked = source.checked;
     }
@@ -506,16 +608,16 @@ function toggle_status_karyawan(source) {
 }
 // 
 function getDivisi() {
-    var _kode_perusahaan = [];
-    $('input[id="kode_perusahaan[]"]:checked').each(function() {
-        _kode_perusahaan.push($(this).val());
+    var _perusahaan = [];
+    $('input[id="perusahaan[]"]:checked').each(function() {
+        _perusahaan.push($(this).val());
     });
-    $('#div_kode_divisi').empty();
-    $('#div_kode_departemen').empty();
-    $('#div_kode_sub_departemen').empty();
+    $('#div_divisi').empty();
+    $('#div_departemen').empty();
+    $('#div_subdepartemen').empty();
     // AJAX request 
     $.ajax({
-        url: "{{ route('getDivisi') }}" + "/" + _kode_perusahaan,
+        url: "{{ route('payroll.get_divisi',0) }}" + "?perusahaan=" + _perusahaan,
         type: 'get',
         dataType: 'json',
         success: function(response) {
@@ -527,8 +629,8 @@ function getDivisi() {
                 for (var i = 0; i < len; i++) {
                     var id = response[i]['id'];
                     var nama = response[i]['nama'];
-                    var option = "<input class='checkbox_animated' id='kode_divisi[]' name='kode_divisi[]' type='checkbox' onClick='get_kode_divisi()' value='" + id + "'> " + nama + "<br/>";
-                    $("#div_kode_divisi").append(option);
+                    var option = "<input class='checkbox_animated' id='divisi[]' name='divisi[]' type='checkbox' onClick='get_divisi()' value='" + id + "'> " + nama + "<br/>";
+                    $("#div_divisi").append(option);
                 }
             }
         }
@@ -536,14 +638,18 @@ function getDivisi() {
 }
 // 
 function getDepartemen() {
-    var _kode_divisi = [];
-    $('input[id="kode_divisi[]"]:checked').each(function() {
-        _kode_divisi.push($(this).val());
+    var _perusahaan = [];
+    $('input[id="perusahaan[]"]:checked').each(function() {
+        _perusahaan.push($(this).val());
     });
-    $('#div_kode_departemen').empty();
-    $('#div_kode_sub_departemen').empty();
+    var _divisi = [];
+    $('input[id="divisi[]"]:checked').each(function() {
+        _divisi.push($(this).val());
+    });
+    $('#div_departemen').empty();
+    $('#div_subdepartemen').empty();
     $.ajax({
-        url: "{{ route('getDepartemen') }}" + "/" + _kode_divisi,
+        url: "{{ route('payroll.get_departemen',0) }}" + "?perusahaan=" + _perusahaan + "&divisi=" + _divisi,
         type: 'get',
         dataType: 'json',
         success: function(response) {
@@ -555,8 +661,8 @@ function getDepartemen() {
                 for (var i = 0; i < len; i++) {
                     var id = response[i]['id'];
                     var nama = response[i]['nama'];
-                    var option = "<input class='checkbox_animated' id='kode_departemen[]' name='kode_departemen[]' type='checkbox' onClick='get_kode_departemen()' value='" + id + "'> " + nama + "<br/>";
-                    $("#div_kode_departemen").append(option);
+                    var option = "<input class='checkbox_animated' id='departemen[]' name='departemen[]' type='checkbox' onClick='get_departemen()' value='" + id + "'> " + nama + "<br/>";
+                    $("#div_departemen").append(option);
                 }
             }
         }
@@ -564,13 +670,21 @@ function getDepartemen() {
 }
 // 
 function getSubDepartemen() {
-    var _kode_departemen = [];
-    $('input[id="kode_departemen[]"]:checked').each(function() {
-        _kode_departemen.push($(this).val());
+    var _perusahaan = [];
+    $('input[id="perusahaan[]"]:checked').each(function() {
+        _perusahaan.push($(this).val());
     });
-    $('#div_kode_sub_departemen').empty();
+    var _divisi = [];
+    $('input[id="divisi[]"]:checked').each(function() {
+        _divisi.push($(this).val());
+    });
+    var _departemen = [];
+    $('input[id="departemen[]"]:checked').each(function() {
+        _departemen.push($(this).val());
+    });
+    $('#div_subdepartemen').empty();
     $.ajax({
-        url: "{{ route('getSubDepartemen') }}" + "/" + _kode_departemen,
+        url: "{{ route('payroll.get_subdepartemen',0) }}" + "?perusahaan=" + _perusahaan + "&divisi=" + _divisi + "&departemen=" + _departemen,
         type: 'get',
         dataType: 'json',
         success: function(response) {
@@ -582,14 +696,117 @@ function getSubDepartemen() {
                 for (var i = 0; i < len; i++) {
                     var id = response[i]['id'];
                     var nama = response[i]['nama'];
-                    var option = "<input class='checkbox_animated' id='kode_sub_departemen[]' name='kode_sub_departemen[]' type='checkbox' value='" + id + "'> " + nama + "<br/>";
-                    $("#div_kode_sub_departemen").append(option);
+                    var option = "<input class='checkbox_animated' id='subdepartemen[]' name='subdepartemen[]' type='checkbox' value='" + id + "'> " + nama + "<br/>";
+                    $("#div_subdepartemen").append(option);
                 }
             }
         }
     });
 }
 // 
+$(document).ready(function() {
+    var options = {
+        series: [{
+            name: 'Biaya Gaji',
+            data: {{ \Illuminate\Support\Js::from($nominal) }}
+        }],
+        chart: {
+            type: 'line',
+            height: 350,
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        // plotOptions: {
+        //     bar: {
+        //         borderRadius: 4,
+        //         columnWidth: '50%',
+        //         borderRadiusApplication: 'end',
+        //         horizontal: false,
+        //         dataLabels: {
+        //             position: 'top', // top, center, bottom
+        //         },
+        //     }
+        // },
+        colors: ['#f57b20'],
+        // dataLabels: {
+        //     enabled: true,
+        //     offsetY: -20,
+        //     style: {
+        //         colors: ["#f57b20"]
+        //     },
+        //     formatter: function(val) {
+        //         return val;
+        //     },
+        // },
+        xaxis: {
+            categories: {{ \Illuminate\Support\Js::from($waktu) }},
+            // labels: {
+            //     show: true,          // Ensure labels are shown
+            //     rotate: -45,         // Rotate labels if they overlap
+                // style: {
+                //     fontSize: '14px',
+                //     colors: ['#333']   // Optional: color of the labels
+                // }
+            // },
+            // title: {
+            //     text: "Bulan-Tahun"
+            // },
+            // title: {
+            //     text: 'Bulan-Tahun',
+            //     offsetY: +85,
+            //     style: {
+            //         fontSize: '14px',
+            //         fontWeight: 'bold',
+            //     },
+            // }
+        },
+        yaxis: {
+            title: {
+                text: 'Biaya Gaji',
+            },
+            labels: {
+                formatter: function (value) {
+                    return value.toLocaleString();
+                }
+            },
+            // min: 0,
+            // max: 2000000000
+        },
+    };
+    new ApexCharts(document.querySelector("#chart_total_biaya_gaji"), options).render();
+    // 
+    var options = {
+        series: [{
+            name: 'Jumlah',
+            data: {{ \Illuminate\Support\Js::from($jumlah_data) }}
+        }],
+        chart: {
+            type: 'line',
+            height: 350,
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        colors: ['#f57b20'],
+        xaxis: {
+            categories: {{ \Illuminate\Support\Js::from($waktu) }},
+        },
+        yaxis: {
+            title: {
+                text: 'Jumlah',
+            },
+            labels: {
+                formatter: function (value) {
+                    return value.toLocaleString();
+                }
+            },
+            // min: 0,
+            // max: 2000000000
+        },
+    };
+    new ApexCharts(document.querySelector("#chart_jumlah_karyawan"), options).render();
+});
 </script>
 <script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script>
 <script src="{{ asset('assets/js/chart/apex-chart/stock-prices.js') }}"></script>
