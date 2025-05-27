@@ -11,41 +11,120 @@ use App\Models\Departemen;
 use App\Models\SubDepartemen;
 use App\Models\ToDoList;
 use App\Models\TrxPayrollLog;
+use App\Models\TrxPayrollBpjstkLog;
+use App\Models\TrxPayrollBpjskesLog;
 use App\Models\KaryawanStatus;
 
 class DashboardController extends Controller
 {
-    public function biaya(Request $request)
+    public function get_divisi(Request $request, $id){
+        $perusahaan = explode(',', $request->perusahaan);
+        $arr_perusahaan = [];
+        foreach($perusahaan as $_perusahaan){
+            array_push($arr_perusahaan, base64_decode($_perusahaan));
+        }
+        $_data = TrxPayrollLog::select('divisi')->whereIn('perusahaan', $arr_perusahaan)->orderBy('divisi', 'asc')->groupBy('divisi')->get();
+        $data = [];
+        foreach($_data as $__data){
+            array_push($data, ['id'=>base64_encode($__data->divisi), 'nama'=>$__data->divisi]);
+        }
+        return json_encode($data, true);
+    }
+
+    public function get_departemen(Request $request, $id){
+        $perusahaan = explode(',', $request->perusahaan);
+        $arr_perusahaan = [];
+        foreach($perusahaan as $_perusahaan){
+            array_push($arr_perusahaan, base64_decode($_perusahaan));
+        }
+        $divisi = explode(',', $request->divisi);
+        $arr_divisi = [];
+        foreach($divisi as $_divisi){
+            array_push($arr_divisi, base64_decode($_divisi));
+        }
+        $_data = TrxPayrollLog::select('departemen')->whereIn('perusahaan', $arr_perusahaan)->whereIn('divisi', $arr_divisi)->orderBy('departemen', 'asc')->groupBy('departemen')->get();
+        $data = [];
+        foreach($_data as $__data){
+            array_push($data, ['id'=>base64_encode($__data->departemen), 'nama'=>$__data->departemen]);
+        }
+        return json_encode($data, true);
+    }
+
+    public function get_subdepartemen(Request $request, $id){
+        $perusahaan = explode(',', $request->perusahaan);
+        $arr_perusahaan = [];
+        foreach($perusahaan as $_perusahaan){
+            array_push($arr_perusahaan, base64_decode($_perusahaan));
+        }
+        $divisi = explode(',', $request->divisi);
+        $arr_divisi = [];
+        foreach($divisi as $_divisi){
+            array_push($arr_divisi, base64_decode($_divisi));
+        }
+        $departemen = explode(',', $request->departemen);
+        $arr_departemen = [];
+        foreach($departemen as $_departemen){
+            array_push($arr_departemen, base64_decode($_departemen));
+        }
+        $_data = TrxPayrollLog::select('subdepartemen')->whereIn('perusahaan', $arr_perusahaan)->whereIn('divisi', $arr_divisi)->whereIn('departemen', $arr_departemen)->orderBy('subdepartemen', 'asc')->groupBy('subdepartemen')->get();
+        $data = [];
+        foreach($_data as $__data){
+            array_push($data, ['id'=>base64_encode($__data->subdepartemen), 'nama'=>$__data->subdepartemen]);
+        }
+        return json_encode($data, true);
+    }
+
+    public function biaya_lain(Request $request)
     {
         // dd($request->all());
         $tahun = TrxPayrollLog::distinct()->orderBy('tahun', 'asc')->get(['tahun'])->toArray();
         $bulan = [['bulan'=>'Januari','angka'=>1],['bulan'=>'Februari','angka'=>2],['bulan'=>'Maret','angka'=>3],['bulan'=>'April','angka'=>4],['bulan'=>'Mei','angka'=>5],['bulan'=>'Juni','angka'=>6],['bulan'=>'Juli','angka'=>7],['bulan'=>'Agustus','angka'=>8],['bulan'=>'September','angka'=>9],['bulan'=>'Oktober','angka'=>10],['bulan'=>'November','angka'=>11],['bulan'=>'Desember','angka'=>12]];
-        // dd($tahun);
-        $status_karyawan = KaryawanStatus::orderBy('status_karyawan', 'asc')->get();
-        $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy('nama', 'asc')->get();
+        // 
+        $status_karyawan = TrxPayrollLog::select('status_karyawan')->orderBy('status_karyawan', 'asc')->groupBy('status_karyawan')->get();
+        $perusahaan = [];
+        $data = TrxPayrollLog::select('perusahaan')->orderBy('perusahaan', 'asc')->groupBy('perusahaan')->get();
+        foreach($data as $_data){
+            array_push($perusahaan, ['id'=>base64_encode($_data->perusahaan), 'nama'=>$_data->perusahaan]);
+        }
         $divisi = [];
         $departemen = [];
-        $sub_departemen = [];
+        $subdepartemen = [];
         //
+        $bulan_tahun_dari = '';
+        $bulan_tahun_sampai = '';
+        // 
         $arr_perusahaan = [];
         $arr_divisi = [];
         $arr_departemen = [];
-        $arr_sub_departemen = [];
+        $arr_subdepartemen = [];
         $arr_tahun = [];
         $arr_bulan = [];
         $arr_status_karyawan = [];
         // 
         $payroll = [];
-        // dd($payroll);
         // start filter
         if ($request->filter == true) {
+            $bulan_tahun_dari = $request->bulan_tahun_dari;
+            $bulan_tahun_sampai = $request->bulan_tahun_sampai;
             $_tahun = $request->input('tahun', []);
             $_bulan = $request->input('bulan', []);
             $_status_karyawan = $request->input('status_karyawan', []);
-            $_perusahaan = $request->input('kode_perusahaan', []);
-            $_divisi = $request->input('kode_divisi', []);
-            $_departemen = $request->input('kode_departemen', []);
-            $_sub_departemen = $request->input('kode_sub_departemen', []);
+            $_perusahaan = [];
+            foreach($request->input('perusahaan', []) as $_data){
+                array_push($_perusahaan, base64_decode($_data));
+            }
+            $_divisi = [];
+            foreach($request->input('divisi', []) as $_data){
+                array_push($_divisi, base64_decode($_data));
+            }
+            $_departemen = [];
+            foreach($request->input('departemen', []) as $_data){
+                array_push($_departemen, base64_decode($_data));
+            }
+            $_subdepartemen = [];
+            foreach($request->input('subdepartemen', []) as $_data){
+                array_push($_subdepartemen, base64_decode($_data));
+            }
             if (count($_perusahaan) > 0) {
                 $arr_perusahaan = $_perusahaan;
             }
@@ -55,8 +134,8 @@ class DashboardController extends Controller
             if (count($_departemen) > 0) {
                 $arr_departemen = $_departemen;
             }
-            if (count($_sub_departemen) > 0) {
-                $arr_sub_departemen = $_sub_departemen;
+            if (count($_subdepartemen) > 0) {
+                $arr_subdepartemen = $_subdepartemen;
             }
             if (count($_tahun) > 0) {
                 $arr_tahun = $_tahun;
@@ -67,21 +146,132 @@ class DashboardController extends Controller
             if (count($_status_karyawan) > 0) {
                 $arr_status_karyawan = $_status_karyawan;
             }
-            $divisi = Divisi::whereIn('kode_perusahaan', $arr_perusahaan)->get();
-            $departemen = Departemen::whereIn('kode_divisi', $arr_divisi)->get();
-            $sub_departemen = SubDepartemen::whereIn('kode_departemen', $arr_departemen)->get();
             // 
-            $payroll = TrxPayrollLog::whereIn('tahun', $arr_tahun)
-            ->whereIn('bulan', $arr_bulan)
-            ->whereIn('status_karyawan', KaryawanStatus::whereIn('id', $arr_status_karyawan)->get('status_karyawan')->toArray())
-            ->whereIn('perusahaan', Perusahaan::whereIn('id', $arr_perusahaan)->get('nama')->toArray())
-            ->whereIn('divisi', Divisi::whereIn('id', $arr_divisi)->get('nama')->toArray())
-            ->whereIn('departemen', Departemen::whereIn('id', $arr_departemen)->get('nama')->toArray())
-            ->whereIn('subdepartemen', SubDepartemen::whereIn('id', $arr_sub_departemen)->get('nama')->toArray())
-            ->get();
-            // dd($payroll);
+            $data = TrxPayrollLog::select('divisi')->whereIn('perusahaan', $arr_perusahaan)->orderBy('divisi', 'asc')->groupBy('divisi')->get();
+            foreach($data as $_data){
+                array_push($divisi, ['id'=>base64_encode($_data->divisi), 'nama'=>$_data->divisi]);
+            }
+            $data = TrxPayrollLog::select('departemen')->whereIn('perusahaan', $arr_perusahaan)->whereIn('divisi', $arr_divisi)->orderBy('departemen', 'asc')->groupBy('departemen')->get();
+            foreach($data as $_data){
+                array_push($departemen, ['id'=>base64_encode($_data->departemen), 'nama'=>$_data->departemen]);
+            }
+            $data = TrxPayrollLog::select('subdepartemen')->whereIn('perusahaan', $arr_perusahaan)->whereIn('divisi', $arr_divisi)->whereIn('departemen', $arr_departemen)->orderBy('subdepartemen', 'asc')->groupBy('subdepartemen')->get();
+            foreach($data as $_data){
+                array_push($subdepartemen, ['id'=>base64_encode($_data->subdepartemen), 'nama'=>$_data->subdepartemen]);
+            }
+            // 
+            $payroll = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+            // whereIn('tahun', $arr_tahun)
+            // ->whereIn('bulan', $arr_bulan)
+            ->whereIn('status_karyawan', $arr_status_karyawan)
+            ->whereIn('perusahaan', $arr_perusahaan)
+            ->whereIn('divisi', $arr_divisi)
+            ->whereIn('departemen', $arr_departemen)
+            ->whereIn('subdepartemen', $arr_subdepartemen)
+            ->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
         }
-        return view( 'dashboard.biaya', compact('payroll', 'perusahaan', 'divisi', 'departemen', 'sub_departemen', 'tahun', 'bulan', 'status_karyawan', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_sub_departemen', 'arr_tahun', 'arr_bulan', 'arr_status_karyawan'));
+        // end filter
+        return view( 'dashboard.biaya_lain', compact('payroll', 'perusahaan', 'divisi', 'departemen', 'subdepartemen', 'tahun', 'bulan', 'status_karyawan', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_subdepartemen', 'arr_tahun', 'arr_bulan', 'arr_status_karyawan', 'bulan_tahun_dari', 'bulan_tahun_sampai'));
+    }
+
+    public function biaya(Request $request)
+    {
+        // dd($request->all());
+        $tahun = TrxPayrollLog::distinct()->orderBy('tahun', 'asc')->get(['tahun'])->toArray();
+        $bulan = [['bulan'=>'Januari','angka'=>1],['bulan'=>'Februari','angka'=>2],['bulan'=>'Maret','angka'=>3],['bulan'=>'April','angka'=>4],['bulan'=>'Mei','angka'=>5],['bulan'=>'Juni','angka'=>6],['bulan'=>'Juli','angka'=>7],['bulan'=>'Agustus','angka'=>8],['bulan'=>'September','angka'=>9],['bulan'=>'Oktober','angka'=>10],['bulan'=>'November','angka'=>11],['bulan'=>'Desember','angka'=>12]];
+        // 
+        $status_karyawan = TrxPayrollLog::select('status_karyawan')->orderBy('status_karyawan', 'asc')->groupBy('status_karyawan')->get();
+        $perusahaan = [];
+        $data = TrxPayrollLog::select('perusahaan')->orderBy('perusahaan', 'asc')->groupBy('perusahaan')->get();
+        foreach($data as $_data){
+            array_push($perusahaan, ['id'=>base64_encode($_data->perusahaan), 'nama'=>$_data->perusahaan]);
+        }
+        $divisi = [];
+        $departemen = [];
+        $subdepartemen = [];
+        //
+        $bulan_tahun_dari = '';
+        $bulan_tahun_sampai = '';
+        // 
+        $arr_perusahaan = [];
+        $arr_divisi = [];
+        $arr_departemen = [];
+        $arr_subdepartemen = [];
+        $arr_tahun = [];
+        $arr_bulan = [];
+        $arr_status_karyawan = [];
+        // 
+        $payroll = [];
+        // start filter
+        if ($request->filter == true) {
+            $bulan_tahun_dari = $request->bulan_tahun_dari;
+            $bulan_tahun_sampai = $request->bulan_tahun_sampai;
+            $_tahun = $request->input('tahun', []);
+            $_bulan = $request->input('bulan', []);
+            $_status_karyawan = $request->input('status_karyawan', []);
+            $_perusahaan = [];
+            foreach($request->input('perusahaan', []) as $_data){
+                array_push($_perusahaan, base64_decode($_data));
+            }
+            $_divisi = [];
+            foreach($request->input('divisi', []) as $_data){
+                array_push($_divisi, base64_decode($_data));
+            }
+            $_departemen = [];
+            foreach($request->input('departemen', []) as $_data){
+                array_push($_departemen, base64_decode($_data));
+            }
+            $_subdepartemen = [];
+            foreach($request->input('subdepartemen', []) as $_data){
+                array_push($_subdepartemen, base64_decode($_data));
+            }
+            if (count($_perusahaan) > 0) {
+                $arr_perusahaan = $_perusahaan;
+            }
+            if (count($_divisi) > 0) {
+                $arr_divisi = $_divisi;
+            }
+            if (count($_departemen) > 0) {
+                $arr_departemen = $_departemen;
+            }
+            if (count($_subdepartemen) > 0) {
+                $arr_subdepartemen = $_subdepartemen;
+            }
+            if (count($_tahun) > 0) {
+                $arr_tahun = $_tahun;
+            }
+            if (count($_bulan) > 0) {
+                $arr_bulan = $_bulan;
+            }
+            if (count($_status_karyawan) > 0) {
+                $arr_status_karyawan = $_status_karyawan;
+            }
+            // 
+            $data = TrxPayrollLog::select('divisi')->whereIn('perusahaan', $arr_perusahaan)->orderBy('divisi', 'asc')->groupBy('divisi')->get();
+            foreach($data as $_data){
+                array_push($divisi, ['id'=>base64_encode($_data->divisi), 'nama'=>$_data->divisi]);
+            }
+            $data = TrxPayrollLog::select('departemen')->whereIn('perusahaan', $arr_perusahaan)->whereIn('divisi', $arr_divisi)->orderBy('departemen', 'asc')->groupBy('departemen')->get();
+            foreach($data as $_data){
+                array_push($departemen, ['id'=>base64_encode($_data->departemen), 'nama'=>$_data->departemen]);
+            }
+            $data = TrxPayrollLog::select('subdepartemen')->whereIn('perusahaan', $arr_perusahaan)->whereIn('divisi', $arr_divisi)->whereIn('departemen', $arr_departemen)->orderBy('subdepartemen', 'asc')->groupBy('subdepartemen')->get();
+            foreach($data as $_data){
+                array_push($subdepartemen, ['id'=>base64_encode($_data->subdepartemen), 'nama'=>$_data->subdepartemen]);
+            }
+            // 
+            $payroll = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+            // whereIn('tahun', $arr_tahun)
+            // ->whereIn('bulan', $arr_bulan)
+            ->whereIn('status_karyawan', $arr_status_karyawan)
+            ->whereIn('perusahaan', $arr_perusahaan)
+            ->whereIn('divisi', $arr_divisi)
+            ->whereIn('departemen', $arr_departemen)
+            ->whereIn('subdepartemen', $arr_subdepartemen)
+            ->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+        }
+        // end filter
+        return view( 'dashboard.biaya', compact('payroll', 'perusahaan', 'divisi', 'departemen', 'subdepartemen', 'tahun', 'bulan', 'status_karyawan', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_subdepartemen', 'arr_tahun', 'arr_bulan', 'arr_status_karyawan', 'bulan_tahun_dari', 'bulan_tahun_sampai'));
     }
     /**
      * Display a listing of the resource.
