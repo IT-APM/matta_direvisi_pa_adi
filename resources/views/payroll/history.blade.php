@@ -963,7 +963,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             $arr_id = [5];
                                             $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
                                             $total_tunjangan = $add->sum('angka');
-                                            $total_upah = $data->gapok + $total_tunjangan;
+                                            $total_upah = round($data->gapok, 0) + round($total_tunjangan, 0);
                                             $total_biaya = $total_upah;
                                         @endphp
                                         <td class="text-end">{{ number_format($total_tunjangan, 0) }}</td>
@@ -972,7 +972,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         @php
                                             $arr_id = [22];
                                             $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
-                                            $angka_22 = $add->sum('angka');
+                                            $angka_22 = round($add->sum('angka'), 0);
                                             $total_biaya += $angka_22;
                                         @endphp
                                         <td class="text-end">{{ number_format($angka_22, 0) }}</td>
@@ -982,7 +982,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         @php
                                             $arr_id = [6,7,8];
                                             $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
-                                            $total_biaya += $add->sum('angka');
+                                            $total_biaya += round($add->sum('angka'), 0);
                                         @endphp
                                         @foreach ($add as $_data)
                                         <td class="text-end">{{ number_format($_data->angka, 0) }}</td>
@@ -993,15 +993,15 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         @php
                                             $arr_id = [4];
                                             $bpjskes = App\Models\TrxPayrollBpjskesLog::where($where)->whereIn('id_bpjskes', $arr_id)->orderBy('id_bpjskes', 'asc')->get();
-                                            $bpjskes = $bpjskes->sum('angka');
-                                            $total_biaya += $data->overtime + $data->pajak + $bpjskes;
+                                            $bpjskes = round($bpjskes->sum('angka'), 0);
+                                            $total_biaya += round($data->overtime, 0) + round($data->pajak, 0) + $bpjskes;
                                         @endphp
                                         <td class="text-end">{{ number_format($bpjskes, 0) }}</td>
                                         {{-- bpjstk --}}
                                         @php
                                             $arr_id = [7];
                                             $bpjstk = App\Models\TrxPayrollBpjstkLog::where($where)->whereIn('id_bpjstk', $arr_id)->orderBy('id_bpjstk', 'asc')->get();
-                                            $bpjstk = $bpjstk->sum('angka');
+                                            $bpjstk = round($bpjstk->sum('angka'), 0);
                                             $total_biaya += $bpjstk;
                                         @endphp
                                         <td class="text-end">{{ number_format($bpjstk, 0) }}</td>
@@ -1010,7 +1010,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         {{-- mgt_fee --}}
                                         <td class="text-end">{{ number_format($data->mgt_fee, 2) }} %</td>
                                         @php
-                                            $mgt_fee = $total_biaya * $data->mgt_fee / 100;
+                                            $mgt_fee = round($total_biaya * $data->mgt_fee / 100, 0);
                                             $total_biaya += $mgt_fee;
                                         @endphp
                                         <td class="text-end">{{ number_format($mgt_fee, 0) }}</td>
@@ -1020,13 +1020,13 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         @php
                                             $arr_id = [9];
                                             $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
-                                            $angka_9 = $add->sum('angka');
+                                            $angka_9 = round($add->sum('angka'), 0);
                                         @endphp
                                         <td class="text-end">{{ number_format($angka_9, 0) }}</td>
                                         {{-- mgt_fee_kkwt --}}
                                         <td class="text-end">{{ number_format($data->mgt_fee_kkwt, 2) }} %</td>
                                         @php
-                                            $mgt_fee_kkwt = $angka_9 * $data->mgt_fee_kkwt / 100;
+                                            $mgt_fee_kkwt = round($angka_9 * $data->mgt_fee_kkwt / 100, 0);
                                         @endphp
                                         <td class="text-end">{{ number_format($mgt_fee_kkwt, 0) }}</td>
                                         @php
@@ -1034,7 +1034,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         @endphp
                                         <td class="text-end">{{ number_format($mgt_fee_kkwt, 0) }}</td>
                                         @php
-                                            $total_biaya += $mgt_fee_kkwt;
+                                            $total_biaya += round($mgt_fee_kkwt, 0);
                                         @endphp
                                         {{-- Total Biaya Outsource --}}
                                         <td class="text-end">{{ number_format($total_biaya, 0) }}</td>
