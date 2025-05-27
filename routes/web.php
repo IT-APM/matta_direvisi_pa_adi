@@ -131,6 +131,10 @@ Route::get('getDepartemen', [OpenDataController::class, 'getDepartemen'])->name(
 Route::get('getSubDepartemen', [OpenDataController::class, 'getSubDepartemen'])->name('getSubDepartemen');
 // Route::get('encrypt_link', [OpenDataController::class, 'encrypt_link'])->name('encrypt_link');
 // 
+Route::get('payroll/get_divisi/{id}', [DashboardController::class, 'get_divisi'])->name('payroll.get_divisi');
+Route::get('payroll/get_departemen/{id}', [DashboardController::class, 'get_departemen'])->name('payroll.get_departemen');
+Route::get('payroll/get_subdepartemen/{id}', [DashboardController::class, 'get_subdepartemen'])->name('payroll.get_subdepartemen');
+// 
 Route::resource('jadwalcls', JadwalClsController::class)->middleware('can:hc');
 Route::get('generate_cls', [JadwalClsController::class, 'generate'])->name('generate_cls')->middleware('can:hc');
 Route::resource('jadwalcls2', JadwalCls2Controller::class)->middleware('can:hc');
@@ -243,7 +247,7 @@ Route::post('recruitment/apply_save', [ TrxRecruitmentController::class, 'apply_
 Route::post('recruitment/applicant_save', [ TrxRecruitmentController::class, 'applicant_save'])->name('recruitment.applicant_save')->middleware('can:hc');
 Route::get('recruitment/applicant_list/{id}', [TrxRecruitmentController::class, 'applicant_list'])->name('recruitment.applicant_list')->middleware('can:hc');
 Route::get('recruitment/applicant_item/{id}', [TrxRecruitmentController::class, 'applicant_item'])->name('recruitment.applicant_item')->middleware('can:hc');
-Route::get('recruitment/download_cv/{id}', [TrxRecruitmentController::class, 'download_cv'])->name('recruitment.download_cv')->middleware('can:hc');
+Route::get('recruitment/download_applicant/{id}', [TrxRecruitmentController::class, 'download_applicant'])->name('recruitment.download_applicant')->middleware('can:hc');
 Route::get('recruitment/download_cv/{id}', [TrxRecruitmentController::class, 'download_cv'])->name('recruitment.download_cv')->middleware('can:hc');
 Route::get('recruitment/applicant_process/{id}', [TrxRecruitmentController::class, 'applicant_process'])->name('recruitment.applicant_process')->middleware('can:hc');
 Route::get('recruitment/interview_item/{id}', [TrxRecruitmentController::class, 'interview_item'])->name('recruitment.interview_item')->middleware('can:hc');
@@ -389,6 +393,7 @@ Route::get('lang/{locale}', function ($locale) {
 })->name('lang');
 Route::resource('dashboard', DashboardController::class)->middleware('can:hc');
 Route::get('dashboard/biaya/{id}', [DashboardController::class, 'biaya'])->name('dashboard.biaya')->middleware('can:hc');
+Route::get('dashboard/biaya_lain/{id}', [DashboardController::class, 'biaya_lain'])->name('dashboard.biaya_lain')->middleware('can:hc');
 // 
 Route::get('lang/{locale}', [LocalizationController::class , 'lang']);
 // 
