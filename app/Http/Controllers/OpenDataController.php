@@ -21,6 +21,12 @@ use Illuminate\Support\Str;
 use App\Models\ToDoList;
 use App\Models\MtrUtility;
 // 
+use App\Models\PelatihanSub;
+use App\Models\SertifikasiSub;
+use App\Models\KeterampilanSub;
+use App\Models\KepribadianSub;
+use App\Models\PekerjaanSub;
+// 
 class OpenDataController extends Controller
 {
 
@@ -184,6 +190,32 @@ class OpenDataController extends Controller
             // Handle the exception, for example log it or display a message
             dd('Caught exception: ' . $e->getMessage());
         }
+    }
+
+    public function get_pekerjaan($id) {
+        // $data = PekerjaanSub::select('id','pekerjaan','tugas','wewenang','tanggung_jawab')->orderBy('pekerjaan', 'asc')->get();
+        $data = DB::table('mtr_tbl_pekerjaan_sub as a')->leftJoin('mtr_tbl_pekerjaan as b', 'a.id_bidang', '=', 'b.id')->select('a.id', 'b.bidang', 'a.pekerjaan', 'a.tugas', 'a.wewenang', 'a.tanggung_jawab')->orderBy('a.pekerjaan', 'asc')->get();
+        return json_decode($data, true);
+    }
+
+    public function get_pelatihan($id) {
+        $data = PelatihanSub::orderBy('sub_pelatihan', 'asc')->get();
+        return json_decode($data, true);
+    }
+
+    public function get_sertifikasi($id) {
+        $data = SertifikasiSub::orderBy('sub_sertifikasi', 'asc')->get();
+        return json_decode($data, true);
+    }
+
+    public function get_keterampilan($id) {
+        $data = KeterampilanSub::orderBy('sub_keterampilan', 'asc')->get();
+        return json_decode($data, true);
+    }
+
+    public function get_kepribadian($id) {
+        $data = KepribadianSub::orderBy('sub_kepribadian', 'asc')->get();
+        return json_decode($data, true);
     }
 
     public function getKaryawanPerusahaan($id){
