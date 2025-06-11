@@ -129,6 +129,11 @@ Route::get('getSubDepartemen/{id}', [OpenDataController::class, 'getSubDeparteme
 Route::get('getDivisi', [OpenDataController::class, 'getDivisi'])->name('getDivisi');
 Route::get('getDepartemen', [OpenDataController::class, 'getDepartemen'])->name('getDepartemen');
 Route::get('getSubDepartemen', [OpenDataController::class, 'getSubDepartemen'])->name('getSubDepartemen');
+Route::get('get_pekerjaan/{id}', [OpenDataController::class, 'get_pekerjaan'])->name('get_pekerjaan');
+Route::get('get_pelatihan/{id}', [OpenDataController::class, 'get_pelatihan'])->name('get_pelatihan');
+Route::get('get_sertifikasi/{id}', [OpenDataController::class, 'get_sertifikasi'])->name('get_sertifikasi');
+Route::get('get_keterampilan/{id}', [OpenDataController::class, 'get_keterampilan'])->name('get_keterampilan');
+Route::get('get_kepribadian/{id}', [OpenDataController::class, 'get_kepribadian'])->name('get_kepribadian');
 // Route::get('encrypt_link', [OpenDataController::class, 'encrypt_link'])->name('encrypt_link');
 // 
 Route::get('payroll/get_divisi/{id}', [DashboardController::class, 'get_divisi'])->name('payroll.get_divisi');
