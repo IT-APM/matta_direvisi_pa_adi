@@ -76,7 +76,8 @@
                                         </tr>
                                     </thead>
                                 </table>
-                            </div><a href="{{ route('kebutuhan.create') }}" class="btn btn-warning" type="button">Back</a>
+                            </div>
+                            {{-- <a href="{{ route('kebutuhan.create') }}" class="btn btn-warning" type="button">Back</a> --}}
                         </div>
                     </div>
                 </div>
