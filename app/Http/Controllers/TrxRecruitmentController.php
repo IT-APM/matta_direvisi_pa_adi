@@ -1387,10 +1387,12 @@ class TrxRecruitmentController extends Controller
                 $lampiran->move('public/assets/recruitment/upload/', $namafile);
             }
             $nego = TrxRecruitmentNegosiasi::where(['id_identitas' => $id])->orderBy('id', 'desc')->first();
-            $nego->id_status = $id_status;
-            $nego->update();
-            $data = [$nama.'/'.$nik, 1, $request->catatan, $namafile];
-            $this->insertNegotiationLog($nego, $data);
+            if(!empty($nego)){
+                $nego->id_status = $id_status;
+                $nego->update();
+                $data = [$nama.'/'.$nik, 1, $request->catatan, $namafile];
+                $this->insertNegotiationLog($nego, $data);
+            }
             // 
             // $_trx->id_join = $request->id_join;
             $_trx->id_join = implode(',', $request->input('id_join', []));
