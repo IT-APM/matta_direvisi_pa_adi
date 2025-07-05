@@ -94,7 +94,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
+                                        <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="{{ route('attendance.index') }}" class="btn btn-info"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a> | <button class="btn btn-success" id="download" name="download" value="true" type="submit"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Download</button>
+                                        {{-- <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button> |  --}}
                                     </div>
                                 </div>
                             </form>
@@ -134,8 +135,8 @@
                                         @foreach ($att as $data)
                                             <tr>
                                                 <td>{{ ++$no }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($data->att_date) ->format('d-m-Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($data->att_timestamp) ->format('d-m-Y H:i:s') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($data->att_date)->format('d-m-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($data->att_timestamp)->format('d-m-Y H:i:s') }}</td>
                                                 <td>{{ $data->_att_nik->nama }}</td>
                                                 <td>{{ $data->att_nik }}</td>
                                                 <td>{{ $data->_att_nik->_perusahaan->nama }}</td>
@@ -207,9 +208,9 @@
                                         @foreach ($duration as $data)
                                             <tr>
                                                 <td>{{ ++$no }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($data['att_date']) ->format('d-m-Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($data['Clock-in']) ->format('d-m-Y H:i:s') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($data['Clock-out']) ->format('d-m-Y H:i:s') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($data['att_date'])->format('d-m-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($data['Clock-in'])->format('d-m-Y H:i:s') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($data['Clock-out'])->format('d-m-Y H:i:s') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse(strtotime($data['Clock-out'])-strtotime($data['Clock-in']))->format('H:i:s') }}</td>
                                                 @php
                                                 $where = ['nik' => $data['att_nik']];
