@@ -8,6 +8,9 @@ use App\Models\WorkingGroup;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AttendanceExport;
+use App\Exports\AttendanceMultiSheetExport;
 
 class AttendanceController extends Controller
 {
@@ -109,7 +112,7 @@ class AttendanceController extends Controller
         $date_from = '';
         $date_to = '';
         // start filter
-        if($request->filter == true){
+        if($request->filter == true || $request->download == true){
             $date_from = $request->date_from;
             $date_to = $request->date_to;
             $_att_type = $request->input('att_type', []);
@@ -225,6 +228,11 @@ class AttendanceController extends Controller
                 // end hitung durasi
             }
             // dd($att);
+            if($request->download == true){
+                // dd($request->all());
+                return Excel::download(new AttendanceMultiSheetExport($att, $duration), 'Raw Data dan Duration '.Carbon::parse($date_from)->format('d-m-Y').' sd '.Carbon::parse($date_to)->format('d-m-Y').'.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+                // return response()->json( [ 'att' => $att ], 200 );
+            }
         }else{
             $arr_att_type = array();
             $arr_att_status = array();
