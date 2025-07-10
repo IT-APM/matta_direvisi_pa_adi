@@ -4,6 +4,7 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatable-extension.css') }}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
 @endsection
 
 @section('style')
@@ -35,7 +36,19 @@
                     @if(Session::has('msg'))
                     <div class="alert alert-success">{{Session::get('msg')}}</div>
                     @endif
-                    <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                    @can('spv')
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <select class="form-select js-example-basic-single col-sm-12" id="ot_maker_by" name="ot_maker_by">
+                                <option value="0">Pilih Karyawan...</option>
+                                @foreach ($karyawan as $data)
+                                <option value="{{ Crypt::encrypt($data->nik) }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    @endcan
+                    <button class="btn btn-primary" type="button" onclick="PilihKaryawan()"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="{{ route('approval-index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
@@ -149,7 +162,21 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/vfs_fonts.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
+<script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
+<script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 <script type="text/javascript">
+function PilihKaryawan() {
+    // var ot_maker_by = "{{ Crypt::encrypt(auth()->user()->nik) }}";
+    @can('spv')
+    if($('#ot_maker_by').val() != '0'){
+        ot_maker_by = $('#ot_maker_by').val();
+        location.href = "{{ route('overtime.create') }}"+"?ot_maker_by="+ot_maker_by;
+    }
+    else {
+        alert('Pilih Karyawan!');
+    }
+    @endcan
+}
 function toggle_ot_approver_status(source) {
     checkboxes = document.getElementsByName('ot_approver_status[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
