@@ -130,14 +130,27 @@ class TrxIjinController extends Controller
         if(auth()->user()->userrole == 'nhc'){
             // $where = ['karyawan' => auth()->user()->nik];
             // $trx = TrxIjin::where($where)->orderBy('id', 'desc')->get();
-            $where = ['layer1' => auth()->user()->nik];
-            $bawahan = Karyawan::select('nik')->where($where)->get();
-            $karyawan = array();
-            array_push($karyawan, auth()->user()->nik);
-            foreach($bawahan as $data){
-                array_push($karyawan, $data->nik);
+            // $where = ['layer1' => auth()->user()->nik];
+            // $bawahan = Karyawan::select('nik')->where($where)->get();
+            // $karyawan = array();
+            // array_push($karyawan, auth()->user()->nik);
+            // foreach($bawahan as $data){
+            //     array_push($karyawan, $data->nik);
+            // }
+            // $trx = TrxIjin::whereIn('karyawan', $karyawan)->orderBy('id', 'desc')->get();
+            $trx = TrxIjin::where('karyawan', [auth()->user()->nik])->orWhere('atasan', [auth()->user()->nik])->orWhere('layer2', [auth()->user()->nik])->orderBy('id', 'desc')->get();
+            // 
+            $arr_id = [];
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id);
             }
-            $trx = TrxIjin::whereIn('karyawan', $karyawan)->orderBy('id', 'desc')->get();
+            $where = ['nik_pic' => auth()->user()->nik];
+            $trx = TrxIjinLog::where($where)->orderBy('id_trx', 'desc')->get();
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id_trx);
+            }
+            // 
+            $trx = TrxIjin::whereIn('id', $arr_id)->orderBy('id', 'desc')->get();
         }
         // filter parameter
         $arr_status = array();
@@ -189,14 +202,27 @@ class TrxIjinController extends Controller
             }
             $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', Karyawan::select('nik')->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get())->whereBetween('tanggal', [$date_from, $date_to])->orderBy('id', 'desc')->get();
             if(auth()->user()->userrole == 'nhc'){
-                $where = ['layer1' => auth()->user()->nik];
-                $bawahan = Karyawan::select('nik')->where($where)->get();
-                $karyawan = array();
-                array_push($karyawan, auth()->user()->nik);
-                foreach($bawahan as $data){
-                    array_push($karyawan, $data->nik);
+                // $where = ['layer1' => auth()->user()->nik];
+                // $bawahan = Karyawan::select('nik')->where($where)->get();
+                // $karyawan = array();
+                // array_push($karyawan, auth()->user()->nik);
+                // foreach($bawahan as $data){
+                //     array_push($karyawan, $data->nik);
+                // }
+                // $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', $karyawan)->whereIn('karyawan', Karyawan::select('nik')->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get())->whereBetween('tanggal', [$date_from, $date_to])->orderBy('id', 'desc')->get();
+                $trx = TrxIjin::where(function($query) {$query->where('karyawan', [auth()->user()->nik])->orWhere('atasan', [auth()->user()->nik])->orWhere('layer2', [auth()->user()->nik]);})->whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', Karyawan::select('nik')->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get())->whereBetween('tanggal', [$date_from, $date_to])->orderBy('id', 'desc')->get();
+                // 
+                $arr_id = [];
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id);
                 }
-                $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', $karyawan)->whereIn('karyawan', Karyawan::select('nik')->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get())->whereBetween('tanggal', [$date_from, $date_to])->orderBy('id', 'desc')->get();
+                $where = ['nik_pic' => auth()->user()->nik];
+                $trx = TrxIjinLog::where($where)->orderBy('id_trx', 'desc')->get();
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id_trx);
+                }
+                // 
+                $trx = TrxIjin::whereIn('id', $arr_id)->where(function($query) {$query->where('karyawan', [auth()->user()->nik])->orWhere('atasan', [auth()->user()->nik])->orWhere('layer2', [auth()->user()->nik]);})->whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', Karyawan::select('nik')->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get())->whereBetween('tanggal', [$date_from, $date_to])->orderBy('id', 'desc')->get();
             }
         }else{
             $arr_status = array();
@@ -258,7 +284,8 @@ class TrxIjinController extends Controller
         $where = [ 'karyawan' => $karyawan, 'tanggal' => $request->tanggal ];
         // 3=Reject by L1
         // 7=Reject by L2
-        $check = TrxIjin::where($where)->whereIn('tipe', [2,3,4])->whereNotIn('status', [3,7])->exists();
+        // 8=Cancel by Requestor
+        $check = TrxIjin::where($where)->whereIn('tipe', [2,3,4])->whereNotIn('status', [3,7,8])->exists();
         // Izin tidak boleh di tanggal yang sama
         if($check){
             return redirect()->back()->with('error', 'Izin tidak boleh di tanggal yang sama');
@@ -267,12 +294,19 @@ class TrxIjinController extends Controller
         $where = [ 'nik' => $karyawan, 'is_aktif' => 1, 'wg_id' => 1 ];
         $isreguler = Karyawan::where($where)->exists();
         $check = Carbon::parse($request->tanggal)->isMonday() || Carbon::parse($request->tanggal)->isFriday();
+        $isPast = Carbon::createFromFormat('Y-m-d', $request->tanggal)->isPast();
+        // dd($isPast, $request->tanggal);
         $where = [ 'tanggal' => $request->tanggal ];
         $isholiday = Holiday::where($where)->exists();
         // Untuk karyawan reguler, Izin Work From Anywhere (WFA)/Work From Home (WFH) hanya di Hari Selasa, Rabu dan Kamis dan bukan libur nasional
         if($isreguler){
             if($check && in_array($request->tipe, [3,4])){
-                return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) hanya di Hari Selasa, Rabu dan Kamis dan bukan libur nasional');
+                if($isPast){
+                    return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) tidak bisa backdate');
+                }
+                else{
+                    return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) hanya di Hari Selasa, Rabu dan Kamis dan bukan libur nasional');
+                }
             }else if(Carbon::parse($request->tanggal)->isWeekend() || $isholiday){
                 return redirect()->back()->with('error', 'Izin hanya di hari kerja dan bukan libur nasional');
             }
@@ -466,6 +500,12 @@ class TrxIjinController extends Controller
         // 
         switch ($view) {
             case 'approval':
+                // 3=Reject by L1
+                // 7=Reject by L2
+                // 8=Cancel by Requestor
+                if(TrxIjinLog::where(['id_trx'=>$id])->whereIn('id_status', [3,7,8])->exists()){
+                    return view('emails.izin_ok');
+                }
                 // atasan
                 if ($pic == 'atasan' && $nik == $trx->atasan && $nAtasan == 0 && $id_status == 1) {
                     // 1 = Submit by Requestor
@@ -530,6 +570,12 @@ class TrxIjinController extends Controller
                         $htmlLog .= '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $layer2['nama'] . '<br/>' . $layer2['jabatan'] . '<br/>' . $izinLog->created_at . '</td>';
                     }
                 }
+                // 8=Cancel by Requestor
+                $where = ['id_trx' => $id, 'nik_pic' => $trx->karyawan];
+                $izinLog = TrxIjinLog::where($where)->whereIn('id_status', [8])->orderBy('id', 'desc')->first();
+                if (!empty($izinLog)) {
+                    $htmlLog .= '<td>Membatalkan<br/><img src="' . public_path('assets/images/matta/cancelled.png') . '" height="30" /><br/>' . $karyawan['nama'] . '<br/>' . $karyawan['jabatan'] . '<br/>' . $izinLog->created_at . '</td>';
+                }
                 // // hco
                 // $where = ['id_trx' => $id, 'id_status' => 6];
                 // $izinLog = TrxIjinLog::where($where)->orderBy('id', 'desc')->first();
@@ -580,6 +626,7 @@ class TrxIjinController extends Controller
         // $hco = auth()->user()->nik;
 		$hco = MtrUtility::find(20)->informasi;
         $id = (new OpenDataController)->decryptWithKey($id);
+        // dd($request->all(), $id);
         // dd($request->all(), $id);
         $trx = TrxIjin::find( $id );
         $karyawan = json_decode($trx->karyawan_property, true);
@@ -646,6 +693,24 @@ class TrxIjinController extends Controller
             // 
             $trx->update();
             $this->insertLog($id, $status, $hco, 'Done by HC');
+            // 
+            return redirect('izin')->with('msg', 'Data is saved successfully.');
+        }
+        // 8=Cancel by Requestor
+        else if ($status == 8) {
+            $trx->status = $status;
+            $trx->update();
+            $this->deleteToDoList(['id_trx'=>$id, 'filename'=>'emails.izin0']);
+            $this->insertLog($id, $status, $nik, $keterangan);
+            // start
+            // parameter yang dipassing ke sendemail
+            $mailData['title'] = 'Formulir Izin';
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
+            $mailData['filename'] = 'emails.izin_cancel';
+            $mailData['to'] = $atasan['email'];
+            $this->sendEmail($mailData);
+            $mailData['to'] = $layer2['email'];
+            $this->sendEmail($mailData);
             // 
             return redirect('izin')->with('msg', 'Data is saved successfully.');
         }
