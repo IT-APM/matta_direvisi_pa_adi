@@ -39,7 +39,7 @@
                                 <select class="form-select" id="tipe" name="tipe" required="">
                                     <option selected="" disabled="" value="">Pilih...</option>
                                     @foreach ($tipe as $data)
-                                    <option value="{{ $data->id }}">{{ $data->tipe }}</option>
+                                        <option value="{{ $data->id }}">{{ $data->tipe }}</option>
                                     @endforeach
                                 </select>
                             </div>
