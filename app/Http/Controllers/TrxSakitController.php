@@ -39,19 +39,14 @@ class TrxSakitController extends Controller
     public function index(Request $request)
     {
         // 
+        $auth_user = auth()->user()->nik;
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $no = 0;
         $trx = TrxSakit::orderBy('id', 'desc')->get();
         if(auth()->user()->userrole == 'nhc'){
-            $layer1 = auth()->user()->nik;
-            $where = ['layer1' => $layer1];
-            $_nik = Karyawan::select('nik')->where($where)->orderBy('nama', 'asc')->get();
-            $arr_nik = [$layer1];
-            foreach ($_nik as $data){
-                array_push($arr_nik, $data->nik);
-            }
-            $trx = TrxSakit::whereIn('nik_karyawan', $arr_nik)->orderBy('id', 'desc')->get();
+            // $trx = TrxSakit::whereIn('nik_karyawan', $arr_nik)->orderBy('id', 'desc')->get();
+            $trx = TrxSakit::where('pic_pengganti','LIKE','%'.$auth_user.'%')->orWhere('nik_karyawan', [$auth_user])->orWhere('nik_atasan', [$auth_user])->orderBy('id', 'desc')->get();
         }
         // filter parameter
         function forgetById($collection,$id){
@@ -104,14 +99,12 @@ class TrxSakitController extends Controller
             $_nama = Karyawan::select('nik')->where('nama','LIKE','%'.$nama.'%')->get();
             $trx = TrxSakit::whereIn('nik_karyawan', $_nama)->whereIn('status_sakit', $arr_status_sakit)->orderBy('id', 'desc')->get();
             if(auth()->user()->userrole == 'nhc'){
-                $layer1 = auth()->user()->nik;
-                $where = ['layer1' => $layer1];
-                $_nik = Karyawan::select('nik')->where($where)->orderBy('nama', 'asc')->get();
-                $arr_nik = [$layer1];
-                foreach ($_nik as $data){
-                    array_push($arr_nik, $data->nik);
-                }
-                $trx = TrxSakit::whereIn('nik_karyawan', $_nama)->whereIn('status_sakit', $arr_status_sakit)->whereIn('nik_karyawan', $arr_nik)->orderBy('id', 'desc')->get();
+                // $trx = TrxSakit::whereIn('nik_karyawan', $_nama)->whereIn('status_sakit', $arr_status_sakit)->whereIn('nik_karyawan', $arr_nik)->orderBy('id', 'desc')->get();
+                $trx = TrxSakit::whereIn('nik_karyawan', $_nama)->whereIn('status_sakit', $arr_status_sakit)->where(function ($query) use ($auth_user) {
+                    $query->where('nik_karyawan', $auth_user)
+                    ->orWhere('nik_atasan', $auth_user)
+                    ->orWhere('pic_pengganti', 'LIKE', '%'.$auth_user.'%');
+                })->get();
             }
             foreach ($trx as $data){
                 $_arr_tanggal = explode(';', $data->tanggal_sakit);
