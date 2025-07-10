@@ -18,6 +18,7 @@ use App\Models\MtrUtility;
 use App\Mail\MattaRebornMail;
 use Illuminate\Support\Facades\Mail;
 use URL;
+use Illuminate\Support\Facades\Crypt;
 
 class OvertimeController extends Controller
 {
@@ -43,6 +44,11 @@ class OvertimeController extends Controller
             // $ot = Overtime::where($where)->orderBy( 'ot_maker_at', 'desc' )->limit(100)->get();
             $ot = Overtime::where($where)->whereYear('ot_start_at', $tahun)->whereMonth('ot_start_at', $bulan)->orderBy( 'ot_maker_at', 'desc' )->get();
         }
+        // 
+        //passing parameter ke formulir page
+        // hanya karyawan bawahan langsung saja
+        $where = ['is_aktif' => 1, 'layer1' => auth()->user()->nik];
+        $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         // filter parameter
         $_arr_ot_approver_status = Overtime::distinct()->orderBy( 'ot_approver_status', 'asc' )->get(['ot_approver_status']);
         $arr_ot_approver_status = array();
@@ -80,7 +86,7 @@ class OvertimeController extends Controller
             $arr_ot_approver_status = array();
         }
         // end filter
-        return view( 'overtime.approval.index', compact( 'ot', 'no', 'ot_approver_status', 'arr_ot_approver_status', 'date_from', 'date_to', 'ot_maker_by', 'ot_approver_by' ) );
+        return view( 'overtime.approval.index', compact( 'ot', 'no', 'ot_approver_status', 'arr_ot_approver_status', 'date_from', 'date_to', 'ot_maker_by', 'ot_approver_by', 'karyawan' ) );
         // return view( 'overtime.approval.index', compact( 'ot', 'no' ) );
     }
 
@@ -513,13 +519,22 @@ class OvertimeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $this->authorize('staf_only');
+        // $this->authorize('staf_only');
         //
         $type_code = OvertimeType::orderBy( 'ot_type', 'asc' )->get();
+        //passing parameter ke formulir page
+        $where = ['is_aktif' => 1];
+        $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $status = 'create';
-        return view( 'overtime.propose.upsert', compact( 'type_code', 'status' ) );
+        // $ot_maker_by = $request->ot_maker_by;
+        $ot_maker_by = Crypt::decrypt($request->ot_maker_by);
+        $where = ['nik' => $ot_maker_by];
+        $pengaju = Karyawan::select('nik', 'nama')->where($where)->first();
+        $pengaju = $pengaju->nama.' / '.$pengaju->nik;
+        return view( 'overtime.propose.upsert', compact( 'type_code', 'status', 'pengaju', 'ot_maker_by' ) );
+        // return view('formulir.sakit.insert', compact('karyawan', 'status', 'nik_karyawan', 'pengaju'));
     }
 
     /**
@@ -530,6 +545,7 @@ class OvertimeController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         // tidak digunakan, karena sudah menggunakan rest-api
         // start
         // $now = date("Y-m-d H:i:s");
@@ -560,7 +576,8 @@ class OvertimeController extends Controller
         $client = new \GuzzleHttp\Client();
         $response = $client->request('POST', URL::to('/').'/api/ot', [
             'form_params' => [
-                'ot_maker_by' => auth()->user()->nik,
+                // 'ot_maker_by' => auth()->user()->nik,
+                'ot_maker_by' => $request->ot_maker_by,
                 'ot_start_at' => Carbon::parse($request->ot_start_at)->format('Y-m-d H:i:s'),
                 'ot_end_at' => Carbon::parse($request->ot_end_at)->format('Y-m-d H:i:s'),
                 'ot_title' => $request->ot_title,
