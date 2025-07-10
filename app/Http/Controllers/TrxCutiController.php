@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use DB;
 use Elibyy\TCPDF\Facades\TCPDF;
+use Illuminate\Support\Facades\Crypt;
 // 
 
 class TrxCutiController extends Controller
@@ -89,6 +90,8 @@ class TrxCutiController extends Controller
         // }
         // die;
         // 
+        $where = ['is_aktif' => 1];
+        $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         // halaman index kali pertama dibuka
         $no = 0;
         $trx = TrxCuti::orderBy('id', 'desc')->get();
@@ -105,16 +108,27 @@ class TrxCutiController extends Controller
         //     $trxM->update();
         // }
         if(auth()->user()->userrole == 'nhc'){
-            $layer1 = auth()->user()->nik;
-            $where = ['layer1' => $layer1];
-            $_nik = Karyawan::select('nik')->where($where)->orderBy('nama', 'asc')->get();
-            $arr_nik = [$layer1];
-            foreach ($_nik as $data){
-                array_push($arr_nik, $data->nik);
+            // $layer1 = auth()->user()->nik;
+            // $where = ['layer1' => $layer1];
+            // $_nik = Karyawan::select('nik')->where($where)->orderBy('nama', 'asc')->get();
+            // $arr_nik = [$layer1];
+            // foreach ($_nik as $data){
+            //     array_push($arr_nik, $data->nik);
+            // }
+            // $trx = TrxCuti::whereIn('nik_karyawan', $arr_nik)->orderBy('id', 'desc')->get();
+            $trx = TrxCuti::where('nik_karyawan', [auth()->user()->nik])->orWhere('nik_atasan', [auth()->user()->nik])->orderBy('id', 'desc')->get();
+            // 
+            $arr_id = [];
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id);
             }
-            $trx = TrxCuti::whereIn('nik_karyawan', $arr_nik)->orderBy('id', 'desc')->get();
-            // $where = ['nik_karyawan' => auth()->user()->nik];
-            // $trx = TrxCuti::where($where)->orderBy('id', 'desc')->get();
+            $where = ['nik_pic' => auth()->user()->nik];
+            $trx = TrxCutiLog::where($where)->orderBy('id_trx', 'desc')->get();
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id_trx);
+            }
+            // 
+            $trx = TrxCuti::whereIn('id', $arr_id)->orderBy('id', 'desc')->get();
         }
         // filter parameter
         function forgetById($collection,$id){
@@ -186,14 +200,27 @@ class TrxCutiController extends Controller
             }
             $trx = TrxCuti::where('nik_karyawan','LIKE','%'.$_nik_karyawan.'%')->where('nik_atasan','LIKE','%'.$_nik_atasan.'%')->whereIn('status_cuti', $arr_status_cuti)->whereIn('tipe_cuti', $arr_tipe_cuti)->orderBy('id', 'desc')->get();
             if(auth()->user()->userrole == 'nhc'){
-                $layer1 = auth()->user()->nik;
-                $where = ['layer1' => $layer1];
-                $_nik = Karyawan::select('nik')->where($where)->orderBy('nama', 'asc')->get();
-                $arr_nik = [$layer1];
-                foreach ($_nik as $data){
-                    array_push($arr_nik, $data->nik);
+                // $layer1 = auth()->user()->nik;
+                // $where = ['layer1' => $layer1];
+                // $_nik = Karyawan::select('nik')->where($where)->orderBy('nama', 'asc')->get();
+                // $arr_nik = [$layer1];
+                // foreach ($_nik as $data){
+                //     array_push($arr_nik, $data->nik);
+                // }
+                $trx = TrxCuti::where('nik_karyawan','LIKE','%'.$_nik_karyawan.'%')->where('nik_atasan', [auth()->user()->nik])->whereIn('status_cuti', $arr_status_cuti)->whereIn('tipe_cuti', $arr_tipe_cuti)->orderBy('id', 'desc')->get();
+                // dd($trx);
+                // 
+                $arr_id = [];
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id);
                 }
-                $trx = TrxCuti::where('nik_karyawan','LIKE','%'.$_nik_karyawan.'%')->whereIn('status_cuti', $arr_status_cuti)->whereIn('tipe_cuti', $arr_tipe_cuti)->whereIn('nik_karyawan', $arr_nik)->orderBy('id', 'desc')->get();
+                $where = ['nik_pic' => auth()->user()->nik];
+                $trx = TrxCutiLog::where($where)->orderBy('id_trx', 'desc')->get();
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id_trx);
+                }
+                // 
+                $trx = TrxCuti::whereIn('id', $arr_id)->where('nik_karyawan','LIKE','%'.$_nik_karyawan.'%')->whereIn('status_cuti', $arr_status_cuti)->whereIn('tipe_cuti', $arr_tipe_cuti)->orderBy('id', 'desc')->get();
             }
             foreach ($trx as $data){
                 $_arr_tanggal = explode(';', $data->tanggal_cuti);
@@ -208,7 +235,7 @@ class TrxCutiController extends Controller
             $arr_nik_atasan = array();
         }
         // end filter
-        return view( 'formulir.cuti.index', compact( 'trx', 'no', 'status_cuti', 'tipe_cuti', 'arr_status_cuti', 'arr_tipe_cuti', 'date_from', 'date_to', 'nik_karyawan', '_nik_karyawan', 'nik_atasan', '_nik_atasan'));
+        return view( 'formulir.cuti.index', compact( 'trx', 'no', 'status_cuti', 'tipe_cuti', 'arr_status_cuti', 'arr_tipe_cuti', 'date_from', 'date_to', 'nik_karyawan', '_nik_karyawan', 'nik_atasan', '_nik_atasan', 'karyawan'));
         // return view('formulir.cuti.index', compact('trx', 'no'));
     }
 
@@ -479,7 +506,7 @@ class TrxCutiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
         //passing parameter ke formulir page
@@ -490,7 +517,11 @@ class TrxCutiController extends Controller
         $tipe = CutiTipe::whereNotIn('id', [12])->orderBy('created_at', 'asc')->get();
         $status = 'create';
         // $jumlah_hari = [1,2,3,4,5,6,7,8,9,10,11,12];
-        return view('formulir.cuti.insert', compact('karyawan', 'tipe', 'status'));
+        $nik_karyawan = Crypt::decrypt($request->nik_karyawan);
+        $where = ['nik' => $nik_karyawan];
+        $pengaju = Karyawan::select('nik', 'nama')->where($where)->first();
+        $pengaju = $pengaju->nama.' - '.$pengaju->nik;
+        return view('formulir.cuti.insert', compact('karyawan', 'tipe', 'status', 'pengaju', 'nik_karyawan'));
     }
 
     /**
@@ -504,8 +535,8 @@ class TrxCutiController extends Controller
         // dd($request->all());
         $preview = $request->preview;
         // start
-        // $nik_karyawan = $request->nik_karyawan;
-        $nik_karyawan = auth()->user()->nik;
+        $nik_karyawan = $request->nik_karyawan;
+        // $nik_karyawan = auth()->user()->nik;
         $tipe_cuti = $request->tipe_cuti;
         $waktu = date('Y-m-d');
         $tanggal_mulai = $request->tanggal_mulai;
