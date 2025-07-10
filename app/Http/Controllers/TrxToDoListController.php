@@ -10,6 +10,8 @@ use App\Models\Divisi;
 use App\Models\Departemen;
 use App\Models\SubDepartemen;
 use DB;
+use App\Models\TrxPdp;
+use App\Models\MtrUtility;
 
 class TrxToDoListController extends Controller
 {
@@ -83,6 +85,10 @@ class TrxToDoListController extends Controller
      */
     public function index()
     {
+        $where = ['nik' => auth()->user()->nik];
+        // 40=PDP di dalam
+        $is_pdp = ['is_pdp'=>TrxPdp::select('is_setuju')->where($where)->exists(), 'is_aktif'=> (MtrUtility::find(40)->informasi==1)];
+        // dd($is_pdp);
         // $arr = [];
         // $trx = DB::select("SELECT COUNT(kode_sub_departemen) AS jumlah,kode_sub_departemen FROM mtr_tbl_karyawan WHERE is_aktif=1 AND wg_id=1 AND nik NOT IN ('Hco.all', 'IT.BM') GROUP BY kode_sub_departemen ORDER BY jumlah");
         // foreach ($trx as $data) {
@@ -134,7 +140,7 @@ class TrxToDoListController extends Controller
         $where = ['nik' => auth()->user()->nik, 'filename' => 'emails.recruitment0'];
         $recruitment = ToDoList::where($where)->orderBy('id', 'desc')->get();
         // 
-        return view('todolist.index', compact('trxKebutuhan','trxCuti','trxIzin','trxNonAktif','trxPelatihan','trxPenilaian','trxReimburse','trxRekomendasi','trxOvertime','trxBpd','trxSakit','recruitment'));
+        return view('todolist.index', compact('trxKebutuhan','trxCuti','trxIzin','trxNonAktif','trxPelatihan','trxPenilaian','trxReimburse','trxRekomendasi','trxOvertime','trxBpd','trxSakit','recruitment','is_pdp'));
     }
 
     /**
