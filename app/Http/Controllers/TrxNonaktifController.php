@@ -70,6 +70,18 @@ class TrxNonaktifController extends Controller
         if(auth()->user()->userrole == 'nhc'){
             $where = ['pengaju' => auth()->user()->nik];
             $trx = TrxNonaktifMaster::where($where)->orderBy('id', 'desc')->get();
+            // 
+            $arr_id = [];
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id);
+            }
+            $where = ['nik_pic' => auth()->user()->nik];
+            $trx = TrxNonaktifLog::where($where)->orderBy('id_trx', 'desc')->get();
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id_trx);
+            }
+            // 
+            $trx = TrxNonaktifMaster::whereIn('id', $arr_id)->orderBy('id', 'desc')->get();
         }
         // filter parameter
         $nama = '';
@@ -132,6 +144,18 @@ class TrxNonaktifController extends Controller
             if(auth()->user()->userrole == 'nhc'){
                 $where = ['pengaju' => auth()->user()->nik];
                 $trx = TrxNonaktifMaster::whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_nama)->whereIn('atasan', $_atasan)->whereIn('status', $arr_status)->whereIn('alasan', $arr_alasan)->where($where)->orderBy('id', 'desc')->get();
+                // 
+                $arr_id = [];
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id);
+                }
+                $where = ['nik_pic' => auth()->user()->nik];
+                $trx = TrxNonaktifLog::where($where)->orderBy('id_trx', 'desc')->get();
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id_trx);
+                }
+                // 
+                $trx = TrxNonaktifMaster::whereIn('id', $arr_id)->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_nama)->whereIn('atasan', $_atasan)->whereIn('status', $arr_status)->whereIn('alasan', $arr_alasan)->orderBy('id', 'desc')->get();
                 foreach ($trx as $_trx) {
                     $where = ['nik_karyawan' => $_trx->pengaju];
                     $check = TrxPenilaian::where($where)->whereIn('id_status', [4,8])->whereIn('is_perpanjang', $arr_perpanjangan)->get();
