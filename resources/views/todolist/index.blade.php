@@ -240,7 +240,68 @@
     </div>
     <!--  -->
 </div>
+{{--  --}}
+<div class="modal fade bd-example-modal-lg" id="autoShowModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+{{-- <div class="modal fade" id="autoShowModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true"> --}}
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title w-100 text-center" id="myLargeModalLabel">SURAT PERSETUJUAN PEMROSESAN DATA PRIBADI</h4>
+            {{-- <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button> --}}
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div style="text-align: justify;font-size: 15px;">
+                            <ol>
+                                <li>Saya memberikan persetujuan kepada PT Alita Praya Mitra (“<b>Alita</b>”) untuk melakukan pemrosesan Data Pribadi yang melekat pada identitas diri (“<b>Data Pribadi</b>”) yang telah saya berikan dan meratifikasi seluruh pemrosesan Data Pribadi yang telah dilakukan sebelum tanggal persetujuan ini.</li>
+                                <li>Bahwa Alita akan menggunakan Data Pribadi tersebut untuk kebutuhan penyimpanan sebagai <i>database</i>, pelaporan kepada pihak ketiga yang diwajibkan oleh Peraturan Perundang-undangan di Indonesia dan/atau kegiatan-kegiatan lain yang berkaitan dengan kepentingan bisnis Alita.</li>
+                                <li>Alita akan menyimpan Data Pribadi tersebut di sistem MATTA  dan sistem database yang lain milik Alita dan Alita menjamin tidak ada penyalahgunaan atau penggunaan di luar kebutuhan yang tercantum dalam Ayat 2 di atas.</li>
+                                <li>Saya telah mengetahui dan/atau menyetujui bahwa terdapat <i>Closed-Circuit Television (CCTV)</i> yang terpasang di lingkungan kerja Alita untuk kepentingan Perlindungan Data Pribadi Alita.</li>
+                                <li>Saya memahami dan setuju bahwa Alita dapat mengungkapkan Data Pribadi tersebut kepada pihak ketiga lainnya dengan tujuan dan tata cara yang telah diatur dalam Peraturan Perundang-undangan yang berlaku, dengan pemberitahuan terlebih dahulu oleh Alita.</li>
+                                <li>Alita akan melakukan penyimpanan Data Pribadi saya selama 10 (sepuluh) tahun sejak saya menyerahkan Data Pribadi saya.</li>
+                                <li>Alita menjamin hak saya sebagai subjek Data Pribadi sesuai Undang-Undang Perlindungan Data Pribadi No. 27/2022, termasuk dengan Peraturan Perundang-undangan turunannya.</li>
+                                <li>Saya menyatakan bahwa Data Pribadi dan dokumen yang saya berikan adalah benar dan sesuai dengan kondisi terkini.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <form action="{{ route('pdp.store') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    @csrf
+                    {{-- <button class="btn btn-warning" type="submit" data-bs-dismiss="modal">Setuju</button> --}}
+                    <input type="hidden" id="is_setuju" name="is_setuju" value="1">
+                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                    <button class="btn btn-warning" type="submit">Setuju</button>
+                </form>
+             </div>
+        </div>
+    </div>
+</div>
+<button id="autoClickBtn" type="button" class="btn btn-warning d-none" data-bs-toggle="modal" data-bs-target="#autoShowModal"></button>
+{{-- <button id="autoClickBtn" class="btn btn-primary" onclick="alert('Button was clicked!')">
+    Click Me
+  </button> --}}
+{{--  --}}
 <script type="text/javascript">
+@if(!$is_pdp['is_pdp'] && $is_pdp['is_aktif'])
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('autoClickBtn').click();
+});
+// document.addEventListener('DOMContentLoaded', function () {
+//     var myModal = new bootstrap.Modal(document.getElementById('autoShowModal'));
+//     myModal.show();
+// });
+// window.addEventListener('DOMContentLoaded', function () {
+//     var myModal = new bootstrap.Modal(document.getElementById('autoShowModal'));
+//     myModal.show();
+// });
+// window.addEventListener('DOMContentLoaded', function () {
+//     document.getElementById('autoShowModal').click();
+//   });
+@endif
+// 
 var session_layout = '{{ session()->get('layout ') }}';
 </script>
 @endsection
