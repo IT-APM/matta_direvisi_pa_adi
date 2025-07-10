@@ -74,7 +74,7 @@ class UtilitasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // dd($request->all, $id);
         $utilitas = MtrUtility::find(1);
         $utilitas->informasi = $request->_1;
         $utilitas->update();
@@ -157,6 +157,12 @@ class UtilitasController extends Controller
         $utilitas->update();
         $utilitas = MtrUtility::find(38);
         $utilitas->informasi = $request->_38;
+        $utilitas->update();
+        $utilitas = MtrUtility::find(39);
+        $utilitas->informasi = $request->_39;
+        $utilitas->update();
+        $utilitas = MtrUtility::find(40);
+        $utilitas->informasi = $request->_40;
         $utilitas->update();
         return redirect('utilitas')->with('msg', 'Data is saved successfully.');
     }
