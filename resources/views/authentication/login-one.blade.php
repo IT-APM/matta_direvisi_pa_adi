@@ -43,6 +43,24 @@
                                     <label class="text-muted" for="checkbox1">Remember password</label>
                                 </div> -->
                                 <button class="btn btn-primary btn-block" type="submit">Login</button>
+                                {{--  --}}
+                                <div class="modal fade bd-example-modal-lg" id="autoShowModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            {{-- <h4 class="modal-title" id="myLargeModalLabel">Large modal</h4> --}}
+                                            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <img src="{{asset('assets/images/matta/uu_pdp.png')}}" class="img-fluid d-flex" alt="Pengumuman">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Tutup</button>
+                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{--  --}}
                                 <!-- <a class="btn btn-primary btn-block" href="{{ route('index') }}">Login</a> -->
                             </div>
                             <div class="form-group mt-0">
@@ -61,6 +79,14 @@
 
 @section('script')
 <script type="text/javascript">
+@php $is_aktif = App\Models\MtrUtility::find(39)->informasi==1; @endphp
+@if($is_aktif)
+document.addEventListener('DOMContentLoaded', function () {
+    var myModal = new bootstrap.Modal(document.getElementById('autoShowModal'));
+    myModal.show();
+});
+@endif
+//   
 function show_pwd() {
   var x = document.getElementById("password");
   if (x.type === "password") {
