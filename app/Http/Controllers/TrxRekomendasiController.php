@@ -46,8 +46,21 @@ class TrxRekomendasiController extends Controller
         $no = 0;
         $trx = TrxRekomendasiMaster::orderBy('id', 'desc')->get();
         if(auth()->user()->userrole == 'nhc'){
-            $where = ['nik_atasan' => auth()->user()->nik];
-            $trx = TrxRekomendasiMaster::where($where)->orderBy('id', 'desc')->get();
+            // $where = ['nik_atasan' => auth()->user()->nik];
+            // $trx = TrxRekomendasiMaster::where($where)->orderBy('id', 'desc')->get();
+            $trx = TrxRekomendasiMaster::where('nik_karyawan', [auth()->user()->nik])->orWhere('nik_atasan', [auth()->user()->nik])->orWhere('nik_reviewer1', [auth()->user()->nik])->orWhere('nik_reviewer2', [auth()->user()->nik])->orWhere('nik_reviewer3', [auth()->user()->nik])->orderBy('id', 'desc')->get();
+            // 
+            $arr_id = [];
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id);
+            }
+            $where = ['nik_pic' => auth()->user()->nik];
+            $trx = TrxRekomendasiLog::where($where)->orderBy('id_trx', 'desc')->get();
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id_trx);
+            }
+            // 
+            $trx = TrxRekomendasiMaster::whereIn('id', $arr_id)->orderBy('id', 'desc')->get();
         }
         // 
         // foreach ($trx as $value) {
@@ -98,8 +111,21 @@ class TrxRekomendasiController extends Controller
             // }
             $trx = TrxRekomendasiMaster::whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->orderBy('id', 'desc')->get();
             if(auth()->user()->userrole == 'nhc'){
-                $where = ['nik_atasan' => auth()->user()->nik];
-                $trx = TrxRekomendasiMaster::whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->where($where)->orderBy('id', 'desc')->get();
+                // $where = ['nik_atasan' => auth()->user()->nik];
+                // $trx = TrxRekomendasiMaster::whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->where($where)->orderBy('id', 'desc')->get();
+                $trx = TrxRekomendasiMaster::where(function($query) {$query->where('nik_karyawan', [auth()->user()->nik])->orWhere('nik_atasan', [auth()->user()->nik])->orWhere('nik_reviewer1', [auth()->user()->nik])->orWhere('nik_reviewer2', [auth()->user()->nik])->orWhere('nik_reviewer3', [auth()->user()->nik]);})->whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->orderBy('id', 'desc')->get();
+                // 
+                $arr_id = [];
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id);
+                }
+                $where = ['nik_pic' => auth()->user()->nik];
+                $trx = TrxRekomendasiLog::where($where)->orderBy('id_trx', 'desc')->get();
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id_trx);
+                }
+                // 
+                $trx = TrxRekomendasiMaster::whereIn('id', $arr_id)->where(function($query) {$query->where('nik_karyawan', [auth()->user()->nik])->orWhere('nik_atasan', [auth()->user()->nik])->orWhere('nik_reviewer1', [auth()->user()->nik])->orWhere('nik_reviewer2', [auth()->user()->nik])->orWhere('nik_reviewer3', [auth()->user()->nik]);})->whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->orderBy('id', 'desc')->get();
             }
         }else{
             $arr_status_rekomendasi = array();
