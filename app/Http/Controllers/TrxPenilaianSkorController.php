@@ -306,6 +306,10 @@ class TrxPenilaianSkorController extends Controller
         $nik_pic = $trx->nik_karyawan;
         $where = [ 'id_trx' => $id, 'nik_pic' => $nik_pic ];
         $nKaryawan = TrxPenilaianLog::where($where)->count();
+        // pengecualian agar maker hco bisa melakukan isian dirinya sendiri
+        if(TrxPenilaianLog::where(['id_trx' => $id])->count() == 1 && $nik_pic == $trx->nik_karyawan){
+            $nKaryawan = 0;
+        }
         // 
         $nik_pic = $trx->nik_penilai_1;
         $where = [ 'id_trx' => $id, 'nik_pic' => $nik_pic ];
@@ -320,7 +324,6 @@ class TrxPenilaianSkorController extends Controller
         $nPenilai3 = TrxPenilaianLog::where($where)->count();
         // return response()->json(['id_status' => $trx->id_status, 'nKaryawan' => $nKaryawan]);die;
         // formulir diinput oleh karyawan
-        // maker hco tidak bisa melakukan isian dirinya sendiri
         if($trx->id_status==1 && $nKaryawan==0 && $request->pic=='nik_karyawan'){
             $data = $request->all();
             foreach ($data as $key => $value) {
