@@ -213,7 +213,7 @@
                                     <input class="form-control" name="tanggal_peraturan_perusahaan" id="tanggal_peraturan_perusahaan" type="date" value="{{ $trxD->tanggal_peraturan_perusahaan }}">
                                 </div>
                                 <div class="col-md-12 pb-2">
-                                    <label class="form-label" for="tanggal_pedoman_prilaku">Pedoman Prilaku</label>
+                                    <label class="form-label" for="tanggal_pedoman_prilaku">Pedoman Perilaku</label>
                                     <input class="form-control" name="tanggal_pedoman_prilaku" id="tanggal_pedoman_prilaku" type="date" value="{{ $trxD->tanggal_pedoman_prilaku }}">
                                 </div>
                                 <div class="col-md-12 pb-2">
