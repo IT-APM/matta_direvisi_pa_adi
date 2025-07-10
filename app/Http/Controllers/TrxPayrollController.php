@@ -985,26 +985,96 @@ class TrxPayrollController extends Controller
                         $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
                         $payroll = TrxPayroll::where($where)->orderBy('id', 'asc')->get();
                         $this->insertBpjs($payroll);
-                        // membandingkan data 1 bulan sebelumnya untuk mengecek apakah ada penambahan Insentif dan atau Kompensasi KKWT
-                        $is_insentif = false;
-                        $is_kompensasi = false;
+                        // sudah tidak diguankan lagi refer to CM 371
+                        // // membandingkan data 1 bulan sebelumnya untuk mengecek apakah ada penambahan Insentif dan atau Kompensasi KKWT
+                        // $is_insentif = false;
+                        // $is_kompensasi = false;
+                        // 6=Insentif
+                        // $arr_id = [6];
+                        // $insentif = TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
+                        // // 9=Kompensasi KKWT
+                        // $arr_id = [9];
+                        // $kompensasi = TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
+                        // // ambil kondisi bulan lalu
+                        // $submonth = Carbon::createFromFormat('Y-m-d', "{$data0[$x][$_103]}-{$data0[$x][$_102]}-01")->subMonth();
+                        // $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$submonth->month, 'tahun'=>$submonth->year];
+                        // $arr_id = [6];
+                        // $insentif_submonth = TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
+                        // $arr_id = [9];
+                        // $kompensasi_submonth = TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
+                        // if($insentif > $insentif_submonth){
+                        //     $is_insentif = true;
+                        // }
+                        // if($kompensasi > $kompensasi_submonth){
+                        //     $is_kompensasi = true;
+                        // }
+                        // 
+                        // sudah tidak diguankan lagi refer to CM 371
+                        // // cek bulan sebelumnya
+                        // // insert into payroll_email
+                        // if($is_insentif && $is_kompensasi){
+                        //     // delete data existing
+                        //     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                        //     TrxPayrollEmail::where($where)->delete();
+                        //     // insert new data
+                        //     $trx = New TrxPayrollEmail;
+                        //     $trx->nik = $data0[$x][$_101];
+                        //     $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
+                        //     $trx->bulan = $data0[$x][$_102];
+                        //     $trx->tahun = $data0[$x][$_103];
+                        //     $subject = 'Penambahan Insentif dan Kompensasi PKWT';
+                        //     $trx->email = json_encode(['nik'=>$data0[$x][$_101], 'subject'=>$subject, 'body'=>$this->getBodyEmail($karyawan->nama, $data0[$x][$_102], $data0[$x][$_103], 69), 'to'=>$karyawan->email, 'cc'=>implode(',', $email_hco)]);
+                        //     $trx->id_addsub = '6,9';
+                        //     $trx->save();
+                        // }
+                        // // cek bulan sebelumnya
+                        // elseif($is_insentif){
+                        //     // delete data existing
+                        //     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                        //     TrxPayrollEmail::where($where)->delete();
+                        //     // insert new data
+                        //     $trx = New TrxPayrollEmail;
+                        //     $trx->nik = $data0[$x][$_101];
+                        //     $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
+                        //     $trx->bulan = $data0[$x][$_102];
+                        //     $trx->tahun = $data0[$x][$_103];
+                        //     $subject = 'Penambahan Insentif';
+                        //     $trx->email = json_encode(['nik'=>$data0[$x][$_101], 'subject'=>$subject, 'body'=>$this->getBodyEmail($karyawan->nama, $data0[$x][$_102], $data0[$x][$_103], 6), 'to'=>$karyawan->email, 'cc'=>implode(',', $email_hco)]);
+                        //     $trx->id_addsub = '6';
+                        //     $trx->save();
+                        // }
+                        // // cek bulan sebelumnya
+                        // elseif($is_kompensasi){
+                        //     // delete data existing
+                        //     $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                        //     TrxPayrollEmail::where($where)->delete();
+                        //     // insert new data
+                        //     $trx = New TrxPayrollEmail;
+                        //     $trx->nik = $data0[$x][$_101];
+                        //     $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
+                        //     $trx->bulan = $data0[$x][$_102];
+                        //     $trx->tahun = $data0[$x][$_103];
+                        //     $subject = 'Penambahan Kompensasi PKWT';
+                        //     $trx->email = json_encode(['nik'=>$data0[$x][$_101], 'subject'=>$subject, 'body'=>$this->getBodyEmail($karyawan->nama, $data0[$x][$_102], $data0[$x][$_103], 9), 'to'=>$karyawan->email, 'cc'=>implode(',', $email_hco)]);
+                        //     $trx->id_addsub = '9';
+                        //     $trx->save();
+                        // }
+                        // 
+                        $arr_addsub = [];
                         // 6=Insentif
                         $arr_id = [6];
-                        $insentif = TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
+                        if(TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka') > 0){
+                            array_push($arr_addsub, 6);
+                        }
                         // 9=Kompensasi KKWT
                         $arr_id = [9];
-                        $kompensasi = TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
-                        $submonth = Carbon::createFromFormat('Y-m-d', "{$data0[$x][$_103]}-{$data0[$x][$_102]}-01")->subMonth();
-                        $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$submonth->month, 'tahun'=>$submonth->year];
-                        $arr_id = [6];
-                        $insentif_submonth = TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
-                        $arr_id = [9];
-                        $kompensasi_submonth = TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka');
-                        if($insentif > $insentif_submonth){
-                            $is_insentif = true;
+                        if(TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka') > 0){
+                            array_push($arr_addsub, 9);
                         }
-                        if($kompensasi > $kompensasi_submonth){
-                            $is_kompensasi = true;
+                        // 10=Rapel
+                        $arr_id = [10];
+                        if(TrxPayrollAddsub::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get()->sum('angka') > 0){
+                            array_push($arr_addsub, 10);
                         }
                         $karyawan = Karyawan::where(['nik'=>$data0[$x][$_101]])->first();
                         $email_hco = array();
@@ -1012,50 +1082,62 @@ class TrxPayrollController extends Controller
                         foreach($hco as $data){
                             array_push($email_hco, $data->email);
                         }
-                        // insert into payroll_email
-                        if($is_insentif && $is_kompensasi){
-                            // delete data existing
-                            $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
-                            TrxPayrollEmail::where($where)->delete();
-                            // insert new data
-                            $trx = New TrxPayrollEmail;
-                            $trx->nik = $data0[$x][$_101];
-                            $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
-                            $trx->bulan = $data0[$x][$_102];
-                            $trx->tahun = $data0[$x][$_103];
-                            $subject = 'Penambahan Insentif dan Kompensasi PKWT';
-                            $trx->email = json_encode(['nik'=>$data0[$x][$_101], 'subject'=>$subject, 'body'=>$this->getBodyEmail($karyawan->nama, $data0[$x][$_102], $data0[$x][$_103], 69), 'to'=>$karyawan->email, 'cc'=>implode(',', $email_hco)]);
-                            $trx->id_addsub = '6,9';
-                            $trx->save();
-                        }elseif($is_insentif){
-                            // delete data existing
-                            $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
-                            TrxPayrollEmail::where($where)->delete();
-                            // insert new data
-                            $trx = New TrxPayrollEmail;
-                            $trx->nik = $data0[$x][$_101];
-                            $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
-                            $trx->bulan = $data0[$x][$_102];
-                            $trx->tahun = $data0[$x][$_103];
-                            $subject = 'Penambahan Insentif';
-                            $trx->email = json_encode(['nik'=>$data0[$x][$_101], 'subject'=>$subject, 'body'=>$this->getBodyEmail($karyawan->nama, $data0[$x][$_102], $data0[$x][$_103], 6), 'to'=>$karyawan->email, 'cc'=>implode(',', $email_hco)]);
-                            $trx->id_addsub = '6';
-                            $trx->save();
-                        }elseif($is_kompensasi){
-                            // delete data existing
-                            $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
-                            TrxPayrollEmail::where($where)->delete();
-                            // insert new data
-                            $trx = New TrxPayrollEmail;
-                            $trx->nik = $data0[$x][$_101];
-                            $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
-                            $trx->bulan = $data0[$x][$_102];
-                            $trx->tahun = $data0[$x][$_103];
-                            $subject = 'Penambahan Kompensasi PKWT';
-                            $trx->email = json_encode(['nik'=>$data0[$x][$_101], 'subject'=>$subject, 'body'=>$this->getBodyEmail($karyawan->nama, $data0[$x][$_102], $data0[$x][$_103], 9), 'to'=>$karyawan->email, 'cc'=>implode(',', $email_hco)]);
-                            $trx->id_addsub = '9';
+                        // delete data existing
+                        $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                        TrxPayrollEmail::where($where)->delete();
+                        // insert new data
+                        $trx = New TrxPayrollEmail;
+                        $trx->nik = $data0[$x][$_101];
+                        $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
+                        $trx->bulan = $data0[$x][$_102];
+                        $trx->tahun = $data0[$x][$_103];
+                        // 6=Insentif
+                        // 9=Kompensasi KKWT
+                        // 10=Rapel
+                        $subject = '';
+                        if(in_array(6, $arr_addsub)){
+                            if(in_array(9, $arr_addsub)){
+                                if(in_array(10, $arr_addsub)){
+                                    // dd('6 9 10');
+                                    $subject = 'Penambahan Insentif dan Kompensasi PKWT dan Rapel';
+                                }else{
+                                    // dd('6 9');
+                                    $subject = 'Penambahan Insentif dan Kompensasi PKWT';
+                                }
+                            }else{
+                                if(in_array(10, $arr_addsub)){
+                                    // dd('6 10');
+                                    $subject = 'Penambahan Insentif dan Rapel';
+                                }else{
+                                    // dd('6');
+                                    $subject = 'Penambahan Insentif';
+                                }
+                            }
+                        }else{
+                            if(in_array(9, $arr_addsub)){
+                                if(in_array(10, $arr_addsub)){
+                                    // dd('9 10');
+                                    $subject = 'Kompensasi PKWT dan Rapel';
+                                }else{
+                                    // dd('9');
+                                    $subject = 'Kompensasi PKWT';
+                                }
+                            }else{
+                                if(in_array(10, $arr_addsub)){
+                                    // dd('10');
+                                    $subject = 'Rapel';
+                                }else{
+                                    // NA
+                                }
+                            }
+                        }
+                        $trx->email = json_encode(['nik'=>$data0[$x][$_101], 'subject'=>$subject, 'body'=>$this->getBodyEmail($karyawan->nama, $data0[$x][$_102], $data0[$x][$_103], $arr_addsub), 'to'=>$karyawan->email, 'cc'=>implode(',', $email_hco)]);
+                        $trx->id_addsub = implode(',', $arr_addsub);
+                        // jika ada
+                        if(count($arr_addsub) > 0){
                             $trx->save();
                         }
+                        // 
                     }
                     // hanya outsource saja
                     elseif($data0[$x][$_100] == 'osc'){
@@ -2100,13 +2182,52 @@ class TrxPayrollController extends Controller
         $body = '<p>Dear Bapak/Ibu '.$nama.'</p>';
         // 6=Insentif
         // 9=Kompensasi KKWT
-        if($addsub == 69){
-            $body .= '<p>Kami informasikan bahwa terdapat penambahan insentif dan penambahan kompensasi masa Perjanjian Kerja Karyawan (PKWT) yang telah berakhir pada akhir '.$nama_bulan[$bulan - 1].' '.$tahun.' dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'. Informasi lebih detail terdapat dalam slip gaji yang dapat diunduh melalui menu Payroll Slip dalam web Matta (https://matta-reborn.alita.id).</p>';
-        }elseif($addsub == 6){
-            $body .= '<p>Kami informasikan bahwa terdapat penambahan insentif dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'. Informasi lebih detail terdapat dalam slip gaji yang dapat diunduh melalui menu Payroll Slip dalam web Matta (https://matta-reborn.alita.id).</p>';
-        }elseif($addsub == 9){
-            $body .= '<p>Kami informasikan bahwa terdapat penambahan kompensasi masa Perjanjian Kerja Karyawan (PKWT) yang telah berakhir pada akhir '.$nama_bulan[$bulan - 1].' '.$tahun.' dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'. Informasi lebih detail terdapat dalam slip gaji yang dapat diunduh melalui menu Payroll Slip dalam web Matta (https://matta-reborn.alita.id).</p>';
+        // 10=Rapel
+        $str_addsub = '';
+        if(in_array(6, $addsub)){
+            if(in_array(9, $addsub)){
+                if(in_array(10, $addsub)){
+                    // dd('6 9 10');
+                    $str_addsub = 'penambahan insentif dan penambahan kompensasi masa Perjanjian Kerja Karyawan (PKWT) yang telah berakhir pada akhir '.$nama_bulan[$bulan - 1].' '.$tahun.' dan rapel dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun;
+                }else{
+                    // dd('6 9');
+                    $str_addsub = 'penambahan insentif dan penambahan kompensasi masa Perjanjian Kerja Karyawan (PKWT) yang telah berakhir pada akhir '.$nama_bulan[$bulan - 1].' '.$tahun.' dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun;
+                }
+            }else{
+                if(in_array(10, $addsub)){
+                    // dd('6 10');
+                    $str_addsub = 'penambahan insentif dan rapel dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun;
+                }else{
+                    // dd('6');
+                    $str_addsub = 'penambahan insentif dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun;
+                }
+            }
+        }else{
+            if(in_array(9, $addsub)){
+                if(in_array(10, $addsub)){
+                    // dd('9 10');
+                    $str_addsub = 'penambahan kompensasi masa Perjanjian Kerja Karyawan (PKWT) yang telah berakhir pada akhir '.$nama_bulan[$bulan - 1].' '.$tahun.' dan rapel dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun;
+                }else{
+                    // dd('9');
+                    $str_addsub = 'penambahan kompensasi masa Perjanjian Kerja Karyawan (PKWT) yang telah berakhir pada akhir '.$nama_bulan[$bulan - 1].' '.$tahun.' dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun;
+                }
+            }else{
+                if(in_array(10, $addsub)){
+                    // dd('10');
+                    $str_addsub = 'rapel dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun;
+                }else{
+                    // NA
+                }
+            }
         }
+        $body .= '<p>Kami informasikan bahwa terdapat '.$str_addsub.'. Informasi lebih detail terdapat dalam slip gaji yang dapat diunduh melalui menu Payroll Slip dalam web Matta (https://matta-reborn.alita.id).</p>';
+        // if($addsub == 69){
+        //     $body .= '<p>Kami informasikan bahwa terdapat '.$str_addsub.'. Informasi lebih detail terdapat dalam slip gaji yang dapat diunduh melalui menu Payroll Slip dalam web Matta (https://matta-reborn.alita.id).</p>';
+        // }elseif($addsub == 6){
+        //     $body .= '<p>Kami informasikan bahwa terdapat penambahan insentif dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'. Informasi lebih detail terdapat dalam slip gaji yang dapat diunduh melalui menu Payroll Slip dalam web Matta (https://matta-reborn.alita.id).</p>';
+        // }elseif($addsub == 9){
+        //     $body .= '<p>Kami informasikan bahwa terdapat penambahan kompensasi masa Perjanjian Kerja Karyawan (PKWT) yang telah berakhir pada akhir '.$nama_bulan[$bulan - 1].' '.$tahun.' dalam penggajian bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'. Informasi lebih detail terdapat dalam slip gaji yang dapat diunduh melalui menu Payroll Slip dalam web Matta (https://matta-reborn.alita.id).</p>';
+        // }
         $body .= '<p>Slip Gaji bersifat <strong style="color:red">PERSONAL & CONFIDENTIAL</strong>. Mohon untuk tidak diberitahukan kepada rekan kerja ataupun pihak lain dengan alasan apapun.</p>';
         $body .= '<p>Demikian kami sampaikan, terimakasih atas perhatian dan kerjasamanya.</p>';
         $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
