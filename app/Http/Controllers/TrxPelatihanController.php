@@ -69,6 +69,18 @@ class TrxPelatihanController extends Controller
         if(auth()->user()->userrole == 'nhc'){
             $where = ['pengaju' => auth()->user()->nik];
             $trx = TrxPelatihan::where($where)->orderBy('id', 'desc')->get();
+            // 
+            $arr_id = [];
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id);
+            }
+            $where = ['nik_pic' => auth()->user()->nik];
+            $trx = TrxPelatihanLog::where($where)->orderBy('id_trx', 'desc')->get();
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id_trx);
+            }
+            // 
+            $trx = TrxPelatihan::whereIn('id', $arr_id)->orderBy('id', 'desc')->get();
         }
         // filter parameter
         $arr_status_pengajuan = array();
@@ -109,6 +121,18 @@ class TrxPelatihanController extends Controller
             if(auth()->user()->userrole == 'nhc'){
 				$where = ['pengaju' => auth()->user()->nik];
                 $trx = TrxPelatihan::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('pengaju', $arr_pengaju)->whereIn('atasan_pengaju', $arr_atasan_pengaju)->where($where)->orderBy('id', 'desc')->get();
+                // 
+                $arr_id = [];
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id);
+                }
+                $where = ['nik_pic' => auth()->user()->nik];
+                $trx = TrxPelatihanLog::where($where)->orderBy('id_trx', 'desc')->get();
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id_trx);
+                }
+                // 
+                $trx = TrxPelatihan::whereIn('id', $arr_id)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('pengaju', $arr_pengaju)->whereIn('atasan_pengaju', $arr_atasan_pengaju)->orderBy('id', 'desc')->get();
             }
         }else{
             $arr_status_pengajuan = array();
