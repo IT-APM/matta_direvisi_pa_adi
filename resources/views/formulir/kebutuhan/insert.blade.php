@@ -29,29 +29,27 @@
                     <div class="row">
                         <!-- start -->
                         <div class="col-md-6">
-                            <div class="card-header">
+                            {{-- <div class="card-header">
                                 <h5>Kebutuhan Rekruitmen</h5>
-                            </div>
+                            </div> --}}
                             <div class="card-body">
+                                <h5>Kebutuhan Rekruitmen</h5>
                                 <div class="row">
-                                    <!-- <button type="button" onclick="cekIsian()">cekIsian</button> -->
                                     <label class="form-label" for="id_pekerjaan">Nama Jabatan*</label>
-                                    <div class="col-md-10 pb-2">
-                                        <!--  -->
+                                    <div class="col-md-11">
                                         <select class="form-select col-sm-12 js-example-basic-single" id="id_pekerjaan" name="id_pekerjaan" required="">
                                             <option selected="" disabled="" value="">Pilih...</option>
                                             @foreach ($pekerjaan as $data)
-                                            <option value="{{ $data->id }}">{{ $data->pekerjaan }}
-                                                ({{ $data->_bidang->bidang }})</option>
+                                            <option value="{{ $data->id }}">{{ $data->pekerjaan }} ({{ $data->_bidang->bidang }})</option>
                                             @endforeach
                                         </select>
                                         <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
-                                    <div class="col-md-2 pb-2 text-end">
-                                        <a class="btn btn-primary" href="{{ route('pekerjaan_master.index') }}" data-toggle="tooltip" title="Add new"><i class="fa fa-plus"></i></a>
+                                    <div class="col-md-1 text-start">
+                                        <a href="{{ route('pekerjaan_master.index') }}" data-toggle="tooltip" title="Add new" target="_blank"><i class="fa fa-plus"></i></a><br/><a href="#" id="get_pekerjaan" data-toggle="tooltip" title="Refresh"><i class="fa fa-refresh"></i></a>
                                     </div>
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="atasan">Atasan Langsung Kandidat*</label>
                                     <select class="form-select js-example-basic-single col-sm-12" id="atasan" name="atasan" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
@@ -61,19 +59,19 @@
                                     </select>
                                     <div class="invalid-feedback txt-danger">This field is required.</div>
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="tugas">Tugas*</label>
                                     <textarea class="form-control" id="tugas" name="tugas" rows="3" required=""></textarea>
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="wewenang">Wewenang*</label>
                                     <textarea class="form-control" id="wewenang" name="wewenang" rows="3" required=""></textarea>
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="tanggung_jawab">Tanggung Jawab*</label>
                                     <textarea class="form-control" id="tanggung_jawab" name="tanggung_jawab" rows="3" required=""></textarea>
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="id_level">Level*</label>
                                     <select class="form-select col-sm-12" id="id_level" name="id_level" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
@@ -82,7 +80,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="id_status_kerja">Status Kerja*</label>
                                     <select class="form-select col-sm-12" id="id_status_kerja" name="id_status_kerja" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
@@ -91,15 +89,15 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-12 pb-2" id="div_waktu_kontrak">
+                                <div class="col-md-12 mt-2" id="div_waktu_kontrak">
                                     <label class="form-label" for="waktu_kontrak">Waktu Kontrak (Bulan)*</label>
                                     <input type="number" min="1" oninput="validity.valid||(value='');" name="waktu_kontrak" id="waktu_kontrak" class="form-control numbers" required="">
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="jumlah">Jumlah (Orang)*</label>
                                     <input type="number" min="1" oninput="validity.valid||(value='');" name="jumlah" id="jumlah" class="form-control numbers" required="">
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="id_kelamin">Jenis Kelamin*</label>
                                     <select class="form-select col-sm-12" id="id_kelamin" name="id_kelamin" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
@@ -108,7 +106,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="id_area">Area Kerja*</label>
                                     <select class="form-select col-sm-12" id="id_area" name="id_area" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
@@ -117,12 +115,11 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-12 pb-2" id="div_kota">
+                                <div class="col-md-12 mt-2" id="div_kota">
                                     <label class="form-label" for="id_kota">Area Kerja Kota</label>
-                                    <select class="form-select col-sm-12" id="id_kota" name="id_kota" >
-                                    </select>
+                                    <select class="form-select col-sm-12" id="id_kota" name="id_kota" ></select>
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="id_jenis_permintaan">Jenis Permintaan*</label>
                                     <select class="form-select col-sm-12" id="id_jenis_permintaan" name="id_jenis_permintaan" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
@@ -131,7 +128,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-12 pb-2" id="div_nik_karyawan">
+                                <div class="col-md-12 mt-2" id="div_nik_karyawan">
                                     <input type="hidden" id="_nik_karyawan_" name="_nik_karyawan_" >
                                     <label class="form-label" for="nik_karyawan">Karyawan Penggantian*<br/>(Sesuai jumlah pada isian Jumlah (Orang))</label>
                                     <select class="js-example-basic-multiple col-sm-12" id="nik_karyawan" name="nik_karyawan" required="" multiple="multiple">
@@ -142,7 +139,7 @@
                                     </select>
                                     <div class="invalid-feedback txt-danger">This field is required.</div>
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="id_rencana">Apakah sudah masuk dalam rencana <span id="str_jenis_permintaan" name="str_jenis_permintaan">penambahan</span> pegawai?*</label>
                                     <select class="form-select col-sm-12" id="id_rencana" name="id_rencana" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
@@ -150,7 +147,7 @@
                                         <option value="1">Sudah</option>
                                     </select>
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="penjelasan">Alasan Permintaan*</label>
                                     <textarea class="form-control" id="penjelasan" name="penjelasan" rows="4" required=""></textarea>
                                 </div>
@@ -159,11 +156,12 @@
                         <!-- finish -->
                         <!-- start -->
                         <div class="col-md-6">
-                            <div class="card-header">
+                            {{-- <div class="card-header">
                                 <h5>Kualifikasi / Spesifikasi Jabatan</h5>
-                            </div>
+                            </div> --}}
                             <div class="card-body">
-                                <div class="col-md-12 pb-2">
+                                <h5>Kualifikasi / Spesifikasi Jabatan</h5>
+                                <div class="col-md-12">
                                     <label class="form-label" for="id_jenjang_pendidikan">Pendidikan Minimum*</label>
                                     <select class="form-select col-sm-12" id="id_jenjang_pendidikan" name="id_jenjang_pendidikan" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
@@ -172,7 +170,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-12 pb-2" id="div_jurusan_pendidikan">
+                                <div class="col-md-12 mt-2" id="div_jurusan_pendidikan">
                                     <label class="form-label" for="id_jurusan_pendidikan">Jurusan</label>
                                     <select class="form-select col-sm-12 js-example-basic-single" id="id_jurusan_pendidikan" name="id_jurusan_pendidikan" >
                                         <option selected="" disabled="" value="">Pilih...</option>
@@ -183,15 +181,15 @@
                                     <label class="form-label" for="nilai_ipk">Nilai IPK</label>
                                     <input type="number" name="nilai_ipk" id="nilai_ipk" class="form-control numbers" placeholder="0.00" step=".01">
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="umur_minimum">Usia Minimum (Tahun)*</label>
                                     <input type="number" min="1" oninput="validity.valid||(value='');" name="umur_minimum" id="umur_minimum" class="form-control numbers" required="">
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="umur_maksimum">Usia Maksimum (Tahun)*</label>
                                     <input type="number" min="1" oninput="validity.valid||(value='');" name="umur_maksimum" id="umur_maksimum" class="form-control numbers" required="">
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="id_pengalaman">Pengalaman Kerja*</label>
                                     <select class="form-select col-sm-12" id="id_pengalaman" name="id_pengalaman" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
@@ -200,9 +198,9 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="row">
+                                <div class="row mt-2">
                                     <label class="form-label" for="id_pelatihan[]">Pelatihan</label>
-                                    <div class="col-md-10 pb-2">
+                                    <div class="col-md-11">
                                         <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_pelatihan[]" name="id_pelatihan[]" placeholder="Pilih...">
                                             <option selected disabled hidden>Pilih...</option>
                                             @foreach ($pelatihan as $data)
@@ -210,13 +208,13 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2 pb-2 text-end">
-                                        <a class="btn btn-primary" href="{{ route('_pelatihan_master.index') }}" data-toggle="tooltip" title="Add new"><i class="fa fa-plus"></i></a>
+                                    <div class="col-md-1 text-start">
+                                        <a href="{{ route('_pelatihan_master.index') }}" data-toggle="tooltip" title="Add new" target="_blank"><i class="fa fa-plus"></i></a><br/><a href="#" id="get_pelatihan" data-toggle="tooltip" title="Refresh"><i class="fa fa-refresh"></i></a>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row mt-2">
                                     <label class="form-label" for="id_sertifikasi[]">Sertifikasi</label>
-                                    <div class="col-md-10 pb-2">
+                                    <div class="col-md-11">
                                         <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_sertifikasi[]" name="id_sertifikasi[]" >
                                             <option selected disabled hidden>Pilih...</option>
                                             @foreach ($sertifikasi as $data)
@@ -224,13 +222,13 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2 pb-2 text-end">
-                                        <a class="btn btn-primary" href="{{ route('_sertifikasi_master.index') }}" data-toggle="tooltip" title="Add new"><i class="fa fa-plus"></i></a>
+                                    <div class="col-md-1 text-start">
+                                        <a href="{{ route('_sertifikasi_master.index') }}" data-toggle="tooltip" title="Add new" target="_blank"><i class="fa fa-plus"></i></a><br/><a href="#" id="get_sertifikasi" data-toggle="tooltip" title="Refresh"><i class="fa fa-refresh"></i></a>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row mt-2">
                                     <label class="form-label" for="id_keterampilan[]">Keterampilan</label>
-                                    <div class="col-md-10 pb-2">
+                                    <div class="col-md-11">
                                         <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_keterampilan[]" name="id_keterampilan[]" >
                                             <option selected disabled hidden>Pilih...</option>
                                             @foreach ($keterampilan as $data)
@@ -238,13 +236,13 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2 pb-2 text-end">
-                                        <a class="btn btn-primary" href="{{ route('_keterampilan_master.index') }}" data-toggle="tooltip" title="Add new"><i class="fa fa-plus"></i></a>
+                                    <div class="col-md-1 text-start">
+                                        <a href="{{ route('_keterampilan_master.index') }}" data-toggle="tooltip" title="Add new" target="_blank"><i class="fa fa-plus"></i></a><br/><a href="#" id="get_keterampilan" data-toggle="tooltip" title="Refresh"><i class="fa fa-refresh"></i></a>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row mt-2">
                                     <label class="form-label" for="id_kepribadian[]">Kepribadian</label>
-                                    <div class="col-md-10 pb-2">
+                                    <div class="col-md-11">
                                         <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_kepribadian[]" name="id_kepribadian[]" >
                                             <option selected disabled hidden>Pilih...</option>
                                             @foreach ($kepribadian as $data)
@@ -252,15 +250,15 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2 pb-2 text-end">
-                                        <a class="btn btn-primary" href="{{ route('_kepribadian_master.index') }}" data-toggle="tooltip" title="Add new"><i class="fa fa-plus"></i></a>
+                                    <div class="col-md-1 text-start">
+                                        <a href="{{ route('_kepribadian_master.index') }}" data-toggle="tooltip" title="Add new" target="_blank"><i class="fa fa-plus"></i></a><br/><a href="#" id="get_kepribadian" data-toggle="tooltip" title="Refresh"><i class="fa fa-refresh"></i></a>
                                     </div>
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="tanggal">Tanggal Mulai Kerja*</label>
                                     <input class="form-control" name="tanggal" id="tanggal" type="date" required="">
                                 </div>
-                                <div class="col-md-12 pb-2">
+                                <div class="col-md-12 mt-2">
                                     <label class="form-label" for="keterangan_lain">Keterangan Lain</label>
                                     <textarea class="form-control" id="keterangan_lain" name="keterangan_lain" rows="4" ></textarea>
                                 </div>
@@ -268,11 +266,12 @@
                         </div>
                         {{-- findim/cost allocation --}}
                         <div class="col-md-12">
-                            <div class="card-header">
+                            {{-- <div class="card-header">
                                 <h5>FinDim / Cost Allocation</h5>
-                            </div>
+                            </div> --}}
                             <div class="card-body">
-                                <div class="row g-3">
+                                <h5>FinDim / Cost Allocation</h5>
+                                <div class="row g-2">
                                     <div class="col-md-6">
                                         <label class="form-label" for="findim_project">Project</label>
                                         <select class="form-select js-example-basic-single col-sm-12" id="findim_project" name="findim_project" required="">
@@ -318,19 +317,20 @@
                         </div>
                         <!-- finish -->
                         <div class="col-md-12">
-                            <div class="card-header">
+                            {{-- <div class="card-header">
                                 <h5>Line Approval</h5>
-                            </div>
+                            </div> --}}
                             <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-6 pb-2">
+                                <h5>Line Approval</h5>
+                                <div class="row g-2">
+                                    <div class="col-md-6">
                                         <label class="form-label" for="layer1">Layer 1*</label>
                                         <select class="form-select js-example-basic-single col-sm-12" id="layer1" name="layer1" required="">
                                             <option selected="" disabled="" value="">Pilih...</option>
                                         </select>
                                         <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
-                                    <div class="col-md-6 pb-2">
+                                    <div class="col-md-6">
                                         <label class="form-label" for="layer2">Layer 2*</label>
                                         <select class="form-select js-example-basic-single col-sm-12" id="layer2" name="layer2" required="">
                                             <option selected="" disabled="" value="">Pilih...</option>
@@ -344,7 +344,7 @@
                     </div>
                     <hr/>
                     <div class="card-body">
-                        <!-- <div class="row g-3"> -->
+                        <!-- <div class="row g-2"> -->
                             <div class="col-md-12">
                                 <button class="btn btn-success" type="submit">Submit</button> | <a href="{{ route('kebutuhan.index') }}" class="btn btn-warning" type="button">Back</a>
                             </div>
@@ -367,6 +367,135 @@
 <script type="text/javascript">
 // 
 $(document).ready(function() {
+    // 
+    $('#get_kepribadian').on('click', function(e) {
+        e.preventDefault();
+        $('#id_kepribadian\\[\\]').find('option').remove();
+        $("#id_kepribadian\\[\\]").append('<option selected disabled hidden>Pilih...</option>');
+        $.ajax({
+            url: "{{ route('get_kepribadian',0) }}",
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var len = 0;
+                if (response != null) {
+                    len = response.length;
+                }
+                if (len > 0) {
+                    for (var i = 0; i < len; i++) {
+                        var id = response[i].id;
+                        var sub_kepribadian = response[i].sub_kepribadian;
+                        var option = "<option value='" + id + "'>" + sub_kepribadian + "</option>";
+                        $("#id_kepribadian\\[\\]").append(option);
+                    }
+                }
+            }
+        });
+    });
+    // 
+    $('#get_keterampilan').on('click', function(e) {
+        e.preventDefault();
+        $('#id_keterampilan\\[\\]').find('option').remove();
+        $("#id_keterampilan\\[\\]").append('<option selected disabled hidden>Pilih...</option>');
+        $.ajax({
+            url: "{{ route('get_keterampilan',0) }}",
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var len = 0;
+                if (response != null) {
+                    len = response.length;
+                }
+                if (len > 0) {
+                    for (var i = 0; i < len; i++) {
+                        var id = response[i].id;
+                        var sub_keterampilan = response[i].sub_keterampilan;
+                        var option = "<option value='" + id + "'>" + sub_keterampilan + "</option>";
+                        $("#id_keterampilan\\[\\]").append(option);
+                    }
+                }
+            }
+        });
+    });
+    // 
+    $('#get_sertifikasi').on('click', function(e) {
+        e.preventDefault();
+        $('#id_sertifikasi\\[\\]').find('option').remove();
+        $("#id_sertifikasi\\[\\]").append('<option selected disabled hidden>Pilih...</option>');
+        $.ajax({
+            url: "{{ route('get_sertifikasi',0) }}",
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var len = 0;
+                if (response != null) {
+                    len = response.length;
+                }
+                if (len > 0) {
+                    for (var i = 0; i < len; i++) {
+                        var id = response[i].id;
+                        var sub_sertifikasi = response[i].sub_sertifikasi;
+                        var option = "<option value='" + id + "'>" + sub_sertifikasi + "</option>";
+                        $("#id_sertifikasi\\[\\]").append(option);
+                    }
+                }
+            }
+        });
+    });
+    // 
+    $('#get_pelatihan').on('click', function(e) {
+        e.preventDefault();
+        $('#id_pelatihan\\[\\]').find('option').remove();
+        $("#id_pelatihan\\[\\]").append('<option selected disabled hidden>Pilih...</option>');
+        $.ajax({
+            url: "{{ route('get_pelatihan',0) }}",
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var len = 0;
+                if (response != null) {
+                    len = response.length;
+                }
+                if (len > 0) {
+                    for (var i = 0; i < len; i++) {
+                        var id = response[i].id;
+                        var sub_pelatihan = response[i].sub_pelatihan;
+                        var option = "<option value='" + id + "'>" + sub_pelatihan + "</option>";
+                        $("#id_pelatihan\\[\\]").append(option);
+                    }
+                }
+            }
+        });
+        e.preventDefault();
+    });
+    // 
+    $('#get_pekerjaan').on('click', function(e) {
+        e.preventDefault();
+        $('#id_pekerjaan').find('option').remove();
+        $("#id_pekerjaan").append('<option selected="" disabled="" value="">Pilih...</option>');
+        e.preventDefault();
+        $.ajax({
+            url: "{{ route('get_pekerjaan',0) }}",
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var len = 0;
+                if (response != null) {
+                    len = response.length;
+                }
+                if (len > 0) {
+                    for (var i = 0; i < len; i++) {
+                        var id = response[i].id;
+                        var bidang = response[i].bidang;
+                        var pekerjaan = response[i].pekerjaan;
+                        var option = "<option value='" + id + "'>" + pekerjaan + " (" + bidang +")</option>";
+                        $("#id_pekerjaan").append(option);
+                    }
+                }
+            }
+        });
+    });
+    // 
     // var _url = window.location.origin;
     // default semua hide dan disable=true
     div_waktu_kontrak(0);
@@ -511,14 +640,14 @@ $(document).ready(function() {
             if (len > 0) {
                 // Read data and create <option >
                 for (var i = 0; i < len; i++) {
-        var nik = response['karyawan'][i].nik;
-        var nama = response['karyawan'][i].nama;
-        if (layer1 == nik) {
-            var option = "<option value='" + nik + "' selected>" + nama + " - " + nik + "</option>";
-        } else {
-            var option = "<option value='" + nik + "'>" + nama + " - " + nik + "</option>";
-        }
-        $("#layer1").append(option);
+                    var nik = response['karyawan'][i].nik;
+                    var nama = response['karyawan'][i].nama;
+                    if (layer1 == nik) {
+                        var option = "<option value='" + nik + "' selected>" + nama + " - " + nik + "</option>";
+                    } else {
+                        var option = "<option value='" + nik + "'>" + nama + " - " + nik + "</option>";
+                    }
+                    $("#layer1").append(option);
                 }
             }
         }
@@ -539,14 +668,14 @@ $(document).ready(function() {
             if (len > 0) {
                 // Read data and create <option >
                 for (var i = 0; i < len; i++) {
-        var nik = response['karyawan'][i].nik;
-        var nama = response['karyawan'][i].nama;
-        if (layer2 == nik) {
-            var option = "<option value='" + nik + "' selected>" + nama + " - " + nik + "</option>";
-        } else {
-            var option = "<option value='" + nik + "'>" + nama + " - " + nik + "</option>";
-        }
-        $("#layer2").append(option);
+                    var nik = response['karyawan'][i].nik;
+                    var nama = response['karyawan'][i].nama;
+                    if (layer2 == nik) {
+                        var option = "<option value='" + nik + "' selected>" + nama + " - " + nik + "</option>";
+                    } else {
+                        var option = "<option value='" + nik + "'>" + nama + " - " + nik + "</option>";
+                    }
+                    $("#layer2").append(option);
                 }
             }
         }
