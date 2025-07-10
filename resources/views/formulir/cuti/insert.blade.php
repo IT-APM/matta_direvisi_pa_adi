@@ -49,19 +49,27 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-4">
+                            <label class="form-label" for="pengaju">Pengaju</label>
+                            <input class="form-control" type="text" required="" readonly="" value="{{ $pengaju }}">
+                        </div>
+                    </div>
                     <form target="_self" id="form" name="form" action="{{ route('cuti.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @csrf
+                        <input type="hidden" id="nik_karyawan" name="nik_karyawan" value="{{ $nik_karyawan }}">
+                        {{-- auth()->user()->nik diganti dengan $nik_karyawan agar hco bisa input on behalf karyawan --}}
                         <div class="row mt-2">
                             <div class="col-md-4">
                                 <label class="form-label">Sisa Jumlah Hari Cuti Tahunan</label>
                                 {{-- <h4>{{ App\Http\Controllers\TrxCutiController::getSisaFormCuti() }} Hari</h4> --}}
                                 {{-- jika di Bulan Januari maka tampilkan sisa cuti tahun lalu --}}
                                 @if(\Carbon\Carbon::today()->between(\Carbon\Carbon::now()->year.'-01-01', \Carbon\Carbon::now()->year.'-01-31'))
-                                    <h4>{{ \Carbon\Carbon::now()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaFormCuti(auth()->user()->nik, \Carbon\Carbon::now()->year) }} hari
-                                    <br/>{{ \Carbon\Carbon::now()->subYear()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaFormCuti(auth()->user()->nik, \Carbon\Carbon::now()->subYear()->year) }} hari</h4>
+                                    <h4>{{ \Carbon\Carbon::now()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaFormCuti($nik_karyawan, \Carbon\Carbon::now()->year) }} hari
+                                    <br/>{{ \Carbon\Carbon::now()->subYear()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaFormCuti($nik_karyawan, \Carbon\Carbon::now()->subYear()->year) }} hari</h4>
                                 {{-- jika selain Bulan Januari maka tampilkan seperti biasa --}}
                                 @else
-                                    <h4>{{ \Carbon\Carbon::now()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaFormCuti(auth()->user()->nik, \Carbon\Carbon::now()->year) }} Hari</h4>
+                                    <h4>{{ \Carbon\Carbon::now()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaFormCuti($nik_karyawan, \Carbon\Carbon::now()->year) }} Hari</h4>
                                 @endif
                             </div>
                             <div class="col-md-4">
