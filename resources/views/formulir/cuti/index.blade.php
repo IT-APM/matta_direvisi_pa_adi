@@ -40,7 +40,20 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    <a href="{{ route('cuti.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                    @can('hc')
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <select class="form-select js-example-basic-single col-sm-12" id="nik_karyawan" name="nik_karyawan">
+                                <option value="0">Pilih Karyawan...</option>
+                                @foreach ($karyawan as $data)
+                                <option value="{{ Crypt::encrypt($data->nik) }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    @endcan
+                    {{-- <a href="{{ route('cuti.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> --}}
+                    <button class="btn btn-primary" type="button" onclick="PilihKaryawan()"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                     <div class="collapse mt-2" id="collapse_filter">
                         <form action="{{ route('cuti.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
@@ -173,6 +186,15 @@
 <script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
 <script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 <script type="text/javascript">
+function PilihKaryawan() {
+    var nik_karyawan = "{{ Crypt::encrypt(auth()->user()->nik) }}";
+    @can('hc')
+    if($('#nik_karyawan').val() != '0'){
+        nik_karyawan = $('#nik_karyawan').val();
+    }
+    @endcan
+    location.href = "{{ route('cuti.create') }}"+"?nik_karyawan="+nik_karyawan;
+}
 function toggle_status_cuti(source) {
     checkboxes = document.getElementsByName('status_cuti[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
