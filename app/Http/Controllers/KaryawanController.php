@@ -36,6 +36,7 @@ use Illuminate\Support\Facades\Hash;
 // 
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -162,7 +163,28 @@ class KaryawanController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        // dd($request->all());
+        if($request->str == 'proper_karyawan'){
+            $trx = Karyawan::all();
+            foreach($trx as $_trx){
+                $data = Karyawan::find($_trx->id);
+                $data->nama = Str::title($_trx->nama);
+                $data->tempat_lahir = Str::title($_trx->tempat_lahir);
+                $data->alamat_domisili = Str::title($_trx->alamat_domisili);
+                $data->alamat_ktp = Str::title($_trx->alamat_ktp);
+                $data->alamat_npwp = Str::title($_trx->alamat_npwp);
+                $data->nama_pasangan = Str::title($_trx->nama_pasangan);
+                $data->update();
+            }
+        }
+        elseif($request->str == 'proper_anak'){
+            $trx = KaryawanAnak::all();
+            foreach($trx as $_trx){
+                $data = KaryawanAnak::find($_trx->id);
+                $data->nama = Str::title($_trx->nama);
+                $data->update();
+            }
+        }
         // $karyawan = Karyawan::all();
         $no = 0;
         $karyawan = Karyawan::where('is_aktif', 1)->orderBy( 'nama', 'asc' )->get();
@@ -371,16 +393,16 @@ class KaryawanController extends Controller
         $karyawan->nik = $request->nik;
         $karyawan->password = $password;
         $karyawan->nama = $request->nama;
-        $karyawan->tempat_lahir = $request->tempat_lahir;
+        $karyawan->tempat_lahir = Str::title($request->tempat_lahir);
         $karyawan->tanggal_lahir = $request->tanggal_lahir;
         $karyawan->no_ktp = $request->no_ktp;
         $karyawan->no_npwp = $request->no_npwp;
         $karyawan->no_bpjs = $request->no_bpjs;
         $karyawan->no_bpjstk = $request->no_bpjstk;
         $karyawan->telepon_darurat = $request->telepon_darurat;
-        $karyawan->alamat_domisili = $request->alamat_domisili;
-        $karyawan->alamat_ktp = $request->alamat_ktp;
-        $karyawan->alamat_npwp = $request->alamat_npwp;
+        $karyawan->alamat_domisili = Str::title($request->alamat_domisili);
+        $karyawan->alamat_ktp = Str::title($request->alamat_ktp);
+        $karyawan->alamat_npwp = Str::title($request->alamat_npwp);
         $karyawan->telepon1 = $request->telepon1;
         $karyawan->telepon2 = $request->telepon2;
         $karyawan->telepon3 = $request->telepon3;
@@ -541,16 +563,16 @@ class KaryawanController extends Controller
         // dd($request->all(), $id);
         $karyawan = Karyawan::find( $id );
         $karyawan->nama = $request->nama;
-        $karyawan->tempat_lahir = $request->tempat_lahir;
+        $karyawan->tempat_lahir = Str::title($request->tempat_lahir);
         $karyawan->tanggal_lahir = $request->tanggal_lahir;
         $karyawan->no_ktp = $request->no_ktp;
         $karyawan->no_npwp = $request->no_npwp;
         $karyawan->no_bpjs = $request->no_bpjs;
         $karyawan->no_bpjstk = $request->no_bpjstk;
         $karyawan->telepon_darurat = $request->telepon_darurat;
-        $karyawan->alamat_domisili = $request->alamat_domisili;
-        $karyawan->alamat_ktp = $request->alamat_ktp;
-        $karyawan->alamat_npwp = $request->alamat_npwp;
+        $karyawan->alamat_domisili = Str::title($request->alamat_domisili);
+        $karyawan->alamat_ktp = Str::title($request->alamat_ktp);
+        $karyawan->alamat_npwp = Str::title($request->alamat_npwp);
         $karyawan->telepon1 = $request->telepon1;
         $karyawan->telepon2 = $request->telepon2;
         $karyawan->telepon3 = $request->telepon3;
@@ -687,16 +709,16 @@ class KaryawanController extends Controller
         }
         $karyawan = Karyawan::where('nik', $id)->first();
         // $karyawan->nama = $request->nama;
-        $karyawan->tempat_lahir = $request->tempat_lahir;
+        $karyawan->tempat_lahir = Str::title($request->tempat_lahir);
         $karyawan->tanggal_lahir = $request->tanggal_lahir;
         $karyawan->no_ktp = $request->no_ktp;
         $karyawan->no_npwp = $request->no_npwp;
         $karyawan->no_bpjs = $request->no_bpjs;
         $karyawan->no_bpjstk = $request->no_bpjstk;
         // $karyawan->telepon_darurat = $request->telepon_darurat;
-        $karyawan->alamat_domisili = $request->alamat_domisili;
-        $karyawan->alamat_ktp = $request->alamat_ktp;
-        $karyawan->alamat_npwp = $request->alamat_npwp;
+        $karyawan->alamat_domisili = Str::title($request->alamat_domisili);
+        $karyawan->alamat_ktp = Str::title($request->alamat_ktp);
+        $karyawan->alamat_npwp = Str::title($request->alamat_npwp);
         $karyawan->telepon1 = $request->telepon1;
         $karyawan->telepon2 = $request->telepon2;
         $karyawan->telepon3 = $request->telepon3;
