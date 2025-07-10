@@ -117,6 +117,8 @@ use App\Http\Controllers\TrxFindimDivisiController;
 use App\Http\Controllers\TrxFindimDepartemenController;
 use App\Http\Controllers\TrxFindimSubdepartemenController;
 // 
+use App\Http\Controllers\TrxPdpController;
+// 
 Route::resource('findim_project', TrxFindimProjectController::class)->middleware('can:hc');
 Route::resource('findim_divisi', TrxFindimDivisiController::class)->middleware('can:hc');
 Route::resource('findim_departemen', TrxFindimDepartemenController::class)->middleware('can:hc');
@@ -381,6 +383,8 @@ Route::resource('mtrdatabodbpd', MtrDataBpdBodController::class)->middleware('ca
 Route::resource('mtrdatacoabpd', MtrDataBpdCoaController::class)->middleware('can:hc');
 Route::resource('mtrdataprojectadmin', MtrDataBpdProjectAdminController::class)->middleware('can:hc');
 Route::resource('mtrdataprojectadminpic', MtrDataBpdProjectAdminPicController::class)->middleware('can:hc');
+// 
+Route::resource('pdp', TrxPdpController::class)->middleware('auth');
 // 
 Route::get('/', function () {
     // return redirect()->route('index');
