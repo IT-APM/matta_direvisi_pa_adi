@@ -69,6 +69,18 @@ class TrxKebutuhanController extends Controller
         if(auth()->user()->userrole == 'nhc'){
             $where = ['pengaju' => auth()->user()->nik];
             $trx = TrxKebutuhanMaster::where($where)->orderBy('id', 'desc')->get();
+            // 
+            $arr_id = [];
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id);
+            }
+            $where = ['nik_pic' => auth()->user()->nik];
+            $trx = TrxKebutuhanLog::where($where)->orderBy('id_trx', 'desc')->get();
+            foreach($trx as $_trx){
+                array_push($arr_id, $_trx->id_trx);
+            }
+            // 
+            $trx = TrxKebutuhanMaster::whereIn('id', $arr_id)->orderBy('id', 'desc')->get();
         }
         // filter parameter
         $arr_status_pengajuan = array();
@@ -110,6 +122,18 @@ class TrxKebutuhanController extends Controller
             if(auth()->user()->userrole == 'nhc'){
                 $where = ['pengaju' => auth()->user()->nik];
                 $trx = TrxKebutuhanMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('id_area', $arr_id_area)->whereIn('id_jenis_permintaan', $arr_id_jenis_permintaan)->where($where)->orderBy('id', 'desc')->get();
+                // 
+                $arr_id = [];
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id);
+                }
+                $where = ['nik_pic' => auth()->user()->nik];
+                $trx = TrxKebutuhanLog::where($where)->orderBy('id_trx', 'desc')->get();
+                foreach($trx as $_trx){
+                    array_push($arr_id, $_trx->id_trx);
+                }
+                // 
+                $trx = TrxKebutuhanMaster::whereIn('id', $arr_id)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('id_area', $arr_id_area)->whereIn('id_jenis_permintaan', $arr_id_jenis_permintaan)->orderBy('id', 'desc')->get();
             }
         }else{
             $arr_status_pengajuan = array();
