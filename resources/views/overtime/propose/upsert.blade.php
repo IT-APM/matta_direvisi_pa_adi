@@ -63,8 +63,10 @@
                                 </div>
                                 @else
                                 <div class="col-md-6">
+                                    <input type="hidden" id="ot_maker_by" name="ot_maker_by" value="{{ $ot_maker_by }}">
                                     <label class="form-label" for="ot_maker_by">Maker</label>
-                                    <h6>{{ auth()->user()->name }} / {{ auth()->user()->nik }}</h6>
+                                    {{-- <h6>{{ auth()->user()->name }} / {{ auth()->user()->nik }}</h6> --}}
+                                    <h6>{{ $pengaju }}</h6>
                                 </div>
                                 @endif
                                 <div class="col-md-6">
