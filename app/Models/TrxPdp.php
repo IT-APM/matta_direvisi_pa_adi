@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class TrxPdp extends Model
 {
     use HasFactory;
-    protected $table = 'trx_pdp';
+    protected $table = 'trx_tbl_pdp';
 
     public function _nik(){
         return $this->belongsTo('App\Models\Karyawan', 'nik', 'nik');
