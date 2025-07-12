@@ -12,6 +12,7 @@ use App\Models\SubDepartemen;
 use DB;
 use App\Models\TrxPdp;
 use App\Models\MtrUtility;
+use Carbon\Carbon;
 
 class TrxToDoListController extends Controller
 {
@@ -86,8 +87,15 @@ class TrxToDoListController extends Controller
     public function index()
     {
         $where = ['nik' => auth()->user()->nik];
+        $is_setuju = TrxPdp::where($where)->orderBy('id', 'desc')->first();
+        // $pdp_next = Carbon::parse($is_setuju->created_at)->addYear(MtrUtility::find(41)->informasi);
+        // dd($is_setuju->created_at, $pdp_next, Carbon::now()->gt(Carbon::parse($is_setuju->created_at)->copy()->addYear(MtrUtility::find(41)->informasi)));
+        $check_is_pdp = true;
+        if(!empty($is_setuju)){
+            $check_is_pdp = Carbon::now()->gt(Carbon::parse($is_setuju->created_at)->copy()->addYear(MtrUtility::find(41)->informasi));
+        }
         // 40=PDP di dalam
-        $is_pdp = ['is_pdp'=>TrxPdp::select('is_setuju')->where($where)->exists(), 'is_aktif'=> (MtrUtility::find(40)->informasi==1)];
+        $is_pdp = ['is_pdp'=>!$check_is_pdp, 'is_aktif'=> (MtrUtility::find(40)->informasi==1)];
         // dd($is_pdp);
         // $arr = [];
         // $trx = DB::select("SELECT COUNT(kode_sub_departemen) AS jumlah,kode_sub_departemen FROM mtr_tbl_karyawan WHERE is_aktif=1 AND wg_id=1 AND nik NOT IN ('Hco.all', 'IT.BM') GROUP BY kode_sub_departemen ORDER BY jumlah");
