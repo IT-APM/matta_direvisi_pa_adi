@@ -360,6 +360,7 @@
                                 <li><a href="{{ route('jabatan.index') }}">Job Position</a></li>
                                 <li><a href="{{ route('join.index') }}">Join Status</a></li>
                                 <li><a href="{{ route('holiday.index') }}">National Holiday</a></li>
+                                <li><a href="{{ route('pdp.index') }}">PDP</a></li>
                                 <li><a href="{{ route('utilitas.index') }}">Utility</a></li>
                             </ul>
                         </li>
