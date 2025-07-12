@@ -71,7 +71,26 @@
                                 @else
                                     <h4>{{ \Carbon\Carbon::now()->year }}: {{ App\Http\Controllers\TrxCutiController::getSisaFormCuti($nik_karyawan, \Carbon\Carbon::now()->year) }} Hari</h4>
                                 @endif
+                                {{-- ambil daftar cutinya --}}
+                                @php
+                                    $where = ['nik_karyawan' => $nik_karyawan, 'periode_cuti' => \Carbon\Carbon::now()->year, 'tipe_cuti' => 0];
+                                    $TrxCuti = App\Models\TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->orderBy('id', 'desc')->get();
+                                    // 
+                                    // cek apakah karyawan reguler atau tidak, jika iya maka dihitung cuti bersama
+                                    $where = [ 'nik' => $nik_karyawan, 'wg_id' => 1 ];
+                                    $check = App\Models\Karyawan::where($where)->exists();
+                                    $BersamaCuti = [];
+                                    if($check){
+                                        $BersamaCuti = App\Models\Holiday::where(['is_cuti' => 1])->whereYear('tanggal', \Carbon\Carbon::now()->year)->orderBy('tanggal', 'desc')->get();
+                                    }
+                                @endphp
+                                @if(!empty($TrxCuti))
+                                    <button id="autoClickBtn" type="button" class="btn text-white" style="background-color: #797d7f;" data-bs-toggle="modal" data-bs-target="#show_cuti">Detail</button>
+                                @endif
                             </div>
+                            {{-- @foreach ($TrxCuti as $data)
+                                <label class="form-label">{{ $data->id }}</label><br/>
+                            @endforeach --}}
                             <div class="col-md-4">
                                 <label class="form-label" for="tipe_cuti">Tipe Cuti</label>
                                 <select class="form-select" id="tipe_cuti" name="tipe_cuti" required="">
@@ -138,6 +157,53 @@
         </div>
     </div>
 </div>
+<div class="modal fade bd-example-modal-lg" id="show_cuti" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title" id="myLargeModalLabel">Daftar Cuti Tahunan dan Cuti Bersama (jika ada)</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{-- <img src="{{asset('assets/images/matta/uu_pdp.png')}}" class="img-fluid d-flex" alt="Pengumuman"> --}}
+                <div class="table-responsive">
+                    <table class="display table" id="_datatable_cuti">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Cuti</th>
+                                <th>Tanggal</th>
+                                <th>Jumlah Hari</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $no = 0; @endphp
+                            @foreach ($TrxCuti as $data)
+                            <tr>
+                                <td>{{ ++$no }}</td>
+                                <td>{{ $data->alasan }}</td>
+                                <td>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d-m-Y') }} sd {{ \Carbon\Carbon::parse($data->tanggal_akhir)->format('d-m-Y') }}</td>
+                                <td>{{ $data->jumlah_hari }}</td>
+                            </tr>
+                            @endforeach
+                            @foreach ($BersamaCuti as $data)
+                            <tr>
+                                <td>{{ ++$no }}</td>
+                                <td>{{ $data->libur }}</td>
+                                <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
+                                <td>1</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Tutup</button>
+             </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('script')
@@ -174,5 +240,16 @@ $(document).ready(function() {
         $('form#form').attr('target', '_blank');
     });
 });
+// 
+$('#_datatable_cuti').DataTable( {
+	// dom: 'lBfrtip',
+    dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
+      "<'row'<'col-sm-12'rt>>" +
+      "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+	buttons: [
+		'copy', 'csv', 'excel', 'pdf', 'print'
+	],
+    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+} );
 </script>
 @endsection
