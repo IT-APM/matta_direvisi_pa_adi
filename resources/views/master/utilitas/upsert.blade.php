@@ -125,7 +125,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-3">
-                                @php $no=23; @endphp
+                                @php $no=42; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
@@ -197,6 +197,11 @@
                             </div>
                             <div class="col-md-3">
                                 @php $no=41; @endphp
+                                <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
+                                <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
+                            </div>
+                            <div class="col-md-6">
+                                @php $no=43; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
