@@ -28,6 +28,7 @@ use App\Models\StatusKerja;
 use App\Models\PekerjaanSub;
 use App\Models\Pengalaman;
 use App\Models\KebutuhanStatus;
+use App\Models\KebutuhanNikKecuali;
 use App\Models\TrxKebutuhanMaster;
 use App\Models\TrxKebutuhanDetail;
 use App\Models\TrxKebutuhanLog;
@@ -41,6 +42,7 @@ use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use DB;
 use Elibyy\TCPDF\Facades\TCPDF;
+use Illuminate\Support\Facades\Crypt;
 // 
 
 class TrxKebutuhanController extends Controller
@@ -57,6 +59,7 @@ class TrxKebutuhanController extends Controller
     public function index(Request $request)
     {
         //
+        $karyawan = Karyawan::select('nik', 'nama')->where(['is_aktif' => 1])->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $no = 0;
         $trx = TrxKebutuhanMaster::orderBy('id', 'desc')->get();
         // foreach ($trx as $value) {
@@ -141,7 +144,7 @@ class TrxKebutuhanController extends Controller
             $arr_id_jenis_permintaan = array();
         }
         // end filter
-        return view('formulir.kebutuhan.index', compact('trx', 'no', 'status_pengajuan', 'id_area', 'id_jenis_permintaan', 'arr_status_pengajuan', 'arr_id_area', 'arr_id_jenis_permintaan'));
+        return view('formulir.kebutuhan.index', compact('trx', 'no', 'status_pengajuan', 'id_area', 'id_jenis_permintaan', 'arr_status_pengajuan', 'arr_id_area', 'arr_id_jenis_permintaan', 'karyawan'));
     }
 
     /**
@@ -149,9 +152,13 @@ class TrxKebutuhanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
+        $nik_pengaju = Crypt::decrypt($request->nik_pengaju);
+        $pengaju = Karyawan::select('nik', 'nama')->where(['nik' => $nik_pengaju])->first();
+        $pengaju = $pengaju->nama.' - '.$pengaju->nik;
+        // 
         $pekerjaan = PekerjaanSub::orderBy('pekerjaan', 'asc')->get();
         $level = Level::orderBy('id', 'asc')->get();
         $status_kerja = StatusKerja::orderBy('status_kerja', 'asc')->get();
@@ -174,7 +181,7 @@ class TrxKebutuhanController extends Controller
         $findim_subdepartemen = MtrFindimSubdepartemen::all();
         // atasan langsung dengan level minimal 3 = Supervisor (SPV)
         $atasan = Karyawan::select('nik', 'nama')->where(['is_aktif' => 1])->where('kode_level','>=',3)->orderBy('nama', 'asc')->get();
-        return view('formulir.kebutuhan.insert', compact('karyawan', 'pekerjaan', 'level', 'status_kerja', 'kelamin', 'area', 'kota', 'jenis_permintaan', 'jenjang_pendidikan', 'jurusan_pendidikan', 'pengalaman_kerja', 'pelatihan', 'sertifikasi', 'keterampilan', 'kepribadian', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen', 'atasan'));
+        return view('formulir.kebutuhan.insert', compact('karyawan', 'pekerjaan', 'level', 'status_kerja', 'kelamin', 'area', 'kota', 'jenis_permintaan', 'jenjang_pendidikan', 'jurusan_pendidikan', 'pengalaman_kerja', 'pelatihan', 'sertifikasi', 'keterampilan', 'kepribadian', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen', 'atasan', 'nik_pengaju', 'pengaju'));
     }
 
     /**
@@ -189,7 +196,8 @@ class TrxKebutuhanController extends Controller
         // karyawan masih di hardcode
         // Andika Cahya Fajar. R
         // $pengaju = '01031406353';
-        $pengaju = auth()->user()->nik;
+        // $pengaju = auth()->user()->nik;
+        $pengaju = $request->nik_pengaju;
         $layer1 = $request->layer1;
         $layer2 = $request->layer2;
         $atasan = $request->atasan;
