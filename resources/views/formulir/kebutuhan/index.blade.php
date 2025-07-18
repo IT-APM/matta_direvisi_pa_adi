@@ -5,6 +5,7 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatable-extension.css') }}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
 @endsection
 
 @section('style')
@@ -39,7 +40,25 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    <a href="{{ route('kebutuhan.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('lang.Tambah Baru') }}</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> {{ __('lang.Saring') }}</button>
+                    @php
+                        // $check = App\Models\MtrUtility::
+                        $check = in_array(auth()->user()->nik, explode(',', App\Models\MtrUtility::find(43)->informasi));
+                        // dd($check);
+                    @endphp
+                    @if($check)
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <select class="form-select js-example-basic-single col-sm-12" id="nik_pengaju" name="nik_pengaju">
+                                <option value="0">Pilih Karyawan...</option>
+                                @foreach ($karyawan as $data)
+                                <option value="{{ Crypt::encrypt($data->nik) }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    @endif
+                    {{-- <a href="{{ route('kebutuhan.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('lang.Tambah Baru') }}</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> {{ __('lang.Saring') }}</button> --}}
+                    <button class="btn btn-primary" type="button" onclick="PilihKaryawan()"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('lang.Tambah Baru') }}</button> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> {{ __('lang.Saring') }}</button>
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="{{ route('kebutuhan.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
@@ -152,7 +171,19 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/vfs_fonts.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
+<script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
+<script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 <script type="text/javascript">
+function PilihKaryawan() {
+    var nik_pengaju = "{{ Crypt::encrypt(auth()->user()->nik) }}";
+    @if($check)
+    if($('#nik_pengaju').val() != '0'){
+        nik_pengaju = $('#nik_pengaju').val();
+    }
+    @endif
+    location.href = "{{ route('kebutuhan.create') }}"+"?nik_pengaju="+nik_pengaju;
+}
+// 
 function toggle_status_pengajuan(source) {
     checkboxes = document.getElementsByName('status_pengajuan[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
