@@ -39,7 +39,8 @@
                                 <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif
-                        <a href="{{ route('nonaktif.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> |
+                        {{-- <a href="{{ route('nonaktif.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | --}}
+                        <button id="autoClickBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#autoShowModal"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button> |
                         @can('hc')
                             <a href="{{ route('nonaktif_auto.index') }}" class="btn btn-success" type="button"><i class="fa fa-plus-circle" aria-hidden="true"></i> Auto</a> |
                         @endcan
@@ -134,9 +135,13 @@
                                         <tr>
                                             <td>{{ ++$no }}</td>
                                             <td>{{ $data->id }}</td>
+                                            @php
+                                                $check = App\Models\TrxNonaktifLog::where(['id_trx'=>$data->id, 'id_status'=>31])->exists();
+                                            @endphp
                                             <td>
                                                 <a href="{{ route('nonaktif.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
-                                                <a href="{{ route('nonaktif.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                                &nbsp;<a href="{{ route('nonaktif.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                                @if($check)&nbsp;<a href="{{ route('nonaktif.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('sanggup')]) }}" data-toggle="tooltip" title="Surat Pernyataan Kesanggupan" target="_blank"><i class="fa fa-file-pdf-o" style="color:orange"></i></a>@endif
                                                 @can('hc')
                                                 @if(auth()->user()->nik == App\Models\MtrUtility::find(15)->informasi)
                                                 <form action="{{ route('nonaktif.destroy', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" method="POST">
@@ -218,6 +223,129 @@
             </div>
         </div>
     </div>
+    {{--  --}}
+    <div class="modal fade bd-example-modal-lg" id="autoShowModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h4 class="modal-title w-100 text-center" id="myLargeModalLabel">SURAT PERNYATAAN KESANGGUPAN</h4>
+                </div>
+                @php
+                    $pengaju = App\Models\Karyawan::where(['nik'=>auth()->user()->nik])->first()
+                @endphp
+                <div class="modal-body">
+                    <div class="row" style="text-align: justify;font-size: 15px;">
+                        <div class="col-12">
+                            <label>Yang menyatakan di bawah ini :</label>
+                        </div>
+                        <div class="col-12">
+                            <table width="100%">
+                                <tbody valign="top">
+                                    <tr>
+                                        <td width="2%">&nbsp;</td>
+                                        <td width="20%">Nama</td>
+                                        <td width="1%">:</td>
+                                        <td width="78%">{{ $pengaju->nama }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>Jabatan</td>
+                                        <td>:</td>
+                                        <td>{{ $pengaju->_jabatan->jabatan }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>NIP</td>
+                                        <td>:</td>
+                                        <td>{{ $pengaju->nik }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>Direktorat</td>
+                                        <td>:</td>
+                                        <td>{{ $pengaju->_divisi->nama }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>Divisi</td>
+                                        <td>:</td>
+                                        <td>{{ $pengaju->_departemen->nama }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>Departemen</td>
+                                        <td>:</td>
+                                        <td>{{ $pengaju->_subdepartemen->nama }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <label>Adalah subjek hukum yang terikat sebagai karyawan <b>PT ALITA PRAYA MITRA</b>.</label>
+                        </div>
+                        <div class="col-12 text-center mt-2">
+                            <label><b><u>MENYATAKAN</u></b></label>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <label>Dalam hal berakhirnya hubungan kerja sebagai Karyawan <b>PT ALITA PRAYA MITRA</b> tersebut di atas maka,<br/>SANGGUP UNTUK :</label>
+                        </div>
+                        <div class="col-12">
+                            <table width="100%">
+                                <tbody valign="top">
+                                    <tr>
+                                        <td width="2%">&nbsp;</td>
+                                        <td width="3%">A.</td>
+                                        <td width="95%">Menjaga Seluruh Kerahasiaan Pekerjaan yang telah dilakukannya di <b>PT ALITA PRAYA MITRA</b>, termasuk di dalamnya hal-hal yang terkait dengan Produk, Harga, Teknologi, Sistem Kerja serta Organisasi, dan tidak memberikan informasi terkait hal-hal tersebut di atas kepada siapapun, dalam bentuk dan cara apapun selama sedikitnya 5 (lima) tahun sejak tanggal Surat Pernyataan Kesanggupan ini;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>B.</td>
+                                        <td>Menyerahkan kembali seluruh Alat Kerja milik <b>PT ALITA PRAYA MITRA</b> yang telah diberikan sebagai penunjang pekerjaan, dalam keadaan dan fungsi yang baik, dibuktikan dengan Membuat Berita Acara Serah Terima Alat Kerja;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>C.</td>
+                                        <td>Menjaga Seluruh Kerahasiaan Data dan Informasi <b>PT ALITA PRAYA MITRA</b> atas berakhirnya masa Kerja, dan tidak memberikan informasi terkait hal-hal tersebut kepada siapapun, dalam bentuk dan cara apapun selama sedikitnya 5 (lima) tahun sejak tanggal Surat Pernyataan Kesanggupan ini;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>D.</td>
+                                        <td>Dituntut sesuai hukum yang berlaku, apabila melanggar seluruh ketentuan dalam Surat Pernyataan Kesanggupan ini.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            {{-- <ol>
+                                <li>Menjaga Seluruh Kerahasiaan Pekerjaan yang telah dilakukannya di <b>PT ALITA PRAYA MITRA</b>, termasuk di dalamnya hal-hal yang terkait dengan Produk, Harga, Teknologi, Sistem Kerja serta Organisasi, dan tidak memberikan informasi terkait hal-hal tersebut di atas kepada siapapun, dalam bentuk dan cara apapun selama sedikitnya 5 (lima) tahun sejak tanggal Surat Pernyataan Kesanggupan ini;</li>
+                                <li>Menyerahkan kembali seluruh Alat Kerja milik <b>PT ALITA PRAYA MITRA</b> yang telah diberikan sebagai penunjang pekerjaan, dalam keadaan dan fungsi yang baik, dibuktikan dengan Membuat Berita Acara Serah Terima Alat Kerja;</li>
+                                <li>Menjaga Seluruh Kerahasiaan Data dan Informasi <b>PT ALITA PRAYA MITRA</b> atas berakhirnya masa Kerja, dan tidak memberikan informasi terkait hal-hal tersebut kepada siapapun, dalam bentuk dan cara apapun selama sedikitnya 5 (lima) tahun sejak tanggal Surat Pernyataan Kesanggupan ini;</li>
+                                <li>Dituntut sesuai hukum yang berlaku, apabila melanggar seluruh ketentuan dalam Surat Pernyataan Kesanggupan ini.</li>
+                            </ol> --}}
+                        </div>
+                        <div class="col-12 mt-2">
+                            <label>Pernyataan ini dibuat secara sadar, tanpa ada tekanan dari pihak manapun dan akan dipatuhi dan dilaksanakan secara penuh tanggung jawab, dan sesuai dengan peraturan Perundangan yang berlaku.</label>
+                        </div>
+                        {{-- <div class="col-12 text-center">
+                            @php
+                                $created_at = \Carbon\Carbon::now();
+                                $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+                            @endphp
+                            <label><b>PT ALITA PRAYA MITRA</b><br/>Jakarta, {{ \Carbon\Carbon::parse($created_at)->format('d') }} {{ $bulan[\Carbon\Carbon::parse($created_at)->format('m')-1] }} {{ \Carbon\Carbon::parse($created_at)->format('Y') }}</label>
+                        </div> --}}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ route('nonaktif.create') }}" method="get" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                        @csrf
+                        <input type="hidden" id="is_setuju" name="is_setuju" value="1">
+                        <input type="hidden" id="created_at" name="created_at" value="{{ Crypt::encrypt(\Carbon\Carbon::now()) }}">
+                        {{-- <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}"> --}}
+                        <button class="btn btn-warning" type="submit">Setuju</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{--  --}}
 @endsection
 
 @section('script')
