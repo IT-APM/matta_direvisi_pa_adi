@@ -26,6 +26,7 @@
             <div class="card">
                 <form action="{{ route('kebutuhan.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return cekIsian()">
                     @csrf
+                    <input type="hidden" id="nik_pengaju" name="nik_pengaju" value="{{ $nik_pengaju }}">
                     <div class="row">
                         <!-- start -->
                         <div class="col-md-6">
@@ -34,7 +35,11 @@
                             </div> --}}
                             <div class="card-body">
                                 <h5>Kebutuhan Rekruitmen</h5>
-                                <div class="row">
+                                <div class="col-md-12">
+                                    <label class="form-label" for="pengaju">Pengaju</label>
+                                    <input class="form-control" name="pengaju" id="pengaju" type="text" required="" readonly="" value="{{ $pengaju }}">
+                                </div>
+                                <div class="row mt-2">
                                     <label class="form-label" for="id_pekerjaan">Nama Jabatan*</label>
                                     <div class="col-md-11">
                                         <select class="form-select col-sm-12 js-example-basic-single" id="id_pekerjaan" name="id_pekerjaan" required="">
@@ -54,7 +59,8 @@
                                     <select class="form-select js-example-basic-single col-sm-12" id="atasan" name="atasan" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
                                         @foreach ($atasan as $data)
-                                        <option value="{{ $data->nik }}" @if($data->nik == auth()->user()->nik) selected @endif>{{ $data->nama }} - {{ $data->nik }}</option>
+                                        {{-- <option value="{{ $data->nik }}" @if($data->nik == auth()->user()->nik) selected @endif>{{ $data->nama }} - {{ $data->nik }}</option> --}}
+                                        <option value="{{ $data->nik }}" @if($data->nik == $nik_pengaju) selected @endif>{{ $data->nama }} - {{ $data->nik }}</option>
                                         @endforeach
                                     </select>
                                     <div class="invalid-feedback txt-danger">This field is required.</div>
@@ -320,22 +326,34 @@
                             {{-- <div class="card-header">
                                 <h5>Line Approval</h5>
                             </div> --}}
+                            @php
+                                $check = App\Models\KebutuhanNikKecuali::where(['karyawan'=>$nik_pengaju])->first();
+                                // dd($check);
+                            @endphp
                             <div class="card-body">
                                 <h5>Line Approval</h5>
                                 <div class="row g-2">
                                     <div class="col-md-6">
                                         <label class="form-label" for="layer1">Layer 1*</label>
-                                        <select class="form-select js-example-basic-single col-sm-12" id="layer1" name="layer1" required="">
-                                            <option selected="" disabled="" value="">Pilih...</option>
-                                        </select>
-                                        <div class="invalid-feedback txt-danger">This field is required.</div>
+                                        @if(!empty($check))
+                                            {{ $check->_layer1->nama }}&nbsp;<input class="form-control" name="layer1" id="layer1" type="text" required="" readonly="" value="{{ $check->layer1 }}">
+                                        @else
+                                            <select class="form-select js-example-basic-single col-sm-12" id="layer1" name="layer1" required="">
+                                                <option selected="" disabled="" value="">Pilih...</option>
+                                            </select>
+                                            <div class="invalid-feedback txt-danger">This field is required.</div>
+                                        @endif
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label" for="layer2">Layer 2*</label>
-                                        <select class="form-select js-example-basic-single col-sm-12" id="layer2" name="layer2" required="">
-                                            <option selected="" disabled="" value="">Pilih...</option>
-                                        </select>
-                                        <div class="invalid-feedback txt-danger">This field is required.</div>
+                                        @if(!empty($check))
+                                            {{ $check->_layer2->nama }}&nbsp;<input class="form-control" name="layer2" id="layer2" type="text" required="" readonly="" value="{{ $check->layer2 }}">
+                                        @else
+                                            <select class="form-select js-example-basic-single col-sm-12" id="layer2" name="layer2" required="">
+                                                <option selected="" disabled="" value="">Pilih...</option>
+                                            </select>
+                                            <div class="invalid-feedback txt-danger">This field is required.</div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -624,11 +642,13 @@ $(document).ready(function() {
     // Andika Cahya Fajar. R
     // var id = '01031406353';
     // AJAX request 
+    var _nik = document.getElementById("nik_pengaju").value;
+    // alert(_nik);
     // layer1
     $.ajax({
         // url: _url + '/matta/kebutuhan/layer/' + id,
         // url: "{{ route('kebutuhan_layer') }}" + "/" + id,
-        url: "{{ route('kebutuhan_layer') }}/{{ auth()->user()->nik }}",
+        url: "{{ route('kebutuhan_layer') }}/"+_nik,
         type: 'get',
         dataType: 'json',
         success: function(response) {
@@ -656,7 +676,7 @@ $(document).ready(function() {
     $.ajax({
         // url: _url + '/matta/kebutuhan/layer/' + id,
         // url: "{{ route('kebutuhan_layer') }}" + "/" + id,
-        url: "{{ route('kebutuhan_layer') }}/{{ auth()->user()->nik }}",
+        url: "{{ route('kebutuhan_layer') }}/"+_nik,
         type: 'get',
         dataType: 'json',
         success: function(response) {
