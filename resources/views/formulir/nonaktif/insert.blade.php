@@ -26,6 +26,8 @@
             <div class="card">
                 <form action="{{ route('nonaktif.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                     @csrf
+                    <input type="hidden" id="is_setuju" name="is_setuju" value="{{ $is_setuju }}">
+                    <input type="hidden" id="created_at" name="created_at" value="{{ $created_at }}">
                     <div class="card-header">
                         <h5>Karyawan</h5>
                     </div>
@@ -62,7 +64,7 @@
                     </div>
                     <div class="card-body typography">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <div class="table-responsive">
                                     <table class="table" id="trx_di">
                                         <thead>
@@ -92,8 +94,8 @@
                                                         <option value="{{ $data->id }}">{{ $data->obyek }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <br/>
-                                                    <label class="form-label" for="keterangan_di[]">Keterangan</label>
+                                                    {{-- <br/> --}}
+                                                    <label class="form-label mt-2" for="keterangan_di[]">Keterangan</label>
                                                     <textarea class="form-control" id="keterangan_di[]" name="keterangan_di[]" rows="4"></textarea>
                                                 </td>
                                             </tr>
@@ -103,9 +105,9 @@
                                 </div>
                             </div>
                         </div>
-                        <br />
-                        <div class="row">
-                            <div class="col-md-8">
+                        {{-- <br /> --}}
+                        <div class="row mt-2">
+                            <div class="col-md-12">
                                 <button id="add_row_di" class="btn btn-primary pull-left"><i class="fa fa-plus"></i> Add Row</button>
                                 <button id="delete_row_di" class="pull-right btn btn-danger"><i class="fa fa-minus"></i> Delete Row</button>
                             </div>
@@ -118,7 +120,7 @@
                     </div>
                     <div class="card-body typography">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <div class="table-responsive">
                                     <table class="table" id="trx_ga">
                                         <thead>
@@ -147,8 +149,8 @@
                                                         <option value="{{ $data->id }}">{{ $data->obyek }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <br/>
-                                                    <label class="form-label" for="keterangan_ga[]">Keterangan</label>
+                                                    {{-- <br/> --}}
+                                                    <label class="form-label mt-2" for="keterangan_ga[]">Keterangan</label>
                                                     <textarea class="form-control" id="keterangan_ga[]" name="keterangan_ga[]" rows="4"></textarea>
                                                 </td>
                                             </tr>
@@ -158,9 +160,9 @@
                                 </div>
                             </div>
                         </div>
-                        <br />
-                        <div class="row">
-                            <div class="col-md-8">
+                        {{-- <br /> --}}
+                        <div class="row mt-2">
+                            <div class="col-md-12">
                                 <button id="add_row_ga" class="btn btn-primary pull-left"><i class="fa fa-plus"></i> Add Row</button>
                                 <button id="delete_row_ga" class="pull-right btn btn-danger"><i class="fa fa-minus"></i> Delete Row</button>
                             </div>
@@ -173,7 +175,7 @@
                     </div>
                     <div class="card-body typography">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <div class="table-responsive">
                                     <table class="table" id="trx_it">
                                         <thead>
@@ -202,8 +204,8 @@
                                                         <option value="{{ $data->id }}">{{ $data->obyek }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <br/>
-                                                    <label class="form-label" for="keterangan_it[]">Keterangan</label>
+                                                    {{-- <br/> --}}
+                                                    <label class="form-label mt-2" for="keterangan_it[]">Keterangan</label>
                                                     <textarea class="form-control" id="keterangan_it[]" name="keterangan_it[]" rows="4"></textarea>
                                                 </td>
                                             </tr>
@@ -213,9 +215,9 @@
                                 </div>
                             </div>
                         </div>
-                        <br />
-                        <div class="row">
-                            <div class="col-md-8">
+                        {{-- <br /> --}}
+                        <div class="row mt-2">
+                            <div class="col-md-12">
                                 <button id="add_row_it" class="btn btn-primary pull-left"><i class="fa fa-plus"></i> Add Row</button>
                                 <button id="delete_row_it" class="pull-right btn btn-danger"><i class="fa fa-minus"></i> Delete Row</button>
                             </div>
@@ -228,7 +230,7 @@
                     </div>
                     <div class="card-body typography">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <div class="table-responsive">
                                     <table class="table" id="trx_hc">
                                         <thead>
@@ -257,8 +259,8 @@
                                                         <option value="{{ $data->id }}">{{ $data->obyek }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <br/>
-                                                    <label class="form-label" for="keterangan_hc[]">Keterangan</label>
+                                                    {{-- <br/> --}}
+                                                    <label class="form-label mt-2" for="keterangan_hc[]">Keterangan</label>
                                                     <textarea class="form-control" id="keterangan_hc[]" name="keterangan_hc[]" rows="4"></textarea>
                                                 </td>
                                             </tr>
@@ -268,9 +270,9 @@
                                 </div>
                             </div>
                         </div>
-                        <br />
-                        <div class="row">
-                            <div class="col-md-8">
+                        {{-- <br /> --}}
+                        <div class="row mt-2">
+                            <div class="col-md-12">
                                 <button id="add_row_hc" class="btn btn-primary pull-left"><i class="fa fa-plus"></i> Add Row</button>
                                 <button id="delete_row_hc" class="pull-right btn btn-danger"><i class="fa fa-minus"></i> Delete Row</button>
                             </div>
@@ -283,7 +285,7 @@
                     </div>
                     <div class="card-body typography">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <div class="table-responsive">
                                     <table class="table" id="trx_ko">
                                         <thead>
@@ -312,8 +314,8 @@
                                                         <option value="{{ $data->id }}">{{ $data->obyek }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <br/>
-                                                    <label class="form-label" for="keterangan_ko[]">Keterangan</label>
+                                                    {{-- <br/> --}}
+                                                    <label class="form-label mt-2" for="keterangan_ko[]">Keterangan</label>
                                                     <textarea class="form-control" id="keterangan_ko[]" name="keterangan_ko[]" rows="4"></textarea>
                                                 </td>
                                             </tr>
@@ -323,11 +325,66 @@
                                 </div>
                             </div>
                         </div>
-                        <br />
-                        <div class="row">
-                            <div class="col-md-8">
+                        {{-- <br /> --}}
+                        <div class="row mt-2">
+                            <div class="col-md-12">
                                 <button id="add_row_ko" class="btn btn-primary pull-left"><i class="fa fa-plus"></i> Add Row</button>
                                 <button id="delete_row_ko" class="pull-right btn btn-danger"><i class="fa fa-minus"></i> Delete Row</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end -->
+                    <!-- start -->
+                    <div class="card-header">
+                        <h5>Application Management</h5>
+                    </div>
+                    <div class="card-body typography">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table" id="trx_am">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <h6>Kepada</h6>
+                                                </th>
+                                                <th>
+                                                    <h6>Obyek</h6>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="div_am0">
+                                                <td>
+                                                    <select class="form-select" id="kepada_am[]" name="kepada_am[]" required="">
+                                                        @foreach ($pic_am as $data)
+                                                        <option value="{{ $data->nik }}">{{ $data->nama }} - {{ $data->nik }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-select" id="obyek_am[]" name="obyek_am[]" required="">
+                                                        <option selected="" disabled="" value="">Pilih...</option>
+                                                        @foreach ($obyek_am as $data)
+                                                        <option value="{{ $data->id }}">{{ $data->obyek }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    {{-- <br/> --}}
+                                                    <label class="form-label mt-2" for="keterangan_am[]">Keterangan</label>
+                                                    <textarea class="form-control" id="keterangan_am[]" name="keterangan_am[]" rows="4"></textarea>
+                                                </td>
+                                            </tr>
+                                            <tr id="div_am1"></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- <br /> --}}
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <button id="add_row_am" class="btn btn-primary pull-left"><i class="fa fa-plus"></i> Add Row</button>
+                                <button id="delete_row_am" class="pull-right btn btn-danger"><i class="fa fa-minus"></i> Delete Row</button>
                             </div>
                         </div>
                     </div>
@@ -440,6 +497,23 @@ $(document).ready(function() {
         if (row_number_ko > 1) {
             $("#div_ko" + (row_number_ko - 1)).html('');
             row_number_ko--;
+        }
+    });
+    // am
+    let row_number_am = 1;
+    $("#add_row_am").click(function(e) {
+        e.preventDefault();
+        let new_row_number_am = row_number_am - 1;
+        $('#div_am' + row_number_am).html($('#div_am' + new_row_number_am).html()).find(
+            'td:first-child');
+        $('#trx_am').append('<tr id="div_am' + (row_number_am + 1) + '"></tr>');
+        row_number_am++;
+    });
+    $("#delete_row_am").click(function(e) {
+        e.preventDefault();
+        if (row_number_am > 1) {
+            $("#div_am" + (row_number_am - 1)).html('');
+            row_number_am--;
         }
     });
     // 
