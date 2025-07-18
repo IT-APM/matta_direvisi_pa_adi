@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 // 
 use App\Models\Karyawan;
 use App\Models\Perusahaan;
@@ -179,8 +180,12 @@ class TrxNonaktifController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
+        // dd($request->all());
+        $is_setuju = $request->is_setuju;
+        $created_at = Crypt::decrypt($request->created_at);
+        // dd($is_setuju, $created_at);
         //
         $alasan = NonaktifAlasan::orderBy('alasan', 'asc')->get();
         // di = divisi
@@ -208,8 +213,13 @@ class TrxNonaktifController extends Controller
         $obyek_ko = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
         $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(16)->informasi];
         $pic_ko = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+        // am = application management
+        $where = ['_into_' => 'am'];
+        $obyek_am = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
+        $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(42)->informasi];
+        $pic_am = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         // 
-        return view('formulir.nonaktif.insert', compact('alasan', 'karyawan', 'obyek_di', 'pic_ga', 'obyek_ga', 'pic_it', 'obyek_it', 'pic_hc', 'obyek_hc', 'pic_ko', 'obyek_ko'));
+        return view('formulir.nonaktif.insert', compact('alasan', 'karyawan', 'obyek_di', 'pic_ga', 'obyek_ga', 'pic_it', 'obyek_it', 'pic_hc', 'obyek_hc', 'pic_ko', 'obyek_ko', 'pic_am', 'obyek_am', 'is_setuju', 'created_at'));
         // return response()->json( [ 'data' => $_pic_ga ] );die;
     }
 
@@ -221,6 +231,7 @@ class TrxNonaktifController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         // cek jika hanya yang belum pernah mengajukan
         $exists = false;
         $where = ['nik' => auth()->user()->nik];
@@ -265,6 +276,9 @@ class TrxNonaktifController extends Controller
         $trxM->status = $status;
         $trxM->save();
         $this->insertLog($trxM->id, $status, $pengaju, 'insert');
+        // 31 = Statement Of Compliance
+        $status = 31;
+        $this->insertLog($trxM->id, $status, $pengaju, $request->created_at);
         // agregate semua input array
         // _di
         $kepada_di = $request->input('kepada_di', []);
@@ -286,6 +300,10 @@ class TrxNonaktifController extends Controller
         $kepada_ko = $request->input('kepada_ko', []);
         $obyek_ko = $request->input('obyek_ko', []);
         $keterangan_ko = $request->input('keterangan_ko', []);
+        // _am
+        $kepada_am = $request->input('kepada_am', []);
+        $obyek_am = $request->input('obyek_am', []);
+        $keterangan_am = $request->input('keterangan_am', []);
         // _di
         for ($x = 0; $x < count($kepada_di); $x++) {
             $trxD = new TrxNonaktifDetail;
@@ -344,6 +362,18 @@ class TrxNonaktifController extends Controller
             $trxD->kepada_property = $kepada_property;
             $trxD->obyek = $obyek_ko[$x];
             $trxD->keterangan = $keterangan_ko[$x];
+            $trxD->save();
+        }
+        // _am
+        for ($x = 0; $x < count($kepada_am); $x++) {
+            $trxD = new TrxNonaktifDetail;
+            $trxD->id_trx = $trxM->id;
+            $trxD->_into_ = 'am';
+            $trxD->kepada = $kepada_am[$x];
+            $kepada_property = $this->getNikProperty($kepada_am[$x]);
+            $trxD->kepada_property = $kepada_property;
+            $trxD->obyek = $obyek_am[$x];
+            $trxD->keterangan = $keterangan_am[$x];
             $trxD->save();
         }
         // sendEmail
@@ -442,6 +472,25 @@ class TrxNonaktifController extends Controller
             $this->sendEmail($mailData);
             // finish
         }
+        // _am
+        $pic = 'am';
+        $where = ['id_trx' => $trxM->id, '_into_' => $pic];
+        $_trxD = TrxNonaktifDetail::select('kepada_property')->where($where)->groupBy('kepada_property')->get();
+        foreach ($_trxD as $value) {
+            // start
+            // parameter yang dipassing ke sendemail
+            // 27 = Submit to PIC Application Management
+            $status = 27;
+            $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
+            $mailData['filename'] = 'emails.nonaktif0';
+            $_kepada = json_decode($value->kepada_property, true);
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
+            $mailData['to'] = $_kepada['email'];
+            $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
+            $this->insertToDoList($todolist, $mailData);
+            $this->sendEmail($mailData);
+            // finish
+        }
         // return response()->json( [ '_hasil' => $_hasil['nama'] ] );die;
         return redirect('nonaktif')->with('msg', 'Data is saved successfully.');
     }
@@ -467,6 +516,12 @@ class TrxNonaktifController extends Controller
         $data->id_status = $id_status;
         $data->nik_pic = $nik_pic;
         $data->keterangan = $keterangan;
+        // 31 = Statement Of Compliance
+        if($id_status == 31){
+            $data->keterangan = 1;
+            $data->created_at = $keterangan;
+            $data->updated_at = $keterangan;
+        }
         $data->save();
     }
 
@@ -536,7 +591,7 @@ class TrxNonaktifController extends Controller
         $id = (new OpenDataController)->decryptWithKey($id);
         $where = ['id_trx' => $id];
         $history = TrxNonaktifLog::where($where)->orderBy('created_at', 'desc')->get();
-        $trxM = TrxNonaktifMaster::find( $id );
+        $trxM = TrxNonaktifMaster::find($id);
         $where = ['nik' => $trxM->pengaju];
         $karyawan_properties = Karyawan::where($where)->first();
         // 
@@ -623,6 +678,19 @@ class TrxNonaktifController extends Controller
         }else if(empty($log)){
             $nKO = true;
         }
+        // am
+        // 27 = Submit to PIC Application Management
+        // 28 = Reject by PIC Application Management
+        // 29 = Resubmit to PIC Application Management
+        // 30 = Approve by PIC Application Management
+        // $nAM = TrxNonaktifLog::where($where)->whereIn('id_status', [28,30])->count();
+        $nAM = false;
+        $log = TrxNonaktifLog::where($where)->whereIn('id_status', [27, 28, 29, 30])->orderBy('id', 'desc')->first();
+        if(!empty($log) && in_array($log->id_status, [27, 29])){
+            $nAM = true;
+        }else if(empty($log)){
+            $nAM = true;
+        }
         // atasan
         // 25 = Submit to L1
         // 2 = Reject by L1
@@ -681,6 +749,16 @@ class TrxNonaktifController extends Controller
                     $trxD = TrxNonaktifDetail::where($where)->get();
                     return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'history'));
                 }
+                // am
+                else if ($pic == 'am' && $nAM) {
+                    // 28 = Reject by PIC Application Management
+                    // 30 = Approve by PIC Application Management
+                    $approve = 30;
+                    $reject = 28;
+                    $where = ['id_trx' => $id, '_into_' => $pic, 'kepada' => $nik];
+                    $trxD = TrxNonaktifDetail::where($where)->get();
+                    return view('emails.nonaktif', compact('trxM', 'trxD','nik', 'pic', 'approve', 'reject', 'pengaju', 'linkAction', 'history'));
+                }
                 // atasan
                 // 25 = Submit to L1
                 else if ($pic == 'atasan' && $nAtasan == 0 && $id_status == 25) {
@@ -733,12 +811,19 @@ class TrxNonaktifController extends Controller
                 // ko
                 $where = ['id_trx' => $id, '_into_' => 'ko'];
                 $trxD_ko = TrxNonaktifDetail::where($where)->get();
+                // am
+                $where = ['id_trx' => $id, '_into_' => 'am'];
+                $trxD_am = TrxNonaktifDetail::where($where)->get();
+                // dd($trxD_am);
                 // start
-                $htmlLog = '<table width="100%" border="0" align="center" cellpadding="2" cellspacing="0"><tr>';
+                $arr_htmlLog = array();
+                // $htmlLog = '<table width="100%" border="0" align="center" cellpadding="2" cellspacing="0"><tr>';
+                $htmlLog = '<table width="100%" border="0" align="center" cellpadding="2" cellspacing="0">';
                 // karyawan
                 $where = ['id_trx' => $id, 'nik_pic' => $trxM->pengaju, 'id_status' => 1];
                 $nonaktifLog = TrxNonaktifLog::where($where)->orderBy('id', 'desc')->first();
-                $htmlLog .= '<td>Mengajukan<br/><img src="' . public_path('assets/images/matta/requested_new.png') . '" height="30" /><br/>' . $karyawan['nama'] . '<br/>' . $karyawan['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                $_htmlLog = '<td>Mengajukan<br/><img src="' . public_path('assets/images/matta/requested_new.png') . '" height="30" /><br/>' . $karyawan['nama'] . '<br/>' . $karyawan['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                array_push($arr_htmlLog, $_htmlLog);
                 // _di
                 $pic = 'di';
                 $where = ['id_trx' => $trxM->id, '_into_' => $pic];
@@ -751,9 +836,11 @@ class TrxNonaktifController extends Controller
                     $nonaktifLog = TrxNonaktifLog::where($where)->whereIn('id_status', [6,8])->orderBy('id', 'desc')->first();
                     if (!empty($nonaktifLog)) {
                         if($nonaktifLog->id_status == 8){
-                            $htmlLog .= '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            $_htmlLog = '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
                         }else if($nonaktifLog->id_status == 6){
-                            $htmlLog .= '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            $_htmlLog = '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
                         }
                     }
                 }
@@ -769,9 +856,11 @@ class TrxNonaktifController extends Controller
                     $nonaktifLog = TrxNonaktifLog::where($where)->whereIn('id_status', [10,12])->orderBy('id', 'desc')->first();
                     if (!empty($nonaktifLog)) {
                         if($nonaktifLog->id_status == 12){
-                            $htmlLog .= '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            $_htmlLog = '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
                         }else if($nonaktifLog->id_status == 10){
-                            $htmlLog .= '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            $_htmlLog = '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
                         }
                     }
                 }
@@ -787,9 +876,11 @@ class TrxNonaktifController extends Controller
                     $nonaktifLog = TrxNonaktifLog::where($where)->whereIn('id_status', [14,16])->orderBy('id', 'desc')->first();
                     if (!empty($nonaktifLog)) {
                         if($nonaktifLog->id_status == 16){
-                            $htmlLog .= '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            $_htmlLog = '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
                         }else if($nonaktifLog->id_status == 14){
-                            $htmlLog .= '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            $_htmlLog = '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
                         }
                     }
                 }
@@ -805,9 +896,11 @@ class TrxNonaktifController extends Controller
                     $nonaktifLog = TrxNonaktifLog::where($where)->whereIn('id_status', [22,24])->orderBy('id', 'desc')->first();
                     if (!empty($nonaktifLog)) {
                         if($nonaktifLog->id_status == 24){
-                            $htmlLog .= '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            $_htmlLog = '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
                         }else if($nonaktifLog->id_status == 22){
-                            $htmlLog .= '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            $_htmlLog = '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
                         }
                     }
                 }
@@ -823,9 +916,31 @@ class TrxNonaktifController extends Controller
                     $nonaktifLog = TrxNonaktifLog::where($where)->whereIn('id_status', [18,20])->orderBy('id', 'desc')->first();
                     if (!empty($nonaktifLog)) {
                         if($nonaktifLog->id_status == 20){
-                            $htmlLog .= '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            $_htmlLog = '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
                         }else if($nonaktifLog->id_status == 18){
-                            $htmlLog .= '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            $_htmlLog = '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
+                        }
+                    }
+                }
+                // _am
+                $pic = 'am';
+                $where = ['id_trx' => $trxM->id, '_into_' => $pic];
+                $_trxD = TrxNonaktifDetail::select('kepada_property')->where($where)->groupBy('kepada_property')->get();
+                foreach ($_trxD as $value) {
+                    // 28 = Reject by PIC Application Management
+                    // 30 = Approve by PIC Application Management
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $id, 'nik_pic' => $kepada['nik']];
+                    $nonaktifLog = TrxNonaktifLog::where($where)->whereIn('id_status', [28,30])->orderBy('id', 'desc')->first();
+                    if (!empty($nonaktifLog)) {
+                        if($nonaktifLog->id_status == 30){
+                            $_htmlLog = '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
+                        }else if($nonaktifLog->id_status == 28){
+                            $_htmlLog = '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $kepada['nama'] . '<br/>' . $kepada['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                            array_push($arr_htmlLog, $_htmlLog);
                         }
                     }
                 }
@@ -836,25 +951,75 @@ class TrxNonaktifController extends Controller
                 $nonaktifLog = TrxNonaktifLog::where($where)->whereIn('id_status', [2, 4])->orderBy('id', 'desc')->first();
                 if (!empty($nonaktifLog)) {
                     if($nonaktifLog->id_status == 4){
-                        $htmlLog .= '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $atasan['nama'] . '<br/>' . $atasan['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                        $_htmlLog = '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $atasan['nama'] . '<br/>' . $atasan['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                        array_push($arr_htmlLog, $_htmlLog);
                     }else if($nonaktifLog->id_status == 2){
-                        $htmlLog .= '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $atasan['nama'] . '<br/>' . $atasan['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                        $_htmlLog = '<td>Menolak<br/><img src="' . public_path('assets/images/matta/rejected_new.png') . '" height="30" /><br/>' . $atasan['nama'] . '<br/>' . $atasan['jabatan'] . '<br/>' . $nonaktifLog->created_at . '</td>';
+                        array_push($arr_htmlLog, $_htmlLog);
                     }
                 }
                 // // hco
                 // $where = ['id_trx' => $id];
                 // $nonaktifLog = TrxNonaktifLog::where($where)->whereIn('id_status', [5, 10])->orderBy('id', 'desc')->first();
                 // if (!empty($nonaktifLog)) {
-                //     $htmlLog .= '<td>Mengetahui<br/><img src="' . public_path('assets/images/matta/informed_new.png') . '" height="30" /><br/>' . $nonaktifLog->_pic->nama . '<br/>' . $nonaktifLog->_pic->_jabatan->jabatan . '<br/>' . $nonaktifLog->created_at . '</td>';
+                    // $_htmlLog = '<td>Mengetahui<br/><img src="' . public_path('assets/images/matta/informed_new.png') . '" height="30" /><br/>' . $nonaktifLog->_pic->nama . '<br/>' . $nonaktifLog->_pic->_jabatan->jabatan . '<br/>' . $nonaktifLog->created_at . '</td>';
+                    // array_push($arr_htmlLog, $_htmlLog);
                 // }
                 // finish
-                $htmlLog .= '</tr></table>';
+                // $htmlLog .= '</tr></table>';
+                // start looping satu baris terdiri dari $pembagi
+                // jumlah ttd dalam 1 baris
+                $pembagi = 4;
+                $jumlah = count($arr_htmlLog);
+                $sisa = $jumlah % $pembagi;
+                $hasil = ($jumlah - $sisa) / $pembagi;
+                if($hasil > 0){
+                    for ($y = 0; $y < $hasil; $y++) {
+                        $htmlLog .= '<tr>';
+                        for ($x = $y*$pembagi; $x < ($y+1)*$pembagi; $x++) {
+                            $htmlLog .= $arr_htmlLog[$x];
+                        }
+                        $htmlLog .= '</tr>';
+                    }
+                    if($sisa>0){
+                        $htmlLog .= '<tr>';
+                        for ($x = $hasil*$pembagi; $x < $jumlah; $x++) {
+                            $htmlLog .= $arr_htmlLog[$x];
+                        }
+                        $htmlLog .= '</tr>';
+                    }
+                }else{
+                    $htmlLog .= '<tr>';
+                    foreach($arr_htmlLog as $value){
+                        $htmlLog .= $value;
+                    }
+                    $htmlLog .= '</tr>';
+                }
+                $htmlLog .= '</table>';
+                // end looping satu baris terdiri dari $pembagi
                 // 
                 $filename = $waktu . '_formulir_nonaktif.pdf';
-                $view = \View::make('formulir.nonaktif.pdf', compact('trxM', 'trxD', 'karyawan', 'karyawan_properties','atasan', 'trxD_di', 'trxD_ga', 'trxD_it', 'trxD_hc', 'trxD_ko', 'htmlLog'));
+                $view = \View::make('formulir.nonaktif.pdf', compact('trxM', 'trxD', 'karyawan', 'karyawan_properties','atasan', 'trxD_di', 'trxD_ga', 'trxD_it', 'trxD_hc', 'trxD_ko', 'trxD_am', 'htmlLog'));
                 $html = $view->render();
                 $pdf = new TCPDF;
                 $pdf::SetTitle('Formulir Karyawan Non Aktif');
+                $pdf::SetFont('times', '', 10, '', true);
+                $pdf::AddPage();
+                $pdf::writeHTML($html, true, false, true, false, '');
+                $pdf::Output(public_path($filename), 'I');
+                return response()->download(public_path($filename));
+                break;
+            case 'sanggup':
+                $this->authorize('auth');
+                $trxM = TrxNonaktifMaster::find($id);
+                // 31 = Statement Of Compliance
+                $trxLog = TrxNonaktifLog::where(['id_trx'=>$id, 'id_status'=>31])->first();
+                // 
+                $filename = $id . '_surat_pernyataan_kesanggupan.pdf';
+                $view = \View::make('formulir.nonaktif.pdf_sanggup', compact('trxM', 'trxLog'));
+                $html = $view->render();
+                $pdf = new TCPDF;
+                $pdf::SetTitle('Surat Pernyataan Kesanggupan');
                 $pdf::SetFont('times', '', 10, '', true);
                 $pdf::AddPage();
                 $pdf::writeHTML($html, true, false, true, false, '');
@@ -877,7 +1042,7 @@ class TrxNonaktifController extends Controller
         $this->authorize('auth');
         $id = (new OpenDataController)->decryptWithKey($id);
         // dd($request->all(), $id);
-        $trxD = TrxNonaktifDetail::find( $id );
+        $trxD = TrxNonaktifDetail::find($id);
         $back_url = $request->back_url;
         // di = divisi
         $where = ['_into_' => 'di'];
@@ -904,8 +1069,13 @@ class TrxNonaktifController extends Controller
         $obyek_ko = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
         $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(16)->informasi];
         $pic_ko = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+        // am = Application Management
+        $where = ['_into_' => 'am'];
+        $obyek_am = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
+        $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(42)->informasi];
+        $pic_am = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         // 
-        return view('formulir.nonaktif.edit', compact('back_url', 'trxD', 'karyawan', 'obyek_di', 'pic_ga', 'obyek_ga', 'pic_it', 'obyek_it', 'pic_hc', 'obyek_hc', 'pic_ko', 'obyek_ko'));
+        return view('formulir.nonaktif.edit', compact('back_url', 'trxD', 'karyawan', 'obyek_di', 'pic_ga', 'obyek_ga', 'pic_it', 'obyek_it', 'pic_hc', 'obyek_hc', 'pic_ko', 'obyek_ko', 'pic_am', 'obyek_am'));
     }
     
     public function save_edit(Request $request, $id)
@@ -913,7 +1083,7 @@ class TrxNonaktifController extends Controller
         // dd($request->all(), $id);
         $this->authorize('auth');
         $id = (new OpenDataController)->decryptWithKey($id);
-        $trxD = TrxNonaktifDetail::find( $id );
+        $trxD = TrxNonaktifDetail::find($id);
         $trxD->kepada = $request->kepada;
         $trxD->obyek = $request->obyek;
         $trxD->keterangan = $request->keterangan;
@@ -935,6 +1105,9 @@ class TrxNonaktifController extends Controller
         }else if($pic == 'ko'){
             $status = 19;
             $keterangan = 'Resubmit to PIC KOPERASI';
+        }else if($pic == 'am'){
+            $status = 29;
+            $keterangan = 'Resubmit to PIC Application Management';
         }else if($pic == 'hc'){
             $status = 23;
             $keterangan = 'Resubmit to PIC HC';
@@ -969,7 +1142,7 @@ class TrxNonaktifController extends Controller
     {
         // dd($request->all(), $id);
         $id = (new OpenDataController)->decryptWithKey($id);
-        $trxM = TrxNonaktifMaster::find( $id );
+        $trxM = TrxNonaktifMaster::find($id);
         $pic = $request->pic;
         $nik = $request->nik;
         $status = $request->status;
@@ -1110,6 +1283,31 @@ class TrxNonaktifController extends Controller
             }
             return view('emails.nonaktif_ok');
         }
+        // am
+        // 27 = Submit to PIC Application Management
+        // 28 = Reject by PIC Application Management
+        // 30 = Approve by PIC Application Management
+        else if (($status == 28 || $status == 30) && $pic == 'am' && in_array($nik, $kepada)) {
+            $trxM->status = $status;
+            $trxM->update();
+            $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$nik, 'pic'=>$pic, 'filename'=>'emails.nonaktif0']);
+            $this->insertLog($id, $status, $nik, $keterangan);
+            $this->checkApproval($id, $trxM);
+            if($status == 28){
+                // start
+                // parameter yang dipassing ke sendemail
+                $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
+                $mailData['filename'] = 'emails.nonaktif0';
+                $_pengaju = json_decode($trxM->pengaju_property, true);
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]) ];
+                $mailData['to'] = $_pengaju['email'];
+                $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
+                $this->insertToDoList($todolist, $mailData);
+                $this->sendEmail($mailData);
+                // finish
+            }
+            return view('emails.nonaktif_ok');
+        }
         // atasan
         // 25 = Submit to L1
         // 2 = Reject by L1
@@ -1136,37 +1334,44 @@ class TrxNonaktifController extends Controller
     public function checkApproval($id_trx, $trxM){
         // return response()->json( [ 'trxM' => $trxM ] );die;
         $check = 0;
+        $n_pic = 5;
         // di
         // 8 = Approve by PIC DIVISI
-        $where = ['id_trx' => $id_trx, 'id_status' => 8];
-        if(TrxNonaktifLog::where($where)->count() > 0){
+        if(TrxNonaktifLog::where(['id_trx' => $id_trx, 'id_status' => 8])->exists()){
             $check += 1;
         }
         // ga
         // 12 = Approve by PIC GA
-        $where = ['id_trx' => $id_trx, 'id_status' => 12];
-        if(TrxNonaktifLog::where($where)->count() > 0){
+        if(TrxNonaktifLog::where(['id_trx' => $id_trx, 'id_status' => 12])->exists()){
             $check += 1;
         }
         // it
         // 16 = Approve by PIC IT
-        $where = ['id_trx' => $id_trx, 'id_status' => 16];
-        if(TrxNonaktifLog::where($where)->count() > 0){
+        if(TrxNonaktifLog::where(['id_trx' => $id_trx, 'id_status' => 16])->exists()){
             $check += 1;
         }
         // hc
         // 24 = Approve by PIC HC
-        $where = ['id_trx' => $id_trx, 'id_status' => 24];
-        if(TrxNonaktifLog::where($where)->count() > 0){
+        if(TrxNonaktifLog::where(['id_trx' => $id_trx, 'id_status' => 24])->exists()){
             $check += 1;
         }
         // ko
         // 20 = Approve by PIC KOPERASI
-        $where = ['id_trx' => $id_trx, 'id_status' => 20];
-        if(TrxNonaktifLog::where($where)->count() > 0){
+        if(TrxNonaktifLog::where(['id_trx' => $id_trx, 'id_status' => 20])->exists()){
             $check += 1;
         }
-        if($check >= 5){
+        // am
+        // 30 = Approve by PIC Application Management
+        if(TrxNonaktifLog::where($where = ['id_trx' => $id_trx, 'id_status' => 30])->exists()){
+            $check += 1;
+        }
+        // jika ada Statement Of Compliance
+        // 31 = Statement Of Compliance
+        if(TrxNonaktifLog::where(['id_trx' => $id_trx, 'id_status' => 31])->exists()){
+            $n_pic = 6;
+        }
+        // jika semua pic sudah approve
+        if($check >= $n_pic){
             // start
             // parameter yang dipassing ke sendemail
             // 25 = Submit to L1
@@ -1195,7 +1400,7 @@ class TrxNonaktifController extends Controller
     {
         $this->authorize('auth');
         $id = (new OpenDataController)->decryptWithKey($id);
-        $trxM = TrxNonaktifMaster::find( $id );
+        $trxM = TrxNonaktifMaster::find($id);
         $trxM->delete();
         ToDoList::where('id_trx', '=', $id)->where('title', 'like', 'Formulir Karyawan Non Aktif%')->delete();
         return redirect( 'nonaktif' )->with( 'msg', 'Data is deleted successfully.' );
