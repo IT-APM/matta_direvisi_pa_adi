@@ -206,6 +206,42 @@
                     @endforeach
                 </table>
                 <hr />
+                <!-- am -->
+                @if(count($trxD_am)>0)
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td align="center"><strong>APPLICATION MANAGEMENT</strong></td>
+                    </tr>
+                </table>
+                <hr />
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td colspan="2"><strong>Kepada</strong></td>
+                    </tr>
+                    @foreach ($trxD_am as $value)
+                    @php
+                    $kepada = json_decode($value->kepada_property, true);
+                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                    // 28 = Reject by PIC Application Management
+                    // 30 = Approve by PIC Application Management
+                    $whereIn = [28, 30];
+                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
+                    @endphp
+                    <tr>
+                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen<br />Obyek Pengembalian<br />Keterangan<br />Catatan PIC</td>
+                        <td width="70%">: {{ $kepada['nama'] }}<br />
+                        : {{ $kepada['nik'] }}<br />
+                        : {{ $kepada['jabatan'] }}<br />
+                        : {{ $kepada['divisi'] }} / {{ $kepada['dep'] }} / {{ $kepada['sub_dep'] }}<br />
+                        : {{ $value->_obyek->obyek }}<br />
+                        : {!! $value->keterangan !!}<br />
+                        : @if(!empty($log)){{ $log->keterangan }}@endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </table>
+                <hr />
+                @endif
                 <!--  -->
                 {!! $htmlLog !!}
                 <!--  -->
