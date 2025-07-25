@@ -183,8 +183,14 @@ class TrxNonaktifController extends Controller
     public function create(Request $request)
     {
         // dd($request->all());
-        $is_setuju = $request->is_setuju;
-        $created_at = Crypt::decrypt($request->created_at);
+        $is_setuju = 1;
+        if(!empty($request->is_setuju)){
+            $is_setuju = $request->is_setuju;
+        }
+        $created_at = Carbon::now();
+        if(!empty($request->created_at)){
+            $created_at = Crypt::decrypt($request->created_at);
+        }
         // dd($is_setuju, $created_at);
         //
         $alasan = NonaktifAlasan::orderBy('alasan', 'asc')->get();
