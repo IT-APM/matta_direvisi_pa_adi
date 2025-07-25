@@ -49,6 +49,8 @@ class MattaApi extends Controller
         $tgl = date('Y-m-d');
         $jam = date('H:i:s');
         $waktu = date('Y-m-d H:i:s');
+        // $jam = date('H:i:s', strtotime('21:30:00'));
+        // $waktu = date('Y-m-d H:i:s', strtotime('2025-07-25 21:30:00'));
         $data = New Attendance;
         $data->att_date = $tgl;
         $data->att_timestamp = $waktu;
@@ -105,7 +107,7 @@ class MattaApi extends Controller
                 // cuti bersama dinyatakan sebagai OT Weekday
                 if($is_cuti == 1){
                     // Weekday
-                    if($status_karyawan == 'Freelance'){
+                    if($status_karyawan == 'Freelance' || $status_karyawan == 'Magang'){
                         return $arr[0]['informasi']*$ot_length/3600;
                     }else{
                         return $this->getOTSalaryWeekday($gaji_pokok,$ot_length);
@@ -114,7 +116,7 @@ class MattaApi extends Controller
                 // cuti bersama dinyatakan sebagai OT Weekend
                 else if($is_cuti == 0){
                     // Weekend
-                    if($status_karyawan == 'Freelance'){
+                    if($status_karyawan == 'Freelance' || $status_karyawan == 'Magang'){
                         return $arr[1]['informasi']*$ot_length/3600;
                     }else{
                         return $this->getOTSalaryWeekend($gaji_pokok,$ot_length);
@@ -124,14 +126,14 @@ class MattaApi extends Controller
                 $isWeekend = $this->isWeekendOT($tanggal)['isWeekend'];
                 if($isWeekend){
                     // Weekend
-                    if($status_karyawan == 'Freelance'){
+                    if($status_karyawan == 'Freelance' || $status_karyawan == 'Magang'){
                         return $arr[1]['informasi']*$ot_length/3600;
                     }else{
                         return $this->getOTSalaryWeekend($gaji_pokok,$ot_length);
                     }
                 }else{
                     // Weekday
-                    if($status_karyawan == 'Freelance'){
+                    if($status_karyawan == 'Freelance' || $status_karyawan == 'Magang'){
                         return $arr[0]['informasi']*$ot_length/3600;
                     }else{
                         return $this->getOTSalaryWeekday($gaji_pokok,$ot_length);
