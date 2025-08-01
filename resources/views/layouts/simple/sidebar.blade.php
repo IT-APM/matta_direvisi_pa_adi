@@ -36,12 +36,12 @@
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-home') }}"></use>
                             </svg><span>Home</span></a>
                         <ul class="sidebar-submenu">
-                            @can('hc')
+                            @can('hc_dashboard')
                             <li><a class="submenu-title" href="#">Dashboard<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="{{ route('dashboard.biaya', 0) }}">Biaya Gaji</a></li>
                                     <li><a href="{{ route('dashboard.biaya_lain', 0) }}">Biaya Lain</a></li>
-                                    <li><a href="{{ route('dashboard.index') }}">Infografis Karyawan</a></li>
+                                    {{-- <li><a href="{{ route('dashboard.index') }}">Infografis Karyawan</a></li> --}}
                                 </ul>
                             </li>
                             {{-- <li><a href="{{ route('dashboard.index') }}">Dashboard</a></li> --}}
