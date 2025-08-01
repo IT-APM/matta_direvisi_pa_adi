@@ -28,10 +28,14 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-        // 
+        
         Gate::define('hc', function(User $user) {
             // return $user->hasAnyRoles(['hc', 'instructor']);
             return $user->userrole == 'hc';
+        });
+        
+        Gate::define('hc_dashboard', function(User $user) {
+            return $user->userrole == 'hc' || in_array($user->nik, explode(',', MtrUtility::find(44)->informasi));
         });
         
         Gate::define('staf_only', function(User $user) {
