@@ -44,7 +44,7 @@ class KaryawanController extends Controller
 {
     public function __construct(Gate $gate)
     {
-        $this->middleware('can:hc', ['except' => ['show', 'get_divisi', 'update_profile']]);
+        $this->middleware('can:hc', ['except' => ['show', 'get_divisi', 'get_departemen', 'get_sub_departemen', 'update_profile']]);
     }
     
     public function upload_data($id)
@@ -310,17 +310,17 @@ class KaryawanController extends Controller
     }
 
     public function get_divisi( $id ) {
-        $data = Divisi::where(['kode_perusahaan'=>$id, 'is_active'=>1])->get();
+        $data = Divisi::where(['kode_perusahaan'=>$id, 'is_active'=>1])->orderBy( 'nama', 'asc' )->get();
         return json_decode($data, true);
     }
 
     public function get_departemen( $id ) {
-        $data = Departemen::where(['kode_divisi'=>$id, 'is_active'=>1])->get();
+        $data = Departemen::where(['kode_divisi'=>$id, 'is_active'=>1])->orderBy( 'nama', 'asc' )->get();
         return json_decode($data, true);
     }
 
     public function get_sub_departemen( $id ) {
-        $data = SubDepartemen::where(['kode_departemen'=>$id, 'is_active'=>1])->get();
+        $data = SubDepartemen::where(['kode_departemen'=>$id, 'is_active'=>1])->orderBy( 'nama', 'asc' )->get();
         return json_decode($data, true);
     }
 
