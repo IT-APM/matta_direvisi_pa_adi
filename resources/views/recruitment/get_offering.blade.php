@@ -47,30 +47,31 @@
                     </div>
                     <hr class="mt-2 mb-2" />
                     <div class="row">
-                        <div class="col-12 col-md-3">
-                            <div class="col-12 mb-2">
-                                <label class="form-label" for="nama">Nama Lengkap</label>
-                                <input class="form-control" name="nama" id="nama" type="text" readonly="" value="{{ $_trx->nama }}">
-                            </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="nama">Nama Lengkap</label>
+                            <input class="form-control" name="nama" id="nama" type="text" readonly="" value="{{ $_trx->nama }}">
                         </div>
-                        <div class="col-12 col-md-3">
-                            <div class="col-12 mb-2">
-                                <label class="form-label" for="alamat_ktp">Alamat</label>
-                                <input class="form-control" name="alamat_ktp" id="alamat_ktp" type="text" readonly="" value="{{ $_trx->alamat_ktp }}">
-                            </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="alamat_ktp">Alamat</label>
+                            <input class="form-control" name="alamat_ktp" id="alamat_ktp" type="text" readonly="" value="{{ $_trx->alamat_ktp }}">
                         </div>
-                        <div class="col-12 col-md-3">
-                            <div class="col-12 mb-2">
-                                <label class="form-label" for="tempat_tanggal_lahir">Tempat/Tanggal Lahir</label>
-                                <input class="form-control" name="tempat_tanggal_lahir" id="tempat_tanggal_lahir" type="text" readonly="" value="{{ $_trx->tempat_lahir }}/{{ Carbon\Carbon::parse($_trx->tanggal_lahir)->format('d-m-Y') }}">
-                            </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="tempat_tanggal_lahir">Tempat / Tanggal Lahir</label>
+                            <input class="form-control" name="tempat_tanggal_lahir" id="tempat_tanggal_lahir" type="text" readonly="" value="{{ $_trx->tempat_lahir }} / {{ Carbon\Carbon::parse($_trx->tanggal_lahir)->format('d-m-Y') }}">
                         </div>
-                        <div class="col-12 col-md-3">
-                            <div class="col-12 mb-2">
-                                <label class="form-label" for="pendidikan">Pendidikan</label>
-                                <input class="form-control" name="pendidikan" id="pendidikan" type="text" readonly="" value="{{ $_trx->pendidikan }}">
-                            </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="pendidikan">Pendidikan</label>
+                            <input class="form-control" name="pendidikan" id="pendidikan" type="text" readonly="" value="{{ $_trx->pendidikan }}">
                         </div>
+                        @php
+                        $formal = App\Models\TrxRecruitmentFormal::where(['id_identitas'=>$_trx->id, 'jenjang'=>$_trx->pendidikan])->first();
+                        @endphp
+                        @if(!empty($formal))
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="jurusan">Jurusan</label>
+                            <input class="form-control" name="jurusan" id="jurusan" type="text" readonly="" value="{{ $formal->jurusan }}">
+                        </div>
+                        @endif
                     </div>
                     {{-- @can('hc') --}}
                     @if(empty($_id[2]))
@@ -170,32 +171,32 @@
                     </div>
                     <hr class="mt-2 mb-2" />
                     <div class="row">
-                        <div class="col-12 col-md-3">
-                            <div class="col-12 mb-2">
-                                <label class="form-label" for="posisi">Posisi / Jabatan</label>
-                                <input class="form-control" name="posisi" id="posisi" type="text" readonly="" value="{{ $trx->posisi }}">
-                            </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="posisi">Posisi / Jabatan</label>
+                            <input class="form-control" name="posisi" id="posisi" type="text" readonly="" value="{{ $trx->posisi }}">
                         </div>
-                        <div class="col-12 col-md-3">
-                            <div class="col-12 mb-2">
-                                <label class="form-label" for="area_kerja">Area Kerja</label>
-                                <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="{{ $trx->area_kerja }}">
-                            </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="level">Level</label>
+                            <input class="form-control" name="level" id="level" type="text" readonly="" value="{{ $trxM->_level->level }}">
+                        </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="area_kerja">Area Kerja</label>
+                            <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="{{ $trx->area_kerja }}">
+                        </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="ddd_kandidat">Direktorat / Divisi / Departemen</label>
+                            <input class="form-control" name="ddd_kandidat" id="ddd_kandidat" type="text" readonly="" value="{{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }}">
                         </div>
                         @php
                         $atasan = json_decode($trxM->atasan_property, true);
                         @endphp
-                        <div class="col-12 col-md-3">
-                            <div class="col-12 mb-2">
-                                <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
-                                <input class="form-control" name="atasan" id="atasan" type="text" readonly="" @if(!empty($atasan))value="{{ $atasan['nama'] . '/' . $atasan['nik'] }}"@endif>
-                            </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
+                            <input class="form-control" name="atasan" id="atasan" type="text" readonly="" @if(!empty($atasan))value="{{ $atasan['nama'] }} / {{ $atasan['nik'] }}"@endif>
                         </div>
-                        <div class="col-12 col-md-3">
-                            <div class="col-12 mb-2">
-                                <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
-                                <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="{{ $trx->divisi }}">
-                            </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
+                            <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="{{ $trx->divisi }}">
                         </div>
                     </div>
                     <hr class="mt-2 mb-2" />
@@ -204,27 +205,22 @@
                     </div>
                     <hr class="mt-2 mb-2" />
                     <div class="row">
-                        <div class="col-12 col-md-4">
-                            <div class="col-12 mb-2">
-                                <label class="form-label" for="thp">Take Home Pay (THP)</label>
-                                <input class="form-control" name="thp" id="thp" type="text" readonly="" value="Rp. {{ number_format($trx->thp, 2) }}">
-                            </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="thp">Take Home Pay (THP)</label>
+                            <input class="form-control" name="thp" id="thp" type="text" readonly="" value="Rp. {{ number_format($trx->thp, 2) }}">
                         </div>
                         @php
                         $benefit_utama = App\Models\MtrRecruitmentBenefit::whereIn('id', explode(',', $trx->benefit_utama))->orderBy('benefit', 'asc')->pluck('benefit')->toArray();
                         $benefit_utama = implode('&#13;&#10;', $benefit_utama);
                         @endphp
-                        <div class="col-12 col-md-4">
-                            <div class="col-12 mb-2">
-                                <label class="form-label" for="benefit_utama">Benefit</label>
-                                <textarea class="form-control" rows="5" id="benefit_utama" name="benefit_utama" readonly="">{!! $benefit_utama !!}</textarea>
-                            </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="benefit_utama">Benefit</label>
+                            <textarea class="form-control" rows="5" id="benefit_utama" name="benefit_utama" readonly="">{!! $benefit_utama !!}</textarea>
                         </div>
-                        <div class="col-12 col-md-4">
-                            <div class="col-12 mb-2">
-                                <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
-                                <input class="form-control" name="benefit_lainnya" id="benefit_lainnya" type="text" readonly="" value="{{ $trx->benefit_lainnya }}">
-                            </div>
+                        <div class="col-12 col-md-12 mb-2">
+                            <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
+                            {{-- <input class="form-control" name="benefit_lainnya" id="benefit_lainnya" type="text" readonly="" value="{{ $trx->benefit_lainnya }}"> --}}
+                            <textarea class="form-control" rows="5" name="benefit_lainnya" id="benefit_lainnya" readonly="">{{ $trx->benefit_lainnya }}</textarea>
                         </div>
                     </div>
                     <hr class="mt-2 mb-2" />
