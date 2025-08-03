@@ -47,8 +47,11 @@ class TrxReimburseController extends Controller
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $no = 0;
-        // $trx = TrxReimburseMaster::orderBy('id', 'desc')->limit(100)->get();
         $trx = TrxReimburseMaster::orderBy('id', 'desc')->get();
+        // 
+        $trxD = TrxReimburseDetail::whereIn('id_reimburse', $trx->pluck('id')->toArray())->get();
+        $layanan = ReimburseLayanan::whereIn('id', $trxD->pluck('id_layanan')->toArray())->orderBy('layanan', 'asc')->get();
+        // 
         $isPlafon = true;
         if(auth()->user()->userrole == 'nhc'){
             $where = ['nik_karyawan' => auth()->user()->nik];
@@ -61,10 +64,15 @@ class TrxReimburseController extends Controller
             if(ReimbursePlafon::where($where)->orderBy('id', 'desc')->count() == 0){
                 $isPlafon = false;
             }
+            // 
+            $trxD = TrxReimburseDetail::whereIn('id_reimburse', $trx->pluck('id')->toArray())->get();
+            $layanan = ReimburseLayanan::whereIn('id', $trxD->pluck('id_layanan')->toArray())->orderBy('layanan', 'asc')->get();
+            // 
         }
         // filter parameter
         $arr_status_pengajuan = array();
         $arr_tahun = array();
+        $arr_layanan = array();
         $arr_nik_karyawan = array();
         foreach ($trx as $data){
             array_push($arr_status_pengajuan, $data->status_pengajuan);
@@ -81,6 +89,7 @@ class TrxReimburseController extends Controller
         if($request->filter == true){
             $_status_pengajuan = $request->input('status_pengajuan', []);
             $_tahun = $request->input('tahun', []);
+            $_layanan = $request->input('layanan', []);
             $_nik_karyawan = $request->input('nik_karyawan', []);
             if(count($_status_pengajuan) > 0){
                 $arr_status_pengajuan = $_status_pengajuan;
@@ -94,6 +103,12 @@ class TrxReimburseController extends Controller
             else{
                 $arr_tahun = array();
             }
+            if(count($_layanan) > 0){
+                $arr_layanan = $_layanan;
+            }
+            else{
+                $arr_layanan = array();
+            }
             if(count($_nik_karyawan) > 0){
                 $arr_nik_karyawan = $_nik_karyawan;
             }
@@ -101,6 +116,8 @@ class TrxReimburseController extends Controller
             //     $arr_nik_karyawan = array();
             // }
             $trx = TrxReimburseMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->orderBy('id', 'desc')->get();
+            $trxD = TrxReimburseDetail::whereIn('id_layanan', $arr_layanan)->whereIn('id_reimburse', $trx->pluck('id')->toArray())->get();
+            $trx = TrxReimburseMaster::whereIn('id', $trxD->pluck('id_reimburse')->toArray())->orderBy('id', 'desc')->get();
             if(auth()->user()->userrole == 'nhc'){
                 $where = ['nik_karyawan' => auth()->user()->nik];
                 $trx = TrxReimburseMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->where($where)->orderBy('id', 'desc')->get();
@@ -110,14 +127,17 @@ class TrxReimburseController extends Controller
                 if(ReimbursePlafon::where($where)->orderBy('id', 'desc')->count() == 0){
                     $isPlafon = false;
                 }
+                $trxD = TrxReimburseDetail::whereIn('id_layanan', $arr_layanan)->whereIn('id_reimburse', $trx->pluck('id')->toArray())->get();
+                $trx = TrxReimburseMaster::whereIn('id', $trxD->pluck('id_reimburse')->toArray())->orderBy('id', 'desc')->get();
             }
         }else{
             $arr_status_pengajuan = array();
             $arr_tahun = array();
+            $arr_layanan = array();
             $arr_nik_karyawan = array();
         }
         // end filter
-        return view( 'formulir.reimburse.index', compact( 'trx', 'no', 'isPlafon', 'status_pengajuan', 'tahun', 'nik_karyawan', 'arr_status_pengajuan', 'arr_tahun', 'arr_nik_karyawan', 'karyawan'));
+        return view( 'formulir.reimburse.index', compact( 'trx', 'no', 'isPlafon', 'status_pengajuan', 'tahun', 'nik_karyawan', 'arr_status_pengajuan', 'arr_tahun', 'arr_nik_karyawan', 'karyawan', 'layanan', 'arr_layanan'));
         // return view('formulir.reimburse.index', compact('trx', 'no', 'isPlafon'));
     }
 
