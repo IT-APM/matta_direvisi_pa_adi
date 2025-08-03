@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Karyawan;
 use App\Models\Jabatan;
 use App\Models\Level;
+use App\Models\Perusahaan;
+use App\Models\Divisi;
+use App\Models\Departemen;
+use App\Models\SubDepartemen;
 // 
 use App\Models\MtrFindimProject;
 use App\Models\MtrFindimDivisi;
@@ -63,10 +67,18 @@ class TrxKebutuhanController extends Controller
         $no = 0;
         $trx = TrxKebutuhanMaster::orderBy('id', 'desc')->get();
         // foreach ($trx as $value) {
-        //     $trxM = TrxKebutuhanMaster::find( $value->id );
-        //     $trxM->pengaju_property = $this->getNikProperty($value->pengaju);
-        //     $trxM->layer1_property = $this->getNikProperty($value->layer1);
-        //     $trxM->layer2_property = $this->getNikProperty($value->layer2);
+        //     $trxM = TrxKebutuhanMaster::find($value->id);
+        //     // $trxM->pengaju_property = $this->getNikProperty($value->pengaju);
+        //     // $trxM->layer1_property = $this->getNikProperty($value->layer1);
+        //     // $trxM->layer2_property = $this->getNikProperty($value->layer2);
+        //     $pengaju_property = json_decode($trxM->pengaju_property, true);
+        //     $id_sub_departemen = $pengaju_property['id_sub_departemen'];
+        //     $id_dep_kandidat = SubDepartemen::find($id_sub_departemen)->kode_departemen;
+        //     $id_divisi_kandidat = Departemen::find($id_dep_kandidat)->kode_divisi;
+        //     $trxM->id_sub_dep_kandidat = $id_sub_departemen;
+        //     $trxM->id_dep_kandidat = $id_dep_kandidat;
+        //     $trxM->id_divisi_kandidat = $id_divisi_kandidat;
+        //     // dd($id_sub_departemen);
         //     $trxM->update();
         // }
         if(auth()->user()->userrole == 'nhc'){
@@ -156,8 +168,8 @@ class TrxKebutuhanController extends Controller
     {
         //
         $nik_pengaju = Crypt::decrypt($request->nik_pengaju);
-        $pengaju = Karyawan::select('nik', 'nama')->where(['nik' => $nik_pengaju])->first();
-        $pengaju = $pengaju->nama.' - '.$pengaju->nik;
+        $pengaju = Karyawan::where(['nik' => $nik_pengaju])->first();
+        // $pengaju = $pengaju->nama.' - '.$pengaju->nik;
         // 
         $pekerjaan = PekerjaanSub::orderBy('pekerjaan', 'asc')->get();
         $level = Level::orderBy('id', 'asc')->get();
@@ -212,6 +224,9 @@ class TrxKebutuhanController extends Controller
         $trxM->layer1 = $layer1;
         $trxM->layer2 = $layer2;
         $trxM->atasan = $atasan;
+        $trxM->id_divisi_kandidat = $request->kode_divisi;
+        $trxM->id_dep_kandidat = $request->kode_departemen;
+        $trxM->id_sub_dep_kandidat = $request->kode_sub_departemen;
         $trxM->pengaju_property = $pengaju_property;
         $trxM->layer1_property = $layer1_property;
         $trxM->layer2_property = $layer2_property;
