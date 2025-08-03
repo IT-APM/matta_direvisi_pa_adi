@@ -48,7 +48,7 @@
                                     {{-- <label class="h6">Pengaju</label>&nbsp;<input type="checkbox" onClick="toggle_pengaju(this)" /> Check All
                                     <label class="d-block" for="pengaju">
                                         @foreach ($pengaju as $data)
-                                        <input class="checkbox_animated" id="pengaju[]" name="pengaju[]" type="checkbox" value="{{ $data->nik }}" @if(in_array($data->nik, $arr_pengaju)) checked @endif> {{ $data->nama }}/{{ $data->nik }}<br/>
+                                        <input class="checkbox_animated" id="pengaju[]" name="pengaju[]" type="checkbox" value="{{ $data->nik }}" @if(in_array($data->nik, $arr_pengaju)) checked @endif> {{ $data->nama }} / {{ $data->nik }}<br/>
                                         @endforeach
                                     </label> --}}
                                     <label class="h6" for="pengaju">Pengaju</label>
@@ -56,7 +56,7 @@
                                         {{-- <option selected="" disabled="" value="">Pilih...</option> --}}
                                         <option value="0" @if(in_array('0', $arr_pengaju)) selected @endif>Semua</option>
                                         @foreach ($pengaju as $data)
-                                        <option value="{{ $data->nik }}" @if(in_array($data->nik, $arr_pengaju)) selected @endif>{{ $data->nama }}/{{ $data->nik }}</option>
+                                        <option value="{{ $data->nik }}" @if(in_array($data->nik, $arr_pengaju)) selected @endif>{{ $data->nama }} / {{ $data->nik }}</option>
                                         @endforeach
                                     </select>
                                     <div class="invalid-feedback txt-danger">Field is required.</div>
