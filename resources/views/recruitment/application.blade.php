@@ -140,6 +140,7 @@
                                                 <option value="D1">D1</option>
                                                 <option value="D2">D2</option>
                                                 <option value="D3">D3</option>
+                                                <option value="D4">D4</option>
                                                 <option value="S1">S1</option>
                                                 <option value="S2">S2</option>
                                                 <option value="S3">S3</option>
@@ -273,6 +274,7 @@
                                                                 <option value="D1">D1</option>
                                                                 <option value="D2">D2</option>
                                                                 <option value="D3">D3</option>
+                                                                <option value="D4">D4</option>
                                                                 <option value="S1">S1</option>
                                                                 <option value="S2">S2</option>
                                                                 <option value="S3">S3</option>
@@ -351,6 +353,7 @@
                                                                 <option value="D1">D1</option>
                                                                 <option value="D2">D2</option>
                                                                 <option value="D3">D3</option>
+                                                                <option value="D4">D4</option>
                                                                 <option value="S1">S1</option>
                                                                 <option value="S2">S2</option>
                                                                 <option value="S3">S3</option>
@@ -383,6 +386,7 @@
                                                                 <option value="D1">D1</option>
                                                                 <option value="D2">D2</option>
                                                                 <option value="D3">D3</option>
+                                                                <option value="D4">D4</option>
                                                                 <option value="S1">S1</option>
                                                                 <option value="S2">S2</option>
                                                                 <option value="S3">S3</option>
@@ -634,7 +638,7 @@
             cols += '<td><input type="text" class="form-control" name="nama_anak[]" id="nama_anak[]" placeholder="Nama Anak" required=""></td>';
             cols += '<td><input type="number" class="form-control" name="usia_anak[]" id="usia_anak[]" placeholder="Usia Anak" required=""></td>';
             cols += '<td><select class="form-select" name="kelamin_anak[]" id="kelamin_anak[]" required=""><option selected disabled value="">-Pilih-</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></td>';
-            cols += '<td><select class="form-select" name="pendidikan_anak[]" id="pendidikan_anak[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
+            cols += '<td><select class="form-select" name="pendidikan_anak[]" id="pendidikan_anak[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
             cols += '<td><input type="text" class="form-control" name="pekerjaan_anak[]" id="pekerjaan_anak[]" placeholder="Pekerjaan Anak" required=""></td>';
             cols += '<td><button class="btn btn-danger" id ="deleteRowAnak">Delete</button></td>';
             // Insert the columns inside a row
@@ -660,7 +664,7 @@
             cols += '<td><input type="text" class="form-control" name="nama_saudara[]" id="nama_saudara[]" placeholder="Nama" required=""></td>';
             cols += '<td><input type="number" class="form-control" name="usia_saudara[]" id="usia_saudara[]" placeholder="Usia" required=""></td>';
             cols += '<td><select class="form-select" name="kelamin_saudara[]" id="kelamin_saudara[]" required=""><option selected disabled value="">-Pilih-</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></td>';
-            cols += '<td><select class="form-select" name="pendidikan_saudara[]" id="pendidikan_saudara[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
+            cols += '<td><select class="form-select" name="pendidikan_saudara[]" id="pendidikan_saudara[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
             cols += '<td><input type="text" class="form-control" name="pekerjaan_saudara[]" id="pekerjaan_saudara[]" placeholder="Pekerjaan" required=""></td>';
             cols += '<td><button class="btn btn-danger" id ="deleteRowSaudara">Delete</button></td>';
             // Insert the columns inside a row
@@ -682,7 +686,7 @@
             var newRow = $('<tr>');
             var cols = '';
             // Table columns
-            cols += '<td><select class="form-select" name="jenjang_sekolah[]" id="jenjang_sekolah[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
+            cols += '<td><select class="form-select" name="jenjang_sekolah[]" id="jenjang_sekolah[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
             cols += '<td><input type="text" class="form-control" name="nama_formal[]" id="nama_formal[]" placeholder="Nama Sekolah" required=""></td>';
             cols += '<td><input type="text" class="form-control" name="kota_sekolah[]" id="kota_sekolah[]" placeholder="Nama Kota" required=""></td>';
             cols += '<td><input type="text" class="form-control" name="jurusan[]" id="jurusan[]" placeholder="Jurusan" required=""></td>';
