@@ -183,44 +183,50 @@ class TrxNonaktifController extends Controller
     public function create(Request $request)
     {
         // dd($request->all());
-        $is_setuju = 1;
-        if(!empty($request->is_setuju)){
-            $is_setuju = $request->is_setuju;
+        if(empty($request->created_at)){
+            // return redirect()->route('nonaktif.index', ['is_setuju' => 1, 'created_at' => Crypt::encrypt(Carbon::now())]);
+            return redirect()->route('nonaktif.index')->with('show_modal', true);
         }
-        $created_at = Carbon::now();
-        if(!empty($request->created_at)){
-            $created_at = Crypt::decrypt($request->created_at);
-        }
+        $is_setuju = $request->is_setuju;
+        $created_at = Crypt::decrypt($request->created_at);
+        // $is_setuju = 1;
+        // if(!empty($request->is_setuju)){
+        //     $is_setuju = $request->is_setuju;
+        // }
+        // $created_at = Carbon::now();
+        // if(!empty($request->created_at)){
+        //     $created_at = Crypt::decrypt($request->created_at);
+        // }
         // dd($is_setuju, $created_at);
         //
         $alasan = NonaktifAlasan::orderBy('alasan', 'asc')->get();
         // di = divisi
-        $where = ['_into_' => 'di'];
+        $where = ['_into_' => 'di', 'is_active' => 1];
         $obyek_di = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         // ga
-        $where = ['_into_' => 'ga'];
+        $where = ['_into_' => 'ga', 'is_active' => 1];
         $obyek_ga = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
         $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(13)->informasi];
         $pic_ga = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         // it
-        $where = ['_into_' => 'it'];
+        $where = ['_into_' => 'it', 'is_active' => 1];
         $obyek_it = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
         $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(14)->informasi];
         $pic_it = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         // hc
-        $where = ['_into_' => 'hc'];
+        $where = ['_into_' => 'hc', 'is_active' => 1];
         $obyek_hc = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
         $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(15)->informasi];
         $pic_hc = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         // ko = koperasi
-        $where = ['_into_' => 'ko'];
+        $where = ['_into_' => 'ko', 'is_active' => 1];
         $obyek_ko = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
         $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(16)->informasi];
         $pic_ko = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         // am = application management
-        $where = ['_into_' => 'am'];
+        $where = ['_into_' => 'am', 'is_active' => 1];
         $obyek_am = NonaktifObyek::where($where)->orderBy('obyek', 'asc')->get();
         $where = ['is_aktif' => 1, 'nik' => MtrUtility::find(42)->informasi];
         $pic_am = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
