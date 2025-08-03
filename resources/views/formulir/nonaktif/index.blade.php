@@ -359,6 +359,10 @@
     <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
     <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
     <script type="text/javascript">
+        @if(session('show_modal'))
+            var myModal = new bootstrap.Modal(document.getElementById('autoShowModal'));
+            myModal.show();
+        @endif
         function toggle_status(source) {
             checkboxes = document.getElementsByName('status[]');
             for (var i = 0, n = checkboxes.length; i < n; i++) {
