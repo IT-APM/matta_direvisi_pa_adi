@@ -9,9 +9,7 @@
 <head>
     <title>Matta Reborn</title>
 </head>
-
-<!-- start -->
-
+{{-- start --}}
 <body>
     <table width="100%" border="1" cellspacing="0" cellpadding="0">
         <tr>
@@ -30,10 +28,8 @@
                 <hr />
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen</td>
-                        <td width="70%">: {{ $pengaju['nama'] }}<br />: {{ $pengaju['nik'] }}<br />:
-                            {{ $pengaju['jabatan'] }}<br />: {{ $pengaju['divisi'] }} / {{ $pengaju['dep'] }} /
-                            {{ $pengaju['sub_dep'] }}</td>
+                        <td width="30%">Nama<br/>NIP<br/>Jabatan<br/>Direktorat / Divisi / Departemen</td>
+                        <td width="70%">: {{ $pengaju['nama'] }}<br/>: {{ $pengaju['nik'] }}<br/>: {{ $pengaju['jabatan'] }}<br/>: {{ $pengaju['divisi'] }} / {{ $pengaju['dep'] }} / {{ $pengaju['sub_dep'] }}</td>
                     </tr>
                 </table>
                 <hr />
@@ -48,17 +44,29 @@
                         <td width="30%">Nama Jabatan/posisi</td>
                         <td width="70%">: {{ $trxM->_pekerjaan->pekerjaan }}</td>
                     </tr>
+                    <tr>
+                        <td>Level</td>
+                        <td>: {{ $trxM->_level->level }}</td>
+                    </tr>
+                    <tr>
+                        <td>Area Kerja</td>
+                        <td>: Propinsi: {{ $trxM->_area->propinsi }}@if(!empty($trxM->id_kota)), Kota: {{ $trxM->_kota->kota }} @endif</td>
+                    </tr>
+                    <tr>
+                        <td>Direktorat / Divisi / Departemen</td>
+                        <td>: {{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }}</td>
+                    </tr>
                     @php
                         $atasan_property = $trxM->atasan_property;
                         $atasan_property = json_decode($atasan_property, true);
                     @endphp
                     <tr>
                         <td>Atasan Langsung Kandidat</td>
-                        <td>: @if(!empty($atasan_property)) {{ $atasan_property['nama'] }}/{{ $atasan_property['nik'] }} @endif</td>
+                        <td>: @if(!empty($atasan_property)) {{ $atasan_property['nama'] }} / {{ $atasan_property['nik'] }} @endif</td>
                     </tr>
                     <tr>
-                        <td>Level</td>
-                        <td>: {{ $trxM->_level->level }}</td>
+                        <td>Direktorat / Divisi / Departemen</td>
+                        <td>: {{ $pengaju['divisi'] }} / {{ $pengaju['dep'] }} / {{ $pengaju['sub_dep'] }}</td>
                     </tr>
                     <tr>
                         <td>Status Kerja</td>
@@ -73,10 +81,6 @@
                     <tr>
                         <td>Jumlah</td>
                         <td>: {{ $trxM->jumlah }} (Orang) {{ $trxM->_kelamin->kelamin }}</td>
-                    </tr>
-                    <tr>
-                        <td>Area Kerja</td>
-                        <td>: Propinsi: {{ $trxM->_area->propinsi }}<br/>&nbsp;@if(!empty($trxM->id_kota)) Kota: {{ $trxM->_kota->kota }} @endif</td>
                     </tr>
                     <tr>
                         <td>Jenis Permintaan</td>
@@ -249,6 +253,5 @@
         </tr>
     </table>
 </body>
-<!-- finish -->
-
+{{-- finish --}}
 </html>
