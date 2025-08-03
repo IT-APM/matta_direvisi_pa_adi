@@ -85,7 +85,7 @@
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2 mb-2" action="{{ route('reimburse.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
-                                <div class="col-sm-3">
+                                <div class="col-sm-4">
                                     <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_pengajuan(this)" /> Check All
                                     <label class="d-block" for="status_pengajuan">
                                         @foreach ($status_pengajuan as $data)
@@ -93,7 +93,7 @@
                                         @endforeach
                                     </label>
                                 </div>
-                                <div class="col-sm-5">
+                                <div class="col-sm-4">
                                     <label class="h6">Tahun</label>&nbsp;<input type="checkbox" onClick="toggle_tahun(this)" /> Check All
                                     <label class="d-block" for="tahun">
                                         @foreach ($tahun as $data)
@@ -107,10 +107,19 @@
                                         @endforeach
                                     </label> -->
                                 </div>
+                                <div class="col-sm-4">
+                                    <label class="h6">Layanan</label>&nbsp;<input type="checkbox" onClick="toggle_layanan(this)" /> Check All
+                                    <label class="d-block" for="layanan">
+                                        @foreach ($layanan as $data)
+                                        <input class="checkbox_animated" id="layanan[]" name="layanan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_layanan)) checked @endif> {{ $data->layanan }}<br/>
+                                        @endforeach
+                                    </label>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
+                                    <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="{{ route('reimburse.index') }}" class="btn btn-info"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
+                                    {{-- <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button> --}}
                                 </div>
                             </div>
                         </form>
@@ -133,7 +142,9 @@
                                     <th>Nama Karyawan</th>
                                     <th>NIP Karyawan</th>
                                     <th>Tahun</th>
-                                    <th>Nominal Klaim</th>
+                                    {{-- <th>Nominal Klaim</th> --}}
+                                    <th>Klaim Kesehatan</th>
+                                    <th>Klaim Non Kesehatan</th>
                                     <th>Status</th>
                                     <th>Created at</th>
                                 </tr>
@@ -152,7 +163,9 @@
                                     <td>{{ $data->_nik->nama }}</td>
                                     <td>{{ $data->_nik->nik }}</td>
                                     <td>{{ $data->periode }}</td>
-                                    <td>Rp. {{ number_format($data->klaim_kesehatan + $data->klaim_non_kesehatan, 0) }}</td>
+                                    {{-- <td>Rp. {{ number_format($data->klaim_kesehatan + $data->klaim_non_kesehatan, 0) }}</td> --}}
+                                    <td>Rp. {{ number_format($data->klaim_kesehatan, 0) }}</td>
+                                    <td>Rp. {{ number_format($data->klaim_non_kesehatan, 0) }}</td>
                                     <td>{{ $data->_status->status }}</td>
                                     <td>{{ $data->created_at }}</td>
                                 </tr>
@@ -194,6 +207,12 @@ function toggle_status_pengajuan(source) {
         checkboxes[i].checked = source.checked;
     }
 }
+function toggle_layanan(source) {
+    checkboxes = document.getElementsByName('layanan[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
 function toggle_tahun(source) {
     checkboxes = document.getElementsByName('tahun[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
@@ -207,7 +226,7 @@ function toggle_nik_karyawan(source) {
     }
 }
 // 
-$('#_datatable').DataTable( {
+$('#_datatable').DataTable({
 	// dom: 'lBfrtip',
     dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
       "<'row'<'col-sm-12'rt>>" +
@@ -216,6 +235,6 @@ $('#_datatable').DataTable( {
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
-} );
+});
 </script>
 @endsection
