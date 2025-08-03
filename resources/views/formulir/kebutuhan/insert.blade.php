@@ -37,7 +37,7 @@
                                 <h5>Kebutuhan Rekruitmen</h5>
                                 <div class="col-md-12">
                                     <label class="form-label" for="pengaju">Pengaju</label>
-                                    <input class="form-control" name="pengaju" id="pengaju" type="text" required="" readonly="" value="{{ $pengaju }}">
+                                    <input class="form-control" name="pengaju" id="pengaju" type="text" required="" readonly="" value="{{ $pengaju->nama }} - {{ $pengaju->nik }}">
                                 </div>
                                 <div class="row mt-2">
                                     <label class="form-label" for="id_pekerjaan">Nama Jabatan*</label>
@@ -64,6 +64,24 @@
                                         @endforeach
                                     </select>
                                     <div class="invalid-feedback txt-danger">This field is required.</div>
+                                </div>
+                                <div class="col-md-12 mt-2">
+                                    <label class="form-label" for="kode_divisi">Direktorat Kandidat*</label>
+                                    <select class="form-select" id="kode_divisi" name="kode_divisi" required="">
+                                        <option selected="" value="">Pilih...</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 mt-2">
+                                    <label class="form-label" for="kode_departemen">Divisi Kandidat*</label>
+                                    <select class="form-select" id="kode_departemen" name="kode_departemen" required="">
+                                        <option selected="" value="">Pilih...</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 mt-2">
+                                    <label class="form-label" for="kode_sub_departemen">Departemen Kandidat*</label>
+                                    <select class="form-select" id="kode_sub_departemen" name="kode_sub_departemen" required="">
+                                        <option selected="" value="">Pilih...</option>
+                                    </select>
                                 </div>
                                 <div class="col-md-12 mt-2">
                                     <label class="form-label" for="tugas">Tugas*</label>
@@ -327,8 +345,7 @@
                                 <h5>Line Approval</h5>
                             </div> --}}
                             @php
-                                $check = App\Models\KebutuhanNikKecuali::where(['karyawan'=>$nik_pengaju])->first();
-                                // dd($check);
+                            $check = App\Models\KebutuhanNikKecuali::where(['karyawan'=>$nik_pengaju])->first();
                             @endphp
                             <div class="card-body">
                                 <h5>Line Approval</h5>
@@ -385,6 +402,128 @@
 <script type="text/javascript">
 // 
 $(document).ready(function() {
+    // 
+    get_kode_divisi();
+    function get_kode_divisi() {
+        $('#kode_departemen').find('option').not(':first').remove();
+        $('#kode_departemen').find('option').not(':first').remove();
+        $('#kode_sub_departemen').find('option').not(':first').remove();
+        // kode_divisi
+        $.ajax({
+            url: "{{ route('get_divisi') }}"+"/1",
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                // alert(" Value: " + response[0]['nama']);
+                var len = 0;
+                if (response != null) {
+                    len = response.length;
+                    // alert(" Value: " + len);
+                }
+                if (len > 0) {
+                    // Read data and create <option>
+                    for (var i = 0; i < len; i++) {
+                        var id = response[i]['id'];
+                        var nama = response[i]['nama'];
+                        var selected = ({{ $pengaju->kode_divisi }} == id) ? 'selected' : '';
+                        var option = "<option value='" + id + "' " + selected + ">" + nama + "</option>";
+                        $("#kode_divisi").append(option);
+                    }
+                }
+            }
+        });
+        // kode_departemen
+        $.ajax({
+            url: "{{ route('get_departemen') }}"+"/"+{{ $pengaju->kode_divisi }},
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var len = 0;
+                if (response != null) {
+                    len = response.length;
+                }
+                if (len > 0) {
+                    for (var i = 0; i < len; i++) {
+                        var id = response[i]['id'];
+                        var nama = response[i]['nama'];
+                        var selected = ({{ $pengaju->kode_departemen }} == id) ? 'selected' : '';
+                        var option = "<option value='" + id + "' " + selected + ">" + nama + "</option>";
+                        $("#kode_departemen").append(option);
+                    }
+                }
+            }
+        });
+        // kode_sub_departemen
+        $.ajax({
+            url: "{{ route('get_sub_departemen') }}"+"/"+{{ $pengaju->kode_departemen }},
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var len = 0;
+                if (response != null) {
+                    len = response.length;
+                }
+                if (len > 0) {
+                    for (var i = 0; i < len; i++) {
+                        var id = response[i]['id'];
+                        var nama = response[i]['nama'];
+                        var selected = ({{ $pengaju->kode_sub_departemen }} == id) ? 'selected' : '';
+                        var option = "<option value='" + id + "' " + selected + ">" + nama + "</option>";
+                        $("#kode_sub_departemen").append(option);
+                    }
+                }
+            }
+        });
+    }
+    // 
+    $("#kode_divisi").change(function() {
+        var _kode_divisi = $(this).val();
+        $('#kode_departemen').find('option').not(':first').remove();
+        $('#kode_sub_departemen').find('option').not(':first').remove();
+        $.ajax({
+            url: "{{ route('get_departemen') }}"+"/"+_kode_divisi,
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var len = 0;
+                if (response != null) {
+                    len = response.length;
+                }
+                if (len > 0) {
+                    for (var i = 0; i < len; i++) {
+                        var id = response[i]['id'];
+                        var nama = response[i]['nama'];
+                        var option = "<option value='" + id + "'>" + nama + "</option>";
+                        $("#kode_departemen").append(option);
+                    }
+                }
+            }
+        });
+    });
+    // 
+    $("#kode_departemen").change(function() {
+        var _kode_departemen = $(this).val();
+        $('#kode_sub_departemen').find('option').not(':first').remove();
+        $.ajax({
+            url: "{{ route('get_sub_departemen') }}"+"/"+_kode_departemen,
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var len = 0;
+                if (response != null) {
+                    len = response.length;
+                }
+                if (len > 0) {
+                    for (var i = 0; i < len; i++) {
+                        var id = response[i]['id'];
+                        var nama = response[i]['nama'];
+                        var option = "<option value='" + id + "'>" + nama + "</option>";
+                        $("#kode_sub_departemen").append(option);
+                    }
+                }
+            }
+        });
+    });
     // 
     $('#get_kepribadian').on('click', function(e) {
         e.preventDefault();
