@@ -120,6 +120,7 @@
                                     <th>PIC Pengganti</th>
                                     <th>Layer 1</th>
                                     <th>Tanggal Cuti</th>
+                                    <th>Jumlah Hari Cuti</th>
                                     <th>Status</th>
                                     <th>Sisa Cuti</th>
                                     <th>Created at</th>
@@ -145,6 +146,7 @@
                                     </td>
                                     <td>{{ $data->_atasan->nama }}</td>
                                     <td>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d-m-Y') }}<br />s/d<br />{{ \Carbon\Carbon::parse($data->tanggal_akhir)->format('d-m-Y') }}</td>
+                                    <td>{{ $data->jumlah_hari }}</td>
                                     <td>{{ $data->_status->status_cuti }}</td>
                                     {{-- <td>{{ App\Http\Controllers\TrxCutiController::getSisaCuti($data->nik_karyawan, $data->periode_cuti, $data->id) }}</td> --}}
                                     <td>
