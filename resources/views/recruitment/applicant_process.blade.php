@@ -64,8 +64,8 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <div class="col-12 mb-2">
-                                <label for="nama" class="form-label">Nama/Email Kandidat</label>
-                                <input type="text" class="form-control" name="nama" id="nama" placeholder="Nama/Email" value="{{ $trx->nama }}/{{ $trx->email }}" disabled>
+                                <label for="nama" class="form-label">Nama / Email Kandidat</label>
+                                <input type="text" class="form-control" name="nama" id="nama" placeholder="Nama/Email" value="{{ $trx->nama }} / {{ $trx->email }}" disabled>
                             </div>
                         </div>
                     </div>
@@ -84,31 +84,29 @@
                         </div>
                         <hr class="mt-2 mb-2" />
                         <div class="row">
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="posisi">Posisi / Jabatan</label>
-                                    <input class="form-control" type="text" readonly="" value="{{ $nego_log->posisi }}">
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="posisi">Posisi / Jabatan</label>
+                                <input class="form-control" type="text" readonly="" value="{{ $nego_log->posisi }}">
                             </div>
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="area_kerja">Area Kerja</label>
-                                    <input class="form-control" type="text" readonly="" value="{{ $nego_log->area_kerja }}">
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="level">Level</label>
+                                <input class="form-control" type="text" readonly="" value="{{ $trxM->_level->level }}">
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
-                                    <input class="form-control" type="text" readonly="" @if(!empty($atasan))value="{{ $atasan['nama'] . '/' . $atasan['nik'] }}"@endif>
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="area_kerja">Area Kerja</label>
+                                <input class="form-control" type="text" readonly="" value="{{ $nego_log->area_kerja }}">
                             </div>
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
-                                    <input class="form-control" type="text" readonly="" value="{{ $nego_log->divisi }}">
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="ddd_kandidat">Direktorat / Divisi / Departemen</label>
+                                <input class="form-control" type="text" readonly="" value="{{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }}">
+                            </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
+                                <input class="form-control" type="text" readonly="" @if(!empty($atasan))value="{{ $atasan['nama'] }} / {{ $atasan['nik'] }}"@endif>
+                            </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
+                                <input class="form-control" type="text" readonly="" value="{{ $nego_log->divisi }}">
                             </div>
                         </div>
                         <div class="col-12 col-md-12">
@@ -116,27 +114,22 @@
                         </div>
                         <hr class="mt-2 mb-2" />
                         <div class="row">
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="thp">Take Home Pay (THP)</label>
-                                    <input class="form-control" type="text" readonly="" value="Rp. {{ number_format($nego_log->thp, 0) }}">
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="thp">Take Home Pay (THP)</label>
+                                <input class="form-control" type="text" readonly="" value="Rp. {{ number_format($nego_log->thp, 0) }}">
                             </div>
                             @php
                             $benefit_utama = App\Models\MtrRecruitmentBenefit::whereIn('id', explode(',', $nego_log->benefit_utama))->orderBy('benefit', 'asc')->pluck('benefit')->toArray();
                             $benefit_utama = implode('&#13;&#10;', $benefit_utama);
                             @endphp
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="benefit_utama">Benefit</label>
-                                    <textarea class="form-control" rows="5" readonly="">{!! $benefit_utama !!}</textarea>
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="benefit_utama">Benefit</label>
+                                <textarea class="form-control" rows="5" readonly="">{!! $benefit_utama !!}</textarea>
                             </div>
-                            <div class="col-12 col-md-12">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
-                                    <input class="form-control" type="text" readonly="" value="{{ $nego_log->benefit_lainnya }}">
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
+                                {{-- <input class="form-control" type="text" readonly="" value="{{ $nego_log->benefit_lainnya }}"> --}}
+                                <textarea class="form-control" rows="5" readonly="">{{ $nego_log->benefit_lainnya }}</textarea>
                             </div>
                         </div>
                         <div class="col-12 col-md-12">
@@ -629,56 +622,53 @@
                                 <div class="col-12 col-md-12">
                                     <h6 class="text-center">ORGANISASI</h6>
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="posisi">Posisi / Jabatan</label>
-                                        <input class="form-control" name="posisi" id="posisi" type="text" readonly="" value="{{ $trxM->_pekerjaan->pekerjaan }}">
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="posisi">Posisi / Jabatan</label>
+                                    <input class="form-control" name="posisi" id="posisi" type="text" readonly="" value="{{ $trxM->_pekerjaan->pekerjaan }}">
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="area_kerja">Area Kerja</label>
-                                        <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="{{ $trxM->_area->propinsi }}">
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="level">Level</label>
+                                    <input class="form-control" name="level" id="level" type="text" readonly="" value="{{ $trxM->_level->level }}">
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
-                                        <input class="form-control" name="atasan" id="atasan" type="text" readonly="" @if(!empty($atasan))value="{{ $atasan['nama'] . '/' . $atasan['nik'] }}"@endif>
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="area_kerja">Area Kerja</label>
+                                    <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="{{ $trxM->_area->propinsi }}">
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
-                                        <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="{{ $pengaju['divisi'] . '/' . $pengaju['dep'] . '/' . $pengaju['sub_dep'] }}">
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="ddd_kandidat">Direktorat / Divisi / Departemen</label>
+                                    <input class="form-control" name="ddd_kandidat" id="ddd_kandidat" type="text" readonly="" value="{{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }}">
+                                </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
+                                    <input class="form-control" name="atasan" id="atasan" type="text" readonly="" @if(!empty($atasan))value="{{ $atasan['nama'] }} / {{ $atasan['nik'] }}"@endif>
+                                </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
+                                    <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="{{ $pengaju['divisi'] }} / {{ $pengaju['dep'] }} / {{ $pengaju['sub_dep'] }}">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-12 col-md-12">
                                     <h6 class="text-center">BENEFIT</h6>
                                 </div>
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-12">
                                     <div class="col-12 mb-2">
                                         <label class="form-label" for="thp">Take Home Pay (THP)<span class="text-danger">*</span></label>
                                         <input min=1 type="number" oninput="validity.valid||(value='')" onfocus="use_number(this)" onblur="use_text(this)" class="form-control" name="thp" id="thp" placeholder="Take Home Pay (THP)" required="">
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
-                                        <input class="form-control" name="benefit_lainnya" id="benefit_lainnya" type="text" placeholder="Benefit lainnya">
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="benefit_utama">Benefit<span class="text-danger">*</span></label><br/>
+                                    <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="benefit_utama[]" name="benefit_utama[]" required="">
+                                        @foreach ($benefit as $data)
+                                        <option value="{{ $data->id }}">{{ $data->benefit }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                                <div class="col-12 col-md-12">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="benefit_utama">Benefit<span class="text-danger">*</span></label><br/>
-                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="benefit_utama[]" name="benefit_utama[]" required="">
-                                            @foreach ($benefit as $data)
-                                            <option value="{{ $data->id }}">{{ $data->benefit }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
+                                    {{-- <input class="form-control" name="benefit_lainnya" id="benefit_lainnya" type="text" placeholder="Benefit lainnya"> --}}
+                                    <textarea class="form-control" rows="5" name="benefit_lainnya" id="benefit_lainnya"></textarea>
                                 </div>
                             </div>
                             <div class="row">
@@ -722,13 +712,13 @@
                             </div>
                             <hr class="mt-2 mb-2" />
                             <div class="row">
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-12">
                                     <div class="col-12 mb-2">
                                         <label class="form-label" for="catatan">Catatan HCO</label>
                                         <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-12">
                                     <div class="col-12 mb-2">
                                         <label class="form-label" for="lampiran">Lampiran HCO</label>
                                         <input name="lampiran" id="lampiran" class="form-control" type="file">
@@ -840,7 +830,8 @@
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
                                         <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
-                                        <input class="form-control" name="benefit_lainnya" id="benefit_lainnya" type="text" placeholder="Benefit lainnya" value="{{ $nego->benefit_lainnya }}">
+                                        {{-- <input class="form-control" name="benefit_lainnya" id="benefit_lainnya" type="text" placeholder="Benefit lainnya" value="{{ $nego->benefit_lainnya }}"> --}}
+                                        <textarea class="form-control" rows="5" name="benefit_lainnya" id="benefit_lainnya">{{ $nego->benefit_lainnya }}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-12">
@@ -1095,7 +1086,7 @@
                                                     $arr = App\Models\Karyawan::select('nik', 'nama')->whereIn('nik', explode(';', $catatan['interviewer']))->get();
                                                     $interviewer = array();
                                                     foreach($arr as $_arr){
-                                                        array_push($interviewer, $_arr->nama.'/'.$_arr->nik);
+                                                        array_push($interviewer, $_arr->nama.' / '.$_arr->nik);
                                                     }
                                                     $interviewer = implode(', ', $interviewer);
                                                 }
