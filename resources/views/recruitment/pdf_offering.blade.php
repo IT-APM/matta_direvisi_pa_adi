@@ -62,6 +62,16 @@
                         <td>:</td>
                         <td>{{ $_trx->pendidikan }}</td>
                     </tr>
+					@php
+					$formal = App\Models\TrxRecruitmentFormal::where(['id_identitas'=>$_trx->id, 'jenjang'=>$_trx->pendidikan])->first();
+					@endphp
+					@if(!empty($formal))
+                    <tr>
+                        <td>Jurusan</td>
+                        <td>:</td>
+                        <td>{{ $formal->jurusan }}</td>
+                    </tr>
+					@endif
                 </table>
 				<br/><br/>
 				<table width="100%" border="0.5" cellspacing="0" cellpadding="2">
@@ -109,18 +119,28 @@
                         <td width="2%">:</td>
                         <td width="69%">{{ $trx->posisi }}</td>
                     </tr>
+                    <tr>
+                        <td>Level</td>
+                        <td>:</td>
+                        <td>{{ $trxM->_level->level }}</td>
+                    </tr>
+                    <tr>
+                        <td>Area Kerja</td>
+                        <td>:</td>
+                        <td>{{ $trx->area_kerja }}</td>
+                    </tr>
+                    <tr>
+                        <td>Direktorat / Divisi / Departemen</td>
+                        <td>:</td>
+                        <td>{{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }}</td>
+                    </tr>
 					@php
 					$atasan = json_decode($trxM->atasan_property, true);
 					@endphp
                     <tr>
                         <td>Atasan Langsung Kandidat</td>
                         <td>:</td>
-                        <td>@if(!empty($atasan)){{ $atasan['nama'] . '/' . $atasan['nik'] }}@endif</td>
-                    </tr>
-                    <tr>
-                        <td>Area Kerja</td>
-                        <td>:</td>
-                        <td>{{ $trx->area_kerja }}</td>
+                        <td>@if(!empty($atasan)){{ $atasan['nama'] }} / {{ $atasan['nik'] }}@endif</td>
                     </tr>
                     <tr>
                         <td>Direktorat / Divisi / Departemen</td>
@@ -176,7 +196,7 @@
                     </tr>
 					<tr>
 						{{-- benefit_lainnya --}}
-						<td colspan="2" style="border-top: 0.5px thin black;">Keterangan:<br/>@if(!empty($trx->benefit_lainnya)){{ $trx->benefit_lainnya }}@endif</td>
+						<td colspan="2" style="border-top: 0.5px thin black;">Keterangan:<br/>@if(!empty($trx->benefit_lainnya)){!! nl2br($trx->benefit_lainnya) !!}@endif</td>
                     </tr>
 				</table>
 				<br/><br/>
