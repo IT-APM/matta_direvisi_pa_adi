@@ -554,6 +554,13 @@ class TrxCutiController extends Controller
         if ($is_reguler == 0) {
             $data1 = ['status' => true, 'message' => 'Tanggal Mulai boleh di HARI SABTU atau MINGGU'];
         }
+        // 12=Ibadah Umroh (7 hari)
+        // 13=Ibadah Haji Plus (30 hari)
+        // 14=Ibadah Umroh (10 hari)
+        // 15=Ibadah Haji Reguler (40 hari)
+        if(in_array($tipe_cuti, [12,13,14,15])){
+            $data1 = ['status' => true, 'message' => 'Tanggal Mulai boleh di HARI SABTU atau MINGGU'];
+        }
         $data2 = $this->checkIfExist($tanggal_mulai, $waktu);
         // cuti tanggungan perusahaan boleh current date / backdate
         if ($tipe_cuti > 0) {
