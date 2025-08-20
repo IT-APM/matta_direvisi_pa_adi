@@ -210,6 +210,10 @@
                         @endforeach
                         @php
                             $data = collect($group_by)->groupBy('bulan_tahun');
+                            $pembagi = count($data);
+                            if(count($data) == 0){
+                                $pembagi = 1;
+                            }
                             $waktu = [];
                             $jumlah_data = [];
                             $nominal = [];
@@ -233,7 +237,7 @@
                                         <div class="media faq-widgets">
                                             <div class="media-body text-center">
                                                 <h5>Jumlah Karyawan</h5>
-                                                <h5>@if(!empty($payroll)) {{ $payroll->count() }} @else 0 @endif</h5>
+                                                <h5>@if(!empty($payroll)) {{ round($payroll->count() / $pembagi) }} @else 0 @endif</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -315,7 +319,7 @@
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ $_data->perusahaan }}</td>
                                                 <td class="text-end">{{ number_format($total_biaya_gaji, 0) }}</td>
-                                                <td class="text-end">{{ number_format($jumlah, 0) }}</td>
+                                                <td class="text-end">{{ number_format(round($jumlah / $pembagi), 0) }}</td>
                                             </tr>
                                             @endif
                                             @endforeach
@@ -355,7 +359,7 @@
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ $_data->divisi }}</td>
                                                 <td class="text-end">{{ number_format($total_biaya_gaji, 0) }}</td>
-                                                <td class="text-end">{{ number_format($jumlah, 0) }}</td>
+                                                <td class="text-end">{{ number_format(round($jumlah / $pembagi), 0) }}</td>
                                             </tr>
                                             @endif
                                             @endforeach
@@ -397,7 +401,7 @@
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ $_data->departemen }}</td>
                                                 <td class="text-end">{{ number_format($total_biaya_gaji, 0) }}</td>
-                                                <td class="text-end">{{ number_format($jumlah, 0) }}</td>
+                                                <td class="text-end">{{ number_format(round($jumlah / $pembagi), 0) }}</td>
                                             </tr>
                                             @endif
                                             @endforeach
@@ -437,7 +441,7 @@
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ $_data->subdepartemen }}</td>
                                                 <td class="text-end">{{ number_format($total_biaya_gaji, 0) }}</td>
-                                                <td class="text-end">{{ number_format($jumlah, 0) }}</td>
+                                                <td class="text-end">{{ number_format(round($jumlah / $pembagi), 0) }}</td>
                                             </tr>
                                             @endif
                                             @endforeach
@@ -480,7 +484,7 @@
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ $_data->status_karyawan }}</td>
                                                 <td class="text-end">{{ number_format($total_biaya_gaji, 0) }}</td>
-                                                <td class="text-end">{{ number_format($jumlah, 0) }}</td>
+                                                <td class="text-end">{{ number_format(round($jumlah / $pembagi), 0) }}</td>
                                             </tr>
                                             @endif
                                             @endforeach
