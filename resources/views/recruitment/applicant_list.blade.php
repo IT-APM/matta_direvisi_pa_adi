@@ -116,7 +116,8 @@
                                                 <th><input type="checkbox" onClick="toggle_identitas(this)" /></th>
                                                 <th>#ID</th>
                                                 <th>Action</th>
-                                                <th>&nbsp;Hasil&nbsp;</th>
+                                                <th>Hasil</th>
+                                                <th>Upload Hasil</th>
                                                 <th>Area Kerja</th>
                                                 <th>Area Kerja Kota</th>
                                                 <th>Posisi</th>
@@ -155,7 +156,9 @@
                                                 $log = App\Models\TrxRecruitmentLog::where(['id_identitas'=>$data->id])->pluck('id_status')->toArray();
                                                 // dd($log);
                                                 // check apakah sudah mulai psikotes, jika sudah maka tidak bisa reschedule psikotes
-                                                $check3 = App\Models\TrxRecruitmentPsychotest::where(['id_identitas' => $data->id, 'jenis' => 0, 'nomor' => 0])->whereNull('check_out')->exists();
+                                                // $check3 = App\Models\TrxRecruitmentPsychotest::where(['id_identitas' => $data->id, 'jenis' => 0, 'nomor' => 0])->whereNull('check_out')->exists();
+                                                // check apakah masih id_status => 4=Psychotest Send
+                                                $check3 = $data->id_status == 4 ? true : false;
                                             @endphp
                                             <tr>
                                                 {{-- 3=Apply --}}
@@ -175,6 +178,18 @@
                                                     &nbsp;<a href="{{ route('recruitment.psychotestexcel', [Crypt::encrypt([$data->id,3])]) }}" target="_blank" data-toggle="tooltip" title="DISC"><i class="fa fa-file-text-o"></i></a>
                                                     @if(!empty($pohon[0]->jawaban1))<br/><a href="{{ asset('assets/recruitment/upload/'.$pohon[0]->jawaban1) }}" target="_blank" data-toggle="tooltip" title="BAUM"><i class="fa fa-file-image-o"></i></a>@endif
                                                     @if(!empty($manusia[0]->jawaban1))&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$manusia[0]->jawaban1) }}" target="_blank" data-toggle="tooltip" title="DAP"><i class="fa fa-file-image-o"></i></a>@endif
+                                                    &nbsp;<a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'process'=>'psikotest_revisi']) }}" target="_self" data-toggle="tooltip" title='Revisi'><i class="icon-pencil-alt"></i></a>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    {{-- jika ada soal dan sudah selesai maka tampilkan hasilnya --}}
+                                                    @if($check)
+                                                    @if(!empty($data->file_epps))<a href="{{ asset('assets/recruitment/upload/'.$data->file_epps) }}" target="_blank" data-toggle="tooltip" title="Download EPPS"><i class="fa fa-file-text-o" style="color: orange;"></i></a>@else<i class="fa fa-file-text-o" style="opacity: 0;"></i>@endif
+                                                    &nbsp;@if(!empty($data->file_papi))<a href="{{ asset('assets/recruitment/upload/'.$data->file_papi) }}" target="_blank" data-toggle="tooltip" title="Download PAPI Kostick"><i class="fa fa-file-text-o" style="color: orange;"></i></a>@else<i class="fa fa-file-text-o" style="opacity: 0;"></i>@endif
+                                                    &nbsp;@if(!empty($data->file_disc))<a href="{{ asset('assets/recruitment/upload/'.$data->file_disc) }}" target="_blank" data-toggle="tooltip" title="Download DISC"><i class="fa fa-file-text-o" style="color: orange;"></i></a>@else<i class="fa fa-file-text-o" style="opacity: 0;"></i>@endif
+                                                    <br/>@if(!empty($data->file_baum))<a href="{{ asset('assets/recruitment/upload/'.$data->file_baum) }}" target="_blank" data-toggle="tooltip" title="Download BAUM"><i class="fa fa-file-image-o" style="color: orange;"></i></a>@else<i class="fa fa-file-image-o" style="opacity: 0;"></i>@endif
+                                                    &nbsp;@if(!empty($data->file_dap))<a href="{{ asset('assets/recruitment/upload/'.$data->file_dap) }}" target="_blank" data-toggle="tooltip" title="Download DAP"><i class="fa fa-file-image-o" style="color: orange;"></i></a>@else<i class="fa fa-file-image-o" style="opacity: 0;"></i>@endif
+                                                    &nbsp;<a href="{{ route('recruitment.upload_psikotest', [Crypt::encrypt([$data->id, 'upload'])]) }}" target="_blank" data-toggle="tooltip" title='Upload'><i class="fa fa-upload" style="color: orange;"></i></a>
                                                     @endif
                                                 </td>
                                                 <td>{{ $recruitment->_area->propinsi }}</td>
@@ -185,7 +200,7 @@
                                                 <td>{{ $data->telepon }}</td>
                                                 <td><div class="d-flex align-items-center"><input id="id_cv[]" name="id_cv[]" type="checkbox" value="{{ $data->id }}">&nbsp;&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$data->cv) }}" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></div></td>
                                                 {{-- $check3 adalah pengecekan apakah psikotes sudah berjalan, jika belum maka bisa reschedule --}}
-                                                <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }} <a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'process'=>'psikotest_reschedule']) }}" data-toggle="tooltip" title="Reschedule"><i class="fa fa-calendar" aria-hidden="true"></i></a> @endif</td>
+                                                <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }} @if($check3) <a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'process'=>'psikotest_reschedule']) }}" target="_self" data-toggle="tooltip" title="Reschedule"><i class="fa fa-calendar" aria-hidden="true"></i></a> @endif @endif</td>
                                                 <td>@if(!empty($data->check_out)){{ \Carbon\Carbon::parse($data->check_out) ->format('d-m-Y H:i:s') }}@endif</td>
                                                 <td>
                                                     {{-- 16=Interpretation --}}
