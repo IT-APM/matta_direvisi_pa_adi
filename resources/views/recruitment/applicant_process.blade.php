@@ -325,6 +325,51 @@
                             </div>
                         </form>
                     @endif
+                    {{-- histori_revisi --}}
+                    @if(!empty($process) && $process=='histori_revisi')
+                    @php
+                        $n_log = App\Models\TrxRecruitmentPsychotestLog::selectRaw('COUNT(*) as total')->where(['id_identitas'=>$trx->id])->groupBy('urutan')->get()->count();
+                    @endphp
+                        <h5>Histori Revisi Psikotes</h5>
+                        <div class="row mb-2">
+                            <div class="col-12 col-md-12">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th width=15%>Histori ke</th>
+                                        <th width=85%>Hasil</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @for($i = 1; $i <= $n_log; $i++)
+                                    <tr>
+                                        <td>{{ $i }}</td>
+                                        @php
+                                            $where = ['urutan' => $i, 'id_identitas' => $trx->id, 'jenis' => 1];
+                                            $jenis1 = App\Models\TrxRecruitmentPsychotestLog::where($where)->where('nomor', '>', 0)->get();
+                                            $where = ['urutan' => $i, 'id_identitas' => $trx->id, 'jenis' => 2];
+                                            $jenis2 = App\Models\TrxRecruitmentPsychotestLog::where($where)->where('nomor', '>', 0)->get();
+                                            $where = ['urutan' => $i, 'id_identitas' => $trx->id, 'jenis' => 3];
+                                            $jenis3 = App\Models\TrxRecruitmentPsychotestLog::where($where)->where('nomor', '>', 0)->get();
+                                            $where = ['urutan' => $i, 'id_identitas' => $trx->id, 'jenis' => 4];
+                                            $pohon = App\Models\TrxRecruitmentPsychotestLog::where($where)->where('nomor', '>', 0)->get();
+                                            $where = ['urutan' => $i, 'id_identitas' => $trx->id, 'jenis' => 5];
+                                            $manusia = App\Models\TrxRecruitmentPsychotestLog::where($where)->where('nomor', '>', 0)->get();
+                                        @endphp
+                                        <td>
+                                            @if(!$jenis1->isEmpty())<a href="{{ route('recruitment.psychotestexcel', [Crypt::encrypt([$trx->id,1,$i])]) }}" target="_blank" data-toggle="tooltip" title="EPPS"><i class="fa fa-file-text-o"></i></a>@endif
+                                            @if(!$jenis2->isEmpty())&nbsp;<a href="{{ route('recruitment.psychotestexcel', [Crypt::encrypt([$trx->id,2,$i])]) }}" target="_blank" data-toggle="tooltip" title="PAPI Kostick"><i class="fa fa-file-text-o"></i></a>@endif
+                                            @if(!$jenis3->isEmpty())&nbsp;<a href="{{ route('recruitment.psychotestexcel', [Crypt::encrypt([$trx->id,3,$i])]) }}" target="_blank" data-toggle="tooltip" title="DISC"><i class="fa fa-file-text-o"></i></a>@endif
+                                            @if(!empty($pohon[0]->jawaban1))&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$pohon[0]->jawaban1) }}" target="_blank" data-toggle="tooltip" title="BAUM"><i class="fa fa-file-image-o"></i></a>@endif
+                                            @if(!empty($manusia[0]->jawaban1))&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$manusia[0]->jawaban1) }}" target="_blank" data-toggle="tooltip" title="DAP"><i class="fa fa-file-image-o"></i></a>@endif
+                                        </td>
+                                    </tr>
+                                    @endfor
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
                     {{-- 6=Interview User and HCO Send --}}
                     <div id="row_6">
                         <form action="{{ route('recruitment.interview_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
