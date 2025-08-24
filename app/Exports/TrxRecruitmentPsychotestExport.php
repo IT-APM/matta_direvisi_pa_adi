@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\TrxRecruitmentPsychotest;
+use App\Models\TrxRecruitmentPsychotestLog;
 use App\Models\TrxRecruitmentIdentitas;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -19,6 +20,10 @@ class TrxRecruitmentPsychotestExport implements FromCollection, WithHeadings, Wi
     private $id;
     public function __construct(Request $request, $id) 
     {
+        // $id berisikan array
+        // $id[0] = id_identitas
+        // $id[1] = jenis
+        // $id[2] = urutan
         $this->id = $id;
     }
 
@@ -74,8 +79,15 @@ class TrxRecruitmentPsychotestExport implements FromCollection, WithHeadings, Wi
     */
     public function collection()
     {
+        // $id berisikan array
+        // $id[0] = id_identitas
+        // $id[1] = jenis
+        // $id[2] = urutan
         $id = $this->id;
         $arr = TrxRecruitmentPsychotest::where(['id_identitas'=>$id[0], 'jenis'=>$id[1]])->where('nomor', '>', 0)->orderBy('id', 'asc')->get();
+        if(!empty($id[2])){
+            $arr = TrxRecruitmentPsychotestLog::where(['urutan'=>$id[2], 'id_identitas'=>$id[0], 'jenis'=>$id[1]])->where('nomor', '>', 0)->orderBy('id', 'asc')->get();
+        }
         $data = [[]];
         // tipe 1
         if($id[1] == 1){
