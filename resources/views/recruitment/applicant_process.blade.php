@@ -275,7 +275,8 @@
                         <form id="myForm" name="myForm" action="{{ route('recruitment.applicant_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @csrf
                             <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($trx->id) }}">
-                            <input type="hidden" id="id_status" name="id_status" value="{{ $trx->id_status }}">
+                            {{-- <input type="hidden" id="id_status" name="id_status" value="{{ $trx->id_status }}"> --}}
+                            <input type="hidden" id="id_status" name="id_status" value="4">
                             <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
                             <input type="hidden" id="process" name="process" value="{{ $process }}">
                             <h5>Revisi Psikotes</h5>
