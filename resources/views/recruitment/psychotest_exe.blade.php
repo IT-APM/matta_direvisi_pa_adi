@@ -65,48 +65,55 @@
                                 @if($soal->jenis == 1 && $soal->nomor > 0)
                                 <span class="text-uppercase fw-bold">Petunjuk Pengerjaan</span>
                                 <span>
-                                    {{-- <br />Pada test ini terdapat {{ $jumlah }} nomor soal. --}}
-                                    <br />Tugas anda adalah memilih pernyataan yang paling menggambarkan dengan diri anda.
-                                    <br />Jika pernyataan A yang paling menggambarkan dengan diri anda silahkan pilih di samping huruf A pada kolom yang tersedia.
-                                    <br />Jika pernyataan B yang paling menggambarkan dengan diri anda silahkan pilih di samping huruf B pada kolom yang tersedia.
-                                    <br />Akan ada pernyataan yang kedua duanya menggambarkan dengan diri anda atau tidak menggambarkan dengan diri anda dan anda tidak diperbolehkan memilih kedua pernyataan.
-                                    <br />Anda hanya diperbolehkan memilih satu pernyataan dalam 1 soal.
+                                    {{-- <br/>Pada test ini terdapat {{ $jumlah }} nomor soal. --}}
+                                    <br/>Tugas anda adalah memilih pernyataan yang paling menggambarkan dengan diri anda.
+                                    <br/>Jika pernyataan A yang paling menggambarkan dengan diri anda silahkan pilih di samping huruf A pada kolom yang tersedia.
+                                    <br/>Jika pernyataan B yang paling menggambarkan dengan diri anda silahkan pilih di samping huruf B pada kolom yang tersedia.
+                                    <br/>Akan ada pernyataan yang kedua duanya menggambarkan dengan diri anda atau tidak menggambarkan dengan diri anda dan anda tidak diperbolehkan memilih kedua pernyataan.
+                                    <br/>Anda hanya diperbolehkan memilih satu pernyataan dalam 1 soal.
+                                </span>
+                                @elseif($soal->jenis == 1 && $soal->nomor == 0)
+                                <span>
+                                    <p>Semangat Pagi!</p>
+                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-{{ $soal->jenis }} dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
+                                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </span>
                                 @elseif($soal->jenis == 2 && $soal->nomor == 0)
                                 <span>
                                     <p>Semangat Pagi!</p>
-                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-2 dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-{{ $soal->jenis }} dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
                                     <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
                                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </span>
                                 @elseif($soal->jenis == 2 && $soal->nomor > 0)
                                 <span class="text-uppercase fw-bold">Petunjuk Pengerjaan</span>
                                 <span>
-                                    {{-- <br />Ada {{ $jumlah }} nomor soal --}}
-                                    <br />Pilihlah satu dari tiap pasangan tersebut yang saudara anggap paling dekat menggambarkan saudara.
-                                    <br />Bila tidak satupun dari sebuah pasangan pernyataan itu cocok, pilihlah yang saudara anggap paling mendekati.
-                                    <br />Kerjakan secepat mungkin dan pilihlah hanya satu pernyataan dari tiap pasang.
+                                    {{-- <br/>Ada {{ $jumlah }} nomor soal --}}
+                                    <br/>Pilihlah satu dari tiap pasangan tersebut yang saudara anggap paling dekat menggambarkan saudara.
+                                    <br/>Bila tidak satupun dari sebuah pasangan pernyataan itu cocok, pilihlah yang saudara anggap paling mendekati.
+                                    <br/>Kerjakan secepat mungkin dan pilihlah hanya satu pernyataan dari tiap pasang.
                                 </span>
                                 @elseif($soal->jenis == 3 && $soal->nomor == 0)
                                 <span>
                                     <p>Semangat Pagi!</p>
-                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-3 dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-{{ $soal->jenis }} dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
                                     <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
                                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </span>
                                 @elseif($soal->jenis == 3 && $soal->nomor > 0)
                                 <span class="text-uppercase fw-bold">Petunjuk Pengerjaan</span>
                                 <span>
-                                    {{-- <br />Ada {{ $jumlah }} nomor soal. --}}
-                                    <br />Setiap nomor di bawah ini memuat 4 (empat) kalimat. Tugas anda adalah:
-                                    <br />1. Memilih pada kolom di bawah huruf  [P] di samping kalimat yang PALING menggambarkan diri anda.
-                                    <br />2. Memilih pada kolom di bawah huruf  [K] di samping kalimat yang PALING TIDAK menggambarkan diri anda.
-                                    <br />PERHATIKAN: Setiap nomor hanya ada 1 yang dipilih di bawah masing-masing kolom P dan K.
+                                    {{-- <br/>Ada {{ $jumlah }} nomor soal. --}}
+                                    <br/>Setiap nomor di bawah ini memuat 4 (empat) kalimat. Tugas anda adalah:
+                                    <br/>1. Memilih pada kolom di bawah huruf  [P] di samping kalimat yang PALING menggambarkan diri anda.
+                                    <br/>2. Memilih pada kolom di bawah huruf  [K] di samping kalimat yang PALING TIDAK menggambarkan diri anda.
+                                    <br/>PERHATIKAN: Setiap nomor hanya ada 1 yang dipilih di bawah masing-masing kolom P dan K.
                                 </span>
                                 @elseif($soal->jenis == 4 && $soal->nomor == 0)
                                 <span>
                                     <p>Semangat Pagi!</p>
-                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-4 dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-{{ $soal->jenis }} dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
                                     <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
                                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </span>
@@ -120,13 +127,13 @@
                                 @elseif(in_array($soal->jenis, [4,5]) && $soal->nomor > 0)
                                 <span class="text-uppercase fw-bold">Petunjuk Pengerjaan</span>
                                 <span>
-                                    <br />Mohon Sediakan:
-                                    <br />1. Pensil
-                                    <br />2. Kertas HVS satu lembar
-                                    <br />3. Tidak diperbolehkan menggunakan penghapus
-                                    <br />4. Bila salah dicoret saja
-                                    <br />5. Waktu pengerjaan gambar 10 menit
-                                    <br />6. Jangan jadikan kertas hvs sebagai alas untuk menggambar
+                                    <br/>Mohon Sediakan:
+                                    <br/>1. Pensil
+                                    <br/>2. Kertas HVS satu lembar
+                                    <br/>3. Tidak diperbolehkan menggunakan penghapus
+                                    <br/>4. Bila salah dicoret saja
+                                    <br/>5. Waktu pengerjaan gambar 10 menit
+                                    <br/>6. Jangan jadikan kertas hvs sebagai alas untuk menggambar
                                 </span>
                                 @endif
                             </div>
@@ -255,11 +262,11 @@
                                     @if($soal->jenis == 4)
                                     <div class="col-12 col-md-6">
                                         <span>GAMBAR POHON
-                                            <br />1. Gambarlah sebuah pohon yang berbatang keras atau berkambium!
-                                            <br />2. Jangan menggambar pohon berikut:
+                                            <br/>1. Gambarlah sebuah pohon yang berbatang keras atau berkambium!
+                                            <br/>2. Jangan menggambar pohon berikut:
                                             <br/>&emsp;Palem, Beringin, Cemara, Kelapa, Bunga, Pisang, Umbi-umbian,<br/>&emsp;Padi, Rumput dan Tanaman merambat
-                                            <br />3. Tuliskan nama pohon yang anda gambar 
-                                            <br />4. Setelah selesai, kemudian scan/foto dan upload gambar tersebut!
+                                            <br/>3. Tuliskan nama pohon yang anda gambar 
+                                            <br/>4. Setelah selesai, kemudian scan/foto dan upload gambar tersebut!
                                             <p class="mt-3 me-3">
                                             <input name="gambar_pohon" id="gambar_pohon" class="form-control" type="file" required="">
                                             <label class="form-label">*Maksimal 5 MB dengan format pdf atau gambar(jpg, jpeg dan png)</label>
@@ -269,17 +276,17 @@
                                     @elseif($soal->jenis == 5)
                                     <div class="col-12 col-md-6">
                                         <span>GAMBAR MANUSIA
-                                            <br />1. Gambarlah manusia secara utuh!
-                                            <br />2. Jangan menggambar:
-                                            <br />&emsp;Patung, Karikatur, Stickman, Animasi, Sketsa, Kartun, Tokoh Pahlawan dan Robot
-                                            <br />3. Setelah menggambar manusia silahkan beri keterangan sebagai berikut:
-                                            <br />&emsp;a. Usia
-                                            <br />&emsp;b. Jenis Kelamin
-                                            <br />&emsp;c. Profesi
-                                            <br />&emsp;d. Aktivitas yang sedang dilakukan pada gambar manusia tersebut
-                                            <br />&emsp;e. Beri 5 kelebihan (dalam hal sifat atau kepribadian)
-                                            <br />&emsp;f. Beri 5 kekurangan (dalam hal sifat atau kepribadian)
-                                            <br />4. Setelah selesai, kemudian scan/foto dan upload gambar tersebut!
+                                            <br/>1. Gambarlah manusia secara utuh!
+                                            <br/>2. Jangan menggambar:
+                                            <br/>&emsp;Patung, Karikatur, Stickman, Animasi, Sketsa, Kartun, Tokoh Pahlawan dan Robot
+                                            <br/>3. Setelah menggambar manusia silahkan beri keterangan sebagai berikut:
+                                            <br/>&emsp;a. Usia
+                                            <br/>&emsp;b. Jenis Kelamin
+                                            <br/>&emsp;c. Profesi
+                                            <br/>&emsp;d. Aktivitas yang sedang dilakukan pada gambar manusia tersebut
+                                            <br/>&emsp;e. Beri 5 kelebihan (dalam hal sifat atau kepribadian)
+                                            <br/>&emsp;f. Beri 5 kekurangan (dalam hal sifat atau kepribadian)
+                                            <br/>4. Setelah selesai, kemudian scan/foto dan upload gambar tersebut!
                                             <p class="mt-3 me-3">
                                             <input name="gambar_manusia" id="gambar_manusia" class="form-control" type="file" required="">
                                             <label class="form-label">*Maksimal 5 MB dengan format pdf atau gambar(jpg, jpeg dan png)</label>
