@@ -239,8 +239,9 @@
                             <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($trx->id) }}">
                             <input type="hidden" id="id_status" name="id_status" value="4">
                             <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
-                            <h5>Psychotest Reschedule</h5>
-                            <h6>Before</h6>
+                            <input type="hidden" id="process" name="process" value="{{ $process }}">
+                            <h5>Jadwal Ulang Psikotes</h5>
+                            <h6>Sebelum</h6>
                             <div class="row mb-2">
                                 <div class="col-12 col-md-6">
                                     <label class="form-label">Check_in</label>
@@ -251,7 +252,7 @@
                                     <input class="form-control" value="{{ \Carbon\Carbon::parse($trx->check_out) ->format('d-m-Y H:i:s') }}" disabled>
                                 </div>
                             </div>
-                            <h6>After</h6>
+                            <h6>Sesudah</h6>
                             <div class="row mb-2">
                                 <div class="col-12 col-md-6">
                                     <label class="form-label" for="check_in">Check_in</label>
@@ -261,6 +262,60 @@
                                     <label class="form-label" for="check_out">Check_out</label>
                                     <input class="form-control" name="check_out" id="check_out" type="datetime-local" required="" disabled>
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-4">
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    @endif
+                    {{-- psikotest_revisi --}}
+                    @if(!empty($process) && $process=='psikotest_revisi')
+                        <form id="myForm" name="myForm" action="{{ route('recruitment.applicant_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                        @csrf
+                            <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($trx->id) }}">
+                            <input type="hidden" id="id_status" name="id_status" value="{{ $trx->id_status }}">
+                            <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                            <input type="hidden" id="process" name="process" value="{{ $process }}">
+                            <h5>Revisi Psikotes</h5>
+                            <h6>Sebelum</h6>
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Check_in</label>
+                                    <input class="form-control" value="{{ \Carbon\Carbon::parse($trx->check_in) ->format('d-m-Y H:i:s') }}" disabled>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Check_out</label>
+                                    <input class="form-control" value="{{ \Carbon\Carbon::parse($trx->check_out) ->format('d-m-Y H:i:s') }}" disabled>
+                                </div>
+                            </div>
+                            <h6>Sesudah</h6>
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="check_in">Check_in</label>
+                                    <input class="form-control" name="check_in" id="check_in" type="datetime-local" required="">
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="check_out">Check_out</label>
+                                    <input class="form-control" name="check_out" id="check_out" type="datetime-local" required="" disabled>
+                                </div>
+                            </div>
+                            <h6>Jenis</h6>
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-12">
+                                    <input type="checkbox" class="form-check-input" id="jenis[]" name="jenis[]" value="1">
+                                    <label class="form-check-label">EPPS</label>
+                                    <input type="checkbox" class="form-check-input" id="jenis[]" name="jenis[]" value="2">
+                                    <label class="form-check-label">PAPI Kostick</label>
+                                    <input type="checkbox" class="form-check-input" id="jenis[]" name="jenis[]" value="3">
+                                    <label class="form-check-label">DISC</label>
+                                    <input type="checkbox" class="form-check-input" id="jenis[]" name="jenis[]" value="4">
+                                    <label class="form-check-label">BAUM</label>
+                                    <input type="checkbox" class="form-check-input" id="jenis[]" name="jenis[]" value="5">
+                                    <label class="form-check-label">DAP</label>
+                                </div>
+                                <div id="checkboxError" class="text-danger" style="display: none;">Please checkbox this field</div>
                             </div>
                             <div class="row">
                                 <div class="col-12 col-md-4">
@@ -1070,10 +1125,14 @@
                                     {{-- 4=Psychotest Send --}}
                                     @if($_history->id_status == 4)
                                         @if(!empty($catatan))
-                                            @if($catatan['no']==1)
-                                            <span class="f-light"><br/>Send ({{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
+                                            @if(empty($catatan['psikotest']))
+                                                @if($catatan['no']==1)
+                                                    <span class="f-light"><br/>Send ({{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
+                                                @else
+                                                    <span class="f-light"><br/>Reschedule ({{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
+                                                @endif
                                             @else
-                                            <span class="f-light"><br/>Reschedule ({{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
+                                                <span class="f-light"><br/>{{ $catatan['psikotest'] }} ({{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
                                             @endif
                                         @endif
                                     {{-- 6=Interview User and HCO Send --}}
@@ -1145,6 +1204,16 @@
         node.value = value.toLocaleString('en');  // or other formatting
     }
     $(document).ready(function () {
+        // 
+        $('#myForm').on('submit', function (e) {
+            if ($('input[name="jenis[]"]:checked').length === 0) {
+                e.preventDefault();
+                $('#checkboxError').show();
+            } else {
+                $('#checkboxError').hide();
+            }
+        });
+        // 
         // 4=Psycotest Send
         // 6=Interview User and HCO Send
         // 8=Interview User Send
