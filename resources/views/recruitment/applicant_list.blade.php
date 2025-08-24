@@ -159,6 +159,8 @@
                                                 // $check3 = App\Models\TrxRecruitmentPsychotest::where(['id_identitas' => $data->id, 'jenis' => 0, 'nomor' => 0])->whereNull('check_out')->exists();
                                                 // check apakah masih id_status => 4=Psychotest Send
                                                 $check3 = $data->id_status == 4 ? true : false;
+                                                // apakah ada revisi psikotest
+                                                $n_log = App\Models\TrxRecruitmentPsychotestLog::selectRaw('COUNT(*) as total')->where(['id_identitas'=>$data->id])->groupBy('urutan')->get()->count();
                                             @endphp
                                             <tr>
                                                 {{-- 3=Apply --}}
@@ -180,6 +182,7 @@
                                                     @if(!empty($manusia[0]->jawaban1))&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$manusia[0]->jawaban1) }}" target="_blank" data-toggle="tooltip" title="DAP"><i class="fa fa-file-image-o"></i></a>@endif
                                                     &nbsp;<a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'process'=>'psikotest_revisi']) }}" target="_self" data-toggle="tooltip" title='Revisi'><i class="icon-pencil-alt"></i></a>
                                                     @endif
+                                                    @if($n_log > 0)<br/><a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'process'=>'histori_revisi']) }}" target="_self" data-toggle="tooltip" title='Histori Revisi'><i class="fa fa-history"></i></a>@endif
                                                 </td>
                                                 <td>
                                                     {{-- jika ada soal dan sudah selesai maka tampilkan hasilnya --}}
