@@ -1730,194 +1730,194 @@ class TrxRecruitmentController extends Controller
             // 24=Join
             if($id_status == 24){
                 // sync data Recruitment ke Employee Addition
-                // if(!empty($trxD)){
-                //     $trxD->nama_karyawan = $_trx->nama;
-                //     $trxD->alamat = $_trx->alamat_ktp;
-                //     $trxD->tanggal_lahir = $_trx->tanggal_lahir;
-                //     $arr_pendidikan = ['SD', 'SMP', 'SMA/SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3', 'Lainnya'];
-                //     $trxD->id_pendidikan = array_search($_trx->pendidikan, $arr_pendidikan) + 1;
-                //     $trxD->tanggal_interview = Carbon::parse($interview->check_in)->format('Y-m-d');
-                //     if(!empty($interview->file_interview)){
-                //         $trxD->file_interview = $interview->file_interview;
-                //         File::copy(public_path('assets/recruitment/upload/'.$interview->file_interview), public_path('assets/kebutuhan/'.$interview->file_interview));
-                //     }
-                //     $trxD->tanggal_psikotes = Carbon::parse($_trx->check_in)->format('Y-m-d');
-                //     $file_psikotes = $id.'_'.now()->getTimestampMs().'.pdf';
-                //     $this->pdf_interpretation($id, $file_psikotes);
-                //     $trxD->file_psikotes = $file_psikotes;
-                //     // 17=Negotiation Deal by Candidate
-                //     $tanggal_negosiasi = TrxRecruitmentLog::where(['id_identitas'=>$id, 'id_status'=>17])->orderBy('id', 'asc')->first();
-                //     if(!empty($tanggal_negosiasi->created_at)){
-                //         $trxD->tanggal_negosiasi = Carbon::parse($tanggal_negosiasi->created_at)->format('Y-m-d');
-                //     }
-                //     // 20=COC and File Upload Done
-                //     $tanggal_coc = TrxRecruitmentLog::where(['id_identitas'=>$id, 'id_status'=>20])->orderBy('id', 'asc')->first();
-                //     $trxD->tanggal_peraturan_perusahaan = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
-                //     $trxD->tanggal_pedoman_prilaku = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
-                //     $trxD->tanggal_struktur_organisasi = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
-                //     if(!empty($_trx->file_dokumen_ttd)){
-                //         $trxD->file_dokumen_ttd = $_trx->file_dokumen_ttd;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_dokumen_ttd), public_path('assets/kebutuhan/'.$_trx->file_dokumen_ttd));
-                //     }
-                //     if(!empty($_trx->cv)){
-                //         $trxD->file_cv = $_trx->cv;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->cv), public_path('assets/kebutuhan/'.$_trx->cv));
-                //     }
-                //     if(!empty($_trx->file_sertifikat_keahlian)){
-                //         $trxD->file_sertifikat_keahlian = $_trx->file_sertifikat_keahlian;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_sertifikat_keahlian), public_path('assets/kebutuhan/'.$_trx->file_sertifikat_keahlian));
-                //     }
-                //     if(!empty($_trx->file_ktp)){
-                //         $trxD->file_ktp = $_trx->file_ktp;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ktp), public_path('assets/kebutuhan/'.$_trx->file_ktp));
-                //     }
-                //     if(!empty($_trx->file_kk)){
-                //         $trxD->file_kk = $_trx->file_kk;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_kk), public_path('assets/kebutuhan/'.$_trx->file_kk));
-                //     }
-                //     if(!empty($_trx->file_npwp)){
-                //         $trxD->file_npwp = $_trx->file_npwp;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_npwp), public_path('assets/kebutuhan/'.$_trx->file_npwp));
-                //     }
-                //     if(!empty($_trx->file_bpjs_tk)){
-                //         $trxD->file_bpjs_tk = $_trx->file_bpjs_tk;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_tk), public_path('assets/kebutuhan/'.$_trx->file_bpjs_tk));
-                //     }
-                //     if(!empty($_trx->file_bpjs_kes)){
-                //         $trxD->file_bpjs_kes = $_trx->file_bpjs_kes;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_kes), public_path('assets/kebutuhan/'.$_trx->file_bpjs_kes));
-                //     }
-                //     if(!empty($_trx->file_buku_tabungan)){
-                //         $trxD->file_buku_tabungan = $_trx->file_buku_tabungan;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_buku_tabungan), public_path('assets/kebutuhan/'.$_trx->file_buku_tabungan));
-                //     }
-                //     if(!empty($_trx->file_ket_sehat)){
-                //         $trxD->file_ket_sehat = $_trx->file_ket_sehat;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ket_sehat), public_path('assets/kebutuhan/'.$_trx->file_ket_sehat));
-                //     }
-                //     if(!empty($_trx->file_skck)){
-                //         $trxD->file_skck = $_trx->file_skck;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_skck), public_path('assets/kebutuhan/'.$_trx->file_skck));
-                //     }
-                //     if(!empty($_trx->file_ijazah)){
-                //         $trxD->file_ijazah = $_trx->file_ijazah;
-                //         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ijazah), public_path('assets/kebutuhan/'.$_trx->file_ijazah));
-                //     }
-                //     $file_offering = $id.'_'.now()->getTimestampMs().'.pdf';
-                //     $this->pdf_offering($id, $file_offering);
-                //     $trxD->file_offering = $file_offering;
-                //     $trxD->take_home_pay = $nego->thp;
-                //     // mapping ke benefit_utama dan benefit_lainnya
-                //     $benefit_utama = explode(',', $nego->benefit_utama);
-                //     $id_benefit = array();
-                //     foreach($benefit_utama as $data){
-                //         // mapping mtr_tbl_recruitment_benefit vs mtr_tbl_benefit
-                //         // refer to "C:\alita\matta\data_master\mapping kebutuhan vs recruitment v1.xlsx"
-                //         // 1=Upah Lembur
-                //         if($data == 1){
-                //             // 1=Overtime
-                //             array_push($id_benefit, 1);
-                //         }
-                //         // Medical Reimbursement
-                //         elseif($data == 2){
-                //             // 2=Medical Reimbursement
-                //             array_push($id_benefit, 2);
-                //         }
-                //         // Asuransi
-                //         elseif($data == 10){
-                //             // 3=Asuransi
-                //             array_push($id_benefit, 3);
-                //         }
-                //         // 5=BPJS Ketenagakerjaan, ditanggung perusahaan
-                //         // 6=BPJS Ketenagakerjaan, ditanggung  perusahaan & karyawan
-                //         elseif($data == 5 || $data == 6){
-                //             // 4=BPJS Ketenagakerjaan
-                //             array_push($id_benefit, 4);
-                //         }
-                //         // 7=BPJS Kesehatan, ditanggung perusahaan
-                //         // 8=BPJS Kesehatan, ditanggung  perusahaan & karyawan
-                //         elseif($data == 7 || $data == 8){
-                //             // 5=BPJS Kesehatan
-                //             array_push($id_benefit, 5);
-                //         }
-                //         // 9=Cuti Setelah 1 tahun
-                //         elseif($data == 9){
-                //             // 6=Cuti
-                //             array_push($id_benefit, 6);
-                //         }
-                //         // 3=PPh 21, ditanggung perusahaan
-                //         // 4=PPh 21, ditanggung perusahaan & karyawan
-                //         elseif($data == 3 || $data == 4){
-                //             // 7=PPh21
-                //             array_push($id_benefit, 7);
-                //         }
-                //         // 11=Tunjangan Corporate
-                //         elseif($data == 11){
-                //             // 8=Tunjangan Corporate
-                //             array_push($id_benefit, 8);
-                //         }
-                //         // 12=Tunjangan Project / Operasional
-                //         elseif($data == 12){
-                //             // 9=Tunjangan Project / Operasional
-                //             array_push($id_benefit, 9);
-                //         }
-                //         // 13=Alat kerja (laptop / notebook)
-                //         elseif($data == 13){
-                //             // 10=Alat kerja (laptop / notebook)
-                //             array_push($id_benefit, 10);
-                //         }
-                //     }
-                //     $trxD->id_benefit = implode(',',$id_benefit);
-                //     $trxD->keterangan3 = $nego->benefit_lainnya;
-                //     $trxD->tanggal_bergabung = $nego->tgl_bergabung;
-                //     // mapping mtr_tbl_recruitment_catat_pegawai vs mtr_tbl_rencana_penambahan
-                //     // refer to "C:\alita\matta\data_master\mapping kebutuhan vs recruitment v1.xlsx"
-                //     $id_catat_pegawai = $nego->id_catat_pegawai;
-                //     // 1=ALITA
-                //     if($id_catat_pegawai == 1){
-                //         // 4=Internal Alita
-                //         $trxD->id_pencatatan_kepegawaian = 4;
-                //     }
-                //     // 2=Outsource
-                //     elseif($id_catat_pegawai == 2){
-                //         // 3=Outsource
-                //         $trxD->id_pencatatan_kepegawaian = 3;
-                //     }
-                //     // mapping mtr_tbl_recruitment_status_pegawai vs mtr_tbl_status_kerja
-                //     // refer to "C:\alita\matta\data_master\mapping kebutuhan vs recruitment v1.xlsx"
-                //     $id_status_pegawai = $nego->id_status_pegawai;
-                //     // 1=Kontrak dan 1=ALITA
-                //     if($id_status_pegawai == 1 && $id_catat_pegawai == 1){
-                //         // 1=Karyawan Kontrak Alita
-                //         $trxD->id_status_kepegawaian = 1;
-                //     }
-                //     // 2=Tetap
-                //     elseif($id_status_pegawai == 2){
-                //         // 2=Karyawan Tetap
-                //         $trxD->id_status_kepegawaian = 2;
-                //     }
-                //     // 3=Tenaga Lepas Harian (TLH)
-                //     elseif($id_status_pegawai == 3){
-                //         // 3=Freelance
-                //         $trxD->id_status_kepegawaian = 3;
-                //     }
-                //     // 4=Konsultan
-                //     elseif($id_status_pegawai == 4){
-                //         // 8=Konsultan
-                //         $trxD->id_status_kepegawaian = 8;
-                //     }
-                //     // 1=Kontrak dan 2=Outsource
-                //     elseif($id_status_pegawai == 1 && $id_catat_pegawai == 2){
-                //         // 9=Karyawan Kontrak Outsource
-                //         $trxD->id_status_kepegawaian = 9;
-                //     }
-                //     $trxD->tanggal_mulai = $nego->tgl_bergabung;
-                //     $trxD->tanggal_akhir = Carbon::parse($nego->tgl_bergabung)->addMonths($nego->masa_kerja)->format('Y-m-d');
-                //     $trxD->tanggal_ttd_kontrak = $nego->tgl_bergabung;
-                //     $trxD->atasan = $trxM->atasan;
-                //     $trxD->id_identitas = $id;
-                //     $trxD->update();
-                // }
+                if(!empty($trxD)){
+                    $trxD->nama_karyawan = $_trx->nama;
+                    $trxD->alamat = $_trx->alamat_ktp;
+                    $trxD->tanggal_lahir = $_trx->tanggal_lahir;
+                    $arr_pendidikan = ['SD', 'SMP', 'SMA/SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3', 'Lainnya'];
+                    $trxD->id_pendidikan = array_search($_trx->pendidikan, $arr_pendidikan) + 1;
+                    $trxD->tanggal_interview = Carbon::parse($interview->check_in)->format('Y-m-d');
+                    if(!empty($interview->file_interview)){
+                        $trxD->file_interview = $interview->file_interview;
+                        File::copy(public_path('assets/recruitment/upload/'.$interview->file_interview), public_path('assets/kebutuhan/'.$interview->file_interview));
+                    }
+                    $trxD->tanggal_psikotes = Carbon::parse($_trx->check_in)->format('Y-m-d');
+                    $file_psikotes = $id.'_'.now()->getTimestampMs().'.pdf';
+                    $this->pdf_interpretation($id, $file_psikotes);
+                    $trxD->file_psikotes = $file_psikotes;
+                    // 17=Negotiation Deal by Candidate
+                    $tanggal_negosiasi = TrxRecruitmentLog::where(['id_identitas'=>$id, 'id_status'=>17])->orderBy('id', 'asc')->first();
+                    if(!empty($tanggal_negosiasi->created_at)){
+                        $trxD->tanggal_negosiasi = Carbon::parse($tanggal_negosiasi->created_at)->format('Y-m-d');
+                    }
+                    // 20=COC and File Upload Done
+                    $tanggal_coc = TrxRecruitmentLog::where(['id_identitas'=>$id, 'id_status'=>20])->orderBy('id', 'asc')->first();
+                    $trxD->tanggal_peraturan_perusahaan = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
+                    $trxD->tanggal_pedoman_prilaku = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
+                    $trxD->tanggal_struktur_organisasi = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
+                    if(!empty($_trx->file_dokumen_ttd)){
+                        $trxD->file_dokumen_ttd = $_trx->file_dokumen_ttd;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->file_dokumen_ttd), public_path('assets/kebutuhan/'.$_trx->file_dokumen_ttd));
+                    }
+                    if(!empty($_trx->cv)){
+                        $trxD->file_cv = $_trx->cv;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->cv), public_path('assets/kebutuhan/'.$_trx->cv));
+                    }
+                    if(!empty($_trx->file_sertifikat_keahlian)){
+                        $trxD->file_sertifikat_keahlian = $_trx->file_sertifikat_keahlian;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->file_sertifikat_keahlian), public_path('assets/kebutuhan/'.$_trx->file_sertifikat_keahlian));
+                    }
+                    if(!empty($_trx->file_ktp)){
+                        $trxD->file_ktp = $_trx->file_ktp;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ktp), public_path('assets/kebutuhan/'.$_trx->file_ktp));
+                    }
+                    if(!empty($_trx->file_kk)){
+                        $trxD->file_kk = $_trx->file_kk;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->file_kk), public_path('assets/kebutuhan/'.$_trx->file_kk));
+                    }
+                    if(!empty($_trx->file_npwp)){
+                        $trxD->file_npwp = $_trx->file_npwp;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->file_npwp), public_path('assets/kebutuhan/'.$_trx->file_npwp));
+                    }
+                    if(!empty($_trx->file_bpjs_tk)){
+                        $trxD->file_bpjs_tk = $_trx->file_bpjs_tk;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_tk), public_path('assets/kebutuhan/'.$_trx->file_bpjs_tk));
+                    }
+                    if(!empty($_trx->file_bpjs_kes)){
+                        $trxD->file_bpjs_kes = $_trx->file_bpjs_kes;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_kes), public_path('assets/kebutuhan/'.$_trx->file_bpjs_kes));
+                    }
+                    if(!empty($_trx->file_buku_tabungan)){
+                        $trxD->file_buku_tabungan = $_trx->file_buku_tabungan;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->file_buku_tabungan), public_path('assets/kebutuhan/'.$_trx->file_buku_tabungan));
+                    }
+                    if(!empty($_trx->file_ket_sehat)){
+                        $trxD->file_ket_sehat = $_trx->file_ket_sehat;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ket_sehat), public_path('assets/kebutuhan/'.$_trx->file_ket_sehat));
+                    }
+                    if(!empty($_trx->file_skck)){
+                        $trxD->file_skck = $_trx->file_skck;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->file_skck), public_path('assets/kebutuhan/'.$_trx->file_skck));
+                    }
+                    if(!empty($_trx->file_ijazah)){
+                        $trxD->file_ijazah = $_trx->file_ijazah;
+                        File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ijazah), public_path('assets/kebutuhan/'.$_trx->file_ijazah));
+                    }
+                    $file_offering = $id.'_'.now()->getTimestampMs().'.pdf';
+                    $this->pdf_offering($id, $file_offering);
+                    $trxD->file_offering = $file_offering;
+                    $trxD->take_home_pay = $nego->thp;
+                    // mapping ke benefit_utama dan benefit_lainnya
+                    $benefit_utama = explode(',', $nego->benefit_utama);
+                    $id_benefit = array();
+                    foreach($benefit_utama as $data){
+                        // mapping mtr_tbl_recruitment_benefit vs mtr_tbl_benefit
+                        // refer to "C:\alita\matta\data_master\mapping kebutuhan vs recruitment v1.xlsx"
+                        // 1=Upah Lembur
+                        if($data == 1){
+                            // 1=Overtime
+                            array_push($id_benefit, 1);
+                        }
+                        // Medical Reimbursement
+                        elseif($data == 2){
+                            // 2=Medical Reimbursement
+                            array_push($id_benefit, 2);
+                        }
+                        // Asuransi
+                        elseif($data == 10){
+                            // 3=Asuransi
+                            array_push($id_benefit, 3);
+                        }
+                        // 5=BPJS Ketenagakerjaan, ditanggung perusahaan
+                        // 6=BPJS Ketenagakerjaan, ditanggung  perusahaan & karyawan
+                        elseif($data == 5 || $data == 6){
+                            // 4=BPJS Ketenagakerjaan
+                            array_push($id_benefit, 4);
+                        }
+                        // 7=BPJS Kesehatan, ditanggung perusahaan
+                        // 8=BPJS Kesehatan, ditanggung  perusahaan & karyawan
+                        elseif($data == 7 || $data == 8){
+                            // 5=BPJS Kesehatan
+                            array_push($id_benefit, 5);
+                        }
+                        // 9=Cuti Setelah 1 tahun
+                        elseif($data == 9){
+                            // 6=Cuti
+                            array_push($id_benefit, 6);
+                        }
+                        // 3=PPh 21, ditanggung perusahaan
+                        // 4=PPh 21, ditanggung perusahaan & karyawan
+                        elseif($data == 3 || $data == 4){
+                            // 7=PPh21
+                            array_push($id_benefit, 7);
+                        }
+                        // 11=Tunjangan Corporate
+                        elseif($data == 11){
+                            // 8=Tunjangan Corporate
+                            array_push($id_benefit, 8);
+                        }
+                        // 12=Tunjangan Project / Operasional
+                        elseif($data == 12){
+                            // 9=Tunjangan Project / Operasional
+                            array_push($id_benefit, 9);
+                        }
+                        // 13=Alat kerja (laptop / notebook)
+                        elseif($data == 13){
+                            // 10=Alat kerja (laptop / notebook)
+                            array_push($id_benefit, 10);
+                        }
+                    }
+                    $trxD->id_benefit = implode(',',$id_benefit);
+                    $trxD->keterangan3 = $nego->benefit_lainnya;
+                    $trxD->tanggal_bergabung = $nego->tgl_bergabung;
+                    // mapping mtr_tbl_recruitment_catat_pegawai vs mtr_tbl_rencana_penambahan
+                    // refer to "C:\alita\matta\data_master\mapping kebutuhan vs recruitment v1.xlsx"
+                    $id_catat_pegawai = $nego->id_catat_pegawai;
+                    // 1=ALITA
+                    if($id_catat_pegawai == 1){
+                        // 4=Internal Alita
+                        $trxD->id_pencatatan_kepegawaian = 4;
+                    }
+                    // 2=Outsource
+                    elseif($id_catat_pegawai == 2){
+                        // 3=Outsource
+                        $trxD->id_pencatatan_kepegawaian = 3;
+                    }
+                    // mapping mtr_tbl_recruitment_status_pegawai vs mtr_tbl_status_kerja
+                    // refer to "C:\alita\matta\data_master\mapping kebutuhan vs recruitment v1.xlsx"
+                    $id_status_pegawai = $nego->id_status_pegawai;
+                    // 1=Kontrak dan 1=ALITA
+                    if($id_status_pegawai == 1 && $id_catat_pegawai == 1){
+                        // 1=Karyawan Kontrak Alita
+                        $trxD->id_status_kepegawaian = 1;
+                    }
+                    // 2=Tetap
+                    elseif($id_status_pegawai == 2){
+                        // 2=Karyawan Tetap
+                        $trxD->id_status_kepegawaian = 2;
+                    }
+                    // 3=Tenaga Lepas Harian (TLH)
+                    elseif($id_status_pegawai == 3){
+                        // 3=Freelance
+                        $trxD->id_status_kepegawaian = 3;
+                    }
+                    // 4=Konsultan
+                    elseif($id_status_pegawai == 4){
+                        // 8=Konsultan
+                        $trxD->id_status_kepegawaian = 8;
+                    }
+                    // 1=Kontrak dan 2=Outsource
+                    elseif($id_status_pegawai == 1 && $id_catat_pegawai == 2){
+                        // 9=Karyawan Kontrak Outsource
+                        $trxD->id_status_kepegawaian = 9;
+                    }
+                    $trxD->tanggal_mulai = $nego->tgl_bergabung;
+                    $trxD->tanggal_akhir = Carbon::parse($nego->tgl_bergabung)->addMonths($nego->masa_kerja)->format('Y-m-d');
+                    $trxD->tanggal_ttd_kontrak = $nego->tgl_bergabung;
+                    $trxD->atasan = $trxM->atasan;
+                    $trxD->id_identitas = $id;
+                    $trxD->update();
+                }
                 // kirim email
                 $link = route('recruitment.download_offering', Crypt::encrypt($_trx->id));
                 $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
