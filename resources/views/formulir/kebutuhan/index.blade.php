@@ -116,6 +116,9 @@
                                     <th>{{ __('lang.Status Pengajuan') }}</th>
                                     <th>{{ __('lang.Waktu Pembuatan') }}</th>
                                     <th>{{ __('lang.Waktu Selesai') }}</th>
+                                    <th>SLA (hari)</th>
+                                    <th>SLA Status</th>
+                                    <th>Tanggal SLA</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -150,6 +153,67 @@
                                     <td>{{ $data->_status_pengajuan->status_pengajuan }}</td>
                                     <td>{{ $data->created_at }}</td>
                                     <td>@if ($data->status_pengajuan==10) {{ $data->updated_at }} @endif</td>
+                                    @php
+                                        $sla = App\Models\TrxRecruitment::where(['id_kebutuhan'=>$data->id, 'id_status'=>2])->first();
+                                        // $detail = App\Models\TrxKebutuhanDetail::where(['id_kebutuhan'=>$data->id])->orderBy('updated_at', 'desc')->get();
+                                        $kandidat = App\Models\TrxRecruitmentIdentitas::where(['id_kebutuhan'=>$data->id])->get();
+                                        $id_identitas = [];
+                                        foreach($kandidat as $_kandidat){
+                                            array_push($id_identitas, $_kandidat->id);
+                                        }
+                                        // 24=Join
+                                        $log = App\Models\TrxRecruitmentLog::whereIn('id_identitas',$id_identitas)->where(['id_status'=>24])->orderBy('created_at', 'desc')->get();
+                                        $sla_start = '';
+                                        $sla_end = '';
+                                        if(!empty($sla->created_at)){
+                                            $sla_start = Carbon\Carbon::parse($sla->created_at)->format('Y-m-d');
+                                        }
+                                        if($log->count() >= $data->jumlah){
+                                            $sla_end = Carbon\Carbon::parse($log[0]->created_at)->format('Y-m-d');
+                                        }
+                                    @endphp
+                                    <td>
+                                        @if(!empty($sla_start) && !empty($sla_end))
+                                            @php
+                                                // $sla_start = Carbon::parse($sla_start)->addDay();
+                                                $period = Carbon\CarbonPeriod::create($sla_start, $sla_end);
+                                                $workingDays = 0;
+                                                $holidays = App\Models\Holiday::whereBetween('tanggal', [$sla_start, $sla_end])->pluck('tanggal')->toArray();
+                                                // $arr_days = [];
+                                                foreach ($period as $date) {
+                                                    // Cek jika hari Sabtu (6) atau Minggu (0)
+                                                    if ($date->isWeekend()) {
+                                                        continue;
+                                                    }
+                                                    // Cek jika tanggal ada di daftar hari libur
+                                                    if (in_array($date->format('Y-m-d'), $holidays)) {
+                                                        continue;
+                                                    }
+                                                    // array_push($arr_days, $date);
+                                                    $workingDays++;
+                                                }
+                                            @endphp
+                                            {{-- {{ Carbon\Carbon::parse($sla_start)->diffInDays(Carbon\Carbon::parse($sla_end), false) }}<br/> --}}
+                                            {{ $workingDays }}
+                                            {{-- @foreach($arr_days as $_arr_days)
+                                                {{ Carbon\Carbon::parse($_arr_days)->format('d-m-Y') }}<br/>
+                                            @endforeach --}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if(!empty($sla_start) && !empty($sla_end))
+                                            @if($workingDays <= 14)
+                                            <span class="badge badge-success">ONTIME</span>
+                                            @else
+                                            <span class="badge badge-danger">OVERDUE</span>
+                                            @endif
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if(!empty($sla_start) && !empty($sla_end))
+                                            {{ Carbon\Carbon::parse($sla_start)->format('d-m-Y') }} sd {{ Carbon\Carbon::parse($sla_end)->format('d-m-Y') }}
+                                        @endif
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>
