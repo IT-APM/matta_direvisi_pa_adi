@@ -646,15 +646,45 @@ class TrxIjinController extends Controller
             $this->insertLog($id, $status, $nik, $keterangan);
             if($status == 2){
                 if(!empty($layer2)){
-                    // start
-                    // parameter yang dipassing ke sendemail
-                    $mailData['title'] = 'Formulir Izin';
-                    $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($layer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey('layer2')]) ];
-                    $mailData['filename'] = 'emails.izin0';
-                    $mailData['to'] = $layer2['email'];
-                    $todolist = ['id_trx' => $trx->id, 'nik' => $layer2['nik'], 'id_status' => $status, 'pic' => 'layer2'];
-                    $this->insertToDoList($todolist, $mailData);
-                    $this->sendEmail($mailData);
+                    // // start
+                    // // parameter yang dipassing ke sendemail
+                    // $mailData['title'] = 'Formulir Izin';
+                    // $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($layer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey('layer2')]) ];
+                    // $mailData['filename'] = 'emails.izin0';
+                    // $mailData['to'] = $layer2['email'];
+                    // $todolist = ['id_trx' => $trx->id, 'nik' => $layer2['nik'], 'id_status' => $status, 'pic' => 'layer2'];
+                    // $this->insertToDoList($todolist, $mailData);
+                    // $this->sendEmail($mailData);
+                    // check apakah $atasan == $layer2 jika sama maka auto approve oleh $layer2
+                    if($atasan['nik'] == $layer2['nik']){
+                        // 6 = Approve by L2
+                        $status = 6;
+                        $trx->status = $status;
+                        $trx->update();
+                        $this->insertLog($id, $status, $nik, $keterangan);
+                        // start
+                        // parameter yang dipassing ke sendemail
+                        $mailData['title'] = 'Formulir Izin';
+                        // $mailData['filename'] = 'emails.izin1';
+                        $mailData['filename'] = 'emails.izin_setuju';
+                        $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link' => route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
+                        // $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
+                        $mailData['to'] = $karyawan['email'];
+                        $this->sendEmail($mailData);
+                        return view('emails.izin_ok');
+                        // finish
+                    }
+                    else{
+                        // start
+                        // parameter yang dipassing ke sendemail
+                        $mailData['title'] = 'Formulir Izin';
+                        $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($layer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey('layer2')]) ];
+                        $mailData['filename'] = 'emails.izin0';
+                        $mailData['to'] = $layer2['email'];
+                        $todolist = ['id_trx' => $trx->id, 'nik' => $layer2['nik'], 'id_status' => $status, 'pic' => 'layer2'];
+                        $this->insertToDoList($todolist, $mailData);
+                        $this->sendEmail($mailData);
+                    }
                 }else{
                     // start
                     // parameter yang dipassing ke sendemail
