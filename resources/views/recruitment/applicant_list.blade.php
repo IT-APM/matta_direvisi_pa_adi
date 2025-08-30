@@ -62,7 +62,7 @@
                                     <div class="invalid-feedback txt-danger">Field is required.</div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="h6">Posisi</label>&nbsp;<input type="checkbox" onClick="toggle_id_pekerjaan(this)" /> Check All
+                                    <label class="h6">Nama Jabatan</label>&nbsp;<input type="checkbox" onClick="toggle_id_pekerjaan(this)" /> Check All
                                     <label class="d-block" for="id_pekerjaan">
                                         @foreach ($pekerjaan as $data)
                                         <input class="checkbox_animated" id="id_pekerjaan[]" name="id_pekerjaan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_id_pekerjaan)) checked @endif> {{ $data->pekerjaan }}<br/>
@@ -120,7 +120,12 @@
                                                 <th>Upload Hasil</th>
                                                 <th>Area Kerja</th>
                                                 <th>Area Kerja Kota</th>
-                                                <th>Posisi</th>
+                                                <th>Pengaju</th>
+                                                <th>NIP</th>
+                                                <th>Direktorat</th>
+                                                <th>Divisi</th>
+                                                <th>Departemen</th>
+                                                <th>Nama Jabatan</th>
                                                 <th>Atasan Langsung Kandidat</th>
                                                 <th>Nama/Email</th>
                                                 <th>Telepon</th>
@@ -139,6 +144,7 @@
                                             @foreach ($trx as $data)
                                             @php
                                                 $recruitment = App\Models\TrxKebutuhanMaster::find($data->id_kebutuhan);
+                                                $pengaju_property = json_decode($recruitment->pengaju_property, true);
                                                 $atasan_property = $recruitment->atasan_property;
                                                 $atasan_property = json_decode($atasan_property, true);
                                                 $nomor = $data->id_kebutuhan.'/'.$data->id;
@@ -197,8 +203,13 @@
                                                 </td>
                                                 <td>{{ $recruitment->_area->propinsi }}</td>
                                                 <td>@if (!empty($recruitment->id_kota)) {{ $recruitment->_kota->kota }} @endif</td>
+                                                <td>{{ $pengaju_property['nama'] }}</td>
+                                                <td>{{ $pengaju_property['nik'] }}</td>
+                                                <td>{{ $pengaju_property['divisi'] }}</td>
+                                                <td>{{ $pengaju_property['dep'] }}</td>
+                                                <td>{{ $pengaju_property['sub_dep'] }}</td>
                                                 <td>{{ $recruitment->_pekerjaan->pekerjaan }}</td>
-                                                <td>@if(!empty($atasan_property)) {{ $atasan_property['nama'] }}<br/>{{ $atasan_property['nik'] }} @endif</td>
+                                                <td>@if(!empty($atasan_property)) {{ $atasan_property['nama'] }}/{{ $atasan_property['nik'] }} @endif</td>
                                                 <td>{{ $data->nama }}<br/>{{ $data->email }}&nbsp;<a href="{{ route('recruitment.edit', [Crypt::encrypt($data->id), 'type'=>'email', 'back_url'=>URL::full()]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt" style="color:green"></i></a></td>
                                                 <td>{{ $data->telepon }}</td>
                                                 <td><div class="d-flex align-items-center"><input id="id_cv[]" name="id_cv[]" type="checkbox" value="{{ $data->id }}">&nbsp;&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$data->cv) }}" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></div></td>
