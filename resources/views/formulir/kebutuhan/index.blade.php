@@ -106,6 +106,9 @@
                                     <th>{{ __('lang.Area Kerja Kota') }}</th>
                                     <th>{{ __('lang.Pengaju') }}</th>
                                     <th>{{ __('lang.NIP') }}</th>
+                                    <th>Direktorat</th>
+                                    <th>Divisi</th>
+                                    <th>Departemen</th>
                                     <th>{{ __('lang.Nama Jabatan') }}</th>
                                     <th>Atasan Langsung Kandidat</th>
                                     <th>{{ __('lang.Status Kerja') }}</th>
@@ -135,15 +138,19 @@
                                         @endcan
 
                                     </td>
-                                    <td>{{ $data->_area->propinsi }}</td>
-                                    <td>@if (!empty($data->id_kota)) {{ $data->_kota->kota }} @endif</td>
-                                    <td>{{ $data->_pengaju->nama }}</td>
-                                    <td>{{ $data->_pengaju->nik }}</td>
-                                    <td>{{ $data->_pekerjaan->pekerjaan }}</td>
                                     @php
+                                        $pengaju_property = json_decode($data->pengaju_property, true);
                                         $atasan_property = $data->atasan_property;
                                         $atasan_property = json_decode($atasan_property, true);
                                     @endphp
+                                    <td>{{ $data->_area->propinsi }}</td>
+                                    <td>@if (!empty($data->id_kota)) {{ $data->_kota->kota }} @endif</td>
+                                    <td>{{ $pengaju_property['nama'] }}</td>
+                                    <td>{{ $data->pengaju }}</td>
+                                    <td>{{ $pengaju_property['divisi'] }}</td>
+                                    <td>{{ $pengaju_property['dep'] }}</td>
+                                    <td>{{ $pengaju_property['sub_dep'] }}</td>
+                                    <td>{{ $data->_pekerjaan->pekerjaan }}</td>
                                     <td>@if(!empty($atasan_property)) {{ $atasan_property['nama'] }}/{{ $atasan_property['nik'] }} @endif</td>
                                     <td>{{ $data->_status_kerja->status_kerja }}</td>
                                     <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $data->tanggal)->format('d-m-Y') }}</td>
