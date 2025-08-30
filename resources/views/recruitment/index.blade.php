@@ -62,13 +62,13 @@
                                     <div class="invalid-feedback txt-danger">Field is required.</div>
                                 </div>
                                 <div class="col-sm-4">
-                                    {{-- <label class="h6">Posisi</label>&nbsp;<input type="checkbox" onClick="toggle_id_pekerjaan(this)" /> Check All
+                                    {{-- <label class="h6">Nama Jabatan</label>&nbsp;<input type="checkbox" onClick="toggle_id_pekerjaan(this)" /> Check All
                                     <label class="d-block" for="id_pekerjaan">
                                         @foreach ($pekerjaan as $data)
                                         <input class="checkbox_animated" id="id_pekerjaan[]" name="id_pekerjaan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_id_pekerjaan)) checked @endif> {{ $data->pekerjaan }}<br/>
                                         @endforeach
                                     </label> --}}
-                                    <label class="h6" for="id_pekerjaan">Posisi</label>
+                                    <label class="h6" for="id_pekerjaan">Nama Jabatan</label>
                                     <select class="form-select js-example-basic-single col-sm-12" id="id_pekerjaan" name="id_pekerjaan" required="">
                                         {{-- <option selected="" disabled="" value="">Pilih...</option> --}}
                                         <option value="0" @if(in_array('0', $arr_id_pekerjaan)) selected @endif>Semua</option>
@@ -104,7 +104,8 @@
                                     <th>Area Kerja</th>
                                     <th>Area Kerja Kota</th>
                                     <th>Pengaju</th>
-                                    <th>Posisi</th>
+                                    <th>NIP</th>
+                                    <th>Nama Jabatan</th>
                                     <th>Atasan Langsung Kandidat</th>
                                     <th>Jenis</th>
                                     <th>Tanggal Mulai Kerja</th>
@@ -132,7 +133,8 @@
                                     </td>
                                     <td>{{ $data->_area->propinsi }}</td>
                                     <td>@if (!empty($data->id_kota)) {{ $data->_kota->kota }} @endif</td>
-                                    <td>{{ $data->_pengaju->nama }} / {{ $data->_pengaju->nik }}</td>
+                                    <td>{{ $data->_pengaju->nama }}</td>
+                                    <td>{{ $data->_pengaju->nik }}</td>
                                     <td>{{ $data->_pekerjaan->pekerjaan }}</td>
                                     <td>@if(!empty($atasan_property)) {{ $atasan_property['nama'] }}/{{ $atasan_property['nik'] }} @endif</td>
                                     <td>{{ $data->_status_kerja->status_kerja }}</td>
