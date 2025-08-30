@@ -205,11 +205,36 @@
                                 $total_biaya_gaji = $biaya_gaji + $kompensasi_kkwt;
                             }
                             // 
-                            array_push($group_by, ['bulan_tahun'=>$data->bulan.'-'.$data->tahun, 'perusahaan'=>$data->perusahaan, 'divisi'=>$data->divisi, 'departemen'=>$data->departemen, 'subdepartemen'=>$data->subdepartemen, 'status_karyawan'=>$data->status_karyawan, 'total_biaya_gaji'=>$_biaya_gaji]);
+                            array_push($group_by, ['bulan_tahun'=>$data->bulan.'-'.$data->tahun, 'tahun'=>$data->tahun, 'perusahaan'=>$data->perusahaan, 'divisi'=>$data->divisi, 'departemen'=>$data->departemen, 'subdepartemen'=>$data->subdepartemen, 'status_karyawan'=>$data->status_karyawan, 'total_biaya_gaji'=>$_biaya_gaji]);
                         @endphp
                         @endforeach
                         @php
                             $data = collect($group_by)->groupBy('bulan_tahun');
+                            // start yoy
+                            $tahun = collect($group_by)->groupBy('tahun');
+                            // $arr_tahun = [null,null,null];
+                            $arr_tahun = [0,0,0];
+                            $arr_bulan = [1,2,3,4,5,6,7,8,9,10,11,12];
+                            $x = 0;
+                            foreach($tahun as $key => $value){
+                                // array_push($arr_tahun, $key);
+                                $arr_tahun[$x] = $key;
+                                $x++;
+                            }
+                            $nominal_0 = [null,null,null,null,null,null,null,null,null,null,null,null];
+                            $nominal_1 = [null,null,null,null,null,null,null,null,null,null,null,null];
+                            $nominal_2 = [null,null,null,null,null,null,null,null,null,null,null,null];
+                            // $nominal_0 = [0,0,0,0,0,0,0,0,0,0,0,0];
+                            // $nominal_1 = [0,0,0,0,0,0,0,0,0,0,0,0];
+                            // $nominal_2 = [0,0,0,0,0,0,0,0,0,0,0,0];
+                            $jumlah_data_0 = [null,null,null,null,null,null,null,null,null,null,null,null];
+                            $jumlah_data_1 = [null,null,null,null,null,null,null,null,null,null,null,null];
+                            $jumlah_data_2 = [null,null,null,null,null,null,null,null,null,null,null,null];
+                            // $jumlah_data_0 = [0,0,0,0,0,0,0,0,0,0,0,0];
+                            // $jumlah_data_1 = [0,0,0,0,0,0,0,0,0,0,0,0];
+                            // $jumlah_data_2 = [0,0,0,0,0,0,0,0,0,0,0,0];
+                            // dd($arr_tahun);
+                            // end yoy
                             $pembagi = count($data);
                             if(count($data) == 0){
                                 $pembagi = 1;
@@ -226,8 +251,36 @@
                                     $_nominal += $_value['total_biaya_gaji'];
                                 }
                                 array_push($nominal, $_nominal);
+                                if($arr_tahun[0] > 0 && $arr_tahun[1] > 0 && $arr_tahun[2] > 0){
+                                    // start yoy
+                                    // pisahkan bulan dan tahun
+                                    $_key = explode('-', $key);
+                                    for($x = 1; $x <= count($arr_bulan); $x++){
+                                        // jika bulan dan tahunnya sama
+                                        if($_key[0] == $x && $arr_tahun[0] == $_key[1]){
+                                            $nominal_0[$x-1] = $_nominal;
+                                            $jumlah_data_0[$x-1] = $value->count();
+                                        }
+                                        // jika $arr_tahun > 1
+                                        if(count($arr_tahun) > 1){
+                                            if($_key[0] == $x && $arr_tahun[1] == $_key[1]){
+                                                $nominal_1[$x-1] = $_nominal;
+                                                $jumlah_data_1[$x-1] = $value->count();
+                                            }
+                                        }
+                                        // jika $arr_tahun > 2
+                                        if(count($arr_tahun) > 2){
+                                            if($_key[0] == $x && $arr_tahun[2] == $_key[1]){
+                                                $nominal_2[$x-1] = $_nominal;
+                                                $jumlah_data_2[$x-1] = $value->count();
+                                            }
+                                        }
+                                    }
+                                    // end yoy
+                                }else{
+                                    $arr_tahun = [0,0,0];
+                                }
                             }
-                            // dd($waktu, $jumlah_data, $nominal);
                         @endphp
                         {{--  --}}
                         <div class="row mt-2">
@@ -508,6 +561,18 @@
                                     <div id="chart_jumlah_karyawan"></div>
                                 </div>
                             </div>
+                            <div class="col-xl-6 col-sm-6">
+                                <div class="card">
+                                    <h5 class="text-center mt-2">Total Biaya Gaji (Year on Year)</h5>
+                                    <div id="chart_yoy_total_biaya_gaji"></div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-sm-6">
+                                <div class="card">
+                                    <h5 class="text-center mt-2">Jumlah Karyawan (Year on Year)</h5>
+                                    <div id="chart_yoy_jumlah_karyawan"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -709,6 +774,7 @@ function getSubDepartemen() {
 }
 // 
 $(document).ready(function() {
+    // Total Biaya Gaji
     var options = {
         series: [{
             name: 'Biaya Gaji',
@@ -779,7 +845,7 @@ $(document).ready(function() {
         },
     };
     new ApexCharts(document.querySelector("#chart_total_biaya_gaji"), options).render();
-    // 
+    // Jumlah Karyawan
     var options = {
         series: [{
             name: 'Jumlah',
@@ -810,6 +876,76 @@ $(document).ready(function() {
         },
     };
     new ApexCharts(document.querySelector("#chart_jumlah_karyawan"), options).render();
+    // YoY Total Biaya Gaji
+    var options = {
+        series: [{
+            name: {{ \Illuminate\Support\Js::from($arr_tahun[0]) }},
+            data: {{ \Illuminate\Support\Js::from($nominal_0) }}
+        },{
+            name: {{ \Illuminate\Support\Js::from($arr_tahun[1]) }},
+            data: {{ \Illuminate\Support\Js::from($nominal_1) }}
+        },{
+            name: {{ \Illuminate\Support\Js::from($arr_tahun[2]) }},
+            data: {{ \Illuminate\Support\Js::from($nominal_2) }}
+        }],
+        chart: {
+            type: 'line',
+            height: 350,
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        colors: ['#f57b20', '#4e71ff', '#6de1d2'],
+        xaxis: {
+            categories: {{ \Illuminate\Support\Js::from($arr_bulan) }},
+        },
+        yaxis: {
+            title: {
+                text: 'Biaya Gaji',
+            },
+            labels: {
+                formatter: function (value) {
+                    return value.toLocaleString();
+                }
+            },
+        },
+    };
+    new ApexCharts(document.querySelector("#chart_yoy_total_biaya_gaji"), options).render();
+    // YoY Jumlah Karyawan
+    var options = {
+        series: [{
+            name: {{ \Illuminate\Support\Js::from($arr_tahun[0]) }},
+            data: {{ \Illuminate\Support\Js::from($jumlah_data_0) }}
+        },{
+            name: {{ \Illuminate\Support\Js::from($arr_tahun[1]) }},
+            data: {{ \Illuminate\Support\Js::from($jumlah_data_1) }}
+        },{
+            name: {{ \Illuminate\Support\Js::from($arr_tahun[2]) }},
+            data: {{ \Illuminate\Support\Js::from($jumlah_data_2) }}
+        }],
+        chart: {
+            type: 'line',
+            height: 350,
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        colors: ['#f57b20', '#4e71ff', '#6de1d2'],
+        xaxis: {
+            categories: {{ \Illuminate\Support\Js::from($arr_bulan) }},
+        },
+        yaxis: {
+            title: {
+                text: 'Jumlah',
+            },
+            labels: {
+                formatter: function (value) {
+                    return value.toLocaleString();
+                }
+            },
+        },
+    };
+    new ApexCharts(document.querySelector("#chart_yoy_jumlah_karyawan"), options).render();
 });
 </script>
 <script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script>
