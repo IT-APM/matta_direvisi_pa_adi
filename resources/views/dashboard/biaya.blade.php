@@ -251,7 +251,7 @@
                                     $_nominal += $_value['total_biaya_gaji'];
                                 }
                                 array_push($nominal, $_nominal);
-                                if($arr_tahun[0] > 0 && $arr_tahun[1] > 0 && $arr_tahun[2] > 0){
+                                if($arr_tahun[0] > 0 && $arr_tahun[1]){
                                     // start yoy
                                     // pisahkan bulan dan tahun
                                     $_key = explode('-', $key);
@@ -876,6 +876,8 @@ $(document).ready(function() {
         },
     };
     new ApexCharts(document.querySelector("#chart_jumlah_karyawan"), options).render();
+    // 
+    @if($arr_tahun[0] > 0 && $arr_tahun[1] > 0 && $arr_tahun[2] > 0)
     // YoY Total Biaya Gaji
     var options = {
         series: [{
@@ -946,6 +948,72 @@ $(document).ready(function() {
         },
     };
     new ApexCharts(document.querySelector("#chart_yoy_jumlah_karyawan"), options).render();
+    @else
+    // YoY Total Biaya Gaji
+    var options = {
+        series: [{
+            name: {{ \Illuminate\Support\Js::from($arr_tahun[0]) }},
+            data: {{ \Illuminate\Support\Js::from($nominal_0) }}
+        },{
+            name: {{ \Illuminate\Support\Js::from($arr_tahun[1]) }},
+            data: {{ \Illuminate\Support\Js::from($nominal_1) }}
+        }],
+        chart: {
+            type: 'line',
+            height: 350,
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        colors: ['#f57b20', '#4e71ff'],
+        xaxis: {
+            categories: {{ \Illuminate\Support\Js::from($arr_bulan) }},
+        },
+        yaxis: {
+            title: {
+                text: 'Biaya Gaji',
+            },
+            labels: {
+                formatter: function (value) {
+                    return value.toLocaleString();
+                }
+            },
+        },
+    };
+    new ApexCharts(document.querySelector("#chart_yoy_total_biaya_gaji"), options).render();
+    // YoY Jumlah Karyawan
+    var options = {
+        series: [{
+            name: {{ \Illuminate\Support\Js::from($arr_tahun[0]) }},
+            data: {{ \Illuminate\Support\Js::from($jumlah_data_0) }}
+        },{
+            name: {{ \Illuminate\Support\Js::from($arr_tahun[1]) }},
+            data: {{ \Illuminate\Support\Js::from($jumlah_data_1) }}
+        }],
+        chart: {
+            type: 'line',
+            height: 350,
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        colors: ['#f57b20', '#4e71ff'],
+        xaxis: {
+            categories: {{ \Illuminate\Support\Js::from($arr_bulan) }},
+        },
+        yaxis: {
+            title: {
+                text: 'Jumlah',
+            },
+            labels: {
+                formatter: function (value) {
+                    return value.toLocaleString();
+                }
+            },
+        },
+    };
+    new ApexCharts(document.querySelector("#chart_yoy_jumlah_karyawan"), options).render();
+    @endif
 });
 </script>
 <script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script>
