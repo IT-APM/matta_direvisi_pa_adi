@@ -207,6 +207,23 @@
                             <a href="{{ route('recruitment.applicant_list', 0) }}" class="btn btn-warning" type="button">Back</a>
                         </div>
                     </div>
+                    {{-- menambahkan ?param=sync pada url untuk sync dokumen upload--}}
+                    @if (request()->get('param') === 'sync')
+                        <div class="row mt-2">
+                        <form action="{{ route('recruitment.interview_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                            @csrf
+                            <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($trx->id) }}">
+                            <input type="hidden" id="id_status" name="id_status" value="24">
+                            <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
+                            <input type="hidden" id="param" name="param" value="{{ request()->get('param') }}">
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <button class="btn btn-primary" type="submit">Document Sync</button>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    @endif
                     <hr class="mt-2 mb-2" />
                     {{-- 4=Psycotest Send --}}
                     <div id="row_4">
