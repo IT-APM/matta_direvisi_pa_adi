@@ -1721,7 +1721,9 @@ class TrxRecruitmentController extends Controller
             // $_trx->id_join = $request->id_join;
             $_trx->id_join = implode(',', $request->input('id_join', []));
             $_trx->id_status = $id_status;
-            $_trx->update();
+            if(empty($request->param)){
+                $_trx->update();
+            }
             $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
             $atasan = json_decode($_trx_->atasan_property, true);
             $posisi = $_trx_->_pekerjaan->pekerjaan;
@@ -1918,57 +1920,59 @@ class TrxRecruitmentController extends Controller
                     $trxD->id_identitas = $id;
                     $trxD->update();
                 }
-                // kirim email
-                $link = route('recruitment.download_offering', Crypt::encrypt($_trx->id));
-                $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
-                <p>Sehubungan dengan proses seleksi yang telah Bapak/Ibu/Saudara/i '.$_trx->nama.' ikuti untuk Posisi '.$posisi.', dengan ini kami sampaikan bahwa Bapak/Ibu/Saudara/i diterima di PT. Alita Praya Mitra sebagai '.$posisi.' di Direktorat / Divisi / Departemen '.$trxM->_divisi_kandidat->nama.' / '.$trxM->_dep_kandidat->nama.' / '.$trxM->_sub_dep_kandidat->nama.'.</p>
-                <p>Klik link berikut untuk mendownload Offering Letter yang telah disepakati.<br/><a target="_blank" href="'.$link.'" data-toggle="tooltip" title="LINK">LINK</a></p>
-                <p>Kami akan menghubungi Bapak/Ibu/Saudara/i  terkait proses selanjutnya. Mohon untuk memastikan bahwa  email anda '.$_trx->email.' dan nomor telepon yang dicantumkan dalam keadaan aktif untuk korespondensi.</p>
-                <p>Terima kasih atas kesediaannya mengikuti proses seleksi di PT. Alita Praya Mitra.</p>
-                <p>Terima kasih atas perhatiannya.<br/>Salam sehat dan sukses selalu.</p>
-                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
-                // parameter yang dipassing ke sendemail
-                $mailData['title'] = 'Pemberitahuan Proses Seleksi Diterima';
-                $mailData['data'] = ['msg'=>$msg];
-                $mailData['filename'] = 'emails.recruitment0';
-                $mailData['to'] = $_trx->email;
-                $this->sendEmail($mailData);
-                // kirim email ke atasan langsung jika ada
-                // <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut dan klik link berikut untuk melakukan persetujuan<br/><a href="'.$link.'" data-toggle="tooltip" title="Link Persetujuan">Link Persetujuan</a>.</p>
-                if(!empty($atasan)){
-                    $link = route('recruitment.get_offering', [Crypt::encrypt([$_trx->id, 'view', 'atasan'])]);
-                    $msg = '<p>Yth. '.$atasan['nama'].',<br/>Dengan hormat,</p>
-                    <p>Kami informasikan bahwa proses negosiasi atas Formulir Kebutuhan Karyawan nomor '.$_trx->id_kebutuhan.' telah dilakukan dan disetujui oleh calon karyawan atas nama berikut:</p>
-                    <p><table border="0" cellpadding="1" cellspacing="1">	
-                        <tr>
-                            <td width="150">Nama</td>
-                            <td width="5">:</td>
-                            <td>'.$_trx->nama.'</td>
-                        </tr>
-                        <tr>
-                            <td>Posisi</td>
-                            <td>:</td>
-                            <td>'.$posisi.'</td>
-                        </tr>
-                        <tr>
-                            <td>Tanggal Bergabung</td>
-                            <td>:</td>
-                            <td>'.Carbon::parse($nego->tgl_bergabung)->format('d-m-Y').'</td>
-                        </tr>
-                    </table></p>
-                    <p>Calon karyawan tersebut telah melalui seluruh tahapan seleksi, termasuk seleksi CV, wawancara HC, wawancara user, Psikotest, dll., dan dinyatakan memenuhi kualifikasi yang dibutuhkan.</p>
-                    <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut. Klik link dibawah ini untuk melakukan persetujuan terhadap Formulir Kebutuhan Karyawan tersebut.<br/><a href="'.$link.'" data-toggle="tooltip" title="LINK">LINK</a></p>
-                    <p>Demikian informasi ini kami sampaikan untuk diketahui. Jika terdapat perkembangan lebih lanjut, kami akan memberikan pembaruan.<br/>Terima kasih.</p>
+                if(empty($request->param)){
+                    // kirim email
+                    $link = route('recruitment.download_offering', Crypt::encrypt($_trx->id));
+                    $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
+                    <p>Sehubungan dengan proses seleksi yang telah Bapak/Ibu/Saudara/i '.$_trx->nama.' ikuti untuk Posisi '.$posisi.', dengan ini kami sampaikan bahwa Bapak/Ibu/Saudara/i diterima di PT. Alita Praya Mitra sebagai '.$posisi.' di Direktorat / Divisi / Departemen '.$trxM->_divisi_kandidat->nama.' / '.$trxM->_dep_kandidat->nama.' / '.$trxM->_sub_dep_kandidat->nama.'.</p>
+                    <p>Klik link berikut untuk mendownload Offering Letter yang telah disepakati.<br/><a target="_blank" href="'.$link.'" data-toggle="tooltip" title="LINK">LINK</a></p>
+                    <p>Kami akan menghubungi Bapak/Ibu/Saudara/i  terkait proses selanjutnya. Mohon untuk memastikan bahwa  email anda '.$_trx->email.' dan nomor telepon yang dicantumkan dalam keadaan aktif untuk korespondensi.</p>
+                    <p>Terima kasih atas kesediaannya mengikuti proses seleksi di PT. Alita Praya Mitra.</p>
+                    <p>Terima kasih atas perhatiannya.<br/>Salam sehat dan sukses selalu.</p>
                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
                     // parameter yang dipassing ke sendemail
-                    $mailData['title'] = 'Pemberitahuan Proses Seleksi Penerimaan Karyawan';
-                    // $mailData['data'] = ['msg'=>$msg];
+                    $mailData['title'] = 'Pemberitahuan Proses Seleksi Diterima';
+                    $mailData['data'] = ['msg'=>$msg];
                     $mailData['filename'] = 'emails.recruitment0';
-                    $mailData['to'] = $atasan['email'];
-                    $todolist = ['id_trx' => $_trx->id, 'nik' => $atasan['nik'], 'id_status' => $id_status, 'pic' => 'atasan'];
-                    $mailData['data'] = ['msg'=>$msg, 'nama' => $atasan['nama'].'/'.$atasan['nik'], 'jabatan' => $atasan['jabatan'], 'unit_kerja' => $atasan['divisi'] . '/' . $atasan['dep'] . '/' . $atasan['sub_dep'], 'link' => $link];
-                    $this->insertToDoList($todolist, $mailData);
+                    $mailData['to'] = $_trx->email;
                     $this->sendEmail($mailData);
+                    // kirim email ke atasan langsung jika ada
+                    // <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut dan klik link berikut untuk melakukan persetujuan<br/><a href="'.$link.'" data-toggle="tooltip" title="Link Persetujuan">Link Persetujuan</a>.</p>
+                    if(!empty($atasan)){
+                        $link = route('recruitment.get_offering', [Crypt::encrypt([$_trx->id, 'view', 'atasan'])]);
+                        $msg = '<p>Yth. '.$atasan['nama'].',<br/>Dengan hormat,</p>
+                        <p>Kami informasikan bahwa proses negosiasi atas Formulir Kebutuhan Karyawan nomor '.$_trx->id_kebutuhan.' telah dilakukan dan disetujui oleh calon karyawan atas nama berikut:</p>
+                        <p><table border="0" cellpadding="1" cellspacing="1">	
+                            <tr>
+                                <td width="150">Nama</td>
+                                <td width="5">:</td>
+                                <td>'.$_trx->nama.'</td>
+                            </tr>
+                            <tr>
+                                <td>Posisi</td>
+                                <td>:</td>
+                                <td>'.$posisi.'</td>
+                            </tr>
+                            <tr>
+                                <td>Tanggal Bergabung</td>
+                                <td>:</td>
+                                <td>'.Carbon::parse($nego->tgl_bergabung)->format('d-m-Y').'</td>
+                            </tr>
+                        </table></p>
+                        <p>Calon karyawan tersebut telah melalui seluruh tahapan seleksi, termasuk seleksi CV, wawancara HC, wawancara user, Psikotest, dll., dan dinyatakan memenuhi kualifikasi yang dibutuhkan.</p>
+                        <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut. Klik link dibawah ini untuk melakukan persetujuan terhadap Formulir Kebutuhan Karyawan tersebut.<br/><a href="'.$link.'" data-toggle="tooltip" title="LINK">LINK</a></p>
+                        <p>Demikian informasi ini kami sampaikan untuk diketahui. Jika terdapat perkembangan lebih lanjut, kami akan memberikan pembaruan.<br/>Terima kasih.</p>
+                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                        // parameter yang dipassing ke sendemail
+                        $mailData['title'] = 'Pemberitahuan Proses Seleksi Penerimaan Karyawan';
+                        // $mailData['data'] = ['msg'=>$msg];
+                        $mailData['filename'] = 'emails.recruitment0';
+                        $mailData['to'] = $atasan['email'];
+                        $todolist = ['id_trx' => $_trx->id, 'nik' => $atasan['nik'], 'id_status' => $id_status, 'pic' => 'atasan'];
+                        $mailData['data'] = ['msg'=>$msg, 'nama' => $atasan['nama'].'/'.$atasan['nik'], 'jabatan' => $atasan['jabatan'], 'unit_kerja' => $atasan['divisi'] . '/' . $atasan['dep'] . '/' . $atasan['sub_dep'], 'link' => $link];
+                        $this->insertToDoList($todolist, $mailData);
+                        $this->sendEmail($mailData);
+                    }
                 }
             }
             // 25=Not Join
@@ -2077,20 +2081,22 @@ class TrxRecruitmentController extends Controller
             $this->sendEmail($mailData);
             // return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
         }
-        // start
-        // id_identitas,id_status,pic,pic_property,aktifitas,catatan
-        $arr = [$_trx->id,$id_status,$nama.'/'.$nik,'','internal',''];
-        // jika ada $catatan
-        if(!empty($catatan)){
-            // $_trx_ = TrxRecruitmentInterview::find($id_interview);
-            // // count
-            // $where = ['id_identitas' => $_trx_->id_identitas, 'id_status' => $_trx_->id_status];
-            // $count = TrxRecruitmentLog::where($where)->count();
-            // $catatan = json_encode(['no'=>$count+1, 'jenis'=>$_trx_->jenis, 'metode'=>$_trx_->metode, 'interviewer'=>$_trx_->interviewer, 'check_in'=>$_trx_->check_in, 'check_out'=>$_trx_->check_out]);
-            $arr = [$_trx->id,$id_status,$nama.'/'.$nik,'','internal',$catatan];
+        if(empty($request->param)){
+            // start
+            // id_identitas,id_status,pic,pic_property,aktifitas,catatan
+            $arr = [$_trx->id,$id_status,$nama.'/'.$nik,'','internal',''];
+            // jika ada $catatan
+            if(!empty($catatan)){
+                // $_trx_ = TrxRecruitmentInterview::find($id_interview);
+                // // count
+                // $where = ['id_identitas' => $_trx_->id_identitas, 'id_status' => $_trx_->id_status];
+                // $count = TrxRecruitmentLog::where($where)->count();
+                // $catatan = json_encode(['no'=>$count+1, 'jenis'=>$_trx_->jenis, 'metode'=>$_trx_->metode, 'interviewer'=>$_trx_->interviewer, 'check_in'=>$_trx_->check_in, 'check_out'=>$_trx_->check_out]);
+                $arr = [$_trx->id,$id_status,$nama.'/'.$nik,'','internal',$catatan];
+            }
+            // 
+            $this->insertLog($arr);
         }
-        // 
-        $this->insertLog($arr);
         return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
     }
 
