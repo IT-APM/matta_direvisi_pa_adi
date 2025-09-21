@@ -10,6 +10,28 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('assets/js/form-validation-custom.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    {{-- <style>
+        @media (min-width: 992px) {
+        .col-lg-5th {
+            flex: 0 0 auto;
+            width: 20%;
+        }
+        }
+
+        .input-row {
+        margin-bottom: 20px;
+        position: relative;
+        padding-right: 40px;
+        }
+
+        .remove-btn {
+        position: absolute;
+        top: -10px;
+        right: 0;
+        z-index: 1;
+        }
+    </style> --}}
 </head>
 
 <body>
@@ -101,12 +123,12 @@
                         </div>
                         <hr class="mt-2 mb-2" />
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-sm-12">
                                 <div class="text-center card-body p-2 p-md-2 p-xl-2">
                                     <h4>IDENTITAS DIRI</h4>
                                 </div>
                             </div>
-                            <div class="col-4 col-md-4">
+                            <div class="col-sm-4 col-md-4">
                                 <div class="card-body p-2 p-md-2 p-xl-2">
                                     <div class="row gy-2 gy-md-2 overflow-hidden">
                                         <div class="col-12">
@@ -154,7 +176,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-4 col-md-4">
+                            <div class="col-sm-4 col-md-4">
                                 <div class="card-body p-2 p-md-2 p-xl-2">
                                     <div class="row gy-2 gy-md-2 overflow-hidden">
                                         <div class="col-12">
@@ -177,7 +199,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-4 col-md-4">
+                            <div class="col-sm-4 col-md-4">
                                 <div class="card-body p-2 p-md-2 p-xl-2">
                                     <div class="row gy-2 gy-md-2 overflow-hidden">
                                         <div class="col-12">
@@ -229,12 +251,59 @@
                             <div class="col-12">
                                 <hr class="mt-2 mb-2" />
                                 <div class="text-center card-body p-2 p-md-2 p-xl-2">
-                                    <h4>SUSUNAN KELUARGA (Jika Sudah Menikah)</h4>
+                                    <h4>SUSUNAN KELUARGA<br/>(Jika Sudah Menikah)</h4>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 col-sm-12">
                                 <div class="card-body p-2 p-md-2 p-xl-2">
-                                    <div class="row gy-2 gy-md-2 overflow-hidden">
+                                    <div class="row input-row">
+                                        <div class="col-sm-2 col-md-2">
+                                            <label for="kelamin_pasangan" class="form-label">Pasangan</label>
+                                            <select class="form-select" name="kelamin_pasangan" id="kelamin_pasangan">
+                                                <option selected disabled value="">-Pilih-</option>
+                                                <option value="Suami">Suami</option>
+                                                <option value="Istri">Istri</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-2 col-md-2">
+                                            <label for="nama_pasangan" class="form-label">Nama</label>
+                                            <input type="text" class="form-control" name="nama_pasangan" id="nama_pasangan" placeholder="Nama Pasangan">
+                                        </div>
+                                        <div class="col-sm-2 col-md-2">
+                                            <label for="usia_pasangan" class="form-label">Usia (tahun)</label>
+                                            <input type="number" class="form-control" name="usia_pasangan" id="usia_pasangan" placeholder="Usia Pasangan">
+                                        </div>
+                                        <div class="col-sm-2 col-md-2">
+                                            <label for="kelamin_pasangan" class="form-label">Jenis Kelamin</label>
+                                            <input type="text" class="form-control" name="kelamin_pasangan_" id="kelamin_pasangan_" placeholder="Jenis Kelamin" disabled>
+                                        </div>
+                                        <div class="col-sm-2 col-md-2">
+                                            <label for="pendidikan_pasangan" class="form-label">Pendidikan</label>
+                                            <select class="form-select" name="pendidikan_pasangan" id="pendidikan_pasangan">
+                                                <option selected disabled value="">-Pilih-</option>
+                                                <option value="SD">SD</option>
+                                                <option value="SMP">SMP</option>
+                                                <option value="SMA/SMK">SMA/SMK</option>
+                                                <option value="D1">D1</option>
+                                                <option value="D2">D2</option>
+                                                <option value="D3">D3</option>
+                                                <option value="D4">D4</option>
+                                                <option value="S1">S1</option>
+                                                <option value="S2">S2</option>
+                                                <option value="S3">S3</option>
+                                                <option value="Lainnya">Lainnya</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-2 col-md-2">
+                                            <label for="pekerjaan_pasangan" class="form-label">Pekerjaan</label>
+                                            <input type="text" class="form-control" name="pekerjaan_pasangan" id="pekerjaan_pasangan" placeholder="Pekerjaan Pasangan">
+                                        </div>
+                                    </div>
+                                    <div id="table_anak">
+                                        {{-- Baris input akan ditambahkan di sini --}}
+                                    </div>
+                                    <button type="button" class="btn btn-success mt-2" id="insertRowAnak"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button>
+                                    {{-- <div class="row gy-2 gy-md-2 overflow-hidden">
                                         <div class="table-responsive">
                                             <table class="table">
                                                 <thead class="text-start">
@@ -305,19 +374,95 @@
                                         <div class="mb-3 col-md-2">
                                             <a class="btn btn-success" id="insertRowAnak" href="#">Add new</a>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                             {{--  --}}
                             <div class="col-12">
                                 <hr class="mt-2 mb-2" />
                                 <div class="text-center card-body p-2 p-md-2 p-xl-2">
-                                    <h4>SUSUNAN KELUARGA<span class="text-danger">*</span></h4>
+                                    <h4>SUSUNAN KELUARGA<span class="text-danger">*</span><br/>(Orang Tua dan Saudara Kandung)</h4>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 col-sm-12">
                                 <div class="card-body p-2 p-md-2 p-xl-2">
-                                    <div class="row gy-2 gy-md-2 overflow-hidden">
+                                    <div class="row input-row">
+                                        <div class="col-sm-2 col-md-2">
+                                            <label class="form-label">Orang Tua<span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" placeholder="Bapak" disabled>
+                                        </div>
+                                        <div class="col-sm-2 col-md-2">
+                                            <label for="nama_bapak" class="form-label">Nama<span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="nama_bapak" id="nama_bapak" placeholder="Nama Bapak" required="">
+                                        </div>
+                                        <div class="col-sm-2 col-md-2">
+                                            <label for="usia_bapak" class="form-label">Usia (tahun)<span class="text-danger">*</span></label>
+                                            <input type="number" class="form-control" name="usia_bapak" id="usia_bapak" placeholder="Usia Bapak" required="">
+                                        </div>
+                                        <div class="col-sm-2 col-md-2">
+                                            <label class="form-label">Jenis Kelamin<span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" placeholder="Laki-laki" disabled>
+                                        </div>
+                                        <div class="col-sm-2 col-md-2">
+                                            <label for="pendidikan_bapak" class="form-label">Pendidikan<span class="text-danger">*</span></label>
+                                            <select class="form-select" name="pendidikan_bapak" id="pendidikan_bapak" required="">
+                                                <option selected disabled value="">-Pilih-</option>
+                                                <option value="SD">SD</option>
+                                                <option value="SMP">SMP</option>
+                                                <option value="SMA/SMK">SMA/SMK</option>
+                                                <option value="D1">D1</option>
+                                                <option value="D2">D2</option>
+                                                <option value="D3">D3</option>
+                                                <option value="D4">D4</option>
+                                                <option value="S1">S1</option>
+                                                <option value="S2">S2</option>
+                                                <option value="S3">S3</option>
+                                                <option value="Lainnya">Lainnya</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-2 col-md-2">
+                                            <label for="pekerjaan_bapak" class="form-label">Pekerjaan<span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="pekerjaan_bapak" id="pekerjaan_bapak" placeholder="Pekerjaan Bapak" required="">
+                                        </div>
+                                    </div>
+                                    <div class="row input-row">
+                                        <div class="col-sm-2 col-md-2 mt-2">
+                                            <input type="text" class="form-control" placeholder="Ibu" disabled>
+                                        </div>
+                                        <div class="col-sm-2 col-md-2 mt-2">
+                                            <input type="text" class="form-control" name="nama_ibu" id="nama_ibu" placeholder="Nama Ibu" required="">
+                                        </div>
+                                        <div class="col-sm-2 col-md-2 mt-2">
+                                            <input type="number" class="form-control" name="usia_ibu" id="usia_ibu" placeholder="Usia Ibu" required="">
+                                        </div>
+                                        <div class="col-sm-2 col-md-2 mt-2">
+                                            <input type="text" class="form-control" placeholder="Perempuan" disabled>
+                                        </div>
+                                        <div class="col-sm-2 col-md-2 mt-2">
+                                            <select class="form-select" name="pendidikan_ibu" id="pendidikan_ibu" required="">
+                                                <option selected disabled value="">-Pilih-</option>
+                                                <option value="SD">SD</option>
+                                                <option value="SMP">SMP</option>
+                                                <option value="SMA/SMK">SMA/SMK</option>
+                                                <option value="D1">D1</option>
+                                                <option value="D2">D2</option>
+                                                <option value="D3">D3</option>
+                                                <option value="D4">D4</option>
+                                                <option value="S1">S1</option>
+                                                <option value="S2">S2</option>
+                                                <option value="S3">S3</option>
+                                                <option value="Lainnya">Lainnya</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-2 col-md-2 mt-2">
+                                            <input type="text" class="form-control" name="pekerjaan_ibu" id="pekerjaan_ibu" placeholder="Pekerjaan Ibu" required="">
+                                        </div>
+                                    </div>
+                                    <div id="table_saudara">
+                                        {{-- Baris input akan ditambahkan di sini --}}
+                                    </div>
+                                    <button type="button" class="btn btn-success mt-2" id="insertRowSaudara"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button>
+                                    {{-- <div class="row gy-2 gy-md-2 overflow-hidden">
                                         <div class="table-responsive">
                                             <table class="table">
                                                 <thead class="text-start">
@@ -402,7 +547,6 @@
                                             <table class="table" id="table_saudara">
                                                 <thead class="text-start">
                                                     <tr>
-                                                        {{-- <th>Hubungan</th> --}}
                                                         <th>Nama</th>
                                                         <th>Usia (tahun)</th>
                                                         <th>Jenis Kelamin</th>
@@ -418,7 +562,7 @@
                                         <div class="mb-3 col-md-2">
                                             <a class="btn btn-success" id="insertRowSaudara" href="#">Add new</a>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                             {{--  --}}
@@ -428,10 +572,24 @@
                                     <h4>RIWAYAT PENDIDIKAN DAN ORGANISASI</h4>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 col-sm-12">
                                 <div class="card-body p-2 p-md-2 p-xl-2">
-                                    <div class="row gy-2 gy-md-2 overflow-hidden">
-                                        {{--  --}}
+                                    <h5>1. Pendidikan Formal*</h5>
+                                    <div id="table_formal">
+                                        {{-- Baris input akan ditambahkan di sini --}}
+                                    </div>
+                                    <button type="button" class="btn btn-success mt-2" id="insertRowFormal"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button>
+                                    <h5 class="mt-3">2. Pendidikan Informal (Kursus, Training, Workshop, dll) dan Keterampilan</h5>
+                                    <div id="table_informal">
+                                        {{-- Baris input akan ditambahkan di sini --}}
+                                    </div>
+                                    <button type="button" class="btn btn-success mt-2" id="insertRowInformal"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button>
+                                    <h5 class="mt-3">3. Organisasi</h5>
+                                    <div id="table_organisasi">
+                                        {{-- Baris input akan ditambahkan di sini --}}
+                                    </div>
+                                    <button type="button" class="btn btn-success mt-2" id="insertRowOrganisasi"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button>
+                                    {{-- <div class="row gy-2 gy-md-2 overflow-hidden">
                                         <div class="table-responsive">
                                             <h5>1. Pendidikan Formal*</h5>
                                             <table class="table" id="table_formal">
@@ -454,7 +612,6 @@
                                         <div class="mb-3 col-md-2">
                                             <a class="btn btn-success" id="insertRowFormal" href="#">Add new</a>
                                         </div>
-                                        {{--  --}}
                                         <div class="table-responsive">
                                             <h5>2. Pendidikan Informal (Kursus, Training, Workshop, dll) dan Keterampilan</h5>
                                             <table class="table" id="table_informal">
@@ -474,7 +631,6 @@
                                         <div class="mb-3 col-md-2">
                                             <a class="btn btn-success" id="insertRowInformal" href="#">Add new</a>
                                         </div>
-                                        {{--  --}}
                                         <div class="table-responsive">
                                             <h5>3. Organisasi</h5>
                                             <table class="table" id="table_organisasi">
@@ -494,8 +650,7 @@
                                         <div class="mb-3 col-md-2">
                                             <a class="btn btn-success" id="insertRowOrganisasi" href="#">Add new</a>
                                         </div>
-                                        {{--  --}}
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                             {{--  --}}
@@ -505,9 +660,13 @@
                                     <h4>RIWAYAT PEKERJAAN</h4>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 col-sm-12">
                                 <div class="card-body p-2 p-md-2 p-xl-2">
-                                    <div class="row gy-2 gy-md-2 overflow-hidden">
+                                    <div id="table_perusahaan">
+                                        {{-- Baris input akan ditambahkan di sini --}}
+                                    </div>
+                                    <button type="button" class="btn btn-success mt-2" id="insertRowPerusahaan"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button>
+                                    {{-- <div class="row gy-2 gy-md-2 overflow-hidden">
                                         <div class="table-responsive">
                                             <table class="table" id="table_perusahaan">
                                                 <thead class="text-start">
@@ -529,7 +688,7 @@
                                         <div class="mb-3 col-md-2">
                                             <a class="btn btn-success" id="insertRowPerusahaan" href="#">Add new</a>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                             {{--  --}}
@@ -539,7 +698,7 @@
                                     <h4>LAIN-LAIN</h4>
                                 </div>
                             </div>
-                            <div class="col-6 col-md-6">
+                            <div class="col-sm-6 col-md-6">
                                 <div class="card-body p-2 p-md-2 p-xl-2">
                                     <div class="row gy-2 gy-md-2 overflow-hidden">
                                         <div class="col-12">
@@ -557,7 +716,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6 col-md-6">
+                            <div class="col-sm-6 col-md-6">
                                 <div class="card-body p-2 p-md-2 p-xl-2">
                                     <div class="row gy-2 gy-md-2 overflow-hidden">
                                         <div class="col-12">
@@ -594,12 +753,8 @@
                             </div>
                             {{--  --}}
                         </div>
-                        <div class="row mb-2">
-                            <div class="col-5">&nbsp;</div>
-                            <div class="col-2 d-grid">
-                                <button class="btn bsb-btn-xl btn-primary" type="submit">Submit</button>
-                            </div>
-                            <div class="col-5">&nbsp;</div>
+                        <div class="card-body p-2 p-md-2 p-xl-2">
+                            <button class="btn bsb-btn-xl btn-primary" type="submit"><i class="fa fa-save" aria-hidden="true"></i> Submit</button>
                         </div>
                     </form>
                 </div>
@@ -627,160 +782,462 @@
       if (!empty_val)
         node.value = value.toLocaleString('en');  // or other formatting
     }
+    // anak
+    var counter_anak = 1;
+    function buatBarisInputAnak(index) {
+      return `
+        <div class="row input-row mt-2" data-index="${index}">
+          <div class="col-sm-2 col-md-2">
+            <label class="form-label">Anak<span class="text-danger">*</span></label>
+          </div>
+          <div class="col-sm-2 col-md-2">
+            <label for="nama_anak[]" class="form-label">Nama<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="nama_anak[]" name="nama_anak[]" required placeholder="Nama Anak">
+          </div>
+          <div class="col-sm-2 col-md-2">
+            <label for="usia_anak[]" class="form-label">Usia (tahun)<span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="usia_anak[]" id="usia_anak[]" placeholder="Usia Anak" required="">
+          </div>
+          <div class="col-sm-2 col-md-2">
+            <label for="kelamin_anak[]" class="form-label">Jenis Kelamin<span class="text-danger">*</span></label>
+            <select class="form-select" name="kelamin_anak[]" id="kelamin_anak[]" required="">
+                <option selected disabled value="">-Pilih-</option>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+            </select>
+          </div>
+          <div class="col-sm-2 col-md-2">
+            <label for="pendidikan_anak[]" class="form-label">Pendidikan<span class="text-danger">*</span></label>
+            <select class="form-select" name="pendidikan_anak[]" id="pendidikan_anak[]" required="">
+                <option selected disabled value="">-Pilih-</option>
+                <option value="SD">SD</option>
+                <option value="SMP">SMP</option>
+                <option value="SMA/SMK">SMA/SMK</option>
+                <option value="D1">D1</option>
+                <option value="D2">D2</option>
+                <option value="D3">D3</option>
+                <option value="D4">D4</option>
+                <option value="S1">S1</option>
+                <option value="S2">S2</option>
+                <option value="S3">S3</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div class="col-sm-2 col-md-2">
+            <label for="pekerjaan_anak[]" class="form-label">Pekerjaan<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="pekerjaan_anak[]" id="pekerjaan_anak[]" placeholder="Pekerjaan Anak" required="">
+          </div>
+          <div class="col-sm-2 col-md-2 mt-2">
+            <button class="btn btn-danger" id ="deleteRowAnak"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+          </div>
+        </div>
+      `;
+    }
+    // saudara
+    var counter_saudara = 1;
+    function buatBarisInputSaudara(index) {
+      return `
+        <div class="row input-row mt-2" data-index="${index}">
+          <div class="col-sm-2 col-md-2">
+            <label class="form-label">Saudara<span class="text-danger">*</span></label>
+          </div>
+          <div class="col-sm-2 col-md-2">
+            <label for="nama_saudara[]" class="form-label">Nama<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="nama_saudara[]" name="nama_saudara[]" required placeholder="Nama Saudara">
+          </div>
+          <div class="col-sm-2 col-md-2">
+            <label for="usia_saudara[]" class="form-label">Usia (tahun)<span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="usia_saudara[]" id="usia_saudara[]" placeholder="Usia Saudara" required="">
+          </div>
+          <div class="col-sm-2 col-md-2">
+            <label for="kelamin_saudara[]" class="form-label">Jenis Kelamin<span class="text-danger">*</span></label>
+            <select class="form-select" name="kelamin_saudara[]" id="kelamin_saudara[]" required="">
+                <option selected disabled value="">-Pilih-</option>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+            </select>
+          </div>
+          <div class="col-sm-2 col-md-2">
+            <label for="pendidikan_saudara[]" class="form-label">Pendidikan<span class="text-danger">*</span></label>
+            <select class="form-select" name="pendidikan_saudara[]" id="pendidikan_saudara[]" required="">
+                <option selected disabled value="">-Pilih-</option>
+                <option value="SD">SD</option>
+                <option value="SMP">SMP</option>
+                <option value="SMA/SMK">SMA/SMK</option>
+                <option value="D1">D1</option>
+                <option value="D2">D2</option>
+                <option value="D3">D3</option>
+                <option value="D4">D4</option>
+                <option value="S1">S1</option>
+                <option value="S2">S2</option>
+                <option value="S3">S3</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div class="col-sm-2 col-md-2">
+            <label for="pekerjaan_saudara[]" class="form-label">Pekerjaan<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="pekerjaan_saudara[]" id="pekerjaan_saudara[]" placeholder="Pekerjaan Saudara" required="">
+          </div>
+          <div class="col-sm-2 col-md-2 mt-2">
+            <button class="btn btn-danger" id ="deleteRowSaudara"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+          </div>
+        </div>
+      `;
+    }
+    // formal
+    var counter_formal = 1;
+    function buatBarisInputFormal(index) {
+      return `
+        <div class="row input-row mt-2" data-index="${index}">
+          <div class="col-sm-3 col-md-3">
+            <label for="jenjang_sekolah[]" class="form-label">Jenjang<span class="text-danger">*</span></label>
+            <select class="form-select" name="jenjang_sekolah[]" id="jenjang_sekolah[]" required="">
+                <option selected disabled value="">-Pilih-</option>
+                <option value="SD">SD</option>
+                <option value="SMP">SMP</option>
+                <option value="SMA/SMK">SMA/SMK</option>
+                <option value="D1">D1</option>
+                <option value="D2">D2</option>
+                <option value="D3">D3</option>
+                <option value="D4">D4</option>
+                <option value="S1">S1</option>
+                <option value="S2">S2</option>
+                <option value="S3">S3</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="nama_formal[]" class="form-label">Nama Sekolah<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="nama_formal[]" id="nama_formal[]" placeholder="Nama Sekolah" required="">
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="kota_sekolah[]" class="form-label">Kota<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="kota_sekolah[]" id="kota_sekolah[]" placeholder="Nama Kota" required="">
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="jurusan[]" class="form-label">Jurusan<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="jurusan[]" id="jurusan[]" placeholder="Jurusan" required="">
+          </div>
+          <div class="col-sm-3 col-md-3 mt-2">
+            <label for="tahun_masuk_sekolah[]" class="form-label">Tahun Masuk</label>
+            <input type="number" class="form-control" name="tahun_masuk_sekolah[]" id="tahun_masuk_sekolah[]" placeholder="Tahun Masuk">
+          </div>
+          <div class="col-sm-3 col-md-3 mt-2">
+            <label for="tahun_lulus_sekolah[]" class="form-label">Tahun Lulus<span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="tahun_lulus_sekolah[]" id="tahun_lulus_sekolah[]" placeholder="Tahun Lulus" required="">
+          </div>
+          <div class="col-sm-3 col-md-3 mt-2">
+            <label for="nilai[]" class="form-label">Nilai IPK/NEM</label>
+            <input type="text" class="form-control" name="nilai[]" id="nilai[]" placeholder="Nilai">
+          </div>
+          <div class="col-sm-3 col-md-3 mt-2">
+            &nbsp;
+          </div>
+          <div class="col-sm-3 col-md-3 mt-2">
+            <button class="btn btn-danger" id ="deleteRowFormal"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+          </div>
+        </div>
+      `;
+    }
+    // informal
+    var counter_informal = 1;
+    function buatBarisInputInformal(index) {
+      return `
+        <div class="row input-row mt-2" data-index="${index}">
+          <div class="col-sm-3 col-md-3">
+            <label for="bidang_informal[]" class="form-label">Bidang<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="bidang_informal[]" id="bidang_informal[]" placeholder="Bidang" required="">
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="tahun_informal[]" class="form-label">Tahun<span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="tahun_informal[]" id="tahun_informal[]" placeholder="Tahun" required="">
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="lembaga[]" class="form-label">Tempat/Lembaga<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="lembaga[]" id="lembaga[]" placeholder="Tempat/Lembaga" required="">
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="sertifikat[]" class="form-label">Sertifikat<span class="text-danger">*</span></label>
+            <select class="form-select" name="sertifikat[]" id="sertifikat[]" required="">
+                <option selected disabled value="">-Pilih-</option>
+                <option value="Ada">Ada</option>
+                <option value="Tidak Ada">Tidak Ada</option>
+            </select>
+          </div>
+          <div class="col-sm-3 col-md-3 mt-2">
+            <button class="btn btn-danger" id ="deleteRowInformal"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+          </div>
+        </div>
+      `;
+    }
+    // organisasi
+    var counter_organisasi = 1;
+    function buatBarisInputOrganisasi(index) {
+      return `
+        <div class="row input-row mt-2" data-index="${index}">
+          <div class="col-sm-3 col-md-3">
+            <label for="nama_organisasi[]" class="form-label">Nama Organisasi<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="nama_organisasi[]" id="nama_organisasi[]" placeholder="Nama Organisasi" required="">
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="periode[]" class="form-label">Periode<span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="periode[]" id="periode[]" placeholder="Periode" required="">
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="jabatan_organisasi[]" class="form-label">Jabatan<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="jabatan_organisasi[]" id="jabatan_organisasi[]" placeholder="Jabatan" required="">
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="keterangan[]" class="form-label">Keterangan<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="keterangan[]" id="keterangan[]" placeholder="Keterangan">
+          </div>
+          <div class="col-sm-3 col-md-3 mt-2">
+            <button class="btn btn-danger" id ="deleteRowOrganisasi"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+          </div>
+        </div>
+      `;
+    }
+    // perusahaan
+    var counter_perusahaan = 1;
+    function buatBarisInputPerusahaan(index) {
+      return `
+        <div class="row input-row mt-2" data-index="${index}">
+          <div class="col-sm-3 col-md-3">
+            <label for="nama_perusahaan[]" class="form-label">Perusahaan<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="nama_perusahaan[]" id="nama_perusahaan[]" placeholder="Nama Perusahaan" required="">
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="kota_perusahaan[]" class="form-label">Kota<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="kota_perusahaan[]" id="kota_perusahaan[]" placeholder="Kota" required="">
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="tahun_masuk_perusahaan[]" class="form-label">Tahun Masuk<span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="tahun_masuk_perusahaan[]" id="tahun_masuk_perusahaan[]" placeholder="Tahun Masuk" required="">
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <label for="tahun_keluar_perusahaan[]" class="form-label">Tahun Keluar<span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="tahun_keluar_perusahaan[]" id="tahun_keluar_perusahaan[]" placeholder="Tahun Keluar" required="">
+          </div>
+          <div class="col-sm-3 col-md-3 mt-2">
+            <label for="jabatan_perusahaan[]" class="form-label">Jabatan</label>
+            <input type="text" class="form-control" name="jabatan_perusahaan[]" id="jabatan_perusahaan[]" placeholder="Jabatan" required="">
+          </div>
+          <div class="col-sm-3 col-md-3 mt-2">
+            <label for="upah[]" class="form-label">Gaji/Upah (Rupiah)<span class="text-danger">*</span></label>
+            <input min=1 type="number" oninput="validity.valid||(value="")" onfocus="use_number(this)" onblur="use_text(this)" class="form-control" name="upah[]" id="upah[]" placeholder="Gaji/Upah" required="">
+          </div>
+          <div class="col-sm-6 col-md-6 mt-2">
+            <label for="alasan_keluar[]" class="form-label">Alasan Keluar</label>
+            <input type="text" class="form-control" name="alasan_keluar[]" id="alasan_keluar[]" placeholder="Alasan Keluar" required="">
+          </div>
+          <div class="col-sm-3 col-md-3 mt-2">
+            <button class="btn btn-danger" id ="deleteRowPerusahaan"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+          </div>
+        </div>
+      `;
+    }
+    // 
     $(document).ready(function () {
         // anak
-        var counter_anak = 1;
         $("#insertRowAnak").on("click", function (event) {
             event.preventDefault();
-            var newRow = $('<tr>');
-            var cols = '';
-            // Table columns
-            cols += '<td><input type="text" class="form-control" name="nama_anak[]" id="nama_anak[]" placeholder="Nama Anak" required=""></td>';
-            cols += '<td><input type="number" class="form-control" name="usia_anak[]" id="usia_anak[]" placeholder="Usia Anak" required=""></td>';
-            cols += '<td><select class="form-select" name="kelamin_anak[]" id="kelamin_anak[]" required=""><option selected disabled value="">-Pilih-</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></td>';
-            cols += '<td><select class="form-select" name="pendidikan_anak[]" id="pendidikan_anak[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
-            cols += '<td><input type="text" class="form-control" name="pekerjaan_anak[]" id="pekerjaan_anak[]" placeholder="Pekerjaan Anak" required=""></td>';
-            cols += '<td><button class="btn btn-danger" id ="deleteRowAnak">Delete</button></td>';
-            // Insert the columns inside a row
-            newRow.append(cols);
-            // Insert the row inside a table
-            $("#table_anak").append(newRow);
-            // Increase counter_anak after each row insertion
-            counter_anak++;
+            $('#table_anak').append(buatBarisInputAnak(counter_anak++));
         });
-        // Remove row when delete btn is clicked
         $("#table_anak").on("click", "#deleteRowAnak", function (event) {
-            $(this).closest("tr").remove();
-            // counter_anak -= 1;
+            $(this).closest('.input-row').remove();
         });
         // saudara
-        var counter_saudara = 1;
         $("#insertRowSaudara").on("click", function (event) {
             event.preventDefault();
-            var newRow = $('<tr>');
-            var cols = '';
-            // Table columns
-            // cols += '<td><select class="form-select" name="kakak_adik[]" id="kakak_adik[]" required=""><option selected disabled value="">-Pilih-</option><option value="Kakak">Kakak</option><option value="Adik">Adik</option></select></td>';
-            cols += '<td><input type="text" class="form-control" name="nama_saudara[]" id="nama_saudara[]" placeholder="Nama" required=""></td>';
-            cols += '<td><input type="number" class="form-control" name="usia_saudara[]" id="usia_saudara[]" placeholder="Usia" required=""></td>';
-            cols += '<td><select class="form-select" name="kelamin_saudara[]" id="kelamin_saudara[]" required=""><option selected disabled value="">-Pilih-</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></td>';
-            cols += '<td><select class="form-select" name="pendidikan_saudara[]" id="pendidikan_saudara[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
-            cols += '<td><input type="text" class="form-control" name="pekerjaan_saudara[]" id="pekerjaan_saudara[]" placeholder="Pekerjaan" required=""></td>';
-            cols += '<td><button class="btn btn-danger" id ="deleteRowSaudara">Delete</button></td>';
-            // Insert the columns inside a row
-            newRow.append(cols);
-            // Insert the row inside a table
-            $("#table_saudara").append(newRow);
-            // Increase counter_saudara after each row insertion
-            counter_saudara++;
+            $('#table_saudara').append(buatBarisInputSaudara(counter_saudara++));
         });
-        // Remove row when delete btn is clicked
         $("#table_saudara").on("click", "#deleteRowSaudara", function (event) {
-            $(this).closest("tr").remove();
-            // counter_saudara -= 1;
+            $(this).closest('.input-row').remove();
         });
         // formal
-        var counter_formal = 1;
         $("#insertRowFormal").on("click", function (event) {
             event.preventDefault();
-            var newRow = $('<tr>');
-            var cols = '';
-            // Table columns
-            cols += '<td><select class="form-select" name="jenjang_sekolah[]" id="jenjang_sekolah[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
-            cols += '<td><input type="text" class="form-control" name="nama_formal[]" id="nama_formal[]" placeholder="Nama Sekolah" required=""></td>';
-            cols += '<td><input type="text" class="form-control" name="kota_sekolah[]" id="kota_sekolah[]" placeholder="Nama Kota" required=""></td>';
-            cols += '<td><input type="text" class="form-control" name="jurusan[]" id="jurusan[]" placeholder="Jurusan" required=""></td>';
-            cols += '<td><input type="number" class="form-control" name="tahun_masuk_sekolah[]" id="tahun_masuk_sekolah[]" placeholder="Tahun Masuk"></td>';
-            cols += '<td><input type="number" class="form-control" name="tahun_lulus_sekolah[]" id="tahun_lulus_sekolah[]" placeholder="Tahun Lulus" required=""></td>';
-            cols += '<td><input type="text" class="form-control" name="nilai[]" id="nilai[]" placeholder="Nilai"></td>';
-            cols += '<td><button class="btn btn-danger" id ="deleteRowFormal">Delete</button></td>';
-            // Insert the columns inside a row
-            newRow.append(cols);
-            // Insert the row inside a table
-            $("#table_formal").append(newRow);
-            // Increase counter_formal after each row insertion
-            counter_formal++;
+            $('#table_formal').append(buatBarisInputFormal(counter_formal++));
         });
-        // Remove row when delete btn is clicked
         $("#table_formal").on("click", "#deleteRowFormal", function (event) {
-            $(this).closest("tr").remove();
-            // counter_formal -= 1;
+            $(this).closest('.input-row').remove();
         });
         // informal
-        var counter_informal = 1;
         $("#insertRowInformal").on("click", function (event) {
             event.preventDefault();
-            var newRow = $('<tr>');
-            var cols = '';
-            // Table columns
-            cols += '<td><input type="text" class="form-control" name="bidang_informal[]" id="bidang_informal[]" placeholder="Bidang" required=""></td>';
-            cols += '<td><input type="number" class="form-control" name="tahun_informal[]" id="tahun_informal[]" placeholder="Tahun" required=""></td>';
-            cols += '<td><input type="text" class="form-control" name="lembaga[]" id="lembaga[]" placeholder="Tempat/Lembaga" required=""></td>';
-            cols += '<td><select class="form-select" name="sertifikat[]" id="sertifikat[]" required=""><option selected disabled value="">-Pilih-</option><option value="Ada">Ada</option><option value="Tidak Ada">Tidak Ada</option></select></td>';
-            cols += '<td><button class="btn btn-danger" id ="deleteRowInformal">Delete</button></td>';
-            // Insert the columns inside a row
-            newRow.append(cols);
-            // Insert the row inside a table
-            $("#table_informal").append(newRow);
-            // Increase counter_informal after each row insertion
-            counter_informal++;
+            $('#table_informal').append(buatBarisInputInformal(counter_informal++));
         });
-        // Remove row when delete btn is clicked
         $("#table_informal").on("click", "#deleteRowInformal", function (event) {
-            $(this).closest("tr").remove();
-            // counter_informal -= 1;
+            $(this).closest('.input-row').remove();
         });
         // organisasi
-        var counter_organisasi = 1;
         $("#insertRowOrganisasi").on("click", function (event) {
             event.preventDefault();
-            var newRow = $('<tr>');
-            var cols = '';
-            // Table columns
-            cols += '<td><input type="text" class="form-control" name="nama_organisasi[]" id="nama_organisasi[]" placeholder="Nama Organisasi" required=""></td>';
-            cols += '<td><input type="number" class="form-control" name="periode[]" id="periode[]" placeholder="Periode" required=""></td>';
-            cols += '<td><input type="text" class="form-control" name="jabatan_organisasi[]" id="jabatan_organisasi[]" placeholder="Jabatan" required=""></td>';
-            cols += '<td><input type="text" class="form-control" name="keterangan[]" id="keterangan[]" placeholder="Keterangan"></td>';
-            cols += '<td><button class="btn btn-danger" id ="deleteRowOrganisasi">Delete</button></td>';
-            // Insert the columns inside a row
-            newRow.append(cols);
-            // Insert the row inside a table
-            $("#table_organisasi").append(newRow);
-            // Increase counter_organisasi after each row insertion
-            counter_organisasi++;
+            $('#table_organisasi').append(buatBarisInputOrganisasi(counter_organisasi++));
         });
-        // Remove row when delete btn is clicked
         $("#table_organisasi").on("click", "#deleteRowOrganisasi", function (event) {
-            $(this).closest("tr").remove();
-            // counter_organisasi -= 1;
+            $(this).closest('.input-row').remove();
         });
         // perusahaan
-        var counter_perusahaan = 1;
         $("#insertRowPerusahaan").on("click", function (event) {
             event.preventDefault();
-            var newRow = $('<tr>');
-            var cols = '';
-            // Table columns
-            cols += '<td><input type="text" class="form-control" name="nama_perusahaan[]" id="nama_perusahaan[]" placeholder="Nama Perusahaan" required=""></td>';
-            cols += '<td><input type="text" class="form-control" name="kota_perusahaan[]" id="kota_perusahaan[]" placeholder="Kota" required=""></td>';
-            cols += '<td><input type="number" class="form-control" name="tahun_masuk_perusahaan[]" id="tahun_masuk_perusahaan[]" placeholder="Tahun Masuk" required=""></td>';
-            cols += '<td><input type="number" class="form-control" name="tahun_keluar_perusahaan[]" id="tahun_keluar_perusahaan[]" placeholder="Tahun Keluar" required=""></td>';
-            cols += '<td><input type="text" class="form-control" name="jabatan_perusahaan[]" id="jabatan_perusahaan[]" placeholder="Jabatan" required=""></td>';
-            cols += '<td><input min=1 type="number" oninput="validity.valid||(value="")" onfocus="use_number(this)" onblur="use_text(this)" class="form-control" name="upah[]" id="upah[]" placeholder="Gaji/Upah" required=""></td>';
-            cols += '<td><input type="text" class="form-control" name="alasan_keluar[]" id="alasan_keluar[]" placeholder="Alasan Keluar" required=""></td>';
-            cols += '<td><button class="btn btn-danger" id ="deleteRowPerusahaan">Delete</button></td>';
-            // Insert the columns inside a row
-            newRow.append(cols);
-            // Insert the row inside a table
-            $("#table_perusahaan").append(newRow);
-            // Increase counter_perusahaan after each row insertion
-            counter_perusahaan++;
+            $('#table_perusahaan').append(buatBarisInputPerusahaan(counter_perusahaan++));
         });
-        // Remove row when delete btn is clicked
         $("#table_perusahaan").on("click", "#deleteRowPerusahaan", function (event) {
-            $(this).closest("tr").remove();
-            // counter_perusahaan -= 1;
+            $(this).closest('.input-row').remove();
         });
+        // var counter_anak = 1;
+        // $("#insertRowAnak").on("click", function (event) {
+        //     event.preventDefault();
+        //     var newRow = $('<tr>');
+        //     var cols = '';
+        //     // Table columns
+        //     cols += '<td><input type="text" class="form-control" name="nama_anak[]" id="nama_anak[]" placeholder="Nama Anak" required=""></td>';
+        //     cols += '<td><input type="number" class="form-control" name="usia_anak[]" id="usia_anak[]" placeholder="Usia Anak" required=""></td>';
+        //     cols += '<td><select class="form-select" name="kelamin_anak[]" id="kelamin_anak[]" required=""><option selected disabled value="">-Pilih-</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></td>';
+        //     cols += '<td><select class="form-select" name="pendidikan_anak[]" id="pendidikan_anak[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
+        //     cols += '<td><input type="text" class="form-control" name="pekerjaan_anak[]" id="pekerjaan_anak[]" placeholder="Pekerjaan Anak" required=""></td>';
+        //     cols += '<td><button class="btn btn-danger" id ="deleteRowAnak">Delete</button></td>';
+        //     // Insert the columns inside a row
+        //     newRow.append(cols);
+        //     // Insert the row inside a table
+        //     $("#table_anak").append(newRow);
+        //     // Increase counter_anak after each row insertion
+        //     counter_anak++;
+        // });
+        // // Remove row when delete btn is clicked
+        // $("#table_anak").on("click", "#deleteRowAnak", function (event) {
+        //     $(this).closest("tr").remove();
+        //     // counter_anak -= 1;
+        // });
+        // saudara
+        // var counter_saudara = 1;
+        // $("#insertRowSaudara").on("click", function (event) {
+        //     event.preventDefault();
+        //     var newRow = $('<tr>');
+        //     var cols = '';
+        //     // Table columns
+        //     // cols += '<td><select class="form-select" name="kakak_adik[]" id="kakak_adik[]" required=""><option selected disabled value="">-Pilih-</option><option value="Kakak">Kakak</option><option value="Adik">Adik</option></select></td>';
+        //     cols += '<td><input type="text" class="form-control" name="nama_saudara[]" id="nama_saudara[]" placeholder="Nama" required=""></td>';
+        //     cols += '<td><input type="number" class="form-control" name="usia_saudara[]" id="usia_saudara[]" placeholder="Usia" required=""></td>';
+        //     cols += '<td><select class="form-select" name="kelamin_saudara[]" id="kelamin_saudara[]" required=""><option selected disabled value="">-Pilih-</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></td>';
+        //     cols += '<td><select class="form-select" name="pendidikan_saudara[]" id="pendidikan_saudara[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
+        //     cols += '<td><input type="text" class="form-control" name="pekerjaan_saudara[]" id="pekerjaan_saudara[]" placeholder="Pekerjaan" required=""></td>';
+        //     cols += '<td><button class="btn btn-danger" id ="deleteRowSaudara">Delete</button></td>';
+        //     // Insert the columns inside a row
+        //     newRow.append(cols);
+        //     // Insert the row inside a table
+        //     $("#table_saudara").append(newRow);
+        //     // Increase counter_saudara after each row insertion
+        //     counter_saudara++;
+        // });
+        // // Remove row when delete btn is clicked
+        // $("#table_saudara").on("click", "#deleteRowSaudara", function (event) {
+        //     $(this).closest("tr").remove();
+        //     // counter_saudara -= 1;
+        // });
+        // formal
+        // var counter_formal = 1;
+        // $("#insertRowFormal").on("click", function (event) {
+        //     event.preventDefault();
+        //     var newRow = $('<tr>');
+        //     var cols = '';
+        //     // Table columns
+        //     cols += '<td><select class="form-select" name="jenjang_sekolah[]" id="jenjang_sekolah[]" required=""><option selected disabled value="">-Pilih-</option><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA/SMK</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option></select></td>';
+        //     cols += '<td><input type="text" class="form-control" name="nama_formal[]" id="nama_formal[]" placeholder="Nama Sekolah" required=""></td>';
+        //     cols += '<td><input type="text" class="form-control" name="kota_sekolah[]" id="kota_sekolah[]" placeholder="Nama Kota" required=""></td>';
+        //     cols += '<td><input type="text" class="form-control" name="jurusan[]" id="jurusan[]" placeholder="Jurusan" required=""></td>';
+        //     cols += '<td><input type="number" class="form-control" name="tahun_masuk_sekolah[]" id="tahun_masuk_sekolah[]" placeholder="Tahun Masuk"></td>';
+        //     cols += '<td><input type="number" class="form-control" name="tahun_lulus_sekolah[]" id="tahun_lulus_sekolah[]" placeholder="Tahun Lulus" required=""></td>';
+        //     cols += '<td><input type="text" class="form-control" name="nilai[]" id="nilai[]" placeholder="Nilai"></td>';
+        //     cols += '<td><button class="btn btn-danger" id ="deleteRowFormal">Delete</button></td>';
+        //     // Insert the columns inside a row
+        //     newRow.append(cols);
+        //     // Insert the row inside a table
+        //     $("#table_formal").append(newRow);
+        //     // Increase counter_formal after each row insertion
+        //     counter_formal++;
+        // });
+        // // Remove row when delete btn is clicked
+        // $("#table_formal").on("click", "#deleteRowFormal", function (event) {
+        //     $(this).closest("tr").remove();
+        //     // counter_formal -= 1;
+        // });
+        // informal
+        // var counter_informal = 1;
+        // $("#insertRowInformal").on("click", function (event) {
+        //     event.preventDefault();
+        //     var newRow = $('<tr>');
+        //     var cols = '';
+        //     // Table columns
+        //     cols += '<td><input type="text" class="form-control" name="bidang_informal[]" id="bidang_informal[]" placeholder="Bidang" required=""></td>';
+        //     cols += '<td><input type="number" class="form-control" name="tahun_informal[]" id="tahun_informal[]" placeholder="Tahun" required=""></td>';
+        //     cols += '<td><input type="text" class="form-control" name="lembaga[]" id="lembaga[]" placeholder="Tempat/Lembaga" required=""></td>';
+        //     cols += '<td><select class="form-select" name="sertifikat[]" id="sertifikat[]" required=""><option selected disabled value="">-Pilih-</option><option value="Ada">Ada</option><option value="Tidak Ada">Tidak Ada</option></select></td>';
+        //     cols += '<td><button class="btn btn-danger" id ="deleteRowInformal">Delete</button></td>';
+        //     // Insert the columns inside a row
+        //     newRow.append(cols);
+        //     // Insert the row inside a table
+        //     $("#table_informal").append(newRow);
+        //     // Increase counter_informal after each row insertion
+        //     counter_informal++;
+        // });
+        // // Remove row when delete btn is clicked
+        // $("#table_informal").on("click", "#deleteRowInformal", function (event) {
+        //     $(this).closest("tr").remove();
+        //     // counter_informal -= 1;
+        // });
+        // organisasi
+        // var counter_organisasi = 1;
+        // $("#insertRowOrganisasi").on("click", function (event) {
+        //     event.preventDefault();
+        //     var newRow = $('<tr>');
+        //     var cols = '';
+        //     // Table columns
+        //     cols += '<td><input type="text" class="form-control" name="nama_organisasi[]" id="nama_organisasi[]" placeholder="Nama Organisasi" required=""></td>';
+        //     cols += '<td><input type="number" class="form-control" name="periode[]" id="periode[]" placeholder="Periode" required=""></td>';
+        //     cols += '<td><input type="text" class="form-control" name="jabatan_organisasi[]" id="jabatan_organisasi[]" placeholder="Jabatan" required=""></td>';
+        //     cols += '<td><input type="text" class="form-control" name="keterangan[]" id="keterangan[]" placeholder="Keterangan"></td>';
+        //     cols += '<td><button class="btn btn-danger" id ="deleteRowOrganisasi">Delete</button></td>';
+        //     // Insert the columns inside a row
+        //     newRow.append(cols);
+        //     // Insert the row inside a table
+        //     $("#table_organisasi").append(newRow);
+        //     // Increase counter_organisasi after each row insertion
+        //     counter_organisasi++;
+        // });
+        // // Remove row when delete btn is clicked
+        // $("#table_organisasi").on("click", "#deleteRowOrganisasi", function (event) {
+        //     $(this).closest("tr").remove();
+        //     // counter_organisasi -= 1;
+        // });
+        // perusahaan
+        // var counter_perusahaan = 1;
+        // $("#insertRowPerusahaan").on("click", function (event) {
+        //     event.preventDefault();
+        //     var newRow = $('<tr>');
+        //     var cols = '';
+        //     // Table columns
+        //     cols += '<td><input type="text" class="form-control" name="nama_perusahaan[]" id="nama_perusahaan[]" placeholder="Nama Perusahaan" required=""></td>';
+        //     cols += '<td><input type="text" class="form-control" name="kota_perusahaan[]" id="kota_perusahaan[]" placeholder="Kota" required=""></td>';
+        //     cols += '<td><input type="number" class="form-control" name="tahun_masuk_perusahaan[]" id="tahun_masuk_perusahaan[]" placeholder="Tahun Masuk" required=""></td>';
+        //     cols += '<td><input type="number" class="form-control" name="tahun_keluar_perusahaan[]" id="tahun_keluar_perusahaan[]" placeholder="Tahun Keluar" required=""></td>';
+        //     cols += '<td><input type="text" class="form-control" name="jabatan_perusahaan[]" id="jabatan_perusahaan[]" placeholder="Jabatan" required=""></td>';
+        //     cols += '<td><input min=1 type="number" oninput="validity.valid||(value="")" onfocus="use_number(this)" onblur="use_text(this)" class="form-control" name="upah[]" id="upah[]" placeholder="Gaji/Upah" required=""></td>';
+        //     cols += '<td><input type="text" class="form-control" name="alasan_keluar[]" id="alasan_keluar[]" placeholder="Alasan Keluar" required=""></td>';
+        //     cols += '<td><button class="btn btn-danger" id ="deleteRowPerusahaan">Delete</button></td>';
+        //     // Insert the columns inside a row
+        //     newRow.append(cols);
+        //     // Insert the row inside a table
+        //     $("#table_perusahaan").append(newRow);
+        //     // Increase counter_perusahaan after each row insertion
+        //     counter_perusahaan++;
+        // });
+        // // Remove row when delete btn is clicked
+        // $("#table_perusahaan").on("click", "#deleteRowPerusahaan", function (event) {
+        //     $(this).closest("tr").remove();
+        //     // counter_perusahaan -= 1;
+        // });
         // 
         $("#sama").change(function () {
             if (this.checked) {
