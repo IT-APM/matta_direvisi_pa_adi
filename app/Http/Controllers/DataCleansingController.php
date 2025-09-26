@@ -13,6 +13,7 @@ use App\Models\TrxCutiLog;
 use App\Models\MtrUtility;
 use App\Models\Holiday;
 use App\Models\ToDoList;
+use App\Models\TrxBirthday;
 // 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -54,6 +55,9 @@ class DataCleansingController extends Controller
         $date_from = date("Y-m-d");
         $date_to = date("Y-m-d");
         $trx = $this->InsertToAttendance($date_from, $date_to);
+        // dipindahkan ke C:\xampp\htdocs\matta\app\Http\Controllers\TrxBirthdayController.php
+        // karena dijalankan setiap jam 7 pagi
+        // $this->getBirthday();
         return response()->json( [ 'success' => true ], 200 );
     }
 
@@ -498,5 +502,36 @@ class DataCleansingController extends Controller
             ->leftJoin('mtr_tbl_status_karyawan', 'mtr_tbl_status_karyawan.id', '=', 'mtr_tbl_karyawan.kode_status')
             ->where($where)->first();
         return json_encode($data);
+    }
+
+    public function getBirthday(){
+        $today = Carbon::today();
+        // exclude BOD & Executive
+        // 14=Direktur
+        $trx = Karyawan::whereNotIn('kode_level', [14])->where(['is_aktif' => 1])->whereMonth('tanggal_lahir', $today->month)->whereDay('tanggal_lahir', $today->day)->get();
+        foreach ($trx as $_trx) {
+            $atasan = Karyawan::where(['nik' => $_trx->layer1, 'is_aktif' => 1])->first();
+            $data = new TrxBirthday;
+            $data->nik = $_trx->nik;
+            $data->nik_property = $this->getNikProperty($_trx->nik);
+            $data->email = json_encode(['subject'=>'Happy Birthday', 'body'=>$this->getBodyEmail($_trx->nama), 'to'=>$_trx->email, 'cc'=>MtrUtility::find(11)->informasi.','.$atasan->email]);
+            $data->birthday = $_trx->tanggal_lahir;
+            $data->save();
+        }
+    }
+
+    public function getBodyEmail($nama)
+    {
+        $body = '<div class="container">';
+        $body .= '<br/><p>Happy Birthday to <b>'.$nama.'</b></p>';
+        $body .= '<br/>';
+        // $images = asset('assets/images/matta/BithdayMatta1.gif');
+        $images = 'https://matta-reborn.alita.id/matta/assets/images/matta/BithdayMatta1.gif';
+        // img-responsive
+        $body .= '<img class="img-responsive" src="'.$images.'" alt="Happy Birthday">';
+        $body .= '<br/><br/><br/>';
+        $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+        $body .= '</div>';
+        return $body;
     }
 }
