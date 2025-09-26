@@ -34,6 +34,12 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    @if(Session::has('error'))
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h6>{{ session('error') }}</h6>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
                     @if(Session::has('msg'))
                     <div class="alert alert-success dark alert-dismissible fade show" role="alert">
                         <h6>{{ session('msg') }}</h6>
@@ -118,10 +124,12 @@
                                     <th>{{ __('lang.Jenis Kelamin') }}</th>
                                     <th>{{ __('lang.Status Pengajuan') }}</th>
                                     <th>{{ __('lang.Waktu Pembuatan') }}</th>
+                                    @can('hc')
                                     <th>{{ __('lang.Waktu Selesai') }}</th>
                                     <th>SLA (hari)</th>
                                     <th>SLA Status</th>
                                     <th>Tanggal SLA</th>
+                                    @endcan
                                 </tr>
                             </thead>
                             <tbody>
@@ -155,10 +163,18 @@
                                     <td>{{ $data->_status_kerja->status_kerja }}</td>
                                     <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $data->tanggal)->format('d-m-Y') }}</td>
                                     <td>{{ $data->_jenis_permintaan->jenis }}</td>
-                                    <td>{{ $data->jumlah }}</td>
+                                    <td>
+                                        @php
+                                        $is_history = App\Models\TrxKebutuhanMasterEdit::where(['id_kebutuhan' => $data->id])->exists();
+                                        @endphp
+                                        @can('hc')<a href="{{ route('kebutuhan.edit_kolom', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'field'=>'jumlah']) }}" data-toggle="tooltip" title='Edit'><span class="badge @if($is_history) badge-warning @else badge-success @endif" style="font-size: 11px;">@endcan {{ $data->jumlah }} @can('hc')</span></a>@endcan
+                                        
+                                    </td>
                                     <td>{{ $data->_kelamin->kelamin }}</td>
                                     <td>{{ $data->_status_pengajuan->status_pengajuan }}</td>
                                     <td>{{ $data->created_at }}</td>
+                                    {{--  --}}
+                                    @can('hc')
                                     <td>@if ($data->status_pengajuan==10) {{ $data->updated_at }} @endif</td>
                                     @php
                                         $sla = App\Models\TrxRecruitment::where(['id_kebutuhan'=>$data->id, 'id_status'=>2])->first();
@@ -210,9 +226,9 @@
                                     <td>
                                         @if(!empty($sla_start) && !empty($sla_end))
                                             @if($workingDays <= 14)
-                                            <span class="badge badge-success">ONTIME</span>
+                                            <span class="badge badge-success" style="font-size: 11px;">Ontime</span>
                                             @else
-                                            <span class="badge badge-danger">OVERDUE</span>
+                                            <span class="badge badge-danger" style="font-size: 11px;">Overdue</span>
                                             @endif
                                         @endif
                                     </td>
@@ -221,6 +237,7 @@
                                             {{ Carbon\Carbon::parse($sla_start)->format('d-m-Y') }} sd {{ Carbon\Carbon::parse($sla_end)->format('d-m-Y') }}
                                         @endif
                                     </td>
+                                    @endcan
                                 </tr>
                                 @endforeach
                             </tbody>
