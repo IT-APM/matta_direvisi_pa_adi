@@ -119,6 +119,14 @@ use App\Http\Controllers\TrxFindimSubdepartemenController;
 // 
 use App\Http\Controllers\TrxPdpController;
 // 
+use App\Http\Controllers\MtrStrukturGajiController;
+// 
+use App\Http\Controllers\TrxBirthdayController;
+// 
+Route::resource('birthday', TrxBirthdayController::class)->middleware('can:hc');
+Route::post('birthday/send_email_exe', [TrxBirthdayController::class, 'send_email_exe'])->name('birthday.send_email_exe')->middleware('can:hc');
+Route::get('birthday/scheduler/{id}', [TrxBirthdayController::class, 'scheduler'])->name('scheduler');
+// 
 Route::resource('findim_project', TrxFindimProjectController::class)->middleware('can:hc');
 Route::resource('findim_divisi', TrxFindimDivisiController::class)->middleware('can:hc');
 Route::resource('findim_departemen', TrxFindimDepartemenController::class)->middleware('can:hc');
@@ -239,12 +247,17 @@ Route::get('payroll/bkp/{id}', [TrxPayrollController::class, 'bkp'])->name('payr
 Route::get('payroll/history/{id}', [TrxPayrollController::class, 'history'])->name('payroll.history')->middleware('can:payroll_hco_fin');
 Route::get('payroll/slip/{id}', [TrxPayrollController::class, 'slip'])->name('payroll.slip')->middleware('auth');
 Route::get('payroll/slip/detail/{id}', [TrxPayrollController::class, 'slip_detail'])->name('payroll.slip.detail')->middleware('auth');
+// Route::get('payroll/surat/upah/{id}', [TrxPayrollController::class, 'surat_upah'])->name('payroll.surat.upah');
 Route::get('payroll/employee_gap/{id}', [TrxPayrollController::class, 'employee_gap'])->name('payroll.employee_gap')->middleware('can:payroll');
 Route::get('payroll/send_email/{id}', [TrxPayrollController::class, 'send_email'])->name('payroll.send_email')->middleware('can:payroll');
 Route::post('payroll/send_email_exe', [TrxPayrollController::class, 'send_email_exe'])->name('payroll.send_email_exe')->middleware('can:payroll');
 Route::get('payroll/set_paid_date/{id}', [TrxPayrollController::class, 'set_paid_date'])->name('payroll.set_paid_date');
 Route::get('payroll/edit_payroll/{id}', [TrxPayrollController::class, 'edit_payroll'])->name('payroll.edit_payroll')->middleware('can:payroll');
 Route::post('payroll/save_edit_payroll', [TrxPayrollController::class, 'save_edit_payroll'])->name('payroll.save_edit_payroll')->middleware('can:payroll');
+Route::get('payroll/download_xlsx/{id}', [TrxPayrollController::class, 'download_xlsx'])->name('payroll.download_xlsx')->middleware('can:payroll');
+Route::post('payroll/upload_pemberitahuan_upah/{id}', [ TrxPayrollController::class, 'upload_pemberitahuan_upah'])->name('payroll.upload_pemberitahuan_upah')->middleware('can:payroll');
+Route::get('payroll/review/{id}', [TrxPayrollController::class, 'review'])->name('payroll.review');
+Route::post('payroll/review_post', [ TrxPayrollController::class, 'review_post'])->name('payroll.review_post');
 // 
 Route::resource('recruitment', TrxRecruitmentController::class)->middleware('can:hc');
 Route::get('recruitment/apply/{id}', [TrxRecruitmentController::class, 'apply'])->name('recruitment.apply');
@@ -341,6 +354,9 @@ Route::get('kebutuhan/kota', [TrxKebutuhanController::class, 'kota'])->name('keb
 Route::get('kebutuhan/layer/{id}', [TrxKebutuhanController::class, 'layer'])->name('kebutuhan.layer');
 Route::get('kebutuhan/layer', [TrxKebutuhanController::class, 'layer'])->name('kebutuhan_layer');
 // 
+Route::get('kebutuhan/edit_kolom/{id}', [TrxKebutuhanController::class, 'edit_kolom'])->name('kebutuhan.edit_kolom')->middleware('can:hc');
+Route::post('kebutuhan/post_kolom/{id}', [TrxKebutuhanController::class, 'post_kolom'])->name('kebutuhan.post_kolom')->middleware('can:hc');
+// 
 Route::get('pekerjaan_master/pekerjaan/{id}', [PekerjaanMasterController::class, 'pekerjaan'])->name('pekerjaan_master.pekerjaan');
 Route::get('pekerjaan_master/pekerjaan', [PekerjaanMasterController::class, 'pekerjaan'])->name('pekerjaan_master_pekerjaan');
 // 
@@ -387,6 +403,9 @@ Route::resource('mtrdataprojectadmin', MtrDataBpdProjectAdminController::class)-
 Route::resource('mtrdataprojectadminpic', MtrDataBpdProjectAdminPicController::class)->middleware('can:hc');
 // 
 Route::resource('pdp', TrxPdpController::class)->middleware('auth');
+// 
+Route::resource('salary_str', MtrStrukturGajiController::class)->middleware('can:hc');
+Route::post('salary_str/upload_template', [ MtrStrukturGajiController::class, 'upload_template'])->name('salary_str.upload_template')->middleware('can:hc');
 // 
 Route::get('/', function () {
     // return redirect()->route('index');
