@@ -34,6 +34,7 @@ use App\Models\Pengalaman;
 use App\Models\KebutuhanStatus;
 use App\Models\KebutuhanNikKecuali;
 use App\Models\TrxKebutuhanMaster;
+use App\Models\TrxKebutuhanMasterEdit;
 use App\Models\TrxKebutuhanDetail;
 use App\Models\TrxKebutuhanLog;
 // 
@@ -50,7 +51,7 @@ use Illuminate\Support\Facades\Crypt;
 // 
 
 class TrxKebutuhanController extends Controller
-{   
+{
     public function __construct()
     {
         $this->middleware('can:asm', ['except' => ['show','update','kota']]);
@@ -403,7 +404,7 @@ class TrxKebutuhanController extends Controller
         $id = (new OpenDataController)->decryptWithKey($id);
         $where = ['id_trx' => $id];
         $history = TrxKebutuhanLog::where($where)->orderBy('created_at', 'desc')->get();
-        $trxM = TrxKebutuhanMaster::find( $id );
+        $trxM = TrxKebutuhanMaster::find($id);
         // 
         // $where = ['id_trx' => $id];
         // $trxD = TrxKebutuhanDetail::where($where)->get();
@@ -596,7 +597,7 @@ class TrxKebutuhanController extends Controller
         //
         $this->authorize('hc');
         $id = (new OpenDataController)->decryptWithKey($id);
-        $trxM = TrxKebutuhanMaster::find( $id );
+        $trxM = TrxKebutuhanMaster::find($id);
         // 
         $status_pengajuan = KebutuhanStatus::whereIn('id', [3,10,28,$trxM->status_pengajuan])->orderBy('id', 'asc')->get();
         // 
@@ -604,10 +605,76 @@ class TrxKebutuhanController extends Controller
         $pengaju = json_decode($trxM->pengaju_property, true);
         $layer1 = json_decode($trxM->layer1_property, true);
         $layer2 = json_decode($trxM->layer2_property, true);
-        return view( 'formulir.kebutuhan.update', compact( 'trxM', 'pengaju', 'layer1', 'layer2', 'status_pengajuan' ) );
+        return view('formulir.kebutuhan.update', compact('trxM', 'pengaju', 'layer1', 'layer2', 'status_pengajuan'));
         // } else {
         //     abort('404');
         // }
+    }
+    
+    public function edit_kolom(Request $request, $id)
+    {
+        $id = (new OpenDataController)->decryptWithKey($id);
+        $field = $request->field;
+        // dd($request->all(), $id);
+        $trxM = TrxKebutuhanMaster::find($id);
+        $where = ['id_kebutuhan' => $id];
+        $history = TrxKebutuhanMasterEdit::where($where)->orderBy('created_at', 'desc')->get();
+        return view('formulir.kebutuhan.edit_kolom', compact('trxM', 'field', 'history') );
+        // 
+    }
+    
+    public function post_kolom(Request $request, $id)
+    {
+        $id = (new OpenDataController)->decryptWithKey($id);
+        // dd($request->all(), $id);
+        $trxM = TrxKebutuhanMaster::find($id);
+        // check jumlah data TrxKebutuhanDetail yang dapat disesuaikan
+        $check = false;
+        $count = TrxKebutuhanDetail::where(['id_kebutuhan'=>$id])->whereNull('nama_karyawan')->count();
+        $sebelum = $trxM->jumlah;
+        $sesudah = $request->jumlah;
+        $selisih = abs($sebelum - $sesudah);
+        // data TrxKebutuhanDetail bertambah
+        if($sesudah > $sebelum){
+            $check = true;
+            $acuan = TrxKebutuhanDetail::where(['id_kebutuhan'=>$id])->first();
+            for ($x = 0; $x < $selisih; $x++) {
+                $trxD = new TrxKebutuhanDetail;
+                $trxD->id_kebutuhan = $acuan->id_kebutuhan;
+                $trxD->id_posisi = $acuan->id_posisi;
+                $trxD->id_divisi = $acuan->id_divisi;
+                $trxD->save();
+            }
+        }
+        // data TrxKebutuhanDetail berkurang
+        elseif($sebelum > $sesudah){
+            // check apakah jumlah pengurangan tersedia
+            if($count >= $selisih){
+                $check = true;
+                $acuan = TrxKebutuhanDetail::where(['id_kebutuhan'=>$id])->whereNull('nama_karyawan')->orderBy('id', 'asc')->get();
+                for ($x = 0; $x < $selisih; $x++) {
+                    TrxKebutuhanDetail::find($acuan[$x]->id)->delete();
+                }
+            }
+        }
+        // 
+        if($check){
+            $data = new TrxKebutuhanMasterEdit;
+            $data->id_kebutuhan = $id;
+            $data->kolom = $request->field;
+            $data->sebelum = $sebelum;
+            $data->sesudah = $sesudah;
+            $data->keterangan = $request->keterangan;
+            $data->pic = auth()->user()->nik;
+            $data->save();
+            // 
+            $trxM->jumlah = $sesudah;
+            $trxM->update();
+            // 
+            return redirect('kebutuhan')->with('msg', 'Data is saved successfully.');
+        }else{
+            return redirect('kebutuhan')->with('error', 'No data is saved successfully.');
+        }
     }
 
     /**
@@ -627,7 +694,7 @@ class TrxKebutuhanController extends Controller
 		// $hco = 01031808735 = Sofyan Farid Ma'Arif
         $id = (new OpenDataController)->decryptWithKey($id);
 		$hco = MtrUtility::find(20)->informasi;
-        $trxM = TrxKebutuhanMaster::find( $id );
+        $trxM = TrxKebutuhanMaster::find($id);
         $pengaju = json_decode($trxM->pengaju_property, true);
         $layer1 = json_decode($trxM->layer1_property, true);
         $layer2 = json_decode($trxM->layer2_property, true);
