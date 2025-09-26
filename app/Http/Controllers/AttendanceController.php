@@ -11,6 +11,8 @@ use DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\AttendanceExport;
 use App\Exports\AttendanceMultiSheetExport;
+use App\Models\TrxDebug;
+use Illuminate\Support\Facades\Route;
 
 class AttendanceController extends Controller
 {
@@ -113,6 +115,7 @@ class AttendanceController extends Controller
         $date_to = '';
         // start filter
         if($request->filter == true || $request->download == true){
+            // $this->into_debug(['nomor'=>1, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
             $date_from = $request->date_from;
             $date_to = $request->date_to;
             $_att_type = $request->input('att_type', []);
@@ -160,6 +163,7 @@ class AttendanceController extends Controller
             $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             // $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             foreach($raw as $_raw){
+                // $this->into_debug(['nomor'=>2, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
                 $result = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 // jika non reguler
                 $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
@@ -175,6 +179,7 @@ class AttendanceController extends Controller
             $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             // $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             foreach($raw as $_raw){
+                // $this->into_debug(['nomor'=>3, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
                 $result = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 // jika non reguler
                 $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
@@ -188,6 +193,7 @@ class AttendanceController extends Controller
             }
             // end hitung durasi
             if(auth()->user()->userrole == 'nhc'){
+                // $this->into_debug(['nomor'=>4, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
                 // $where = ['att_nik' => auth()->user()->nik];
                 $where = ['layer1' => auth()->user()->nik];
                 $bawahan = Karyawan::select('nik')->where($where)->get();
@@ -202,6 +208,7 @@ class AttendanceController extends Controller
                 $_att_data_src = 'Regular';
                 $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
                 foreach($raw as $_raw){
+                    // $this->into_debug(['nomor'=>5, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
                     $result = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                     // jika non reguler
                     $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
@@ -215,6 +222,7 @@ class AttendanceController extends Controller
                 $_att_data_src = 'Overtime';
                 $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
                 foreach($raw as $_raw){
+                    // $this->into_debug(['nomor'=>6, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
                     $result = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                     // jika non reguler
                     $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
@@ -241,6 +249,8 @@ class AttendanceController extends Controller
             $arr_wg_id = array();
         }
         // return response()->json( [ 'att' => $att ], 200 );
+        // $this->into_debug(['nomor'=>7, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
+        // dd($att);
         // end filter
         return view( 'attendance.index', compact( 'att', 'duration', 'att_type', 'att_status', 'att_data_src', 'perusahaan', 'wg_id', 'arr_att_type', 'arr_att_status', 'arr_att_data_src', 'date_from', 'date_to', 'arr_perusahaan', 'arr_wg_id' ) );
         // return view( 'attendance.index', compact( 'att', 'duration', 'att_type', 'att_status', 'att_data_src', 'wg_id', 'arr_att_type', 'arr_att_status', 'arr_att_data_src', 'date_from', 'date_to', 'arr_wg_id' ) );
@@ -310,5 +320,14 @@ class AttendanceController extends Controller
     public function destroy($id)
     {
         //
+    }
+    
+    public function into_debug(array $arr)
+    {
+        $data = New TrxDebug;
+        $data->nomor = $arr['nomor'];
+        $data->modul = $arr['modul'];
+        $data->url = $arr['url'];
+        $data->save();
     }
 }
