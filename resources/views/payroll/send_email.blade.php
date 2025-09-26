@@ -34,6 +34,17 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    @if (count($errors) > 0)
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h6>Upload File is ERROR</h6>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
                     @if(Session::has('msg'))
                     <div class="alert alert-success dark alert-dismissible fade show" role="alert">
                         <h6>{{ session('msg') }}</h6>
@@ -46,11 +57,25 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                     </ul>
                     <div class="tab-content" id="pills-warningtabContent">
                         <div class="tab-pane fade show active" id="pills-current" role="tabpanel" aria-labelledby="pills-current-tab">
+                            <form action="{{ route('payroll.upload_pemberitahuan_upah', 0) }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                            @csrf
+                            {{-- <input type="hidden" id="view" name="view" value="pdf">
+                            <input type="hidden" id="perihal" name="perihal" value="pemberitahuan_upah"> --}}
+                            <div class="row mt-2">
+                                <div class="col-md-4">
+                                    <input name="template" id="template" class="form-control" type="file" required="">
+                                    <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <button type="submit" class="btn btn-success" data-bs-toggle="tooltip" title="Upload Daftar Penyesuaian Upah"><i class="fa fa-upload"></i> Upload</button> | <a href="{{ route('payroll.download_xlsx', 0) }}" class="btn btn-warning" data-bs-toggle="tooltip" title="Download Daftar Penyesuaian Upah"><i class="fa fa-download" aria-hidden="true"></i> Download</a>
+                                </div>
+                            </div>
+                            </form>
                             <form action="{{ route('payroll.send_email_exe') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to execute this data?');">
                             @csrf
                             <input type="hidden" id="tipe" name="tipe" value="current">
                             @if(count($trx_current)>0)
-                            <button class="btn btn-success mt-2 mb-2" type="submit" name="submit" id="submit" value="execute"><i class="fa fa-plus-circle" aria-hidden="true"></i> Execute</button> | <button class="btn btn-danger mt-2 mb-2" type="submit" name="submit" id="submit" value="delete"><i class="icon-trash" aria-hidden="true"></i> Delete</button>
+                            <button class="btn btn-success mt-2 mb-2" type="submit" name="submit" id="submit" value="execute" data-bs-toggle="tooltip" title="Kirimkan Email"><i class="fa fa-plus-circle" aria-hidden="true"></i> Execute</button> | <button class="btn btn-danger mt-2 mb-2" type="submit" name="submit" id="submit" value="delete" data-bs-toggle="tooltip" title="Delete Email"><i class="icon-trash" aria-hidden="true"></i> Delete</button>
                             @endif
                             <div class="table-responsive">
                                 <table class="display" id="_datatable_current">
@@ -58,6 +83,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                         <tr>
                                             <th><input type="checkbox" onClick="toggle_status_current(this)" /></th>
                                             <th>No</th>
+                                            <th>#ID</th>
                                             <th>Tahun</th>
                                             <th>Bulan</th>
                                             <th>Nama</th>
@@ -77,8 +103,10 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 $nik_property = json_decode($data->nik_property, true);
                                                 $email = json_decode($data->email, true);
                                             @endphp
+                                            {{-- @if($data->id_addsub != '0')@endif --}}
                                             <td><input id="id_current[]" name="id_current[]" type="checkbox" value="{{ $data->id }}"></td>
                                             <td>{{ ++$no }}</td>
+                                            <td>{{ $data->id }}</td>
                                             <td>{{ $data->tahun }}</td>
                                             <td>{{ $bulan[$data->bulan - 1] }}</td>
                                             <td>{{ $nik_property['nama'] }}</td>
