@@ -67,11 +67,12 @@ class MattaRebornMail extends Mailable
      */
     public function attachments()
     {
-        return [];
-        // return [
-        //     Attachment::fromPath('E:/tls/mcu/send_email/pdf/'.$this->mailData['file_pdf'])
-        //             ->as($this->mailData['file_pdf'])
-        //             ->withMime('application/pdf'),
-        // ];
+        if(!empty($this->mailData['attachments'])){
+            return [
+                Attachment::fromPath($this->mailData['attachments'])->as($this->mailData['namafile'])->withMime('application/pdf'),
+            ];
+        }else{
+            return [];
+        }
     }
 }
