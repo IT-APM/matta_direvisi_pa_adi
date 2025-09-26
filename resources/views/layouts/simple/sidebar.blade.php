@@ -90,6 +90,15 @@
                             <h6>Applications</h6>
                         </div>
                     </li>
+                    @can('hc')
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('birthday.index') }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-knowledgebase') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-knowledgebase') }}"></use>
+                            </svg><span>Birthday</span></a></li>
+                    @endcan
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('feeds.view') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-knowledgebase') }}"></use>
@@ -361,6 +370,7 @@
                                 <li><a href="{{ route('join.index') }}">Join Status</a></li>
                                 <li><a href="{{ route('holiday.index') }}">National Holiday</a></li>
                                 <li><a href="{{ route('pdp.index') }}">PDP</a></li>
+                                <li><a href="{{ route('salary_str.index') }}">Salary Structure</a></li>
                                 <li><a href="{{ route('utilitas.index') }}">Utility</a></li>
                             </ul>
                         </li>
