@@ -20,7 +20,7 @@
 
     .content {
         width: 100%;
-        max-width: 600px;
+        max-width: 650px;
     }
 
     .header {
@@ -121,7 +121,7 @@
                                     </td>
                                 </tr>
                             </table>
-                            <table class="col425" align="left" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 425px;">
+                            <table class="col425" align="left" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 475px;">
                                 <tr>
                                     <td height="70">
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
