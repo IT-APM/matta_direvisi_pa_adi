@@ -13,6 +13,8 @@ use Elibyy\TCPDF\Facades\TCPDF;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TrxPayrollEmailExport;
 use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\File;
 use URL;
 // 
 use App\Models\ToDoList;
@@ -151,6 +153,9 @@ class TrxPayrollController extends Controller
                     $mailData['to'] = $email['to'];
                     $mailData['cc'] = $email['cc'];
                     if($_trx->id_addsub == '0'){
+                        // menambahkan parameter
+                        $request->merge(['view' => 'pdf', 'perihal' => 'pemberitahuan_upah', 'redaksi' => $_trx->param1, 'no_surat' => $_trx->no_surat, 'filename' => $_trx->filename, 'email_id' => $_id, 'password' => true]);
+                        $this->slip_detail($request, (new OpenDataController)->encryptWithKey(TrxPayroll::where(['tahun'=>$_trx->tahun, 'bulan'=>$_trx->bulan, 'nik'=>$_trx->nik])->first()->id));
                         $mailData['attachments'] = public_path('assets/penyesuaian_upah').'/'.$_trx->filename;
                         $mailData['namafile'] = $_trx->filename;
                     }
@@ -166,6 +171,7 @@ class TrxPayrollController extends Controller
                     $trx->param1 = $_trx->param1;
                     $trx->filename = $_trx->filename;
                     $trx->no_surat = $_trx->no_surat;
+                    $trx->spu = $_trx->spu;
                     $trx->save();
                     // delete
                     TrxPayrollEmail::find($_id)->delete();
@@ -440,9 +446,9 @@ class TrxPayrollController extends Controller
         // $pdf::SetFont('times', '', 8, '', true);
         $pdf::SetFont('helvetica', '', 8, '', true);
         // Surat Pemberitahuan Penyesuaian Upah
-        $str_html = '';
         if(!empty($request->perihal)){
             if($request->perihal == 'pemberitahuan_upah'){
+                $str_html = [];
                 $page1 = \View::make('payroll.penyesuaian_upah', compact('payroll', '_view', 'pic_paraf'))->render();
                 $pdf::AddPage('P', 'A4');
                 $pdf::SetAutoPageBreak(true, 0);
@@ -505,40 +511,34 @@ class TrxPayrollController extends Controller
                 $font_size_family = 'font-size:10px; font-family:helvetica;';
                 $text = '<span style="color:red; text-align:left; font-size:14px; font-family:helvetica;"><b><u>CONFIDENTIAL</u></b></span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
                 $text = '<span style="text-align:center; '.$font_size_family.'"><b><u>SURAT PEMBERITAHUAN UPAH</u></b></span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y+=10, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">No</span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y+=10, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">: '.$request->no_surat.'</span>';
                 $pdf::writeHTMLCell(0, 0, 35, $y, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
+                $str_html['no_surat'] = $request->no_surat;
                 $text = '<span style="text-align:right; '.$font_size_family.'"><b>NIP : '.$payroll->nik.'</b></span>';
                 $pdf::writeHTMLCell(0, 0, 50, $y, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
+                $str_html['nik'] = $payroll->nik;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">Kepada</span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y+=5, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">: '.$karyawan['nama'].'</span>';
                 $pdf::writeHTMLCell(0, 0, 35, $y, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
+                $str_html['nama'] = $karyawan['nama'];
                 $text = '<span style="text-align:justify; '.$font_size_family.'">Dari</span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y+=5, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">: '.$payroll->jabatan.'</span>';
                 $pdf::writeHTMLCell(0, 0, 35, $y, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
+                $str_html['jabatan'] = $payroll->jabatan;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">Perihal</span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y+=5, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">: Penyesuaian Upah</span>';
                 $pdf::writeHTMLCell(0, 0, 35, $y, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">Berdasarkan '.$request->redaksi.', bersama ini disampaikan bahwa terhitung mulai bulan <b>'.$bulan[$payroll->bulan - 1].' '.$payroll->tahun.'</b> posisi level, grade dan gaji Saudara/i adalah sebagai berikut:</span>';
+                $str_html['redaksi'] = $request->redaksi;
                 $pdf::writeHTMLCell(0, 0, 10, $y+=10, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
+                $str_html['bulan_tahun_present'] = $bulan[$payroll->bulan - 1].' '.$payroll->tahun;
                 $text = '<table width="100%" cellspacing="0" cellpadding="1" style="text-align:left; '.$font_size_family.' '.$border_top.' '.$border_bottom.' '.$border_left.' '.$border_right.'">
                     <tr>
                         <td width="3%">&nbsp;</td>
@@ -649,38 +649,66 @@ class TrxPayrollController extends Controller
                         <td style="text-align:right;"><b>'.number_format($upah_present, 0).'</b>'.$indent_kanan.'</td>
                     </tr>
                 </table>';
+                $str_html['bulan_tahun_past'] = $bulan[$payroll_past->bulan - 1]." ".$payroll_past->tahun;
+                $str_html['level_past'] = $level_past;
+                $str_html['level_present'] = $level_present;
+                $str_html['grade_past'] = $grade_past;
+                $str_html['grade_present'] = $grade_present;
+                $str_html['gapok_past'] = $payroll_past->gapok;
+                $str_html['gapok_present'] = $payroll->gapok;
+                $str_html['t_makan_past'] = $tunjangan_past[0]->angka;
+                $str_html['t_makan_present'] = $tunjangan_present[0]->angka;
+                $str_html['t_transport_past'] = $tunjangan_past[1]->angka;
+                $str_html['t_transport_present'] = $tunjangan_present[1]->angka;
+                $str_html['t_jabatan_past'] = $tunjangan_past[2]->angka;
+                $str_html['t_jabatan_present'] = $tunjangan_present[2]->angka;
+                $str_html['t_komunikasi_past'] = $tunjangan_past[3]->angka;
+                $str_html['t_komunikasi_present'] = $tunjangan_present[3]->angka;
+                $str_html['t_lain_past'] = $tunjangan_past[4]->angka;
+                $str_html['t_lain_present'] = $tunjangan_present[4]->angka;
+                $str_html['total_tunjangan_past'] = $total_tunjangan_past;
+                $str_html['total_tunjangan_present'] = $total_tunjangan_present;
+                $str_html['upah_past'] = $upah_past;
+                $str_html['upah_present'] = $upah_present;
                 $pdf::writeHTMLCell(0, 0, 10, $y+=20, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
                 $text = '<span style="text-align:justify; '.$font_size_family.'"><u>Catatan</u></span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y+=95, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">*,**, dan ***, ditanggung oleh perusahaan</span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y+=5, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">Demikian agar maklum adanya.</span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y+=10, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">Terima kasih.</span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y+=5, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
-                $text = '<span style="text-align:justify; '.$font_size_family.'">Jakarta, 21 Januari 2025</span>';
-                $pdf::writeHTMLCell(0, 0, 10, $y+=10, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
-                $text = '<span style="text-align:justify; '.$font_size_family.'"><b>PT. ALITA PRAYA MITRA</b></span>';
-                $pdf::writeHTMLCell(0, 0, 10, $y+=5, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
-                $text = '<span style="text-align:justify; '.$font_size_family.'"><b><u>BAMBANG ANDJAR PRASETYONO</u></b></span>';
-                $pdf::writeHTMLCell(0, 0, 10, $y+=30, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
-                $text = '<span style="text-align:justify; '.$font_size_family.'">Head of Corporate Service</span>';
-                $pdf::writeHTMLCell(0, 0, 10, $y+=5, $text, 0, 1, 0, true, '', true);
-                $str_html .= $text;
+                // reviewer1
+                $pic = explode(',', MtrUtility::find(45)->informasi)[0];
+                $reviewer1 = TrxPayrollPenyesuaianUpahLog::where(['no_surat'=>$request->no_surat, 'pic'=>$pic, 'id_status'=>1, 'nik'=>$payroll->nik, 'bulan'=>$payroll->bulan, 'tahun'=>$payroll->tahun])->orderBy('id', 'desc')->first();
+                // reviewer2
+                $pic = explode(',', MtrUtility::find(45)->informasi)[1];
+                $reviewer2 = TrxPayrollPenyesuaianUpahLog::where(['no_surat'=>$request->no_surat, 'pic'=>$pic, 'id_status'=>2, 'nik'=>$payroll->nik, 'bulan'=>$payroll->bulan, 'tahun'=>$payroll->tahun])->orderBy('id', 'desc')->first();
+                // jika sudah direview oleh reviewer2
+                if(!empty($reviewer2)){
+                    $tanggal = Carbon::parse($reviewer2->created_at)->format('d').' '.$bulan[Carbon::parse($reviewer2->created_at)->format('m')-1].' '.Carbon::parse($reviewer2->created_at)->format('Y');
+                    $pic_property = json_decode($reviewer2->pic_property, true);
+                    $text = '<span style="text-align:justify; '.$font_size_family.'">Jakarta, '.$tanggal.'</span>';
+                    $pdf::writeHTMLCell(0, 0, 10, $y+=10, $text, 0, 1, 0, true, '', true);
+                    $text = '<span style="text-align:justify; '.$font_size_family.'"><b>PT ALITA PRAYA MITRA</b></span>';
+                    $pdf::writeHTMLCell(0, 0, 10, $y+=5, $text, 0, 1, 0, true, '', true);
+                    $text = '<span style="text-align:justify; '.$font_size_family.'"><b><u>'.strtoupper($pic_property['nama']).'</u></b></span>';
+                    $pdf::writeHTMLCell(0, 0, 10, $y+=35, $text, 0, 1, 0, true, '', true);
+                    $text = '<span style="text-align:justify; '.$font_size_family.'">'.$pic_property['jabatan'].'</span>';
+                    $pdf::writeHTMLCell(0, 0, 10, $y+=5, $text, 0, 1, 0, true, '', true);
+                    // reviewer1
+                    // $qrcode = public_path('assets/penyesuaian_upah/'.$reviewer1->qrcode);
+                    // $pdf::Image($qrcode, 50, 245, 10, 10, '', '', '', false, 300, '', false, false, 0);
+                    // reviewer2
+                    $qrcode = public_path('assets/penyesuaian_upah/'.$reviewer2->qrcode);
+                    $pdf::Image($qrcode, 11.4, 225, 30, 30, '', '', '', false, 300, '', false, false, 0);;
+                }
                 // 
-                TrxPayrollEmail::where('id', $request->email_id)->update(['spu' => $str_html]);
+                TrxPayrollEmail::where('id', $request->email_id)->update(['spu' => json_encode($str_html)]);
                 // 
             }
         }
-        // dd($str_html);
         $pdf::AddPage('L', 'A4');
         $pdf::writeHTML($html, true, false, true, false, '');
         // Set PDF protection settings
@@ -689,14 +717,16 @@ class TrxPayrollController extends Controller
         // The third parameter: Owner password (this is used to unlock for modification)
         // The fourth parameter: Encryption type (0 = no encryption, 256 = AES encryption)
         // $pdf::SetProtection(array('print', 'copy'), $password, $password);
-        // $pdf::SetProtection(array('print', 'copy'), $password, md5(123456), 0, null);
+        if($request->password || empty($request->perihal)){
+            $pdf::SetProtection(array('print', 'copy'), $password, md5(123456), 0, null);
+        }
         // open browser
         // $pdf::Output(public_path($filename), 'I');
         // Surat Pemberitahuan Penyesuaian Upah
         if(!empty($request->perihal)){
             if($request->perihal == 'pemberitahuan_upah'){
                 $filePath = public_path('assets/penyesuaian_upah').'/'.$request->filename;
-                $pdf::SetTitle($filename);
+                $pdf::SetTitle($request->filename);
                 $pdf::Output($filePath, 'F');
                 $pdf::reset();
             }
@@ -2725,73 +2755,78 @@ class TrxPayrollController extends Controller
                 // reset nomor surat
                 $i = 0;
                 for ($x = 2; $x < count($data0); $x++) {
-                    $_id = $data0[$x][$_1];
-                    $tahun = $data0[$x][$_2];
-                    $bulan = $data0[$x][$_3];
-                    $nik = $data0[$x][$_5];
-                    $trx = TrxPayrollEmail::where(['id'=>$_id, 'tahun'=>$tahun, 'bulan'=>$bulan, 'nik'=>$nik])->first();
-                    $redaksi = $data0[$x][$_8];
-                    $trx->param1 = $redaksi;
-                    // $filePath = public_path('assets/penyesuaian_upah').'/'.(new OpenDataController)->encryptWithKey($payroll->nik.'_'.$payroll->bulan.'_'.$payroll->tahun).'_Surat Pemberitahuan Penyesuaian Upah.pdf';
-                    $filename = (new OpenDataController)->encryptWithKey($nik).'_Surat Pemberitahuan Penyesuaian Upah_'.$nik.'_'.$bulan.'_'.$tahun.'.pdf';
-                    $trx->filename = $filename;
-                    // nomor surat
-                    // contoh: 009-LTR/SPU/ADM-APM/HCO/I/2025
-                    $romawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
-                    $hitung = TrxPayrollEmailLog::where(['tahun'=>$tahun, 'id_addsub'=>'0'])->count();
-                    $no_surat = str_pad($hitung + (++$i), 3, '0', STR_PAD_LEFT).'-LTR/SPU/ADM-APM/HCO/'.$romawi[$bulan-1].'/'.$tahun;
-                    $trx->no_surat = $no_surat;
-                    // 
-                    $nik_property = json_decode($trx->nik_property, true);
-                    $email = json_decode($trx->email, true);
-                    // 
-                    $karyawan = Karyawan::where(['nik'=>$nik_property['nik']])->first();
-                    $kelamin = '';
-                    // 2=Pria
-                    if($karyawan->kode_kelamin == 2){
-                        $kelamin = 'Bapak';
+                    // hanya yang beredaksi yang diproses
+                    if(!empty($data0[$x][$_8])){
+                        $_id = $data0[$x][$_1];
+                        $tahun = $data0[$x][$_2];
+                        $bulan = $data0[$x][$_3];
+                        $nik = $data0[$x][$_5];
+                        $trx = TrxPayrollEmail::where(['id'=>$_id, 'tahun'=>$tahun, 'bulan'=>$bulan, 'nik'=>$nik])->first();
+                        $redaksi = $data0[$x][$_8];
+                        $trx->param1 = $redaksi;
+                        // $filePath = public_path('assets/penyesuaian_upah').'/'.(new OpenDataController)->encryptWithKey($payroll->nik.'_'.$payroll->bulan.'_'.$payroll->tahun).'_Surat Pemberitahuan Penyesuaian Upah.pdf';
+                        $filename = (new OpenDataController)->encryptWithKey($nik).'_Surat Pemberitahuan Penyesuaian Upah_'.$nik.'_'.$bulan.'_'.$tahun.'.pdf';
+                        $trx->filename = $filename;
+                        // nomor surat
+                        // contoh: 009-LTR/SPU/ADM-APM/HCO/I/2025
+                        $romawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+                        $hitung = TrxPayrollEmailLog::where(['tahun'=>$tahun, 'id_addsub'=>'0'])->count();
+                        $no_surat = str_pad($hitung + (++$i), 3, '0', STR_PAD_LEFT).'-LTR/SPU/ADM-APM/HCO/'.$romawi[$bulan-1].'/'.$tahun;
+                        $trx->no_surat = $no_surat;
+                        // 
+                        $nik_property = json_decode($trx->nik_property, true);
+                        $email = json_decode($trx->email, true);
+                        // 
+                        $karyawan = Karyawan::where(['nik'=>$nik_property['nik']])->first();
+                        $kelamin = '';
+                        // 2=Pria
+                        if($karyawan->kode_kelamin == 2){
+                            $kelamin = 'Bapak';
+                        }
+                        // 3=Wanita
+                        elseif($karyawan->kode_kelamin == 3){
+                            $kelamin = 'Ibu';
+                        }
+                        $nama_bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+                        // tidak digunakan diganti dengan attachment file
+                        // Carbon::setLocale('id');
+                        // $tgl_sk_direksi = Carbon::parse($tgl_sk_direksi)->translatedFormat('d F Y');
+                        // $where = ['nik'=>$trx->nik, 'bulan'=>$trx->bulan, 'tahun'=>$trx->tahun];
+                        // $payroll = TrxPayroll::where($where)->first();
+                        // dd($payroll);
+                        // $link = route('payroll.surat.upah', [(new OpenDataController)->encryptWithKey($payroll->id), 'view' => 'pdf']);
+                        $body = '<p>Dear '.$kelamin.' '.$nik_property['nama'].'</p>';
+                        // $body .= '<p>Berdasarkan Surat Keputusan Direksi No. '.$no_sk_direksi.' tanggal '.$tgl_sk_direksi.' tentang Penyesuaian Upah Minimum tahun '.$tahun.' dan Struktur Upah, berikut kami sampaikan Surat Pemberitahuan perubahan Level, Grade dan/atau Gaji terhitung mulai bulan '.$nama_bulan[$bulan - 1].' '.$tahun.' dan Slip Gaji bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'.</p>';
+                        $body .= '<p>Berdasarkan '.$redaksi.', berikut kami sampaikan Surat Pemberitahuan perubahan Level, Grade dan/atau Gaji terhitung mulai bulan '.$nama_bulan[$bulan - 1].' '.$tahun.' dan Slip Gaji bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'.</p>';
+                        $body .= '<p>Surat Pemberitahuan dan Slip Gaji ini adalah bersifat <strong style="color:red">CONFIDENTIAL</strong> dan tidak untuk diberitahukan kepada rekan kerja ataupun Pihak Lain.</p>';
+                        // $body .= '<p>Klik link berikut untuk mendownload Surat Pemberitahuan Penyesuaian Upah ini.</p>';
+                        // $body .= '<p><a href="'.$link.'">Download File</a>';
+                        $body .= '<p>Demikian kami sampaikan, terimakasih atas perhatian dan kerjasamanya.</p>';
+                        $body .= '<p><i style="color:blue">Notes : password berupa tanggal lahir dengan format DDMMYYYY.</i></p>';
+                        $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                        // 
+                        $trx->email = json_encode(['nik'=>$nik_property['nik'], 'subject'=>$email['subject'], 'body'=>$body, 'to'=>$email['to'], 'cc'=>$email['cc']]);
+                        $trx->update();
+                        // menambahkan parameter
+                        $request->merge(['view' => 'pdf', 'perihal' => 'pemberitahuan_upah', 'redaksi' => $redaksi, 'no_surat' => $no_surat, 'filename' => $filename, 'email_id' => $_id]);
+                        // 
+                        $this->slip_detail($request, (new OpenDataController)->encryptWithKey(TrxPayroll::where(['tahun'=>$tahun, 'bulan'=>$bulan, 'nik'=>$nik])->first()->id));
+                        // start kirim email dan notifikasi ke reviewer1
+                        $nik_reviewer = explode(',', MtrUtility::find(45)->informasi)[0];
+                        $reviewer = Karyawan::where(['nik' => $nik_reviewer])->first();
+                        // parameter yang dipassing ke sendemail
+                        $mailData['title'] = $data0[$x][$_7];
+                        $mailData['data'] = ['nama'=>$nik_property['nama'].'/'.$nik_property['nik'], 'jabatan'=>$nik_property['jabatan'], 'unit_kerja'=>$nik_property['divisi'].'/'.$nik_property['dep'].'/'.$nik_property['sub_dep'], 'divisi'=>$nik_property['divisi'], 'dep'=>$nik_property['dep'], 'sub_dep'=>$nik_property['sub_dep'], 'link'=> route('payroll.review', [(new OpenDataController)->encryptWithKey($trx->id), 'pic' => (new OpenDataController)->encryptWithKey($nik_reviewer), 'id_status' => 1 ])];
+                        $mailData['filename'] = 'emails.penyesuaian_upah0';
+                        $mailData['to'] = $reviewer->email;
+                        $mailData['cc'] = $email['cc'];
+                        $todolist = ['id_trx' => $trx->id, 'nik' => $nik_reviewer, 'id_status' => 1, 'pic' => 'reviewer1'];
+                        $mailData['attachments'] = public_path('assets/penyesuaian_upah').'/'.$filename;
+                        $mailData['namafile'] = $filename;
+                        $this->insertToDoList($todolist, $mailData);
+                        $this->sendEmail($mailData);
+                        // end
                     }
-                    // 3=Wanita
-                    elseif($karyawan->kode_kelamin == 3){
-                        $kelamin = 'Ibu';
-                    }
-                    $nama_bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-                    // tidak digunakan diganti dengan attachment file
-                    // Carbon::setLocale('id');
-                    // $tgl_sk_direksi = Carbon::parse($tgl_sk_direksi)->translatedFormat('d F Y');
-                    // $where = ['nik'=>$trx->nik, 'bulan'=>$trx->bulan, 'tahun'=>$trx->tahun];
-                    // $payroll = TrxPayroll::where($where)->first();
-                    // dd($payroll);
-                    // $link = route('payroll.surat.upah', [(new OpenDataController)->encryptWithKey($payroll->id), 'view' => 'pdf']);
-                    $body = '<p>Dear '.$kelamin.' '.$nik_property['nama'].'</p>';
-                    // $body .= '<p>Berdasarkan Surat Keputusan Direksi No. '.$no_sk_direksi.' tanggal '.$tgl_sk_direksi.' tentang Penyesuaian Upah Minimum tahun '.$tahun.' dan Struktur Upah, berikut kami sampaikan Surat Pemberitahuan perubahan Level, Grade dan/atau Gaji terhitung mulai bulan '.$nama_bulan[$bulan - 1].' '.$tahun.' dan Slip Gaji bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'.</p>';
-                    $body .= '<p>Berdasarkan '.$redaksi.', berikut kami sampaikan Surat Pemberitahuan perubahan Level, Grade dan/atau Gaji terhitung mulai bulan '.$nama_bulan[$bulan - 1].' '.$tahun.' dan Slip Gaji bulan '.$nama_bulan[$bulan - 1].' '.$tahun.'.</p>';
-                    $body .= '<p>Surat Pemberitahuan dan Slip Gaji ini adalah bersifat <strong style="color:red">CONFIDENTIAL</strong> dan tidak untuk diberitahukan kepada rekan kerja ataupun Pihak Lain.</p>';
-                    // $body .= '<p>Klik link berikut untuk mendownload Surat Pemberitahuan Penyesuaian Upah ini.</p>';
-                    // $body .= '<p><a href="'.$link.'">Download File</a>';
-                    $body .= '<p>Demikian kami sampaikan, terimakasih atas perhatian dan kerjasamanya.</p>';
-                    $body .= '<p><i style="color:blue">Notes : password berupa tanggal lahir dengan format DDMMYYYY.</i></p>';
-                    $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
-                    // 
-                    $trx->email = json_encode(['nik'=>$nik_property['nik'], 'subject'=>$email['subject'], 'body'=>$body, 'to'=>$email['to'], 'cc'=>$email['cc']]);
-                    $trx->update();
-                    // menambahkan parameter
-                    $request->merge(['view' => 'pdf', 'perihal' => 'pemberitahuan_upah', 'redaksi' => $redaksi, 'no_surat' => $no_surat, 'filename' => $filename, 'email_id' => $_id]);
-                    // 
-                    $this->slip_detail($request, (new OpenDataController)->encryptWithKey(TrxPayroll::where(['tahun'=>$tahun, 'bulan'=>$bulan, 'nik'=>$nik])->first()->id));
-                    // // kirim email dan notifikasi ke reviewer1
-                    // $nik_reviewer = explode(',', MtrUtility::find(45)->informasi)[0];
-                    // $reviewer = Karyawan::where(['nik' => $nik_reviewer])->first();
-                    // // parameter yang dipassing ke sendemail
-                    // $mailData['title'] = $data0[$x][$_7];
-                    // $mailData['data'] = ['nama'=>$nik_property['nama'].'/'.$nik_property['nik'], 'jabatan'=>$nik_property['jabatan'], 'unit_kerja'=>$nik_property['divisi'].'/'.$nik_property['dep'].'/'.$nik_property['sub_dep'], 'divisi'=>$nik_property['divisi'], 'dep'=>$nik_property['dep'], 'sub_dep'=>$nik_property['sub_dep'], 'link'=> route('payroll.review', [(new OpenDataController)->encryptWithKey($trx->id), 'pic' => (new OpenDataController)->encryptWithKey($nik_reviewer), 'id_status' => 1 ])];
-                    // $mailData['filename'] = 'emails.penyesuaian_upah0';
-                    // $mailData['to'] = $reviewer->email;
-                    // $mailData['cc'] = $email['cc'];
-                    // $todolist = ['id_trx' => $trx->id, 'nik' => $nik_reviewer, 'id_status' => 1, 'pic' => 'reviewer1'];
-                    // $this->insertToDoList($todolist, $mailData);
-                    // $this->sendEmail($mailData);
-                    // end
                 }
                 return redirect('/payroll/send_email/0')->with('msg', 'Data is saved successfully.');
             }
@@ -2802,17 +2837,78 @@ class TrxPayrollController extends Controller
         $pic = $request->pic;
         $id_status = $request->id_status;
         // dd($request->pic, $id, $request->id_status);
-        // $id = (new OpenDataController)->decryptWithKey($id);
-        // $pic = (new OpenDataController)->decryptWithKey($request->pic);
+        $id = (new OpenDataController)->decryptWithKey($id);
+        $pic = (new OpenDataController)->decryptWithKey($request->pic);
         // dd($request->all(), $id, $pic);
-        return view('emails.penyesuaian_upah1', compact('id', 'pic', 'id_status'));
+        // check apa ada di todolist
+        $check = ToDoList::where(['id_trx'=>$id, 'id_status'=>$id_status, 'nik'=>$pic, 'filename'=>'emails.penyesuaian_upah0'])->exists();
+        if($check){
+            $trx = TrxPayrollEmail::find($id);
+            $id = (new OpenDataController)->encryptWithKey($id);
+            $pic = (new OpenDataController)->encryptWithKey($pic);
+            $id_status = (new OpenDataController)->encryptWithKey($id_status);
+            return view('emails.penyesuaian_upah1', compact('id', 'pic', 'id_status', 'trx'));
+        }else{
+            return view('emails.penyesuaian_upah_ok');
+        }
     }
 
     public function review_post(Request $request){
         // dd($request->all());
-        $id_status = $request->id_status;
         $id = (new OpenDataController)->decryptWithKey($request->id);
         $pic = (new OpenDataController)->decryptWithKey($request->pic);
-        dd($id, $pic, $id_status);
+        $id_status = (new OpenDataController)->decryptWithKey($request->id_status);
+        // dd($id, $pic, $id_status);
+        $data = TrxPayrollEmail::find($id);
+        if(!empty($data)){
+            // insert into trx_tbl_payroll_penyesuaian_upah_log
+            $trx = New TrxPayrollPenyesuaianUpahLog;
+            $trx->no_surat = $data->no_surat;
+            $trx->nik = $data->nik;
+            $trx->nik_property = $data->nik_property;
+            $trx->pic = $pic;
+            $trx->pic_property = $this->getNikProperty($pic);
+            $trx->id_status = $id_status;
+            $trx->bulan = $data->bulan;
+            $trx->tahun = $data->tahun;
+            // 
+            $qrcode = $pic.'_'.$data->no_surat;
+            $qr = QrCode::format('png')->size(500)->generate($qrcode);
+            $qr_filename = (new OpenDataController)->encryptWithKey($qrcode).'.png';
+            file_put_contents(public_path('assets/penyesuaian_upah').'/'.$qr_filename, $qr);
+            $trx->qrcode = $qr_filename;
+            // 
+            $trx->save();
+            // delete todolist
+            $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$pic, 'id_status'=>$id_status, 'filename'=>'emails.penyesuaian_upah0']);
+            if($id_status == 1){
+                // start kirim email dan notifikasi ke reviewer2
+                $nik_reviewer = explode(',', MtrUtility::find(45)->informasi)[1];
+                $reviewer = Karyawan::where(['nik' => $nik_reviewer])->first();
+                $email = json_decode($data->email, true);
+                $nik_property = json_decode($data->nik_property, true);
+                // parameter yang dipassing ke sendemail
+                $mailData['title'] = $email['subject'];
+                $mailData['data'] = ['nama'=>$nik_property['nama'].'/'.$nik_property['nik'], 'jabatan'=>$nik_property['jabatan'], 'unit_kerja'=>$nik_property['divisi'].'/'.$nik_property['dep'].'/'.$nik_property['sub_dep'], 'divisi'=>$nik_property['divisi'], 'dep'=>$nik_property['dep'], 'sub_dep'=>$nik_property['sub_dep'], 'link'=> route('payroll.review', [(new OpenDataController)->encryptWithKey($id), 'pic' => (new OpenDataController)->encryptWithKey($nik_reviewer), 'id_status' => 2 ])];
+                $mailData['filename'] = 'emails.penyesuaian_upah0';
+                $mailData['to'] = $reviewer->email;
+                $mailData['cc'] = $email['cc'];
+                $todolist = ['id_trx' => $id, 'nik' => $nik_reviewer, 'id_status' => 2, 'pic' => 'reviewer2'];
+                $mailData['attachments'] = public_path('assets/penyesuaian_upah').'/'.$data->filename;
+                $mailData['namafile'] = $data->filename;
+                $this->insertToDoList($todolist, $mailData);
+                $this->sendEmail($mailData);
+                // end
+            }
+            // jika $id_status == 2 maka buat kembali file pdf yang sudah ditambahkan approval dari para reviewer
+            elseif($id_status == 2){
+                // menambahkan parameter
+                $request->merge(['view' => 'pdf', 'perihal' => 'pemberitahuan_upah', 'redaksi' => $data->param1, 'no_surat' => $data->no_surat, 'filename' => $data->filename, 'email_id' => $id]);
+                $this->slip_detail($request, (new OpenDataController)->encryptWithKey(TrxPayroll::where(['tahun'=>$data->tahun, 'bulan'=>$data->bulan, 'nik'=>$data->nik])->first()->id));
+            }
+            return view('emails.penyesuaian_upah_ok');
+        }else{
+            return view('emails.penyesuaian_upah_ok');
+        }
     }
 }
