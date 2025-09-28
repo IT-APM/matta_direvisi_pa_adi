@@ -81,6 +81,10 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('auth', function(User $user) {
             return true;
         });
+        
+        Gate::define('notif_letter', function(User $user) {
+            return in_array($user->nik, explode(',', MtrUtility::find(45)->informasi));
+        });
         //
     }
 }
