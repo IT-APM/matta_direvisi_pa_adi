@@ -18,40 +18,40 @@
     }, */
     </style>
 </head>
-
+@php $spu = json_decode($trx->spu, true); @endphp
 <body>
     <section class="p-2 p-md-2 p-xl-2">
         <div class="container-fluid">
             <div class="card border-light-subtle shadow-sm">
-                <div class="row g-0 text-start">
+                <div class="row px-2">
                     <div class="col-12 col-md-12 col-sm-12"><img class="img-fluid rounded-start w-194 h-73 object-fit-cover" loading="lazy" src="{{ asset('assets/images/matta/alita.png') }}" alt="Alita"></div>
                 </div>
                 <hr class="mt-2" />
-                <div class="row g-0">
-                    <h4 class="ms-2 text-uppercase fw-bold text-danger" style="text-decoration: underline;">Confidential</h4>
+                <div class="row px-2">
+                    <div class="col-md-12 col-sm-12">
+                        <h4 class="ms-2 text-uppercase fw-bold text-danger" style="text-decoration: underline;">Confidential</h4>
+                    </div>
                 </div>
-                <hr class="mt-2" />
                 <div class="row g-0">
-                    <h4 class="text-center text-uppercase">Surat Pemberitahuan Penyesuaian Upah</h4>
+                    <h4 class="text-center text-uppercase" style="text-decoration: underline;">Surat Pemberitahuan Penyesuaian Upah</h4>
                 </div>
-                <hr class="mt-2" />
                 <div class="row g-0">
                     <div class="col-12 col-md-12 col-sm-12">
                         <table class="table table-no-border">
                             <tbody>
                                 <tr>
                                     <td width="10%">No</td>
-                                    <td width="60%">: 001-LTR/SPU/ADM-APM/HCO/IX/2025</td>
-                                    <td width="30%" class="text-end fw-bold">NIP : 01031608478</td>
+                                    <td width="60%">: {{ $spu['no_surat'] }}</td>
+                                    <td width="30%" class="text-end fw-bold">NIP : {{ $spu['nik'] }}</td>
                                 </tr>
                                 <tr>
                                     <td>Kepada</td>
-                                    <td>: Didin Saripudin</td>
+                                    <td>: {{ $spu['nama'] }}</td>
                                     <td>&nbsp;</td>
                                 </tr>
                                 <tr>
                                     <td>Dari</td>
-                                    <td>: Project Manager PDT-BAU</td>
+                                    <td>: {{ $spu['jabatan'] }}</td>
                                     <td>&nbsp;</td>
                                 </tr>
                                 <tr>
@@ -63,19 +63,11 @@
                         </table>
                     </div>
                 </div>
-                {{-- <hr class="mt-2" /> --}}
-                <div class="row g-0">
-                    <div class="col-12 col-md-12 col-sm-12">
-                        <table class="table table-no-border">
-                            <tbody>
-                                <tr>
-                                    <td style="text-align: justify;">Berdasarkan Surat Keputusan Direksi No. 002/SK/ADM-APM/TP/I/2025 tanggal 20 Januari 2025 tentang Penyesuaian Upah Minimum tahun 2025 dan Struktur Upah, bersama ini disampaikan bahwa terhitung mulai bulan September 2025 posisi level, grade dan gaji Saudara/i adalah sebagai berikut:</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="row px-2">
+                    <div class="col-md-12 col-sm-12">
+                        <p style="text-align: justify;">Berdasarkan {{ $spu['redaksi'] }}, bersama ini disampaikan bahwa terhitung mulai bulan <b>{{ $spu['bulan_tahun_present'] }}</b> posisi level, grade dan gaji Saudara/i adalah sebagai berikut:</p>
                     </div>
                 </div>
-                {{-- <hr class="mt-2" /> --}}
                 <div class="row g-0">
                     <div class="col-12 col-md-12 col-sm-12">
                         <table class="table table-no-border">
@@ -85,26 +77,26 @@
                                 <tr>
                                     <td width="2%" style="border-left: 1px solid #000; border-top: 1px solid #000;">&nbsp;</td>
                                     <td width="18%" style="border-top: 1px solid #000;">&nbsp;</td>
-                                    <td width="40%" style="border-left: 1px solid #000; border-top: 1px solid #000;">SAMPAI AGUSTUS 2025</td>
-                                    <td width="40%" style="border-left: 1px solid #000; border-top: 1px solid #000; border-right: 1px solid #000;">SETELAH PENYESUAIAN</td>
+                                    <td width="40%" class="text-uppercase fw-bold" style="border-left: 1px solid #000; border-top: 1px solid #000;">Sampai {{ $spu['bulan_tahun_past'] }}</td>
+                                    <td width="40%" class="text-uppercase fw-bold" style="border-left: 1px solid #000; border-top: 1px solid #000; border-right: 1px solid #000;">Setelah Penyesuaian</td>
                                 </tr>
                                 <tr>
                                     <td style="border-left: 1px solid #000;">A.</td>
                                     <td>Level</td>
-                                    <td style="border-left: 1px solid #000;">JUNIOR MANAGER</td>
-                                    <td style="border-left: 1px solid #000; border-right: 1px solid #000;">JUNIOR MANAGER</td>
+                                    <td style="border-left: 1px solid #000;">{{ $spu['level_past'] }}</td>
+                                    <td style="border-left: 1px solid #000; border-right: 1px solid #000;">{{ $spu['level_present'] }}</td>
                                 </tr>
                                 <tr>
                                     <td style="border-left: 1px solid #000;">B.</td>
                                     <td>Grade</td>
-                                    <td style="border-left: 1px solid #000;">V</td>
-                                    <td style="border-left: 1px solid #000; border-right: 1px solid #000;">V</td>
+                                    <td style="border-left: 1px solid #000;">{{ $spu['grade_past'] }}</td>
+                                    <td style="border-left: 1px solid #000; border-right: 1px solid #000;">{{ $spu['grade_present'] }}</td>
                                 </tr>
                                 <tr>
                                     <td style="border-left: 1px solid #000;">C.</td>
                                     <td>Gaji Pokok</td>
-                                    <td style="text-align: right; border-left: 1px solid #000;">V</td>
-                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">V</td>
+                                    <td style="text-align: right; border-left: 1px solid #000;"><b>{{ number_format($spu['gapok_past'], 0) }}</b></td>
+                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;"><b>{{ number_format($spu['gapok_present'], 0) }}</b></td>
                                 </tr>
                                 <tr>
                                     <td style="border-left: 1px solid #000;">D.</td>
@@ -115,32 +107,32 @@
                                 <tr>
                                     <td style="border-left: 1px solid #000;">&nbsp;</td>
                                     <td>Makan</td>
-                                    <td style="text-align: right; border-left: 1px solid #000;">Makan</td>
-                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">Makan</td>
+                                    <td style="text-align: right; border-left: 1px solid #000;">{{ number_format($spu['t_makan_past'], 0) }}</td>
+                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">{{ number_format($spu['t_makan_present'], 0) }}</td>
                                 </tr>
                                 <tr>
                                     <td style="border-left: 1px solid #000;">&nbsp;</td>
                                     <td>Transport</td>
-                                    <td style="text-align: right; border-left: 1px solid #000;">Makan</td>
-                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">Makan</td>
+                                    <td style="text-align: right; border-left: 1px solid #000;">{{ number_format($spu['t_transport_past'], 0) }}</td>
+                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">{{ number_format($spu['t_transport_present'], 0) }}</td>
                                 </tr>
                                 <tr>
                                     <td style="border-left: 1px solid #000;">&nbsp;</td>
                                     <td>Jabatan</td>
-                                    <td style="text-align: right; border-left: 1px solid #000;">Makan</td>
-                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">Makan</td>
+                                    <td style="text-align: right; border-left: 1px solid #000;">{{ number_format($spu['t_jabatan_past'], 0) }}</td>
+                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">{{ number_format($spu['t_jabatan_present'], 0) }}</td>
                                 </tr>
                                 <tr>
                                     <td style="border-left: 1px solid #000;">&nbsp;</td>
                                     <td>Komunikasi</td>
-                                    <td style="text-align: right; border-left: 1px solid #000;">Makan</td>
-                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">Makan</td>
+                                    <td style="text-align: right; border-left: 1px solid #000;">{{ number_format($spu['t_komunikasi_past'], 0) }}</td>
+                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">{{ number_format($spu['t_komunikasi_present'], 0) }}</td>
                                 </tr>
                                 <tr>
                                     <td style="border-left: 1px solid #000;">&nbsp;</td>
                                     <td>Lain-lain</td>
-                                    <td style="text-align: right; border-left: 1px solid #000;">Makan</td>
-                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">Makan</td>
+                                    <td style="text-align: right; border-left: 1px solid #000;">{{ number_format($spu['t_lain_past'], 0) }}</td>
+                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">{{ number_format($spu['t_lain_present'], 0) }}</td>
                                 </tr>
                                 <tr>
                                     <td style="border-left: 1px solid #000;">&nbsp;</td>
@@ -163,40 +155,27 @@
                                 <tr>
                                     <td style="border-left: 1px solid #000;">&nbsp;</td>
                                     <td>Total Tunjangan</td>
-                                    <td style="text-align: right; border-left: 1px solid #000;">***</td>
-                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;">***</td>
+                                    <td style="text-align: right; border-left: 1px solid #000;"><b>{{ number_format($spu['total_tunjangan_past'], 0) }}</b></td>
+                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000;"><b>{{ number_format($spu['total_tunjangan_present'], 0) }}</b></td>
                                 </tr>
                                 <tr>
                                     <td style="border-left: 1px solid #000; border-bottom: 1px solid #000;">&nbsp;</td>
-                                    <td style="border-bottom: 1px solid #000;">Take Home Pay (THP)</td>
-                                    <td style="text-align: right; border-left: 1px solid #000; border-bottom: 1px solid #000;">***</td>
-                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;">***</td>
+                                    <td style="border-bottom: 1px solid #000;"><b>Take Home Pay (THP)</b></td>
+                                    <td style="text-align: right; border-left: 1px solid #000; border-bottom: 1px solid #000;"><b>{{ number_format($spu['upah_past'], 0) }}</b></td>
+                                    <td style="text-align: right; border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;"><b>{{ number_format($spu['upah_present'], 0) }}</b></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                {{-- <hr class="mt-2" /> --}}
-                <div class="row g-0">
-                    <div class="col-12 col-md-12 col-sm-12">
-                        <table class="table table-no-border">
-                            <tbody>
-                                <tr>
-                                    <td style="text-align: justify;"><u>Catatan</u><br/>*,**, dan ***, ditanggung oleh perusahaan</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="row px-2">
+                    <div class="col-md-12 col-sm-12">
+                        <p style="text-align: justify;"><u>Catatan</u><br/>*,**, dan ***, ditanggung oleh perusahaan</p>
                     </div>
                 </div>
-                <div class="row g-0">
-                    <div class="col-12 col-md-12 col-sm-12">
-                        <table class="table table-no-border">
-                            <tbody>
-                                <tr>
-                                    <td style="text-align: justify;">Demikian agar maklum adanya.<br/>Terima kasih.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="row px-2">
+                    <div class="col-md-12 col-sm-12">
+                        <p style="text-align: justify;">Demikian agar maklum adanya.<br/>Terima kasih.</p>
                     </div>
                 </div>
                 <div class="row g-0">
