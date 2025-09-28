@@ -59,8 +59,6 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         <div class="tab-pane fade show active" id="pills-current" role="tabpanel" aria-labelledby="pills-current-tab">
                             <form action="{{ route('payroll.upload_pemberitahuan_upah', 0) }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
                             @csrf
-                            {{-- <input type="hidden" id="view" name="view" value="pdf">
-                            <input type="hidden" id="perihal" name="perihal" value="pemberitahuan_upah"> --}}
                             <div class="row mt-2">
                                 <div class="col-md-4">
                                     <input name="template" id="template" class="form-control" type="file" required="">
@@ -102,9 +100,17 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             @php
                                                 $nik_property = json_decode($data->nik_property, true);
                                                 $email = json_decode($data->email, true);
+                                                $exists = App\Models\TrxPayrollPenyesuaianUpahLog::where(['no_surat'=>$data->no_surat, 'nik'=>$data->nik, 'id_status'=>2, 'bulan'=>$data->bulan, 'tahun'=>$data->tahun])->exists();
                                             @endphp
-                                            {{-- @if($data->id_addsub != '0')@endif --}}
-                                            <td><input id="id_current[]" name="id_current[]" type="checkbox" value="{{ $data->id }}"></td>
+                                            <td>
+                                                @if($data->id_addsub != '0')
+                                                    <input id="id_current[]" name="id_current[]" type="checkbox" value="{{ $data->id }}">
+                                                @elseif($data->id_addsub == '0' && !empty($data->param1))
+                                                    @if($exists)
+                                                        <input id="id_current[]" name="id_current[]" type="checkbox" value="{{ $data->id }}">
+                                                    @endif
+                                                @endif
+                                            </td>
                                             <td>{{ ++$no }}</td>
                                             <td>{{ $data->id }}</td>
                                             <td>{{ $data->tahun }}</td>
