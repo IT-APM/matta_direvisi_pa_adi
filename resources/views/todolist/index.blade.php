@@ -237,6 +237,21 @@
             </div>
         </div>
         @endcan
+        @can('notif_letter')
+        <div class="col-xl-4 col-sm-4">
+            <div class="card bg-warning">
+                <div class="card-body">
+                    <div class="media faq-widgets">
+                        <div class="media-body text-center">
+                            <a href="{{ route('todolist.show', [0, 'filename' => 'emails.penyesuaian_upah0']) }}" style="color: #FFFFFF;">
+                                <h5><span @if (count($notif_letter)>0) class="badge bg-danger" @else class="badge bg-warning" @endif>{{ count($notif_letter) }}</span><br/><i class="fa fa-file-text-o"></i> NOTIFICATION LETTER</h5>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endcan
     </div>
     <!--  -->
 </div>
