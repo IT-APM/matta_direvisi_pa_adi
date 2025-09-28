@@ -147,8 +147,11 @@ class TrxToDoListController extends Controller
         // recruitment0
         $where = ['nik' => auth()->user()->nik, 'filename' => 'emails.recruitment0'];
         $recruitment = ToDoList::where($where)->orderBy('id', 'desc')->get();
+        // penyesuaian_upah0
+        $where = ['nik' => auth()->user()->nik, 'filename' => 'emails.penyesuaian_upah0'];
+        $notif_letter = ToDoList::where($where)->orderBy('id', 'desc')->get();
         // 
-        return view('todolist.index', compact('trxKebutuhan','trxCuti','trxIzin','trxNonAktif','trxPelatihan','trxPenilaian','trxReimburse','trxRekomendasi','trxOvertime','trxBpd','trxSakit','recruitment','is_pdp'));
+        return view('todolist.index', compact('trxKebutuhan','trxCuti','trxIzin','trxNonAktif','trxPelatihan','trxPenilaian','trxReimburse','trxRekomendasi','trxOvertime','trxBpd','trxSakit','recruitment','is_pdp','notif_letter'));
     }
 
     /**
@@ -255,6 +258,12 @@ class TrxToDoListController extends Controller
         // recruitment0
         else if($filename == 'emails.recruitment0'){
             $where = ['nik' => auth()->user()->nik, 'filename' => 'emails.recruitment0'];
+            $trx = ToDoList::where($where)->orderBy('id', 'desc')->get();
+            return view('todolist.list', compact('no', 'trx'));
+        }
+        // penyesuaian_upah0
+        else if($filename == 'emails.penyesuaian_upah0'){
+            $where = ['nik' => auth()->user()->nik, 'filename' => 'emails.penyesuaian_upah0'];
             $trx = ToDoList::where($where)->orderBy('id', 'desc')->get();
             return view('todolist.list', compact('no', 'trx'));
         }
