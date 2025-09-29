@@ -17,8 +17,8 @@ class TrxBirthdayController extends Controller
     public function scheduler($id){
         // dd($id);
         $this->getBirthday();
-        // 
         $trx = TrxBirthday::orderBy('id', 'desc')->get();
+        // $arr = [];
         foreach($trx as $_trx){
             $email = json_decode($_trx->email, true);
             // parameter yang dipassing ke sendemail
@@ -27,10 +27,11 @@ class TrxBirthdayController extends Controller
             $mailData['filename'] = 'emails.birthday0';
             $mailData['to'] = $email['to'];
             $mailData['cc'] = $email['cc'];
+            // array_push($arr, $mailData);
             $this->sendEmail($mailData);
         }
-        // 
         return response()->json( [ 'success' => true ], 200 );
+        // return response()->json( [ 'arr' => $arr ], 200 );
     }
 
     public function getNikProperty($nik)
@@ -55,6 +56,18 @@ class TrxBirthdayController extends Controller
     }
 
     public function getBirthday(){
+        // pindahkan ke trx_tbl_birthday_log
+        $trx = TrxBirthday::orderBy('id', 'asc')->get();
+        foreach ($trx as $_trx) {
+            $data = new TrxBirthdayLog;
+            $data->nik = $_trx->nik;
+            $data->nik_property = $_trx->nik_property;
+            $data->email = $_trx->email;
+            $data->birthday = $_trx->birthday;
+            $data->save();
+            // delete trx_tbl_birthday
+            TrxBirthday::find($_trx->id)->delete();
+        }
         // hari ini
         $today = Carbon::today();
         // 3 hari lalu
