@@ -246,6 +246,7 @@ class OvertimeApi extends Controller
         $data3 = $this->checkStartEnd($from, $to);
         // Datetime OT bukan waktu kerja
         $data4 = $this->cekDatetimeKerja($nik, $from, $to);
+        // return response()->json( [ 'success' => true, 'data4' => $data4 ], 200 );
         // Jumlah OT weekday yang bisa diambil tidak melebihi quota
         $data5 = $this->calOTLength($nik, $from, $diff);
         array_push($arr, $data1, $data2, $data3, $data4, $data5);
@@ -635,12 +636,18 @@ class OvertimeApi extends Controller
         $tglFrom = Carbon::parse($from)->format('Y-m-d');
         $tglTo = Carbon::parse($to)->format('Y-m-d');
         $where = [ 'nik' => $nik ];
-        $data = Karyawan::select('mtr_tbl_working_group.clockin','mtr_tbl_working_group.clockout','mtr_tbl_working_group.is_reguler','mtr_tbl_karyawan.wg_id')->leftJoin('mtr_tbl_working_group', 'mtr_tbl_working_group.id', '=', 'mtr_tbl_karyawan.wg_id')->where($where)->first();
+        $data = Karyawan::select('mtr_tbl_working_group.start_clockin','mtr_tbl_working_group.clockin','mtr_tbl_working_group.clockout','mtr_tbl_working_group.is_reguler','mtr_tbl_karyawan.wg_id')->leftJoin('mtr_tbl_working_group', 'mtr_tbl_working_group.id', '=', 'mtr_tbl_karyawan.wg_id')->where($where)->first();
         // hanya untuk reguler, 1 jam setelah window-out
-        $clockinFrom = Carbon::parse($tglFrom.' '.$data['clockin']);
+        $clockinFrom = Carbon::parse($tglFrom.' '.$data['start_clockin']);
         $clockoutFrom = Carbon::parse($tglFrom.' '.$data['clockout'])->addHour();
-        $clockinTo = Carbon::parse($tglTo.' '.$data['clockin']);
+        $clockinTo = Carbon::parse($tglTo.' '.$data['start_clockin']);
         $clockoutTo = Carbon::parse($tglTo.' '.$data['clockout'])->addHour();
+        // return response()->json( [ 'success' => true, 
+        //     ['clockinFrom' => Carbon::parse($clockinFrom)->format('Y-m-d H:i:s'), 
+        //     'clockoutFrom' => Carbon::parse($clockoutFrom)->format('Y-m-d H:i:s'), 
+        //     'clockinTo' => Carbon::parse($clockinTo)->format('Y-m-d H:i:s'), 
+        //     'clockoutTo' => Carbon::parse($clockoutTo)->format('Y-m-d H:i:s')] 
+        // ], 200 );
         // start
         // khusus jam kerja karyawan reguler Bulan Ramadhan 08-16
         // tetapi jam overtime tetap dimulai dari jam 19 jadi ditambah 1+2 jam
