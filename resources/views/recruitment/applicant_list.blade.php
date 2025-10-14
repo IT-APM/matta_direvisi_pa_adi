@@ -162,9 +162,9 @@
                                                 $log = App\Models\TrxRecruitmentLog::where(['id_identitas'=>$data->id])->pluck('id_status')->toArray();
                                                 // dd($log);
                                                 // check apakah sudah mulai psikotes, jika sudah maka tidak bisa reschedule psikotes
-                                                // $check3 = App\Models\TrxRecruitmentPsychotest::where(['id_identitas' => $data->id, 'jenis' => 0, 'nomor' => 0])->whereNull('check_out')->exists();
+                                                $check3 = App\Models\TrxRecruitmentPsychotest::where(['id_identitas' => $data->id, 'jenis' => 1, 'nomor' => 1])->whereNull('check_out')->exists();
                                                 // check apakah masih id_status => 4=Psychotest Send
-                                                $check3 = $data->id_status == 4 ? true : false;
+                                                // $check3 = $data->id_status == 4 ? true : false;
                                                 // apakah ada revisi psikotest
                                                 $n_log = App\Models\TrxRecruitmentPsychotestLog::selectRaw('COUNT(*) as total')->where(['id_identitas'=>$data->id])->groupBy('urutan')->get()->count();
                                             @endphp
