@@ -49,7 +49,7 @@
                                         dan
                                         kompetensi Anda.</p>
                                     <p style="text-align: justify">Kami berharap Anda dapat mengikuti seluruh rangkaian
-                                        test dengan baik dan
+                                        tes dengan baik dan
                                         menunjukkan kemampuan terbaik Anda. Semoga hasil yang diperoleh dapat memberikan
                                         gambaran yang jelas mengenai kecocokan Anda dengan posisi yang dilamar.</p>
                                     <p style="text-align: justify">Harap diingat bahwa tidak ada jawaban benar atau
@@ -58,25 +58,25 @@
                                     <p style="text-align: justify">Pastikan Anda berada di tempat yang tenang dan
                                         memiliki koneksi internet yang
                                         stabil. Luangkan waktu dengan baik dan fokus dalam mengerjakan setiap soal.</p>
-                                    <p style="text-align: justify">Proses Psikotes ini terdiri dari 4 tahapan test dan
-                                        di setiap tahapan test memiliki
+                                    <p style="text-align: justify">Proses Psikotes ini terdiri dari beberapa jenis tes dan
+                                        di setiap jenis tes memiliki
                                         petunjuk pengerjaan dan instruksi yang berbeda - beda, mohon untuk membaca
                                         dengan
-                                        baik dan teliti seluruh petunjuk dan instruksi di setiap tahapan test. Seluruh
-                                        tahapan test memiliki batasan waktu, jadi mohon untuk mengerjakan semaksimal
+                                        baik dan teliti seluruh petunjuk dan instruksi di setiap jenis tes. Seluruh
+                                        jenis tes memiliki batasan waktu, jadi mohon untuk mengerjakan semaksimal
                                         mungkin
                                         sesuai dengan batasan waktu yang diberikan.</p>
                                     <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Batasan waktu untuk mengerjakan seluruh psikotes ini adalah {{ round($trx->remain/60) }} menit
                                         <br/>Tes ini akan dimulai setelah anda klik tombol Start</p>
-                                    <p style="text-align: justify">Jika ada pertanyaan atau kendala selama proses test
+                                    <p style="text-align: justify">Jika ada pertanyaan atau kendala selama proses tes
                                         berlangsung, jangan ragu untuk segera menghubungi tim kami.
                                         <br />Terima kasih atas perhatian dan partisipasi Anda. Selamat mengerjakan
-                                        test.</p>
+                                        tes.</p>
                                         <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </div>
                                 <form class="text-end"
                                     action="{{ route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))]) }}"
-                                    method="GET" enctype="multipart/form-data"
+                                    method="POST" enctype="multipart/form-data"
                                     onsubmit="return confirm('Are you sure want to start this psychotest?');">
                                     @csrf
                                     <button class="btn btn-primary" type="submit">Start</button>
