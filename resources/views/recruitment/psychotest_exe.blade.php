@@ -50,6 +50,8 @@
                         BAUM
                         @elseif($soal->jenis == 5)
                         DAP
+                        @elseif($soal->jenis == 6)
+                        TIU 5
                         @endif
                     </h3>
                 </div>
@@ -65,7 +67,7 @@
                                 @if($soal->jenis == 1 && $soal->nomor > 0)
                                 <span class="text-uppercase fw-bold">Petunjuk Pengerjaan</span>
                                 <span>
-                                    {{-- <br/>Pada test ini terdapat {{ $jumlah }} nomor soal. --}}
+                                    {{-- <br/>Pada tes ini terdapat {{ $jumlah }} nomor soal. --}}
                                     <br/>Tugas anda adalah memilih pernyataan yang paling menggambarkan dengan diri anda.
                                     <br/>Jika pernyataan A yang paling menggambarkan dengan diri anda silahkan pilih di samping huruf A pada kolom yang tersedia.
                                     <br/>Jika pernyataan B yang paling menggambarkan dengan diri anda silahkan pilih di samping huruf B pada kolom yang tersedia.
@@ -75,14 +77,14 @@
                                 @elseif($soal->jenis == 1 && $soal->nomor == 0)
                                 <span>
                                     <p>Semangat Pagi!</p>
-                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-{{ $soal->jenis }} dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p>Selanjutnya, Anda akan menjalani Tes EPPS dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam tes berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
                                     <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
                                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </span>
                                 @elseif($soal->jenis == 2 && $soal->nomor == 0)
                                 <span>
                                     <p>Semangat Pagi!</p>
-                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-{{ $soal->jenis }} dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p>Selanjutnya, Anda akan menjalani Tes PAPI KOSTIC dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam tes berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
                                     <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
                                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </span>
@@ -97,7 +99,7 @@
                                 @elseif($soal->jenis == 3 && $soal->nomor == 0)
                                 <span>
                                     <p>Semangat Pagi!</p>
-                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-{{ $soal->jenis }} dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p>Selanjutnya, Anda akan menjalani Tes DISC dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam tes berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
                                     <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
                                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </span>
@@ -113,14 +115,14 @@
                                 @elseif($soal->jenis == 4 && $soal->nomor == 0)
                                 <span>
                                     <p>Semangat Pagi!</p>
-                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-{{ $soal->jenis }} dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p>Selanjutnya, Anda akan menjalani Tes BAUM dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam tes berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
                                     <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
                                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </span>
                                 @elseif($soal->jenis == 5 && $soal->nomor == 0)
                                 <span>
                                     <p>Semangat Pagi!</p>
-                                    <p>Selanjutnya, Anda akan menjalani tahapan test ke-5 dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam test berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
+                                    <p>Selanjutnya, Anda akan menjalani Tes DAP dalam proses psikotes. Silahkan bersiap dan mengerjakan dengan sebaik-baiknya. Ikuti arahan atau instruksi dalam tes berikut ini. Psikotes ini dirancang untuk menilai berbagai aspek kemampuan serta kepribadian yang berhubungan dengan posisi yang Anda lamar. Semoga Anda mendapatkan hasil yang terbaik.</p>
                                     <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Tes ini akan dimulai setelah anda klik tombol Start</p>
                                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </span>
@@ -147,19 +149,19 @@
                             @if(in_array($soal->jenis, [1,2]))
                             <form
                                 action="{{ route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))]) }}"
-                                method="GET" enctype="multipart/form-data"
+                                method="POST" enctype="multipart/form-data"
                                 @if($soal->nomor == 0) onsubmit="return confirm('Are you sure want to start this test?');" @elseif($soal->nomor > 0) onsubmit="return confirm('Are you sure want to submit this data?');" @endif>
                                 @csrf
                             @elseif(in_array($soal->jenis, [3]))
                             <form name="_form" id="_form"
                                 action="{{ route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))]) }}"
-                                method="GET" enctype="multipart/form-data"
+                                method="POST" enctype="multipart/form-data"
                                 @if($soal->nomor == 0) onsubmit="return confirm('Are you sure want to start this test?');" @elseif($soal->nomor > 0) onsubmit="return validateForm()" @endif>
                                 @csrf
                             @elseif(in_array($soal->jenis, [4,5]) && $soal->nomor == 0)
                             <form name="_form" id="_form"
                                 action="{{ route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))]) }}"
-                                method="GET" enctype="multipart/form-data"
+                                method="POST" enctype="multipart/form-data"
                                 @if($soal->nomor == 0) onsubmit="return confirm('Are you sure want to start this test?');" @elseif($soal->nomor > 0) onsubmit="return confirm('Are you sure want to submit this data?');" @endif>
                                 @csrf
                             @elseif(in_array($soal->jenis, [4,5]) && $soal->nomor > 0)
@@ -169,6 +171,12 @@
                                 @if($soal->nomor == 0) onsubmit="return confirm('Are you sure want to start this test?');" @elseif($soal->nomor > 0) onsubmit="return confirm('Are you sure want to submit this data?');" @endif>
                                 @csrf
                                 <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt(array($trx->id, 'psychotest', $soal->id)) }}">
+                            @elseif(in_array($soal->jenis, [6]))
+                            <form
+                                action="{{ route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))]) }}"
+                                method="POST" enctype="multipart/form-data"
+                                @if($soal->urutan == 0) onsubmit="return confirm('Are you sure want to start this test?');" @elseif($soal->urutan > 0) onsubmit="return confirm('Are you sure want to submit this data?');" @endif>
+                                @csrf
                             @endif
                                 <input type="hidden" id="je" name="je" value="{{ $soal->jenis }}">
                                 <input type="hidden" id="no" name="no" value="{{ $soal->nomor }}">
@@ -295,13 +303,94 @@
                                     </div>
                                     @endif
                                 </div>
+                                @elseif(in_array($soal->jenis, [6]) && $soal->nomor == 0)
+                                <div class="col-12">
+                                    <div class="card-body">
+                                        @if($soal->urutan == 1)
+                                        <span>Contoh 1:<br>Bila A dikecilkan diperoleh B. Bila sekarang dengan C dilakukan hal serupa, jadi C dikecilkan.
+                                            <br/>Diperoleh gambar 1, maka dari itu silahkan memilih pilihan 1 pada soal yang tersedia</span>
+                                        @elseif($soal->urutan == 2)
+                                        <span>Contoh 2:<br>Bila A diputar diperoleh B, Bila C diputar diperoleh gambar...
+                                            <br/>Carilah gambar tersebut dan pilihlah jawaban yang benar dari pilihan gambar yang tersedia</span>
+                                        @elseif($soal->urutan == 3)
+                                        <span>Latihan 1:<br>Seperti halnya A dirubah menjadi B, demikian pula C dirubah menjadi salah satu dari kelima gambar berikutnya.
+                                            <br/>Carilah gambar tersebut dan pilihlah jawaban yang benar dari pilihan gambar yang tersedia</span>
+                                        @elseif($soal->urutan == 4)
+                                        <span>Latihan 2:<br>Seperti halnya A dirubah menjadi B, demikian pula C dirubah menjadi salah satu dari kelima gambar berikutnya.
+                                            <br/>Carilah gambar tersebut dan pilihlah jawaban yang benar dari pilihan gambar yang tersedia</span>
+                                        @endif
+                                        {{-- Bagian atas: Gambar --}}
+                                        <div class="text-center">
+                                            <img src="{{ asset('assets/images/matta/tiu5/soal0'.$soal->urutan.'.png') }}" alt="Gambar" class="img-fluid" style="max-height: 300px;">
+                                        </div>
+                                        {{-- Bagian bawah: Pilihan radio button horizontal --}}
+                                        <div class="text-end">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="a" id="a" required="" value="1">
+                                                <label class="form-check-label" for="pilihan1">Pilihan 1</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="a" id="a" required="" value="2">
+                                                <label class="form-check-label" for="pilihan2">Pilihan 2</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="a" id="a" required="" value="3">
+                                                <label class="form-check-label" for="pilihan3">Pilihan 3</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="a" id="a" required="" value="4">
+                                                <label class="form-check-label" for="pilihan4">Pilihan 4</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="a" id="a" required="" value="5">
+                                                <label class="form-check-label" for="pilihan5">Pilihan 5</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @elseif(in_array($soal->jenis, [6]) && $soal->nomor > 0)
+                                <div class="col-12">
+                                    <div class="card-body">
+                                        {{-- Bagian atas: Gambar --}}
+                                        <div class="text-center">
+                                            <img src="{{ asset('assets/images/matta/tiu5/soal'.$soal->nomor.'.png') }}" alt="Gambar" class="img-fluid" style="max-height: 300px;">
+                                        </div>
+                                        {{-- Bagian bawah: Pilihan radio button horizontal --}}
+                                        <div class="text-end">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="a" id="a" required="" value="1">
+                                                <label class="form-check-label" for="pilihan1">Pilihan 1</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="a" id="a" required="" value="2">
+                                                <label class="form-check-label" for="pilihan2">Pilihan 2</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="a" id="a" required="" value="3">
+                                                <label class="form-check-label" for="pilihan3">Pilihan 3</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="a" id="a" required="" value="4">
+                                                <label class="form-check-label" for="pilihan4">Pilihan 4</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="a" id="a" required="" value="5">
+                                                <label class="form-check-label" for="pilihan5">Pilihan 5</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 @endif
                                 <hr class="mt-2 mb-2" />
                                 <div class="col-12 text-center">
                                     @if($soal->nomor > 0)
                                     <button class="btn btn-primary" type="submit">Submit</button>
                                     @elseif($soal->nomor == 0)
-                                    <button class="btn btn-primary" type="submit">Start</button>
+                                        @if($soal->jenis == 6 && $soal->urutan > 0)
+                                        <button class="btn btn-primary" type="submit">Submit</button>
+                                        @else
+                                        <button class="btn btn-primary" type="submit">Start</button>
+                                        @endif
                                     @endif
                                 </div>
                             </form>
