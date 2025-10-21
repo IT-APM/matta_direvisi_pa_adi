@@ -14,6 +14,8 @@ use App\Models\TrxKebutuhanLog;
 use App\Models\TrxRecruitment;
 use App\Models\MtrRecruitmentStatus;
 use App\Models\MtrRecruitmentSoal;
+use App\Models\MtrRecruitmentSoalTiu5;
+use App\Models\MtrRecruitmentSoalTiu5Norma;
 use App\Models\TrxRecruitmentIdentitas;
 use App\Models\TrxRecruitmentAnak;
 use App\Models\TrxRecruitmentSaudara;
@@ -23,6 +25,7 @@ use App\Models\TrxRecruitmentOrganisasi;
 use App\Models\TrxRecruitmentPekerjaan;
 use App\Models\TrxRecruitmentPsychotest;
 use App\Models\TrxRecruitmentPsychotestLog;
+use App\Models\TrxRecruitmentTiu5;
 use App\Models\TrxRecruitmentInterview;
 use App\Models\TrxRecruitmentLog;
 use App\Models\MtrRecruitmentBenefit;
@@ -2197,17 +2200,36 @@ class TrxRecruitmentController extends Controller
             // return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
             return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
         }
+        $jenis_psikotes = $request->jenis_psikotes;
+        $type = $request->type;
         $trx = TrxRecruitmentIdentitas::find(Crypt::decrypt($request->id));
         $_trx = TrxKebutuhanMaster::find($trx->id_kebutuhan);
         // $posisi = $_trx->_pekerjaan->pekerjaan;
         // dd($trx);
         $trx->id_status = $request->id_status;
         $trx->check_in = $request->check_in;
-        // default durasi pengerjaan adalah 150 menit (2.5 jam)
-        $trx->check_out = Carbon::parse($request->check_in)->addMinutes(150);
+        // <option value="1">TIU 5</option>
+        // jika diberikan tiu5 maka ditambah 30 menit
+        if($jenis_psikotes == 1){
+            $trx->check_out = Carbon::parse($request->check_in)->addMinutes(25);
+        }
+        // <option value="2">EPPS, PAPI Kostick, DISC, BAUM, DAP</option>
+        // jika diberikan existing maka ditambah 150 menit
+        elseif($jenis_psikotes == 2){
+            $trx->check_out = Carbon::parse($request->check_in)->addMinutes(150);
+        }
+        // <option value="3">TIU 5 & (EPPS, PAPI Kostick, DISC, BAUM, DAP)</option>
+        // jika diberikan tiu5 & existing maka ditambah 25 + 150 menit
+        elseif($jenis_psikotes == 3){
+            $trx->check_out = Carbon::parse($request->check_in)->addMinutes(175);
+        }
         // dan jika belum terisi karena sudah dikerjakan
         if(empty($trx->remain)){
             $trx->remain = Carbon::parse($trx->check_out)->diffInSeconds(Carbon::parse($trx->check_in));
+        }
+        // jika extend
+        if($type == 'extend'){
+            $trx->check_out = Carbon::parse($request->check_in)->addMinutes(60);
         }
         // jika revisi psikotes
         if($request->process == 'psikotest_revisi'){
@@ -2272,9 +2294,17 @@ class TrxRecruitmentController extends Controller
         $this->insertLog($arr);
         // end
         // jika belum psychotest
+        // <option value="2">EPPS, PAPI Kostick, DISC, BAUM, DAP</option>
+        // <option value="3">TIU 5 & (EPPS, PAPI Kostick, DISC, BAUM, DAP)</option>
         $where = ['id_identitas'=>$trx->id];
-        if(!TrxRecruitmentPsychotest::where($where)->exists()){
+        if(!TrxRecruitmentPsychotest::where($where)->exists() && in_array($jenis_psikotes, [2,3])){
             $this->insertPsychotest($trx);
+        }
+        // jika diberikan tiu5 dan belum ada maka insert into TrxRecruitmentTiu5
+        // <option value="1">TIU 5</option>
+        // <option value="3">TIU 5 & (EPPS, PAPI Kostick, DISC, BAUM, DAP)</option>
+        if(!TrxRecruitmentTiu5::where($where)->exists() && in_array($jenis_psikotes, [1,3])){
+            $this->insertTiu5($trx);
         }
         // source: https://ziixon93.blogspot.com/2020/07/cara-memasang-imagemagick-di-xampp.html
         $qr = QrCode::format('png')->size(500)->generate(route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest'))]));
@@ -2482,8 +2512,35 @@ class TrxRecruitmentController extends Controller
         }
     }
 
+    public function insertTiu5($id)
+    {
+        $trx = MtrRecruitmentSoalTiu5::orderBy('id', 'asc')->get();
+        foreach($trx as $_trx){
+            $data = new TrxRecruitmentTiu5;
+            $data->id_identitas = $id->id;
+            $data->jenis = $_trx->jenis;
+            $data->nomor = $_trx->nomor;
+            $data->urutan = $_trx->urutan;
+            $data->soal = $_trx->soal;
+            $data->kunci = $_trx->kunci;
+            $data->save();
+        }
+    }
+
     public function psychotest(Request $request, $id)
     {
+        // contoh param yang dipassing
+        // array:4 [
+        //     "_token" => "P4iAcbVv66NMtwARC44IeoyDKNzoVpxPIOIwcOBf"
+        //     "je" => "1"
+        //     "no" => "2"
+        //     "a" => "1"
+        // ]
+        // array:3 [
+        //     0 => 11150
+        //     1 => "psychotest"
+        //     2 => 160715
+        // ]
         try {
             // dd($request->all(), Crypt::decrypt($id));
             $remain = 0;
@@ -2496,6 +2553,63 @@ class TrxRecruitmentController extends Controller
             $_trx_ = TrxKebutuhanMaster::find($trx->id_kebutuhan);
             // ambil sisa waktu yang tersisa
             $remain = $_now->diffInSeconds(Carbon::parse($trx->check_out));
+            // check apakah ada tiu5 atau check_out null
+            $tiu5 = TrxRecruitmentTiu5::where(['id_identitas' => $id])->whereNull('check_out')->orderBy('jenis', 'asc')->orderBy('nomor', 'asc')->first();
+            if(!empty($tiu5)){
+                // dd($request->all());
+                // $_id[2] = id-nya trx_tbl_recruitment_tiu5
+                if(!empty($_id[2])){
+                    $soal = TrxRecruitmentTiu5::find($_id[2]);
+                    $soal->check_out = $_now;
+                    $soal->jawaban = $request->a;
+                    // jika jawaban benar sama dengan kunci maka dibarikan 1
+                    if($soal->nomor > 0){
+                        $soal->cek = 0;
+                        if($request->a == $soal->kunci){
+                            $soal->cek = 1;
+                        }
+                    }
+                    $soal->update();
+                }
+                $posisi = $_trx_->_pekerjaan->pekerjaan;
+                $where = ['id_identitas' => $id];
+                $soal = TrxRecruitmentTiu5::where($where)->whereNull('check_out')->orderBy('jenis', 'asc')->orderBy('nomor', 'asc')->first();
+                if(!empty($soal)){
+                    if((Carbon::now() > Carbon::parse($trx->check_in)) && (Carbon::now() < Carbon::parse($trx->check_out))){
+                        $where = ['id_identitas' => $soal->id_identitas, 'jenis' => $soal->jenis];
+                        $jumlah = TrxRecruitmentTiu5::where($where)->where('nomor', '>', 0)->count();
+                        $soal->check_in = $_now;
+                        $soal->remain = $remain;
+                        $soal->update();
+                        // 
+                        $trx->remain = $remain;
+                        $trx->update();
+                        if($soal->jenis == 6){
+                            if($soal->nomor == 0 & $soal->urutan == 0){
+                                return view('recruitment.tiu5_pre', compact('trx','soal', 'jumlah'));
+                            }else{
+                                return view('recruitment.psychotest_exe', compact('trx','soal', 'jumlah'));
+                            }
+                        }
+                    }else{
+                        $msg = '<p>Yth. '.$trx->nama.',<br/>Dengan Hormat,</p>
+                        <p>Kami ingin menginformasikan bahwa psikotest belum dapat dimulai karena belum sesuai dengan jadwal dan waktu yang telah diinformasikan.</p>
+                        <p>Mohon kesediaannya untuk menunggu sesuai jadwal dan waktu yang telah diinformasikan. Apabila ada pertanyaan atau kebutuhan lainnya, jangan ragu untuk menghubungi kami melalui [nomor telepon/email].</p>
+                        <p>Terima kasih,</p>
+                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                        return view('recruitment.thank', compact('msg'));
+                    }
+                }else{
+                    if(empty($trx->check_in)){
+                        $msg = '<p>Yth. '.$trx->nama.',<br/>Dengan Hormat,</p>
+                        <p>Kami ingin menginformasikan bahwa psikotest belum dapat dimulai karena belum sesuai dengan jadwal dan waktu yang telah diinformasikan.</p>
+                        <p>Mohon kesediaannya untuk menunggu sesuai jadwal dan waktu yang telah diinformasikan. Apabila ada pertanyaan atau kebutuhan lainnya, jangan ragu untuk menghubungi kami melalui [nomor telepon/email].</p>
+                        <p>Terima kasih,</p>
+                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                        return view('recruitment.thank', compact('msg'));
+                    }
+                }
+            }
             // $_id[2] = id-nya trx_tbl_recruitment_psychotest
             if(!empty($_id[2])){
                 $soal = TrxRecruitmentPsychotest::find($_id[2]);
@@ -2511,6 +2625,17 @@ class TrxRecruitmentController extends Controller
                     $soal->jawaban2 = $request->k;
                 }
                 $soal->update();
+            }
+            // check apakah ada tiu5 dan semua sudah dikerjakan
+            if(TrxRecruitmentTiu5::where(['id_identitas' => $id])->whereNotNull('check_in')->whereNotNull('check_out')->whereNotNull('remain')->exists()){
+                // jika sudah dikerjakan maka pengantar tidak diberikan
+                if(TrxRecruitmentPsychotest::where(['id_identitas' => $id, 'jenis' => 0, 'nomor' => 0])->whereNull('check_in')->whereNull('check_out')->whereNull('remain')->exists()){
+                    $soal = TrxRecruitmentPsychotest::where($where)->whereNull('check_out')->orderBy('jenis', 'asc')->orderBy('nomor', 'asc')->first();
+                    $soal->check_in = $_now;
+                    $soal->check_out = $_now;
+                    $soal->remain = $remain;
+                    $soal->update();
+                }
             }
             $posisi = $_trx_->_pekerjaan->pekerjaan;
             $where = ['id_identitas' => $id];
@@ -2557,7 +2682,12 @@ class TrxRecruitmentController extends Controller
                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
                     // jika sudah tidak ada lagi soal setelah soal terakhir maka dikirimkan email ke kandidat
                     if(!empty($_id[2])){
-                        $arr = [$trx->id,5,$trx->nama,'','external',''];
+                        $headers = [];
+                        foreach ($request->headers->all() as $k => $v) {
+                            $headers[$k] = $v;
+                        };
+                        $catatan = ['url'=>request()->fullUrl(),'method' => $request->method(),'ip' => $request->ip(),'user_agent' => $request->userAgent(),'headers' => $headers];
+                        $arr = [$trx->id,5,$trx->nama,'','external',response()->json($catatan)];
                         $this->insertLog($arr);
                         // parameter yang dipassing ke sendemail
                         $mailData['title'] = 'Psikotes Selesai';
