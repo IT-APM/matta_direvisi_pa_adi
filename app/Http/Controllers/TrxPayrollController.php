@@ -1546,7 +1546,12 @@ class TrxPayrollController extends Controller
                         $payroll = TrxPayrollLog::where($where)->orderBy('id', 'asc')->get();
                         $add = TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
                         $total_tunjangan = $add->sum('angka');
-                        $upah_past = $payroll[0]->gapok + $total_tunjangan;
+                        // $upah_past = $payroll[0]->gapok + $total_tunjangan;
+                        $gapok_last = 0;
+                        if(!empty($payroll[0]->gapok)){
+                            $gapok_last = $payroll[0]->gapok;
+                        }
+                        $upah_past = $gapok_last + $total_tunjangan;
                         if($upah_present != $upah_past){
                             // insert new data
                             $trx = New TrxPayrollEmail;
