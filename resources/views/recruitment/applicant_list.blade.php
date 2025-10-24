@@ -175,8 +175,8 @@
                                                 <td>{{ $nomor }}</td>
                                                 <td>
                                                     <a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id)]) }}" data-toggle="tooltip" title='Process'><i class="icon-pencil-alt"></i></a>
-                                                    {{-- 4=Psychotest Send --}}
-                                                    @if($data->id_status == 4)&nbsp;<a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'type'=>'extend']) }}" data-toggle="tooltip" title='Extend'><i class="fa fa-calendar-plus-o"></i></a>@endif
+                                                    {{-- jika belum 5=Psychotest Done maka bisa diberikan extend --}}
+                                                    @if(!in_array(5, $log) && $data->id_status > 3)&nbsp;<a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'type'=>'extend']) }}" data-toggle="tooltip" title='Extend'><i class="fa fa-calendar-plus-o"></i></a>@endif
                                                     <br/><a href="{{ route('recruitment.applicant_item', [Crypt::encrypt($data->id)]) }}" data-toggle="tooltip" title='Form' target="_blank"><i class="fa fa-file-text-o" style="color:green"></i></a>
                                                     &nbsp;<a href="{{ route('recruitment.psychotest', [Crypt::encrypt(array($data->id, 'psychotest'))]) }}" data-toggle="tooltip" title='Psychotest' target="_blank"><i class="fa fa-file-text-o" style="color:green"></i></a>
                                                 </td>
