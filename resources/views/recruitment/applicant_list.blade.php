@@ -158,6 +158,12 @@
                                                 $check2 = App\Models\TrxRecruitmentPsychotest::where(['id_identitas' => $data->id])->whereNull('check_out')->exists();
                                                 // jika ada soal dan sudah selesai maka tampilkan hasilnya
                                                 $check = $check1 && !$check2;
+                                                // cek apakah sudah ada soal tiu5
+                                                $check_tiu51 = App\Models\TrxRecruitmentTiu5::where(['id_identitas' => $data->id])->exists();
+                                                // cek apakah masih ada yang belum selesai
+                                                $check_tiu52 = App\Models\TrxRecruitmentTiu5::where(['id_identitas' => $data->id])->whereNull('check_out')->exists();
+                                                // jika ada soal dan sudah selesai maka tampilkan hasilnya
+                                                $check_tiu5 = $check_tiu51 && !$check_tiu52;
                                                 // $status = App\Models\TrxRecruitmentIdentitas::find($data->id);
                                                 $log = App\Models\TrxRecruitmentLog::where(['id_identitas'=>$data->id])->pluck('id_status')->toArray();
                                                 // dd($log);
@@ -182,6 +188,9 @@
                                                 </td>
                                                 <td>
                                                     {{-- jika ada soal dan sudah selesai maka tampilkan hasilnya --}}
+                                                    @if($check_tiu5)
+                                                    <a href="{{ route('recruitment.psychotestexcel', [Crypt::encrypt([$data->id,6])]) }}" target="_blank" data-toggle="tooltip" title="TIU5"><i class="fa fa-file-text-o"></i></a><br/>
+                                                    @endif
                                                     @if($check)
                                                     <a href="{{ route('recruitment.psychotestexcel', [Crypt::encrypt([$data->id,1])]) }}" target="_blank" data-toggle="tooltip" title="EPPS"><i class="fa fa-file-text-o"></i></a>
                                                     &nbsp;<a href="{{ route('recruitment.psychotestexcel', [Crypt::encrypt([$data->id,2])]) }}" target="_blank" data-toggle="tooltip" title="PAPI Kostick"><i class="fa fa-file-text-o"></i></a>

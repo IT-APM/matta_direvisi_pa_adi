@@ -183,7 +183,7 @@
                             <table class="table table-striped">
                                 <tbody>
                                     <tr>
-                                        <td width="30%">Pelatihan ke</td>
+                                        <td width="30%">Pengajuan Pelatihan ke</td>
                                         <td width="70%">{{ $trx->ke }}</td>
                                     </tr>
                                     <tr>
@@ -206,12 +206,23 @@
                                         <td>Penyelenggara</td>
                                         <td>{{ $trx->penyelenggara }}</td>
                                     </tr>
+                                    @php
+                                    $tanggal_range = [];
+                                    if(!empty($trx->tanggal_range)){
+                                        $tanggal_range = json_decode($trx->tanggal_range, true);
+                                        $formatted_ranges = array_map(function($range) {
+                                            [$mulai, $selesai] = array_map('trim', explode('s/d', $range));
+                                            return Carbon\Carbon::createFromFormat('Y-m-d', $mulai)->format('d-m-Y') . ' s/d ' . Carbon\Carbon::createFromFormat('Y-m-d', $selesai)->format('d-m-Y');
+                                        }, $tanggal_range);
+                                    }
+                                    @endphp
                                     <tr>
                                         <td>Tanggal Pelaksanaan</td>
-                                        <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y') }}
-                                            sampai
-                                            {{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y') }}
-                                        </td>
+                                        @if(empty($trx->tanggal_range))
+                                        <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y') }} s/d {{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y') }}</td>
+                                        @else
+                                        <td>@foreach ($formatted_ranges as $_tanggal_range){{ $_tanggal_range }} @if(!$loop->last) <br/> @endif @endforeach</td>
+                                        @endif
                                     </tr>
                                     <tr>
                                         <td>Tempat</td>
@@ -219,7 +230,7 @@
                                     </tr>
                                     <tr>
                                         <td>Biaya</td>
-                                        <td>Rp. {{ number_format($trx->biaya, 2) }}</td>
+                                        <td>Rp. {{ number_format($trx->biaya, 0) }}</td>
                                     </tr>
                                     <tr>
                                         <td>Benefit</td>
@@ -244,18 +255,34 @@
                     </div>
                 </div>
                 <!--  -->
-                <div class="col-12">
+                {{-- <div class="col-12">
                     <div class="appointment">
                         <a href="{{ URL::previous() }}" class="btn btn-warning" type="button">Back</a>
                         <p>&nbsp;</p>
                     </div>
+                </div> --}}
+                <form action="{{ route('pelatihan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id)) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                @method('PATCH')
+                @csrf
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label class="form-label" for="status_pengajuan">Status Pengajuan</label>
+                        <select class="form-select" id="status_pengajuan" name="status_pengajuan" required="">
+                            <option selected="" disabled="" value="">Pilih...</option>
+                            @foreach ($status_pengajuan as $data)
+                            <option value="{{ $data->id }}" @if($data->id == $trx->status_pengajuan) selected @endif >{{ $data->status_pengajuan }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
+                <button class="btn btn-success mt-2 mb-2" type="submit">Update</button> | <a href="{{ route('pelatihan.index') }}" class="btn btn-warning mt-2 mb-2" type="button">Back</a>
+                </form>
             </div>
         </div>
     </div>
 </div>
 <div class="modal fade" id="modal_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
        <div class="modal-content">
         <form action="{{ route('pelatihan.save_update', [$trx->id, 'data_type' => 'biaya', 'back_url' => URL::full()]) }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
         @csrf

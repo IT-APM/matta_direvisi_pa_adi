@@ -5,6 +5,8 @@ namespace App\Exports;
 use App\Models\TrxRecruitmentPsychotest;
 use App\Models\TrxRecruitmentPsychotestLog;
 use App\Models\TrxRecruitmentIdentitas;
+use App\Models\TrxRecruitmentTiu5;
+use App\Models\MtrRecruitmentSoalTiu5Norma;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
@@ -13,9 +15,11 @@ use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithDrawings;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 // use Maatwebsite\Excel\Facades\Excel;
 
-class TrxRecruitmentPsychotestExport implements FromCollection, WithHeadings, WithTitle, WithStyles, WithCustomStartCell
+class TrxRecruitmentPsychotestExport implements FromCollection, WithHeadings, WithTitle, WithStyles, WithCustomStartCell, WithDrawings
 {
     private $id;
     public function __construct(Request $request, $id) 
@@ -29,7 +33,15 @@ class TrxRecruitmentPsychotestExport implements FromCollection, WithHeadings, Wi
 
     public function startCell(): string
     {
-        return 'A7';
+        $id = $this->id;
+        // tipe 6
+        if($id[1] == 6){
+            return 'A11';
+        }
+        // selain tipe 6
+        else{
+            return 'A7';
+        }
     }
 
     public function styles(Worksheet $sheet)
@@ -72,6 +84,20 @@ class TrxRecruitmentPsychotestExport implements FromCollection, WithHeadings, Wi
         // tipe 3
         elseif($id[1] == 3){
             // 
+        }
+        // tipe 6
+        elseif($id[1] == 6){
+            $trx = TrxRecruitmentTiu5::where(['id_identitas' => $id[0]])->orderBy('id', 'asc')->get();
+            $benar = $trx->sum('cek');
+            $norma = MtrRecruitmentSoalTiu5Norma::whereRaw('? BETWEEN bawah AND atas', [$benar])->first();
+            $sheet->setCellValue('A6', 'Benar');
+            $sheet->setCellValue('A7', 'Salah');
+            $sheet->setCellValue('A8', 'WS');
+            $sheet->setCellValue('A9', 'Kategori');
+            $sheet->setCellValue('B6', ': '.$benar);
+            $sheet->setCellValue('B7', ': '.(30 - $benar));
+            $sheet->setCellValue('B8', ': '.$norma->ws);
+            $sheet->setCellValue('B9', ': '.$norma->kategori);
         }
     }
     /**
@@ -604,7 +630,56 @@ class TrxRecruitmentPsychotestExport implements FromCollection, WithHeadings, Wi
                 }
             }
         }
+        // tipe 6
+        elseif($id[1] == 6){
+            $data1 = [];
+            array_push($data1, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '');
+            array_push($data, $data1);
+            $arr = TrxRecruitmentTiu5::where(['id_identitas'=>$id[0], 'jenis'=>$id[1]])->where('nomor', '>', 0)->orderBy('id', 'asc')->get();
+            foreach ($arr as $index => $_arr) {
+                $hasil = 'Salah';
+                if($_arr->cek == 1){
+                    $hasil = 'Benar';
+                }
+                $data1 = [];
+                array_push($data1, '', '', '', '', '', '', '', '', '', '', '', '', '', '', $_arr->nomor, $_arr->jawaban, $_arr->kunci, $hasil);
+                array_push($data, $data1);
+                for ($x = 0; $x < 5; $x++) {
+                    $data1 = [];
+                    array_push($data1, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '');
+                    array_push($data, $data1);
+                }
+                // array_push($data1, $_arr->soal, $_arr->jawaban, $_arr->kunci, $_arr->cek);
+            }
+        }
         return new Collection($data);
+    }
+
+    public function drawings()
+    {
+        $id = $this->id;
+        $drawings = [];
+        // tipe 6
+        if($id[1] == 6){
+            $startRow = 12;
+            $arr = TrxRecruitmentTiu5::where(['id_identitas'=>$id[0], 'jenis'=>$id[1]])->where('nomor', '>', 0)->orderBy('id', 'asc')->get();
+            foreach ($arr as $index => $_arr) {
+                // {{ asset('assets/images/matta/tiu5/soal'.$soal->nomor.'.png') }}
+                $path = public_path('assets/images/matta/tiu5/' . $_arr->soal);
+                if (file_exists($path)) {
+                    $drawing = new Drawing();
+                    // $drawing->setName('Gambar Soal');
+                    // $drawing->setDescription('Soal Gambar');
+                    $drawing->setPath($path);
+                    $drawing->setHeight(100);
+                    $drawing->setCoordinates('A' . ($startRow + ($index * 6)));
+                    $drawings[] = $drawing;
+                } else {
+                    // \Log::warning("Gambar tidak ditemukan: $path");
+                }
+            }
+        }
+        return $drawings;
     }
 
     public function headings(): array
@@ -624,7 +699,11 @@ class TrxRecruitmentPsychotestExport implements FromCollection, WithHeadings, Wi
         // }
         // tipe 3
         elseif($id[1] == 3){
-            return ['No','P','','K','','Gambaran Diri','','No','P','','K','','Gambaran Diri','','No','P','','K','','Gambaran Diri',];
+            return ['No','P', '','K', '','Gambaran Diri', '','No','P', '','K', '','Gambaran Diri', '','No','P', '','K', '','Gambaran Diri',];
+        }
+        // tipe 6
+        elseif($id[1] == 6){
+            return ['Soal', '', '', '', '', '', '', '', '', '', '', '', '', '', 'No','Jawaban','Kunci','Hasil',];
         }
     }
 

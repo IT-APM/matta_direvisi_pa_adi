@@ -470,11 +470,18 @@ class TrxRecruitmentController extends Controller
         $log_status = TrxRecruitmentLog::where(['id_identitas'=>$id])->pluck('id_status')->toArray();
         // 5=Psychotest Done
         if(in_array(5, $log_status)){
-            $id_status = array_values(array_diff($id_status, [4]));
+            // jika kandidat sudah diberikan TIU 5 dan (EPPS, PAPI Kostick, DISC, BAUM, DAP) maka Psychotest Send menjadi tidak ada
+            if(TrxRecruitmentPsychotest::where(['id_identitas'=>$id])->exists() && TrxRecruitmentTiu5::where(['id_identitas'=>$id])->exists()){
+                // do nothing
+            }else{
+                // $id_status = array_values(array_diff($id_status, [4]));
+                $log_status = array_values(array_diff($log_status, [4]));
+            }
             // 16=Interpretation
             // 25=Not Join
             array_push($id_status, 16, 25);
         }
+        // dd($log_status);
         // negosiasi dilakukan setelah interpretasi dan done any interview
         // 16=Interpretation
         // 7=Interview User and HCO Done
@@ -507,7 +514,6 @@ class TrxRecruitmentController extends Controller
             // 14=Negotiation No Deal by HCO
             // $id_status = [13,14];
         }
-        // dd($log_status);
         $id_status = MtrRecruitmentStatus::whereIn('id', $id_status)->whereNotIn('id', $log_status)->orderBy('id', 'asc')->get();
         // 17=Negotiation Deal by Candidate
         // 18=Negotiation No Deal by Candidate
@@ -537,6 +543,7 @@ class TrxRecruitmentController extends Controller
             $id_status = [];
         }
         // kode_level=3=Supervisor (SPV)
+        // dd($id_status);
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->whereNotIn('kode_sub_departemen', [263])->orderBy('nama', 'asc')->get();
         $karyawan_user_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
@@ -2611,7 +2618,8 @@ class TrxRecruitmentController extends Controller
                 }
             }
             // $_id[2] = id-nya trx_tbl_recruitment_psychotest
-            if(!empty($_id[2])){
+            // if(!empty($_id[2])){
+            if(!empty($_id[2]) && TrxRecruitmentPsychotest::where(['id_identitas' => $id, 'id' => $_id[2]])->exists()){
                 $soal = TrxRecruitmentPsychotest::find($_id[2]);
                 $soal->check_out = $_now;
                 // $remain = $soal->remain - $_now->diffInSeconds(Carbon::parse($soal->check_in));
@@ -2630,7 +2638,7 @@ class TrxRecruitmentController extends Controller
             if(TrxRecruitmentTiu5::where(['id_identitas' => $id])->whereNotNull('check_in')->whereNotNull('check_out')->whereNotNull('remain')->exists()){
                 // jika sudah dikerjakan maka pengantar tidak diberikan
                 if(TrxRecruitmentPsychotest::where(['id_identitas' => $id, 'jenis' => 0, 'nomor' => 0])->whereNull('check_in')->whereNull('check_out')->whereNull('remain')->exists()){
-                    $soal = TrxRecruitmentPsychotest::where($where)->whereNull('check_out')->orderBy('jenis', 'asc')->orderBy('nomor', 'asc')->first();
+                    $soal = TrxRecruitmentPsychotest::where(['id_identitas' => $id])->whereNull('check_out')->orderBy('jenis', 'asc')->orderBy('nomor', 'asc')->first();
                     $soal->check_in = $_now;
                     $soal->check_out = $_now;
                     $soal->remain = $remain;
@@ -2681,7 +2689,7 @@ class TrxRecruitmentController extends Controller
                     <p>Demikian kami sampaikan, terima kasih atas perhatian dan kerja samanya.</p>
                     <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
                     // jika sudah tidak ada lagi soal setelah soal terakhir maka dikirimkan email ke kandidat
-                    if(!empty($_id[2])){
+                    if(!empty($_id[2]) && !empty($request->je) && !empty($request->no) && !empty($request->a)){
                         $headers = [];
                         foreach ($request->headers->all() as $k => $v) {
                             $headers[$k] = $v;
@@ -2689,6 +2697,9 @@ class TrxRecruitmentController extends Controller
                         $catatan = ['url'=>request()->fullUrl(),'method' => $request->method(),'ip' => $request->ip(),'user_agent' => $request->userAgent(),'headers' => $headers];
                         $arr = [$trx->id,5,$trx->nama,'','external',response()->json($catatan)];
                         $this->insertLog($arr);
+                        // 
+                        $trx->id_status = 5;
+                        $trx->update();
                         // parameter yang dipassing ke sendemail
                         $mailData['title'] = 'Psikotes Selesai';
                         $mailData['data'] = ['msg'=>$msg];
@@ -3126,6 +3137,8 @@ class TrxRecruitmentController extends Controller
             $filename = 'PAPI KOSTIC_';
         }elseif($id[1] == 3){
             $filename = 'DISC_';
+        }elseif($id[1] == 6){
+            $filename = 'TIU5_';
         }
         return Excel::download(new TrxRecruitmentPsychotestExport($request,$id), $filename.$id[0].'_'.now()->getTimestampMs().'.xlsx', \Maatwebsite\Excel\Excel::XLSX);
         // if($id[1] == 1){

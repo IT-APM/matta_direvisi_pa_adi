@@ -182,7 +182,7 @@
                             <table class="table table-striped">
                                 <tbody>
                                     <tr>
-                                        <td width="30%">Pelatihan ke</td>
+                                        <td width="30%">Pengajuan Pelatihan ke</td>
                                         <td width="70%"><?php echo e($trx->ke); ?></td>
                                     </tr>
                                     <tr>
@@ -205,14 +205,23 @@
                                         <td>Penyelenggara</td>
                                         <td><?php echo e($trx->penyelenggara); ?></td>
                                     </tr>
+                                    <?php
+                                    $tanggal_range = [];
+                                    if(!empty($trx->tanggal_range)){
+                                        $tanggal_range = json_decode($trx->tanggal_range, true);
+                                        $formatted_ranges = array_map(function($range) {
+                                            [$mulai, $selesai] = array_map('trim', explode('s/d', $range));
+                                            return Carbon\Carbon::createFromFormat('Y-m-d', $mulai)->format('d-m-Y') . ' s/d ' . Carbon\Carbon::createFromFormat('Y-m-d', $selesai)->format('d-m-Y');
+                                        }, $tanggal_range);
+                                    }
+                                    ?>
                                     <tr>
                                         <td>Tanggal Pelaksanaan</td>
-                                        <td><?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y')); ?>
-
-                                            sampai
-                                            <?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y')); ?>
-
-                                        </td>
+                                        <?php if(empty($trx->tanggal_range)): ?>
+                                        <td><?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y')); ?> s/d <?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y')); ?></td>
+                                        <?php else: ?>
+                                        <td><?php $__currentLoopData = $formatted_ranges; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_tanggal_range): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php echo e($_tanggal_range); ?> <?php if(!$loop->last): ?> <br/> <?php endif; ?> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></td>
+                                        <?php endif; ?>
                                     </tr>
                                     <tr>
                                         <td>Tempat</td>
@@ -220,7 +229,7 @@
                                     </tr>
                                     <tr>
                                         <td>Biaya</td>
-                                        <td>Rp. <?php echo e(number_format($trx->biaya, 2)); ?></td>
+                                        <td>Rp. <?php echo e(number_format($trx->biaya, 0)); ?></td>
                                     </tr>
                                     <tr>
                                         <td>Benefit</td>
@@ -245,18 +254,29 @@
                     </div>
                 </div>
                 <!--  -->
-                <div class="col-12">
-                    <div class="appointment">
-                        <a href="<?php echo e(URL::previous()); ?>" class="btn btn-warning" type="button">Back</a>
-                        <p>&nbsp;</p>
+                
+                <form action="<?php echo e(route('pelatihan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id))); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                <?php echo method_field('PATCH'); ?>
+                <?php echo csrf_field(); ?>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label class="form-label" for="status_pengajuan">Status Pengajuan</label>
+                        <select class="form-select" id="status_pengajuan" name="status_pengajuan" required="">
+                            <option selected="" disabled="" value="">Pilih...</option>
+                            <?php $__currentLoopData = $status_pengajuan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($data->id); ?>" <?php if($data->id == $trx->status_pengajuan): ?> selected <?php endif; ?> ><?php echo e($data->status_pengajuan); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
                     </div>
                 </div>
+                <button class="btn btn-success mt-2 mb-2" type="submit">Update</button> | <a href="<?php echo e(route('pelatihan.index')); ?>" class="btn btn-warning mt-2 mb-2" type="button">Back</a>
+                </form>
             </div>
         </div>
     </div>
 </div>
 <div class="modal fade" id="modal_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
        <div class="modal-content">
         <form action="<?php echo e(route('pelatihan.save_update', [$trx->id, 'data_type' => 'biaya', 'back_url' => URL::full()])); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
         <?php echo csrf_field(); ?>

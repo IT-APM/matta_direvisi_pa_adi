@@ -49,7 +49,7 @@
                                     <td>{{ $pengaju['jabatan'] }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Divisi / SBU / Unit Kerja</td>
+                                    <td>Divisi/SBU/Unit Kerja</td>
                                     <td>{{ $pengaju['divisi'] . '/' . $pengaju['dep'] . '/' . $pengaju['sub_dep'] }}
                                     </td>
                                 </tr>
@@ -88,7 +88,7 @@
                                     <td>{{ $value['jabatan'] }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Direktorat / Divisi / Departemen</td>
+                                    <td>Direktorat/Divisi/Departemen</td>
                                     <td>{{ $value['divisi'] . '/' . $value['dep'] . '/' . $value['sub_dep'] }}</td>
                                 </tr>
                             </tbody>
@@ -108,7 +108,7 @@
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
-                                    <td width="30%">Pelatihan ke</td>
+                                    <td width="30%">Pengajuan Pelatihan ke</td>
                                     <td width="70%">{{ $trx->ke }}</td>
                                 </tr>
                                 <tr>
@@ -131,12 +131,24 @@
                                     <td>Penyelenggara</td>
                                     <td>{{ $trx->penyelenggara }}</td>
                                 </tr>
+                                @php
+                                $tanggal_range = [];
+                                if(!empty($trx->tanggal_range)){
+                                    $tanggal_range = json_decode($trx->tanggal_range, true);
+                                    $formatted_ranges = array_map(function($range) {
+                                        [$mulai, $selesai] = array_map('trim', explode('s/d', $range));
+                                        return Carbon\Carbon::createFromFormat('Y-m-d', $mulai)->format('d-m-Y') . ' s/d ' . Carbon\Carbon::createFromFormat('Y-m-d', $selesai)->format('d-m-Y');
+                                    }, $tanggal_range);
+                                }
+                                @endphp
                                 <tr>
                                     <td>Tanggal Pelaksanaan</td>
-                                    <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y') }}
-                                        sampai
-                                        {{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y') }}
-                                    </td>
+                                    {{-- <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y') }} s/d {{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y') }}</td> --}}
+                                    @if(empty($trx->tanggal_range))
+                                    <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y') }} s/d {{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y') }}</td>
+                                    @else
+                                    <td>@foreach ($formatted_ranges as $_tanggal_range){{ $_tanggal_range }} @if(!$loop->last) <br/> @endif @endforeach</td>
+                                    @endif
                                 </tr>
                                 <tr>
                                     <td>Tempat</td>
@@ -144,7 +156,7 @@
                                 </tr>
                                 <tr>
                                     <td>Biaya</td>
-                                    <td>Rp. {{ number_format($trx->biaya, 2) }}</td>
+                                    <td>Rp. {{ number_format($trx->biaya, 0) }}</td>
                                 </tr>
                                 <tr>
                                     <td>Benefit</td>
@@ -200,12 +212,15 @@
             <div class="col-sm-12">
             <div class="card">
                 <div class="card-body typography">
+                <h5>Catatan</h5>
                 <form id="myform" name="myform" method="post" enctype="multipart/form-data" action="{{ $linkAction }}" target="_self" onsubmit="return confirm('Are you sure want to submit this data?');">
                     @method('PATCH')
                     @csrf
                     <input type="hidden" id="nik" name="nik" value="{{ $nik }}">
                     <input type="hidden" id="pic" name="pic" value="{{ $pic }}">
-                    <input type="hidden" id="keterangan" name="keterangan" value="keterangan">
+                    {{-- <input type="hidden" id="keterangan" name="keterangan" value="keterangan"> --}}
+                    <textarea class="form-control mb-2" id="keterangan" name="keterangan" rows="4" ></textarea>
+                    {{-- <br/> --}}
                     <button type="submit" name="status_pengajuan" value="{{ $approve }}" class="btn btn-success">Approve</button>
                     <button type="submit" name="status_pengajuan" value="{{ $reject }}" class="btn btn-danger">Reject</button>
                 </form>

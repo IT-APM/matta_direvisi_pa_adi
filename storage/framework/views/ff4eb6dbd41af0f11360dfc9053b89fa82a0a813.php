@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Application Form</title>
+    <title>PSIKOTES</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="<?php echo e(asset('assets/images/favicon.png')); ?>" type="image/x-icon">
@@ -30,64 +30,41 @@
                     <h3 class="text-center">PSIKOTES</h3>
                 </div>
                 <hr class="mt-2 mb-2" />
-                
-                <div class="row g-0">
-                    <div class="col-12 col-md-7">
-                        <div class="card-body">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Kolom kiri (teks) -->
+                        <div class="col-md-6 d-flex align-items-center">
                             <div class="row">
                                 <div class="col-12">
                                     <p>Semangat Pagi!</p>
-                                    <p>Kepada Yth. <?php echo e($trx->nama); ?><br />
-                                        Peserta Psikotes - Seleksi Penerimaan Karyawan<br />
-                                        PT. Alita Praya Mitra</p>
-                                    <p style="text-align: justify">Kami ucapkan selamat datang kepada Anda dalam sesi
-                                        Psikotes yang diselenggarakan
-                                        oleh PT Alita Praya Mitra. Kami sangat menghargai waktu dan usaha yang Anda
-                                        luangkan
-                                        untuk mengikuti proses Seleksi Penerimaan Karyawan ini. Psikotes ini merupakan
-                                        bagian penting dari upaya kami untuk mengenal lebih jauh kepribadian, potensi
-                                        dan
-                                        kompetensi Anda.</p>
-                                    <p style="text-align: justify">Kami berharap Anda dapat mengikuti seluruh rangkaian
-                                        test dengan baik dan
-                                        menunjukkan kemampuan terbaik Anda. Semoga hasil yang diperoleh dapat memberikan
-                                        gambaran yang jelas mengenai kecocokan Anda dengan posisi yang dilamar.</p>
-                                    <p style="text-align: justify">Harap diingat bahwa tidak ada jawaban benar atau
-                                        salah, jadi jawablah dengan jujur
-                                        dan sesuai dengan diri Anda.</p>
-                                    <p style="text-align: justify">Pastikan Anda berada di tempat yang tenang dan
-                                        memiliki koneksi internet yang
-                                        stabil. Luangkan waktu dengan baik dan fokus dalam mengerjakan setiap soal.</p>
-                                    <p style="text-align: justify">Proses Psikotes ini terdiri dari 4 tahapan test dan
-                                        di setiap tahapan test memiliki
-                                        petunjuk pengerjaan dan instruksi yang berbeda - beda, mohon untuk membaca
-                                        dengan
-                                        baik dan teliti seluruh petunjuk dan instruksi di setiap tahapan test. Seluruh
-                                        tahapan test memiliki batasan waktu, jadi mohon untuk mengerjakan semaksimal
-                                        mungkin
-                                        sesuai dengan batasan waktu yang diberikan.</p>
-                                    <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Batasan waktu untuk mengerjakan seluruh psikotes ini adalah <?php echo e(round($trx->remain/60)); ?> menit
-                                        <br/>Tes ini akan dimulai setelah anda klik tombol Start</p>
-                                    <p style="text-align: justify">Jika ada pertanyaan atau kendala selama proses test
-                                        berlangsung, jangan ragu untuk segera menghubungi tim kami.
-                                        <br />Terima kasih atas perhatian dan partisipasi Anda. Selamat mengerjakan
-                                        test.</p>
-                                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+                                    <p>Kepada Yth. <?php echo e($trx->nama); ?><br/>Peserta Psikotes - Seleksi Penerimaan Karyawan<br/>PT. Alita Praya Mitra</p>
+                                    <p style="text-align: justify">Kami ucapkan selamat datang kepada Anda dalam sesi Psikotes yang diselenggarakan oleh PT Alita Praya Mitra. Kami sangat menghargai waktu dan usaha yang Anda luangkan untuk mengikuti proses Seleksi Penerimaan Karyawan ini. Psikotes ini merupakan bagian penting dari upaya kami untuk mengenal lebih jauh kepribadian, potensi dan kompetensi Anda.</p>
+                                    <p style="text-align: justify">Kami berharap Anda dapat mengikuti seluruh rangkaian tes dengan baik dan menunjukkan kemampuan terbaik Anda. Semoga hasil yang diperoleh dapat memberikan gambaran yang jelas mengenai kecocokan Anda dengan posisi yang dilamar.</p>
+                                    <p style="text-align: justify">Harap diingat bahwa tidak ada jawaban benar atau salah, jadi jawablah dengan jujur dan sesuai dengan diri Anda.</p>
+                                    <p style="text-align: justify">Pastikan Anda berada di tempat yang tenang dan memiliki koneksi internet yang stabil. Luangkan waktu dengan baik dan fokus dalam mengerjakan setiap soal.</p>
+                                    <p style="text-align: justify">Proses Psikotes ini terdiri dari beberapa jenis tes dan di setiap jenis tes memiliki petunjuk pengerjaan dan instruksi yang berbeda - beda, mohon untuk membaca dengan baik dan teliti seluruh petunjuk dan instruksi di setiap jenis tes. Seluruh jenis tes memiliki batasan waktu, jadi mohon untuk mengerjakan semaksimal mungkin sesuai dengan batasan waktu yang diberikan.</p>
+                                    <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Batasan waktu untuk mengerjakan seluruh psikotes ini adalah <?php echo e(round($trx->remain/60)); ?> menit.<br/>Tes ini akan dimulai setelah anda klik tombol Start</p>
+                                    <p style="text-align: justify">Jika ada pertanyaan atau kendala selama proses tes berlangsung, jangan ragu untuk segera menghubungi tim kami.<br/>Terima kasih atas perhatian dan partisipasi Anda. Selamat mengerjakan tes.</p>
+                                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </div>
                                 <form class="text-end"
                                     action="<?php echo e(route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))])); ?>"
-                                    method="GET" enctype="multipart/form-data"
+                                    method="POST" enctype="multipart/form-data"
                                     onsubmit="return confirm('Are you sure want to start this psychotest?');">
                                     <?php echo csrf_field(); ?>
                                     <button class="btn btn-primary" type="submit">Start</button>
                                 </form>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12 col-md-5 p-2 p-md-2 p-xl-2">
-                        <img class="img-fluid rounded-start w-100 h-100 object-fit-cover" loading="lazy" src="<?php echo e(asset('assets/recruitment/test.jpg')); ?>" alt="Application Form">
+                        <!-- Kolom kanan (gambar) -->
+                        <div class="col-md-6 text-center">
+                            <img src="<?php echo e(asset('assets/recruitment/test.jpg')); ?>" alt="tiu5" class="img-fluid">
+                        </div>
                     </div>
                 </div>
+                
+                
+                
                 
             </div>
         </div>

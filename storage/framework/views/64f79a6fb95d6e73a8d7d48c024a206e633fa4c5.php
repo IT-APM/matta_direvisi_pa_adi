@@ -104,7 +104,7 @@
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </td>
                                     <td><?php echo e($data->judul); ?></td>
-                                    <td>Rp.<?php echo e(number_format($data->biaya, 2)); ?></td>
+                                    <td>Rp.<?php echo e(number_format($data->biaya, 0)); ?></td>
                                     <td><?php echo e($data->_status->status_pengajuan); ?></td>
                                     <td><?php echo e($data->created_at); ?></td>
                                 </tr>

@@ -173,9 +173,10 @@
                                 <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt(array($trx->id, 'psychotest', $soal->id)) }}">
                             @elseif(in_array($soal->jenis, [6]))
                             <form
+                                @if($soal->nomor == 0 && $soal->urutan > 0) id="formJawaban" @endif
                                 action="{{ route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))]) }}"
                                 method="POST" enctype="multipart/form-data"
-                                @if($soal->urutan == 0) onsubmit="return confirm('Are you sure want to start this test?');" @elseif($soal->urutan > 0) onsubmit="return confirm('Are you sure want to submit this data?');" @endif>
+                                @if($soal->nomor == 0 && $soal->urutan == 0) onsubmit="return confirm('Are you sure want to start this test?');" @elseif($soal->nomor > 0) onsubmit="return confirm('Are you sure want to submit this data?');" @endif>
                                 @csrf
                             @endif
                                 <input type="hidden" id="je" name="je" value="{{ $soal->jenis }}">
@@ -307,15 +308,19 @@
                                 <div class="col-12">
                                     <div class="card-body">
                                         @if($soal->urutan == 1)
+                                        <input type="hidden" id="kunci_jawaban" name="kunci_jawaban" value="1">
                                         <span>Contoh 1:<br>Bila A dikecilkan diperoleh B. Bila sekarang dengan C dilakukan hal serupa, jadi C dikecilkan.
                                             <br/>Diperoleh gambar 1, maka dari itu silahkan memilih pilihan 1 pada soal yang tersedia</span>
                                         @elseif($soal->urutan == 2)
+                                        <input type="hidden" id="kunci_jawaban" name="kunci_jawaban" value="4">
                                         <span>Contoh 2:<br>Bila A diputar diperoleh B, Bila C diputar diperoleh gambar...
                                             <br/>Carilah gambar tersebut dan pilihlah jawaban yang benar dari pilihan gambar yang tersedia</span>
                                         @elseif($soal->urutan == 3)
+                                        <input type="hidden" id="kunci_jawaban" name="kunci_jawaban" value="2">
                                         <span>Latihan 1:<br>Seperti halnya A dirubah menjadi B, demikian pula C dirubah menjadi salah satu dari kelima gambar berikutnya.
                                             <br/>Carilah gambar tersebut dan pilihlah jawaban yang benar dari pilihan gambar yang tersedia</span>
                                         @elseif($soal->urutan == 4)
+                                        <input type="hidden" id="kunci_jawaban" name="kunci_jawaban" value="5">
                                         <span>Latihan 2:<br>Seperti halnya A dirubah menjadi B, demikian pula C dirubah menjadi salah satu dari kelima gambar berikutnya.
                                             <br/>Carilah gambar tersebut dan pilihlah jawaban yang benar dari pilihan gambar yang tersedia</span>
                                         @endif
@@ -412,6 +417,25 @@ $(document).ready(function () {
         // alert('p: '+$p_val);
         // alert('k: '+$k_val);
     });
+    // 
+    $('#formJawaban').on('submit', function(e) {
+        // Jika user klik "Cancel" di confirm, hentikan eksekusi
+        if (!confirm('Are you sure want to submit this data?')) {
+            e.preventDefault(); // batalkan pengiriman form
+            return false;
+        }
+        // Ambil nilai radio yang dipilih
+        let pilihan = $('input[name="a"]:checked').val();
+        // Ambil nilai dari input hidden
+        let kunci_jawaban = $('#kunci_jawaban').val();
+        if (pilihan === kunci_jawaban) {
+            alert('✅ Pilihan Anda BENAR!');
+        } else {
+            alert('❌ Pilihan Anda SALAH, yang BENAR adalah Pilihan ' + kunci_jawaban);
+        }
+        // e.preventDefault();
+        return true;
+    });
 });
 // 
 function validateForm() {
@@ -448,10 +472,9 @@ var x = setInterval(function() {
   seconds = seconds < 10 ? "0" + seconds : seconds;
     
   // Output the result in an element with id="div_timer"
-  document.getElementById("div_timer").innerHTML = "Timer: " + hours + "h "
-  + minutes + "m " + seconds + "s ";
+  document.getElementById("div_timer").innerHTML = "Timer: " + hours + "h " + minutes + "m " + seconds + "s ";
 //   menambahkan alert jika tersisa 10 menit
-  if(minutes == '10' && seconds == '00'){
+  if(hours == '00' && minutes == '10' && seconds == '00'){
     alert('Waktu anda tersisa 10 menit');
   }
   // If the count down is over, write some text 

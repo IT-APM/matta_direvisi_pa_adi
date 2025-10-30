@@ -48,7 +48,7 @@
                                     <td><?php echo e($pengaju['jabatan']); ?></td>
                                 </tr>
                                 <tr>
-                                    <td>Divisi / SBU / Unit Kerja</td>
+                                    <td>Divisi/SBU/Unit Kerja</td>
                                     <td><?php echo e($pengaju['divisi'] . '/' . $pengaju['dep'] . '/' . $pengaju['sub_dep']); ?>
 
                                     </td>
@@ -88,7 +88,7 @@
                                     <td><?php echo e($value['jabatan']); ?></td>
                                 </tr>
                                 <tr>
-                                    <td>Direktorat / Divisi / Departemen</td>
+                                    <td>Direktorat/Divisi/Departemen</td>
                                     <td><?php echo e($value['divisi'] . '/' . $value['dep'] . '/' . $value['sub_dep']); ?></td>
                                 </tr>
                             </tbody>
@@ -108,7 +108,7 @@
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
-                                    <td width="30%">Pelatihan ke</td>
+                                    <td width="30%">Pengajuan Pelatihan ke</td>
                                     <td width="70%"><?php echo e($trx->ke); ?></td>
                                 </tr>
                                 <tr>
@@ -131,14 +131,24 @@
                                     <td>Penyelenggara</td>
                                     <td><?php echo e($trx->penyelenggara); ?></td>
                                 </tr>
+                                <?php
+                                $tanggal_range = [];
+                                if(!empty($trx->tanggal_range)){
+                                    $tanggal_range = json_decode($trx->tanggal_range, true);
+                                    $formatted_ranges = array_map(function($range) {
+                                        [$mulai, $selesai] = array_map('trim', explode('s/d', $range));
+                                        return Carbon\Carbon::createFromFormat('Y-m-d', $mulai)->format('d-m-Y') . ' s/d ' . Carbon\Carbon::createFromFormat('Y-m-d', $selesai)->format('d-m-Y');
+                                    }, $tanggal_range);
+                                }
+                                ?>
                                 <tr>
                                     <td>Tanggal Pelaksanaan</td>
-                                    <td><?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y')); ?>
-
-                                        sampai
-                                        <?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y')); ?>
-
-                                    </td>
+                                    
+                                    <?php if(empty($trx->tanggal_range)): ?>
+                                    <td><?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y')); ?> s/d <?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y')); ?></td>
+                                    <?php else: ?>
+                                    <td><?php $__currentLoopData = $formatted_ranges; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_tanggal_range): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php echo e($_tanggal_range); ?> <?php if(!$loop->last): ?> <br/> <?php endif; ?> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></td>
+                                    <?php endif; ?>
                                 </tr>
                                 <tr>
                                     <td>Tempat</td>
@@ -146,7 +156,7 @@
                                 </tr>
                                 <tr>
                                     <td>Biaya</td>
-                                    <td>Rp. <?php echo e(number_format($trx->biaya, 2)); ?></td>
+                                    <td>Rp. <?php echo e(number_format($trx->biaya, 0)); ?></td>
                                 </tr>
                                 <tr>
                                     <td>Benefit</td>
@@ -202,12 +212,15 @@
             <div class="col-sm-12">
             <div class="card">
                 <div class="card-body typography">
+                <h5>Catatan</h5>
                 <form id="myform" name="myform" method="post" enctype="multipart/form-data" action="<?php echo e($linkAction); ?>" target="_self" onsubmit="return confirm('Are you sure want to submit this data?');">
                     <?php echo method_field('PATCH'); ?>
                     <?php echo csrf_field(); ?>
                     <input type="hidden" id="nik" name="nik" value="<?php echo e($nik); ?>">
                     <input type="hidden" id="pic" name="pic" value="<?php echo e($pic); ?>">
-                    <input type="hidden" id="keterangan" name="keterangan" value="keterangan">
+                    
+                    <textarea class="form-control mb-2" id="keterangan" name="keterangan" rows="4" ></textarea>
+                    
                     <button type="submit" name="status_pengajuan" value="<?php echo e($approve); ?>" class="btn btn-success">Approve</button>
                     <button type="submit" name="status_pengajuan" value="<?php echo e($reject); ?>" class="btn btn-danger">Reject</button>
                 </form>

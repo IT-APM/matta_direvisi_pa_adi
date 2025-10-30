@@ -31,9 +31,9 @@
                 <hr />
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td width="30%">Nama<br />NIP<br />Jabatan<br />Direktorat / Divisi / Departemen</td>
-                        <td width="70%">: <?php echo e($pengaju['nama']); ?><br />: <?php echo e($pengaju['nik']); ?><br />:
-                            <?php echo e($pengaju['jabatan']); ?><br />: <?php echo e($pengaju['divisi']); ?> / <?php echo e($pengaju['dep']); ?> /
+                        <td width="30%">Nama<br/>NIP<br/>Jabatan<br/>Direktorat / Divisi / Departemen</td>
+                        <td width="70%">: <?php echo e($pengaju['nama']); ?><br/>: <?php echo e($pengaju['nik']); ?><br/>:
+                            <?php echo e($pengaju['jabatan']); ?><br/>: <?php echo e($pengaju['divisi']); ?> / <?php echo e($pengaju['dep']); ?> /
                             <?php echo e($pengaju['sub_dep']); ?></td>
                     </tr>
                 </table>
@@ -65,64 +65,94 @@
                 <hr />
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td width="30%">Pelatihan ke</td>
-                        <td width="70%">: <?php echo e($trx->ke); ?></td>
+                        <td width="30%">Pengajuan Pelatihan ke</td>
+                        <td width="2%">:</td>
+                        <td width="68%"><?php echo e($trx->ke); ?></td>
                     </tr>
                     <tr>
                         <td>Tahun</td>
-                        <td>: <?php echo e($trx->tahun); ?></td>
+                        <td>:</td>
+                        <td><?php echo e($trx->tahun); ?></td>
                     </tr>
                     <tr>
                         <td>Jenis</td>
-                        <td> :
-                            <?php $__currentLoopData = $arrJenis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <?php echo e($value->jenis); ?> <?php if(!$loop->last): ?> / <?php endif; ?>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </td>
+                        <td>:</td>
+                        <td><?php $__currentLoopData = $arrJenis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php echo e($value->jenis); ?> <?php if(!$loop->last): ?> / <?php endif; ?> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></td>
                     </tr>
                     <tr>
                         <td>Judul</td>
-                        <td>: <?php echo e($trx->judul); ?></td>
+                        <td>:</td>
+                        <td><?php echo e($trx->judul); ?></td>
                     </tr>
                     <tr>
                         <td>Penyelenggara</td>
-                        <td>: <?php echo e($trx->penyelenggara); ?></td>
+                        <td>:</td>
+                        <td><?php echo e($trx->penyelenggara); ?></td>
                     </tr>
+                    <?php
+                    $tanggal_range = [];
+                    if(!empty($trx->tanggal_range)){
+                        $tanggal_range = json_decode($trx->tanggal_range, true);
+                        $formatted_ranges = array_map(function($range) {
+                            [$mulai, $selesai] = array_map('trim', explode('s/d', $range));
+                            return Carbon\Carbon::createFromFormat('Y-m-d', $mulai)->format('d-m-Y') . ' s/d ' . Carbon\Carbon::createFromFormat('Y-m-d', $selesai)->format('d-m-Y');
+                        }, $tanggal_range);
+                    }
+                    ?>
                     <tr>
                         <td>Tanggal Pelaksanaan</td>
-                        <td>: <?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y')); ?>
-
-                            sampai
-                            <?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y')); ?>
-
-                        </td>
+                        <td>:</td>
+                        <?php if(empty($trx->tanggal_range)): ?>
+                        <td><?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y')); ?> s/d <?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y')); ?></td>
+                        <?php else: ?>
+                        <td><?php $__currentLoopData = $formatted_ranges; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_tanggal_range): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php echo e($_tanggal_range); ?> <?php if(!$loop->last): ?> <br/> <?php endif; ?> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></td>
+                        <?php endif; ?>
                     </tr>
                     <tr>
                         <td>Tempat</td>
-                        <td>: <?php echo e($trx->tempat); ?></td>
+                        <td>:</td>
+                        <td><?php echo e($trx->tempat); ?></td>
                     </tr>
                     <tr>
                         <td>Biaya</td>
-                        <td>: Rp. <?php echo e(number_format($trx->biaya, 2)); ?></td>
+                        <td>:</td>
+                        <td>Rp. <?php echo e(number_format($trx->biaya, 0)); ?></td>
                     </tr>
                     <tr>
                         <td>Benefit</td>
-                        <td>: 
-                            <?php $__currentLoopData = $arrBenefit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <?php echo e($value->benefit); ?> <?php if(!$loop->last): ?> / <?php endif; ?>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </td>
+                        <td>:</td>
+                        <td><?php $__currentLoopData = $arrBenefit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php echo e($value->benefit); ?> <?php if(!$loop->last): ?> / <?php endif; ?> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></td>
                     </tr>
                     <tr>
                         <td>Anggaran</td>
-                        <td>: <?php echo e($trx->_anggaran->anggaran); ?></td>
+                        <td>:</td>
+                        <td><?php echo e($trx->_anggaran->anggaran); ?></td>
                     </tr>
                     <tr>
                         <td>Keterangan</td>
-                        <td>: <?php echo $trx->keterangan; ?></td>
+                        <td>:</td>
+                        <td><?php echo $trx->keterangan; ?></td>
                     </tr>
                 </table>
                 <hr />
+                <?php
+                $log = App\Models\TrxPelatihanLog::where(['id_trx' => $trx->id])->whereNotIn('id_status', [1])->orderBy('id_trx', 'desc')->get();
+                ?>
+                <?php if(!empty($log)): ?>
+                <?php $__currentLoopData = $log; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_log): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php if(!empty($_log->keterangan)): ?>
+                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                    
+                    <tr>
+                        <td width="30%">Catatan</td>
+                        <td width="2%">:</td>
+                        <td width="68%"><?php echo e(App\Models\Karyawan::where(['nik'=>$_log->nik_pic])->first()->nama); ?> / <?php echo e($_log->nik_pic); ?><br/><?php echo e($_log->keterangan); ?></td>
+                    </tr>
+                </table>
+                <hr />
+                <?php endif; ?>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php endif; ?>
                 <?php echo $htmlLog; ?>
 
             </td>

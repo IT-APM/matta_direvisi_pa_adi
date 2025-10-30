@@ -537,16 +537,23 @@ class TrxPenilaianSkorController extends Controller
             // $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'] ];
             $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaian.edit', [(new OpenDataController)->encryptWithKey($trx->id)]) ];
             $mailData['title'] .= ' - Outsourcing';
-            // template email tidak ada link done to hco
+            // 
             $mailData['filename'] = 'emails.penilaian0_outsourcing';
-            $mailData['to'] = explode('/', MtrUtility::find(28)->informasi)[1];
-            $todolist = ['id_trx' => $trx->id, 'nik' => explode('/', MtrUtility::find(28)->informasi)[0], 'id_status' => $trx->id_status, 'pic' => 'hco'];
+            // tidak digunakan karena menjadi 2 pic
+            // $mailData['to'] = explode('/', MtrUtility::find(28)->informasi)[1];
+            // $todolist = ['id_trx' => $trx->id, 'nik' => explode('/', MtrUtility::find(28)->informasi)[0], 'id_status' => $trx->id_status, 'pic' => 'hco'];
+            // 
             // $this->insertToDoList($todolist, $mailData);
             // $this->sendEmail($mailData);
             // jika layer3 tidak ada maka email done to hco
             if(empty($trx->nik_penilai_3)){
-                $this->insertToDoList($todolist, $mailData);
-                $this->sendEmail($mailData);
+                $pic_hco = explode(',', MtrUtility::find(28)->informasi);
+                foreach($pic_hco as $_data){
+                    $mailData['to'] = explode('/', $_data)[1];
+                    $todolist = ['id_trx' => $trx->id, 'nik' => explode('/', $_data)[0], 'id_status' => $trx->id_status, 'pic' => 'hco'];
+                    $this->insertToDoList($todolist, $mailData);
+                    $this->sendEmail($mailData);
+                }
             }
             // jika diinput penilai 2
             if($request->pic == 'nik_penilai_2' && $nPenilai2 == 0){
@@ -575,8 +582,13 @@ class TrxPenilaianSkorController extends Controller
                 $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$trx->nik_penilai_3, 'pic'=>'nik_penilai_3', 'filename'=>'emails.penilaian0_outsourcing']);
                 // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
                 $this->insertLog($id, 7, $trx->nik_penilai_3, $request->kes_rek, $request->is_perpanjang, $request->bulan);
-                $this->insertToDoList($todolist, $mailData);
-                $this->sendEmail($mailData);
+                $pic_hco = explode(',', MtrUtility::find(28)->informasi);
+                foreach($pic_hco as $_data){
+                    $mailData['to'] = explode('/', $_data)[1];
+                    $todolist = ['id_trx' => $trx->id, 'nik' => explode('/', $_data)[0], 'id_status' => $trx->id_status, 'pic' => 'hco'];
+                    $this->insertToDoList($todolist, $mailData);
+                    $this->sendEmail($mailData);
+                }
             }
         }
         return view( 'emails.penilaian_ok' );

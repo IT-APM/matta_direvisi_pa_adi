@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 // 
 use App\Models\Karyawan;
 use App\Models\Jabatan;
@@ -14,6 +17,7 @@ use App\Models\PelatihanBenefit;
 use App\Models\PelatihanStatus;
 use App\Models\TrxPelatihan;
 use App\Models\TrxPelatihanLog;
+use App\Models\TrxPelatihanSertifikat;
 // 
 use App\Models\ToDoList;
 use App\Models\ToDoListLog;
@@ -33,6 +37,89 @@ class TrxPelatihanController extends Controller
     {
         $this->middleware('can:spv', ['except' => ['show','update']]);
     }
+
+    public function downloadDriveFile(Request $request)
+    {
+        $driveUrl = 'https://drive.google.com/file/d/1bdhv9OAr6jEWsClt5Me7mqeJ1K3CnNru/view?usp=sharing';
+
+        if (!preg_match('/\/d\/(.*?)\//', $driveUrl, $matches)) {
+            return response('Invalid Google Drive URL.', 400);
+        }
+
+        $fileId = $matches[1];
+        $downloadUrl = "https://drive.google.com/uc?export=download&id={$fileId}";
+        $filename = $fileId . '.pdf';
+        $savePath = public_path("assets/pelatihan/{$filename}");
+
+        // Download file pakai cURL
+        $fp = fopen($savePath, 'w+');
+        $ch = curl_init($downloadUrl);
+
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            fclose($fp);
+            unlink($savePath);
+            return response('Gagal download file: ' . curl_error($ch), 500);
+        }
+
+        curl_close($ch);
+        fclose($fp);
+
+        // Setelah disimpan, kirim file ke user
+        return response()->download($savePath);
+    }
+
+    public function autoSave(Request $request)
+    {
+        // Contoh file Google Drive
+        $fileId = '1bdhv9OAr6jEWsClt5Me7mqeJ1K3CnNru';
+        $downloadUrl = "https://drive.google.com/uc?export=download&id={$fileId}";
+
+        // Lokasi penyimpanan
+        $fileName = $fileId . '.pdf';
+        $savePath = public_path("assets/pelatihan/{$fileName}");
+
+        // Buat folder jika belum ada
+        // if (!file_exists(dirname($savePath))) {
+        //     mkdir(dirname($savePath), 0755, true);
+        // }
+
+        // Download & simpan menggunakan cURL
+        $fp = fopen($savePath, 'w+');
+        $ch = curl_init($downloadUrl);
+
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+        curl_exec($ch);
+
+        // Error handling
+        if (curl_errno($ch)) {
+            fclose($fp);
+            unlink($savePath);
+            return response()->json(['error' => curl_error($ch)], 500);
+        }
+
+        curl_close($ch);
+        fclose($fp);
+
+        // Optional: Auto kirim file ke user
+        // return response()->download($savePath);
+
+        // Atau hanya info sukses
+        return response()->json([
+            'message' => 'File berhasil disimpan.',
+            'saved_to' => "assets/pelatihan/{$fileName}"
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -40,7 +127,98 @@ class TrxPelatihanController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        // $trx = TrxPelatihanSertifikat::orderBy('id', 'asc')->get();
+        // $this->autoSave($request);
+        // $_response = [];
+        // foreach($trx as $_trx){
+        //     $url = $_trx->formulir_link;
+        //     $fileName = $_trx->id;
+        //     if(!empty($url) && str_starts_with($url, 'https')){
+        //         $parts = explode('/d/', $url);
+        //         $idPart = explode('/', $parts[1]);
+        //         $fileId = $idPart[0];
+        //         $filePath = public_path('assets/pelatihan/formulir_' . $fileName . '.pdf');
+        //         // Mulai cURL
+        //         $fp = fopen($filePath, 'w+');
+        //         $ch = curl_init('https://drive.google.com/uc?export=download&id='.$fileId);
+        //         // $downloadUrl = 'https://drive.google.com/file/d/1bdhv9OAr6jEWsClt5Me7mqeJ1K3CnNru/view?usp=sharing';
+        //         $downloadUrl = 'https://drive.google.com/uc?export=download&id=1bdhv9OAr6jEWsClt5Me7mqeJ1K3CnNru';
+        //         return view('formulir.pelatihan.opentab', compact('downloadUrl'));
+        //         curl_setopt($ch, CURLOPT_FILE, $fp);
+        //         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        //         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        //         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+        //         curl_exec($ch);
+
+        //         // Cek error
+        //         if (curl_errno($ch)) {
+        //             fclose($fp);
+        //             unlink($filePath); // Hapus file yang gagal didownload
+        //             return response()->json(['error' => curl_error($ch)], 500);
+        //         }
+
+        //         curl_close($ch);
+        //         fclose($fp);
+
+        //         return response()->json([
+        //             'message' => 'File berhasil didownload.',
+        //             'path' => "assets/pelatihan/{$fileId}.pdf"
+        //         ]);
+        //         // dd($fileId);
+        //         // $savePath = public_path('assets/pelatihan/formulir_' . $fileName . '.pdf');
+        //         // $downloadUrl = Http::get('https://drive.google.com/uc?export=download&id='.$fileId);
+        //         // try {
+        //         //     $response = Http::get('https://drive.google.com/uc?export=download&id='.$fileId);
+        //         //     if ($response->successful()) {
+        //         //         $contentType = $response->header('Content-Type');
+        //         //         if (!Str::startsWith($contentType, 'application/pdf')) {
+        //         //             return response()->json([
+        //         //                 'error' => 'File bukan PDF atau tidak bisa langsung didownload. Kemungkinan Google Drive mengembalikan HTML.',
+        //         //                 'content_type' => $contentType
+        //         //             ], 400);
+        //         //         }else{
+        //         //             // Optional: ambil nama file dari header jika ada
+        //         //             $contentDisposition = $response->header('Content-Disposition');
+        //         //             preg_match('/filename="(.*?)"/', $contentDisposition ?? '', $filenameMatch);
+        //         //             $fileName = $filenameMatch[1] ?? $fileId . '.file'; // fallback
+        //         //             // Simpan file di public/assets/pelatihan
+        //         //             $savePath = public_path('assets/pelatihan/' . $fileName);
+        //         //             file_put_contents($savePath, $response->body());
+        //         //             array_push($_response, [
+        //         //                 'message' => 'File berhasil didownload dan disimpan.',
+        //         //                 'path' => $savePath
+        //         //             ], 200);
+        //         //         }
+        //         //     } else {
+        //         //         array_push($_response, [
+        //         //             'message' => 'Gagal mendownload file.',
+        //         //             'status' => $response->status()
+        //         //         ], 400);
+        //         //     }
+        //         // } catch (\Exception $e) {
+        //         //     return response()->json([
+        //         //         'error' => 'Terjadi kesalahan: ' . $e->getMessage()
+        //         //     ], 500);
+        //         // }
+        //         // if ($response->successful()) {
+        //         //     file_put_contents($savePath, $response->body());
+        //             // array_push($_response, [
+        //             //     'message' => 'File berhasil didownload dan disimpan.',
+        //             //     'path' => $savePath
+        //             // ], 200);
+        //         // } else {
+        //             // array_push($_response, [
+        //             //     'message' => 'Gagal mendownload file.',
+        //             //     'status' => $response->status()
+        //             // ], 400);
+        //         // }
+        //         return response()->json($_response);
+        //     }
+        // }
+        // return response()->json($_response);
+        // echo($this->downloadDriveFile($request));
+        // dd($trx);
         $no = 0;
         $trx = TrxPelatihan::orderBy('id', 'desc')->get();
         // foreach ($trx as $value) {
@@ -156,7 +334,9 @@ class TrxPelatihanController extends Controller
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
         $anggaran = PelatihanAnggaran::orderBy('anggaran', 'asc')->get();
-        $benefit = PelatihanBenefit::orderBy('benefit', 'asc')->get();
+        // tidak digunakan
+        // 2=Sertifikat
+        $benefit = PelatihanBenefit::whereNotIn('id', [2])->orderBy('benefit', 'asc')->get();
         // reviewer level minimal 3 = spv
         $where = [ 'is_aktif' => 1];
         $reviewer = Karyawan::where($where)->where('kode_level','>=',3)->orderBy('nama', 'asc')->get();
@@ -171,8 +351,7 @@ class TrxPelatihanController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        // return response()->json(['request' => $request->all()]);
+        // dd($request->all());
         // nik pengaju di hardcode 01031504369
         // Abi Ibadallah
         // Minimal level pengaju adalah spv
@@ -223,8 +402,10 @@ class TrxPelatihanController extends Controller
         $trx->jenis = implode(';', $request->jenis);
         $trx->judul = $request->judul;
         $trx->penyelenggara = $request->penyelenggara;
-        $trx->tanggal_mulai = $request->tanggal_mulai;
-        $trx->tanggal_akhir = $request->tanggal_akhir;
+        // tidak digunakan diganti dengan tanggal_range
+        // $trx->tanggal_mulai = $request->tanggal_mulai;
+        // $trx->tanggal_akhir = $request->tanggal_akhir;
+        $trx->tanggal_range = json_encode($request->input('tanggal_range', []), JSON_UNESCAPED_SLASHES);
         $trx->tempat = $request->tempat;
         $trx->biaya = str_replace(',', '', $request->biaya);
         $trx->benefit = implode(';', $request->benefit);
@@ -380,7 +561,10 @@ class TrxPelatihanController extends Controller
             $pengaju = json_decode($trx->pengaju_property, true);
             $mailData['title'] = 'Formulir Pengajuan Pelatihan';
             $mailData['filename'] = 'emails.pelatihan0';
-            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.edit', [(new OpenDataController)->encryptWithKey($id)]), 'trx'=>$trx];
+            // tidak digunakan
+            // $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.edit', [(new OpenDataController)->encryptWithKey($id)]), 'trx'=>$trx];
+            // diganti dengan ini
+            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [(new OpenDataController)->encryptWithKey($id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'trx'=>$trx];
             $hco = explode('/', MtrUtility::find(29)->informasi);
             $mailData['to'] = $hco[1];
             $todolist = ['id_trx' => $trx->id, 'nik' => $hco[0], 'id_status' => $trx->status_pengajuan, 'pic' => 'hco'];
@@ -401,6 +585,7 @@ class TrxPelatihanController extends Controller
         //
         $linkAction = route('pelatihan.update', $id);
         $id = (new OpenDataController)->decryptWithKey($id);
+        // 
         $where = ['id_trx' => $id];
         $history = TrxPelatihanLog::where($where)->orderBy('created_at', 'desc')->get();
         $trx = TrxPelatihan::find( $id );
@@ -510,6 +695,11 @@ class TrxPelatihanController extends Controller
                     return view('emails.pelatihan_ok');
                 }
                 break;
+            // case 'hco':
+            //     $approve = 14;
+            //     $reject = 12;
+            //     return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history'));
+            //     break;
             case 'detail':
                 $this->authorize('auth');
                 $where = ['id_trx' => $id];
@@ -517,7 +707,8 @@ class TrxPelatihanController extends Controller
                 $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
                 $anggaran = PelatihanAnggaran::orderBy('anggaran', 'asc')->get();
                 $benefit = PelatihanBenefit::orderBy('benefit', 'asc')->get();
-                return view('formulir.pelatihan.view', compact('trx', 'pengaju', 'arrPeserta', 'arrAtasanPeserta', 'history', 'arrJenis', 'arrBenefit', 'jenis', 'anggaran', 'benefit'));
+                $status_pengajuan = PelatihanStatus::whereIn('id', [11,$trx->status_pengajuan])->orderBy('id', 'asc')->get();
+                return view('formulir.pelatihan.view', compact('trx', 'pengaju', 'arrPeserta', 'arrAtasanPeserta', 'history', 'arrJenis', 'arrBenefit', 'jenis', 'anggaran', 'benefit', 'status_pengajuan'));
                 break;
             case 'pdf':
                 $this->authorize('auth');
@@ -758,7 +949,8 @@ class TrxPelatihanController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Pengajuan Pelatihan';
             $mailData['filename'] = 'emails.pelatihan1';
-            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
+            // $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
+            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'trx'=>$trx];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // check para approver, jika sudah semua kirimkan email ke pengaju
@@ -777,7 +969,8 @@ class TrxPelatihanController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Pengajuan Pelatihan';
             $mailData['filename'] = 'emails.pelatihan1';
-            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
+            // $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
+            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'trx'=>$trx];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // check para approver, jika sudah semua kirimkan email ke pengaju
@@ -798,7 +991,8 @@ class TrxPelatihanController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Pengajuan Pelatihan';
             $mailData['filename'] = 'emails.pelatihan1';
-            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
+            // $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
+            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'trx'=>$trx];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // check para approver, jika sudah semua kirimkan email ke pengaju
@@ -819,7 +1013,8 @@ class TrxPelatihanController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Pengajuan Pelatihan';
             $mailData['filename'] = 'emails.pelatihan1';
-            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
+            // $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
+            $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'trx'=>$trx];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // check para approver, jika sudah semua kirimkan email ke pengaju
@@ -873,7 +1068,8 @@ class TrxPelatihanController extends Controller
                     // parameter yang dipassing ke sendemail
                     $mailData['title'] = 'Formulir Pengajuan Pelatihan';
                     $mailData['filename'] = 'emails.pelatihan1';
-                    $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
+                    // $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'trx'=>$trx];
+                    $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'trx'=>$trx];
                     $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
                     $this->sendEmail($mailData);
                     // check para approver, jika sudah semua kirimkan email ke pengaju
@@ -892,7 +1088,8 @@ class TrxPelatihanController extends Controller
             // 
             $trx->update();
             $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$hco[0], 'pic'=>'hco', 'filename'=>'emails.pelatihan0']);
-            $this->insertLog($id, $status_pengajuan, $hco[0], 'Done by HC');
+            // $this->insertLog($id, $status_pengajuan, $hco[0], 'Done by HC');
+            $this->insertLog($id, $status_pengajuan, $hco[0], '');
             // 
             return redirect('pelatihan')->with('msg', 'Data is saved successfully.');
         }

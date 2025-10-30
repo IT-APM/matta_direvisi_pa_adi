@@ -190,7 +190,7 @@
                         @endif
                     @endif
                     {{-- end --}}
-                    @if(request('type') == 'extend')
+                    @if(request()->get('type') == 'extend')
                     <hr class="mt-2 mb-2" />
                     <label class="form-label">Extend</label>
                     <form action="{{ route('recruitment.applicant_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
@@ -278,15 +278,15 @@
                                     <label class="form-label" for="jenis_psikotes">Jenis Psikotes</label>
                                     <select class="form-select col-sm-12" id="jenis_psikotes" name="jenis_psikotes" required="">
                                         <option selected="" disabled="" value="">Pilih...</option>
-                                        {{-- @if(!$check1)
+                                        @if(!$check1)
                                         <option value="1">TIU 5</option>
                                         @endif
-                                        @if(!$check2) --}}
+                                        @if(!$check2)
                                         <option value="2">EPPS, PAPI Kostick, DISC, BAUM, DAP</option>
-                                        {{-- @endif
+                                        @endif
                                         @if(!$check1 && !$check2)
                                         <option value="3">TIU 5 & (EPPS, PAPI Kostick, DISC, BAUM, DAP)</option>
-                                        @endif --}}
+                                        @endif
                                     </select>
                                 </div>
                             </div>

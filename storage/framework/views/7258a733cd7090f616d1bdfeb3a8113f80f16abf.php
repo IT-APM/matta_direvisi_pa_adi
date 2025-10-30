@@ -36,8 +36,15 @@
                                 <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-home')); ?>"></use>
                             </svg><span>Home</span></a>
                         <ul class="sidebar-submenu">
-                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
-                            <li><a href="<?php echo e(route('dashboard.index')); ?>">Dashboard</a></li>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc_dashboard')): ?>
+                            <li><a class="submenu-title" href="#">Dashboard<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                <ul class="nav-sub-childmenu submenu-content">
+                                    <li><a href="<?php echo e(route('dashboard.biaya', 0)); ?>">Biaya Gaji</a></li>
+                                    <li><a href="<?php echo e(route('dashboard.biaya_lain', 0)); ?>">Biaya Lain</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
                             <?php endif; ?>
                             <li><a href="<?php echo e(route('todolist.index')); ?>">To Do List</a></li>
                             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
@@ -83,6 +90,15 @@
                             <h6>Applications</h6>
                         </div>
                     </li>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('birthday.index')); ?>">
+                            <svg class="stroke-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-knowledgebase')); ?>"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-knowledgebase')); ?>"></use>
+                            </svg><span>Birthday</span></a></li>
+                    <?php endif; ?>
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('feeds.view')); ?>">
                             <svg class="stroke-icon">
                                 <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-knowledgebase')); ?>"></use>
@@ -353,6 +369,8 @@
                                 <li><a href="<?php echo e(route('jabatan.index')); ?>">Job Position</a></li>
                                 <li><a href="<?php echo e(route('join.index')); ?>">Join Status</a></li>
                                 <li><a href="<?php echo e(route('holiday.index')); ?>">National Holiday</a></li>
+                                <li><a href="<?php echo e(route('pdp.index')); ?>">PDP</a></li>
+                                <li><a href="<?php echo e(route('salary_str.index')); ?>">Salary Structure</a></li>
                                 <li><a href="<?php echo e(route('utilitas.index')); ?>">Utility</a></li>
                             </ul>
                         </li>
@@ -557,8 +575,7 @@
                                 <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-form')); ?>"> </use>
                             </svg><span>Forms</span></a>
                         <ul class="sidebar-submenu">
-                            <li><a class="submenu-title" href="#">Form Controls<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Form Controls<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="<?php echo e(route('form-validation')); ?>">Form Validation</a></li>
                                     <li><a href="<?php echo e(route('base-input')); ?>">Base Inputs</a></li>
@@ -567,8 +584,7 @@
                                     <li><a href="<?php echo e(route('megaoptions')); ?>">Mega Options</a></li>
                                 </ul>
                             </li>
-                            <li><a class="submenu-title" href="#">Form Widgets<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Form Widgets<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="<?php echo e(route('datepicker')); ?>">Datepicker</a></li>
                                     <li><a href="<?php echo e(route('time-picker')); ?>">Timepicker</a></li>
@@ -581,8 +597,7 @@
                                     <li><a href="<?php echo e(route('clipboard')); ?>">Clipboard</a></li>
                                 </ul>
                             </li>
-                            <li><a class="submenu-title" href="#">Form layout<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Form layout<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="<?php echo e(route('default-form')); ?>">Default Forms</a></li>
                                     <li><a href="<?php echo e(route('form-wizard')); ?>">Form Wizard 1</a></li>
@@ -600,15 +615,13 @@
                                 <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
                             </svg><span>Tables</span></a>
                         <ul class="sidebar-submenu">
-                            <li><a class="submenu-title" href="#">Bootstrap Tables<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Bootstrap Tables<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="<?php echo e(route('bootstrap-basic-table')); ?>">Basic Tables</a></li>
                                     <li><a href="<?php echo e(route('table-components')); ?>">Table components</a></li>
                                 </ul>
                             </li>
-                            <li><a class="submenu-title" href="#">Data Tables<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Data Tables<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="<?php echo e(route('datatable-basic-init')); ?>">Basic Init</a></li>
                                     <li><a href="<?php echo e(route('datatable-api')); ?>">API</a></li>
@@ -645,8 +658,7 @@
                             <li><a href="<?php echo e(route('loader')); ?>">Spinners</a></li>
                             <li><a href="<?php echo e(route('dropdown')); ?>">Dropdown</a></li>
                             <li><a href="<?php echo e(route('accordion')); ?>">Accordion</a></li>
-                            <li><a class="submenu-title" href="#">Tabs<span class="sub-arrow"><i
-                                            class="fa fa-angle-right"></i></span></a>
+                            <li><a class="submenu-title" href="#">Tabs<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="<?php echo e(route('tab-bootstrap')); ?>">Bootstrap Tabs</a></li>
                                     <li><a href="<?php echo e(route('tab-material')); ?>">Line Tabs</a></li>

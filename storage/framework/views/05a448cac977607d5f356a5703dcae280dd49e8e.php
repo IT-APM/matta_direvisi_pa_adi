@@ -178,7 +178,7 @@
                             </select>
                         </div>
                     </div>
-                        <button class="btn btn-success mt-2" type="submit">Update</button> | <a href="<?php echo e(route('pelatihan.index')); ?>" class="btn btn-warning" type="button">Back</a>
+                    <button class="btn btn-success mt-2 mb-2" type="submit">Update</button> | <a href="<?php echo e(route('pelatihan.index')); ?>" class="btn btn-warning mt-2 mb-2" type="button">Back</a>
                     </form>
                 
         </div>

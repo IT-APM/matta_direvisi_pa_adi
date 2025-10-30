@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="status" content="true">
     <title>Formulir Pengajuan Pelatihan</title>
+    <link rel="icon" href="<?php echo e(asset('assets/images/favicon.png')); ?>" type="image/x-icon">
     <style type="text/css">
     body {
         margin: 0;

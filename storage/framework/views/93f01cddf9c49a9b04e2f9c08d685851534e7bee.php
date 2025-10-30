@@ -73,6 +73,8 @@
                                         <a href="<?php echo e(route('izin.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         <?php elseif($data->filename == 'emails.pelatihan0'): ?>
                                         <a href="<?php echo e(route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <?php elseif($data->filename == 'emails.recruitment0'): ?>
+                                        <a href="<?php echo e(route('recruitment.download_offering', Crypt::encrypt($data->id_trx))); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

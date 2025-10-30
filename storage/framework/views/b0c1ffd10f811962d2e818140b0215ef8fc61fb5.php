@@ -62,8 +62,8 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <div class="col-12 mb-2">
-                                <label for="nama" class="form-label">Nama/Email Kandidat</label>
-                                <input type="text" class="form-control" name="nama" id="nama" placeholder="Nama/Email" value="<?php echo e($trx->nama); ?>/<?php echo e($trx->email); ?>" disabled>
+                                <label for="nama" class="form-label">Nama / Email Kandidat</label>
+                                <input type="text" class="form-control" name="nama" id="nama" placeholder="Nama/Email" value="<?php echo e($trx->nama); ?> / <?php echo e($trx->email); ?>" disabled>
                             </div>
                         </div>
                     </div>
@@ -82,31 +82,29 @@
                         </div>
                         <hr class="mt-2 mb-2" />
                         <div class="row">
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="posisi">Posisi / Jabatan</label>
-                                    <input class="form-control" type="text" readonly="" value="<?php echo e($nego_log->posisi); ?>">
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="posisi">Posisi / Jabatan</label>
+                                <input class="form-control" type="text" readonly="" value="<?php echo e($nego_log->posisi); ?>">
                             </div>
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="area_kerja">Area Kerja</label>
-                                    <input class="form-control" type="text" readonly="" value="<?php echo e($nego_log->area_kerja); ?>">
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="level">Level</label>
+                                <input class="form-control" type="text" readonly="" value="<?php echo e($trxM->_level->level); ?>">
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="atasan">Atasan Langsung</label>
-                                    <input class="form-control" type="text" readonly="" <?php if(!empty($atasan)): ?>value="<?php echo e($atasan['nama'] . '/' . $atasan['nik']); ?>"<?php endif; ?>>
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="area_kerja">Area Kerja</label>
+                                <input class="form-control" type="text" readonly="" value="<?php echo e($nego_log->area_kerja); ?>">
                             </div>
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
-                                    <input class="form-control" type="text" readonly="" value="<?php echo e($nego_log->divisi); ?>">
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="ddd_kandidat">Direktorat / Divisi / Departemen</label>
+                                <input class="form-control" type="text" readonly="" value="<?php echo e($trxM->_divisi_kandidat->nama); ?> / <?php echo e($trxM->_dep_kandidat->nama); ?> / <?php echo e($trxM->_sub_dep_kandidat->nama); ?>">
+                            </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
+                                <input class="form-control" type="text" readonly="" <?php if(!empty($atasan)): ?>value="<?php echo e($atasan['nama']); ?> / <?php echo e($atasan['nik']); ?>"<?php endif; ?>>
+                            </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
+                                <input class="form-control" type="text" readonly="" value="<?php echo e($nego_log->divisi); ?>">
                             </div>
                         </div>
                         <div class="col-12 col-md-12">
@@ -114,27 +112,22 @@
                         </div>
                         <hr class="mt-2 mb-2" />
                         <div class="row">
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="thp">Take Home Pay (THP)</label>
-                                    <input class="form-control" type="text" readonly="" value="Rp. <?php echo e(number_format($nego_log->thp, 0)); ?>">
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="thp">Take Home Pay (THP)</label>
+                                <input class="form-control" type="text" readonly="" value="Rp. <?php echo e(number_format($nego_log->thp, 0)); ?>">
                             </div>
                             <?php
                             $benefit_utama = App\Models\MtrRecruitmentBenefit::whereIn('id', explode(',', $nego_log->benefit_utama))->orderBy('benefit', 'asc')->pluck('benefit')->toArray();
                             $benefit_utama = implode('&#13;&#10;', $benefit_utama);
                             ?>
-                            <div class="col-12 col-md-6">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="benefit_utama">Benefit</label>
-                                    <textarea class="form-control" rows="5" readonly=""><?php echo $benefit_utama; ?></textarea>
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="benefit_utama">Benefit</label>
+                                <textarea class="form-control" rows="5" readonly=""><?php echo $benefit_utama; ?></textarea>
                             </div>
-                            <div class="col-12 col-md-12">
-                                <div class="col-12 mb-2">
-                                    <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
-                                    <input class="form-control" type="text" readonly="" value="<?php echo e($nego_log->benefit_lainnya); ?>">
-                                </div>
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
+                                
+                                <textarea class="form-control" rows="5" readonly=""><?php echo e($nego_log->benefit_lainnya); ?></textarea>
                             </div>
                         </div>
                         <div class="col-12 col-md-12">
@@ -195,9 +188,36 @@
                         <?php endif; ?>
                     <?php endif; ?>
                     
+                    <?php if(request()->get('type') == 'extend'): ?>
+                    <hr class="mt-2 mb-2" />
+                    <label class="form-label">Extend</label>
+                    <form action="<?php echo e(route('recruitment.applicant_save')); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <?php echo csrf_field(); ?>
+                        <input type="hidden" id="id" name="id" value="<?php echo e(Crypt::encrypt($trx->id)); ?>">
+                        <input type="hidden" id="id_status" name="id_status" value="4">
+                        <input type="hidden" id="back_url" name="back_url" value="<?php echo e(URL::full()); ?>">
+                        <input type="hidden" id="type" name="type" value="extend">
+                        <div class="row mb-2">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="check_in">Check_in</label>
+                                <input class="form-control" name="check_in" id="check_in" type="datetime-local" required="">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="check_out">Check_out</label>
+                                <input class="form-control" name="check_out" id="check_out" type="datetime-local" required="" disabled>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-4">
+                                <button class="btn btn-primary" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                    <?php else: ?>
                     <hr class="mt-2 mb-2" />
                     <div class="row">
                         <div class="col-12 col-md-6">
+                            <?php if(empty($process)): ?>
                             <div class="col-12 mb-2">
                                 <label class="form-label" for="id_process">Process</label>
                                 <select class="form-select col-sm-12" id="id_process" name="id_process" required="">
@@ -207,9 +227,28 @@
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
+                            <?php endif; ?>
                             <a href="<?php echo e(route('recruitment.applicant_list', 0)); ?>" class="btn btn-warning" type="button">Back</a>
                         </div>
                     </div>
+                    <?php endif; ?>
+                    
+                    <?php if(request()->get('param') === 'sync'): ?>
+                        <div class="row mt-2">
+                        <form action="<?php echo e(route('recruitment.interview_save')); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                            <?php echo csrf_field(); ?>
+                            <input type="hidden" id="id" name="id" value="<?php echo e(Crypt::encrypt($trx->id)); ?>">
+                            <input type="hidden" id="id_status" name="id_status" value="24">
+                            <input type="hidden" id="back_url" name="back_url" value="<?php echo e(URL::full()); ?>">
+                            <input type="hidden" id="param" name="param" value="<?php echo e(request()->get('param')); ?>">
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <button class="btn btn-primary" type="submit">Document Sync</button>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    <?php endif; ?>
                     <hr class="mt-2 mb-2" />
                     
                     <div id="row_4">
@@ -228,6 +267,27 @@
                                     <input class="form-control" name="check_out" id="check_out" type="datetime-local" required="" disabled>
                                 </div>
                             </div>
+                            <?php
+                            $check1 = App\Models\TrxRecruitmentTiu5::where(['id_identitas'=>$trx->id])->exists();
+                            $check2 = App\Models\TrxRecruitmentPsychotest::where(['id_identitas'=>$trx->id])->exists();
+                            ?>
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-12">
+                                    <label class="form-label" for="jenis_psikotes">Jenis Psikotes</label>
+                                    <select class="form-select col-sm-12" id="jenis_psikotes" name="jenis_psikotes" required="">
+                                        <option selected="" disabled="" value="">Pilih...</option>
+                                        <?php if(!$check1): ?>
+                                        <option value="1">TIU 5</option>
+                                        <?php endif; ?>
+                                        <?php if(!$check2): ?>
+                                        <option value="2">EPPS, PAPI Kostick, DISC, BAUM, DAP</option>
+                                        <?php endif; ?>
+                                        <?php if(!$check1 && !$check2): ?>
+                                        <option value="3">TIU 5 & (EPPS, PAPI Kostick, DISC, BAUM, DAP)</option>
+                                        <?php endif; ?>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-12 col-md-4">
                                     <button class="btn btn-primary" type="submit">Submit</button>
@@ -235,6 +295,144 @@
                             </div>
                         </form>
                     </div>
+                    
+                    <?php if(!empty($process) && $process=='psikotest_reschedule'): ?>
+                        <form action="<?php echo e(route('recruitment.applicant_save')); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                        <?php echo csrf_field(); ?>
+                            <input type="hidden" id="id" name="id" value="<?php echo e(Crypt::encrypt($trx->id)); ?>">
+                            <input type="hidden" id="id_status" name="id_status" value="4">
+                            <input type="hidden" id="back_url" name="back_url" value="<?php echo e(URL::full()); ?>">
+                            <input type="hidden" id="process" name="process" value="<?php echo e($process); ?>">
+                            <h5>Jadwal Ulang Psikotes</h5>
+                            <h6>Sebelum</h6>
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Check_in</label>
+                                    <input class="form-control" value="<?php echo e(\Carbon\Carbon::parse($trx->check_in) ->format('d-m-Y H:i:s')); ?>" disabled>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Check_out</label>
+                                    <input class="form-control" value="<?php echo e(\Carbon\Carbon::parse($trx->check_out) ->format('d-m-Y H:i:s')); ?>" disabled>
+                                </div>
+                            </div>
+                            <h6>Sesudah</h6>
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="check_in">Check_in</label>
+                                    <input class="form-control" name="check_in" id="check_in" type="datetime-local" required="">
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="check_out">Check_out</label>
+                                    <input class="form-control" name="check_out" id="check_out" type="datetime-local" required="" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-4">
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    <?php endif; ?>
+                    
+                    <?php if(!empty($process) && $process=='psikotest_revisi'): ?>
+                        <form id="myForm" name="myForm" action="<?php echo e(route('recruitment.applicant_save')); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                        <?php echo csrf_field(); ?>
+                            <input type="hidden" id="id" name="id" value="<?php echo e(Crypt::encrypt($trx->id)); ?>">
+                            
+                            <input type="hidden" id="id_status" name="id_status" value="4">
+                            <input type="hidden" id="back_url" name="back_url" value="<?php echo e(URL::full()); ?>">
+                            <input type="hidden" id="process" name="process" value="<?php echo e($process); ?>">
+                            <h5>Revisi Psikotes</h5>
+                            <h6>Sebelum</h6>
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Check_in</label>
+                                    <input class="form-control" value="<?php echo e(\Carbon\Carbon::parse($trx->check_in) ->format('d-m-Y H:i:s')); ?>" disabled>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Check_out</label>
+                                    <input class="form-control" value="<?php echo e(\Carbon\Carbon::parse($trx->check_out) ->format('d-m-Y H:i:s')); ?>" disabled>
+                                </div>
+                            </div>
+                            <h6>Sesudah</h6>
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="check_in">Check_in</label>
+                                    <input class="form-control" name="check_in" id="check_in" type="datetime-local" required="">
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="check_out">Check_out</label>
+                                    <input class="form-control" name="check_out" id="check_out" type="datetime-local" required="" disabled>
+                                </div>
+                            </div>
+                            <h6>Jenis</h6>
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-12">
+                                    <input type="checkbox" class="form-check-input" id="jenis[]" name="jenis[]" value="1">
+                                    <label class="form-check-label">EPPS</label>
+                                    <input type="checkbox" class="form-check-input" id="jenis[]" name="jenis[]" value="2">
+                                    <label class="form-check-label">PAPI Kostick</label>
+                                    <input type="checkbox" class="form-check-input" id="jenis[]" name="jenis[]" value="3">
+                                    <label class="form-check-label">DISC</label>
+                                    <input type="checkbox" class="form-check-input" id="jenis[]" name="jenis[]" value="4">
+                                    <label class="form-check-label">BAUM</label>
+                                    <input type="checkbox" class="form-check-input" id="jenis[]" name="jenis[]" value="5">
+                                    <label class="form-check-label">DAP</label>
+                                </div>
+                                <div id="checkboxError" class="text-danger" style="display: none;">Please checkbox this field</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-4">
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    <?php endif; ?>
+                    
+                    <?php if(!empty($process) && $process=='histori_revisi'): ?>
+                    <?php
+                        $n_log = App\Models\TrxRecruitmentPsychotestLog::selectRaw('COUNT(*) as total')->where(['id_identitas'=>$trx->id])->groupBy('urutan')->get()->count();
+                    ?>
+                        <h5>Histori Revisi Psikotes</h5>
+                        <div class="row mb-2">
+                            <div class="col-12 col-md-12">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th width=15%>Histori ke</th>
+                                        <th width=85%>Hasil</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php for($i = 1; $i <= $n_log; $i++): ?>
+                                    <tr>
+                                        <td><?php echo e($i); ?></td>
+                                        <?php
+                                            $where = ['urutan' => $i, 'id_identitas' => $trx->id, 'jenis' => 1];
+                                            $jenis1 = App\Models\TrxRecruitmentPsychotestLog::where($where)->where('nomor', '>', 0)->get();
+                                            $where = ['urutan' => $i, 'id_identitas' => $trx->id, 'jenis' => 2];
+                                            $jenis2 = App\Models\TrxRecruitmentPsychotestLog::where($where)->where('nomor', '>', 0)->get();
+                                            $where = ['urutan' => $i, 'id_identitas' => $trx->id, 'jenis' => 3];
+                                            $jenis3 = App\Models\TrxRecruitmentPsychotestLog::where($where)->where('nomor', '>', 0)->get();
+                                            $where = ['urutan' => $i, 'id_identitas' => $trx->id, 'jenis' => 4];
+                                            $pohon = App\Models\TrxRecruitmentPsychotestLog::where($where)->where('nomor', '>', 0)->get();
+                                            $where = ['urutan' => $i, 'id_identitas' => $trx->id, 'jenis' => 5];
+                                            $manusia = App\Models\TrxRecruitmentPsychotestLog::where($where)->where('nomor', '>', 0)->get();
+                                        ?>
+                                        <td>
+                                            <?php if(!$jenis1->isEmpty()): ?><a href="<?php echo e(route('recruitment.psychotestexcel', [Crypt::encrypt([$trx->id,1,$i])])); ?>" target="_blank" data-toggle="tooltip" title="EPPS"><i class="fa fa-file-text-o"></i></a><?php endif; ?>
+                                            <?php if(!$jenis2->isEmpty()): ?>&nbsp;<a href="<?php echo e(route('recruitment.psychotestexcel', [Crypt::encrypt([$trx->id,2,$i])])); ?>" target="_blank" data-toggle="tooltip" title="PAPI Kostick"><i class="fa fa-file-text-o"></i></a><?php endif; ?>
+                                            <?php if(!$jenis3->isEmpty()): ?>&nbsp;<a href="<?php echo e(route('recruitment.psychotestexcel', [Crypt::encrypt([$trx->id,3,$i])])); ?>" target="_blank" data-toggle="tooltip" title="DISC"><i class="fa fa-file-text-o"></i></a><?php endif; ?>
+                                            <?php if(!empty($pohon[0]->jawaban1)): ?>&nbsp;<a href="<?php echo e(asset('assets/recruitment/upload/'.$pohon[0]->jawaban1)); ?>" target="_blank" data-toggle="tooltip" title="BAUM"><i class="fa fa-file-image-o"></i></a><?php endif; ?>
+                                            <?php if(!empty($manusia[0]->jawaban1)): ?>&nbsp;<a href="<?php echo e(asset('assets/recruitment/upload/'.$manusia[0]->jawaban1)); ?>" target="_blank" data-toggle="tooltip" title="DAP"><i class="fa fa-file-image-o"></i></a><?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <?php endfor; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                     
                     <div id="row_6">
                         <form action="<?php echo e(route('recruitment.interview_save')); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
@@ -377,6 +575,111 @@
                         </form>
                     </div>
                     
+                    <?php if(!empty($process) && in_array($process, ['interview_user_hco_reschedule','interview_hco_reschedule','interview_user_reschedule'])): ?>
+                        <form action="<?php echo e(route('recruitment.interview_save')); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                            <?php echo csrf_field(); ?>
+                            <input type="hidden" id="id" name="id" value="<?php echo e(Crypt::encrypt($trx->id)); ?>">
+                            <input type="hidden" id="id_interview" name="id_interview" value="<?php echo e(Crypt::encrypt($interview->id)); ?>">
+                            <input type="hidden" id="back_url" name="back_url" value="<?php echo e(URL::full()); ?>">
+                            <input type="hidden" id="process" name="process" value=<?php echo e($process); ?>>
+                            <?php if($process=='interview_user_hco_reschedule'): ?>
+                                <h5>Interview User and HCO Reschedule</h5>
+                                
+                                <input type="hidden" id="id_status" name="id_status" value="6">
+                            <?php elseif($process=='interview_user_reschedule'): ?>
+                                <h5>Interview User Reschedule</h5>
+                                
+                                <input type="hidden" id="id_status" name="id_status" value="8">
+                            <?php elseif($process=='interview_hco_reschedule'): ?>
+                                <h5>Interview HCO Reschedule</h5>
+                                
+                                <input type="hidden" id="id_status" name="id_status" value="10">
+                            <?php endif; ?>
+                            <h6>Before</h6>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="interviewer">Pewawancara</label>
+                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" disabled>
+                                            <?php $__currentLoopData = $karyawan_user_hco; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($data->nik); ?>" <?php if(in_array($data->nik, explode(';', $interview->interviewer))): ?> selected <?php endif; ?>><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="metode">Metode</label>
+                                        <input class="form-control" value="<?php echo e($interview->metode); ?>" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="check_in">Check_in</label>
+                                        <input class="form-control" value="<?php echo e(\Carbon\Carbon::parse($interview->check_in) ->format('d-m-Y H:i:s')); ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="check_out">Check_out</label>
+                                        <input class="form-control" value="<?php echo e(\Carbon\Carbon::parse($interview->check_out) ->format('d-m-Y H:i:s')); ?>" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <h6>After</h6>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="interviewer">Pewawancara</label>
+                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="interviewer[]" name="interviewer[]" required="">
+                                            
+                                            <?php if($process=='interview_user_hco_reschedule'): ?>
+                                                <?php $__currentLoopData = $karyawan_user_hco; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($data->nik); ?>"><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            <?php elseif($process=='interview_user_reschedule'): ?>
+                                                <?php $__currentLoopData = $karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($data->nik); ?>"><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            <?php elseif($process=='interview_hco_reschedule'): ?>
+                                                <?php $__currentLoopData = $karyawan_hco; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($data->nik); ?>"><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            <?php endif; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="metode">Metode</label>
+                                        <select class="form-select col-sm-12" id="metode" name="metode" required="">
+                                            <option selected="" disabled="" value="">Pilih...</option>
+                                            <option value="Offline">Offline</option>
+                                            <option value="Online">Online</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="check_in">Check_in</label>
+                                        <input class="form-control" name="check_in" id="check_in" type="datetime-local" required="">
+                                    </div>
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label" for="check_out">Check_out</label>
+                                        <input class="form-control" name="check_out" id="check_out" type="datetime-local" required="">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    <?php endif; ?>
+                    
                     <div id="row_16">
                         <form action="<?php echo e(route('recruitment.interview_save')); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                             <?php echo csrf_field(); ?>
@@ -474,56 +777,53 @@
                                 <div class="col-12 col-md-12">
                                     <h6 class="text-center">ORGANISASI</h6>
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="posisi">Posisi / Jabatan</label>
-                                        <input class="form-control" name="posisi" id="posisi" type="text" readonly="" value="<?php echo e($trxM->_pekerjaan->pekerjaan); ?>">
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="posisi">Posisi / Jabatan</label>
+                                    <input class="form-control" name="posisi" id="posisi" type="text" readonly="" value="<?php echo e($trxM->_pekerjaan->pekerjaan); ?>">
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="area_kerja">Area Kerja</label>
-                                        <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="<?php echo e($trxM->_area->propinsi); ?>">
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="level">Level</label>
+                                    <input class="form-control" name="level" id="level" type="text" readonly="" value="<?php echo e($trxM->_level->level); ?>">
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="atasan">Atasan Langsung</label>
-                                        <input class="form-control" name="atasan" id="atasan" type="text" readonly="" <?php if(!empty($atasan)): ?>value="<?php echo e($atasan['nama'] . '/' . $atasan['nik']); ?>"<?php endif; ?>>
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="area_kerja">Area Kerja</label>
+                                    <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="<?php echo e($trxM->_area->propinsi); ?>">
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
-                                        <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="<?php echo e($pengaju['divisi'] . '/' . $pengaju['dep'] . '/' . $pengaju['sub_dep']); ?>">
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="ddd_kandidat">Direktorat / Divisi / Departemen</label>
+                                    <input class="form-control" name="ddd_kandidat" id="ddd_kandidat" type="text" readonly="" value="<?php echo e($trxM->_divisi_kandidat->nama); ?> / <?php echo e($trxM->_dep_kandidat->nama); ?> / <?php echo e($trxM->_sub_dep_kandidat->nama); ?>">
+                                </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
+                                    <input class="form-control" name="atasan" id="atasan" type="text" readonly="" <?php if(!empty($atasan)): ?>value="<?php echo e($atasan['nama']); ?> / <?php echo e($atasan['nik']); ?>"<?php endif; ?>>
+                                </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
+                                    <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="<?php echo e($pengaju['divisi']); ?> / <?php echo e($pengaju['dep']); ?> / <?php echo e($pengaju['sub_dep']); ?>">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-12 col-md-12">
                                     <h6 class="text-center">BENEFIT</h6>
                                 </div>
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-12">
                                     <div class="col-12 mb-2">
                                         <label class="form-label" for="thp">Take Home Pay (THP)<span class="text-danger">*</span></label>
                                         <input min=1 type="number" oninput="validity.valid||(value='')" onfocus="use_number(this)" onblur="use_text(this)" class="form-control" name="thp" id="thp" placeholder="Take Home Pay (THP)" required="">
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
-                                        <input class="form-control" name="benefit_lainnya" id="benefit_lainnya" type="text" placeholder="Benefit lainnya">
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="benefit_utama">Benefit<span class="text-danger">*</span></label><br/>
+                                    <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="benefit_utama[]" name="benefit_utama[]" required="">
+                                        <?php $__currentLoopData = $benefit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($data->id); ?>"><?php echo e($data->benefit); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
                                 </div>
-                                <div class="col-12 col-md-12">
-                                    <div class="col-12 mb-2">
-                                        <label class="form-label" for="benefit_utama">Benefit<span class="text-danger">*</span></label><br/>
-                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="benefit_utama[]" name="benefit_utama[]" required="">
-                                            <?php $__currentLoopData = $benefit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <option value="<?php echo e($data->id); ?>"><?php echo e($data->benefit); ?></option>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </select>
-                                    </div>
+                                <div class="col-12 col-md-12 mb-2">
+                                    <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
+                                    
+                                    <textarea class="form-control" rows="5" name="benefit_lainnya" id="benefit_lainnya"></textarea>
                                 </div>
                             </div>
                             <div class="row">
@@ -567,13 +867,13 @@
                             </div>
                             <hr class="mt-2 mb-2" />
                             <div class="row">
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-12">
                                     <div class="col-12 mb-2">
                                         <label class="form-label" for="catatan">Catatan HCO</label>
                                         <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-12">
                                     <div class="col-12 mb-2">
                                         <label class="form-label" for="lampiran">Lampiran HCO</label>
                                         <input name="lampiran" id="lampiran" class="form-control" type="file">
@@ -685,7 +985,8 @@
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
                                         <label class="form-label" for="benefit_lainnya">Benefit lainnya</label>
-                                        <input class="form-control" name="benefit_lainnya" id="benefit_lainnya" type="text" placeholder="Benefit lainnya" value="<?php echo e($nego->benefit_lainnya); ?>">
+                                        
+                                        <textarea class="form-control" rows="5" name="benefit_lainnya" id="benefit_lainnya"><?php echo e($nego->benefit_lainnya); ?></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-12">
@@ -917,7 +1218,47 @@
                             <div class="ms-3">
                                 <p class="d-flex justify-content-between mb-2"><span class="date-content light-background"><?php echo e($_history->created_at); ?></span></p>
                                 <h6><?php echo e($_history->_status->status); ?><span class="dot-notification"></span></h6>
-                                <p class="f-light"><?php echo e($_history->pic); ?></p>
+                                <p class="f-light"><?php echo e($_history->pic); ?>
+
+                                    <?php
+                                        $catatan = json_decode($_history->catatan, true);
+                                    ?>
+                                    
+                                    <?php if($_history->id_status == 4): ?>
+                                        <?php if(!empty($catatan)): ?>
+                                            <?php if(empty($catatan['psikotest'])): ?>
+                                                <?php if($catatan['no']==1): ?>
+                                                    <span class="f-light"><br/>Send (<?php echo e(\Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s')); ?> s/d <?php echo e(\Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s')); ?>)</span>
+                                                <?php else: ?>
+                                                    <span class="f-light"><br/>Reschedule (<?php echo e(\Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s')); ?> s/d <?php echo e(\Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s')); ?>)</span>
+                                                <?php endif; ?>
+                                            <?php else: ?>
+                                                <span class="f-light"><br/><?php echo e($catatan['psikotest']); ?> (<?php echo e(\Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s')); ?> s/d <?php echo e(\Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s')); ?>)</span>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    
+                                    
+                                    
+                                    <?php elseif(in_array($_history->id_status, [6,8,10])): ?>
+                                        <?php if(!empty($catatan)): ?>
+                                            <?php
+                                                if(!empty($catatan['interviewer'])){
+                                                    $arr = App\Models\Karyawan::select('nik', 'nama')->whereIn('nik', explode(';', $catatan['interviewer']))->get();
+                                                    $interviewer = array();
+                                                    foreach($arr as $_arr){
+                                                        array_push($interviewer, $_arr->nama.' / '.$_arr->nik);
+                                                    }
+                                                    $interviewer = implode(', ', $interviewer);
+                                                }
+                                            ?>
+                                            <?php if($catatan['no']==1): ?>
+                                            <span class="f-light"><br/>Send (Metode: <?php echo e($catatan['metode']); ?>, Pewawancara: <?php echo e($interviewer); ?>, Waktu: <?php echo e(\Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s')); ?> s/d <?php echo e(\Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s')); ?>)</span>
+                                            <?php else: ?>
+                                            <span class="f-light"><br/>Reschedule (Metode: <?php echo e($catatan['metode']); ?>, Pewawancara: <?php echo e($interviewer); ?>, Waktu: <?php echo e(\Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s')); ?> s/d <?php echo e(\Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s')); ?>)</span>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </p>
                             </div>
                         </li>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -964,6 +1305,16 @@
         node.value = value.toLocaleString('en');  // or other formatting
     }
     $(document).ready(function () {
+        // 
+        $('#myForm').on('submit', function (e) {
+            if ($('input[name="jenis[]"]:checked').length === 0) {
+                e.preventDefault();
+                $('#checkboxError').show();
+            } else {
+                $('#checkboxError').hide();
+            }
+        });
+        // 
         // 4=Psycotest Send
         // 6=Interview User and HCO Send
         // 8=Interview User Send

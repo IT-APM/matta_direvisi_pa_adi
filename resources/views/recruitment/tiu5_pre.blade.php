@@ -38,39 +38,14 @@
                             <div class="row">
                                 <div class="col-12">
                                     <p>Semangat Pagi!</p>
-                                    <p>Kepada Yth. {{ $trx->nama }}<br />
-                                        Peserta Psikotes - Seleksi Penerimaan Karyawan<br />
-                                        PT. Alita Praya Mitra</p>
-                                    <p style="text-align: justify">Kami ucapkan selamat datang kepada Anda dalam sesi
-                                        Psikotes yang diselenggarakan
-                                        oleh PT Alita Praya Mitra. Kami sangat menghargai waktu dan usaha yang Anda
-                                        luangkan
-                                        untuk mengikuti proses Seleksi Penerimaan Karyawan ini. Psikotes ini merupakan
-                                        bagian penting dari upaya kami untuk mengenal lebih jauh kepribadian, potensi
-                                        dan
-                                        kompetensi Anda.</p>
-                                    <p style="text-align: justify">Kami berharap Anda dapat mengikuti seluruh rangkaian
-                                        tes dengan baik dan
-                                        menunjukkan kemampuan terbaik Anda. Semoga hasil yang diperoleh dapat memberikan
-                                        gambaran yang jelas mengenai kecocokan Anda dengan posisi yang dilamar.</p>
-                                    <p style="text-align: justify">Pastikan Anda berada di tempat yang tenang dan
-                                        memiliki koneksi internet yang
-                                        stabil. Luangkan waktu dengan baik dan fokus dalam mengerjakan setiap soal.</p>
-                                    <p style="text-align: justify">Proses Psikotes ini terdiri dari beberapa jenis tes dan
-                                        di setiap jenis tes memiliki
-                                        petunjuk pengerjaan dan instruksi yang berbeda - beda, mohon untuk membaca
-                                        dengan
-                                        baik dan teliti seluruh petunjuk dan instruksi di setiap jenis tes. Seluruh
-                                        jenis tes memiliki batasan waktu, jadi mohon untuk mengerjakan semaksimal
-                                        mungkin
-                                        sesuai dengan batasan waktu yang diberikan.</p>
-                                    <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Batasan waktu untuk mengerjakan seluruh psikotes ini adalah {{ round($trx->remain/60) }} menit
-                                        <br/>Tes ini akan dimulai setelah anda klik tombol Start</p>
-                                    <p style="text-align: justify">Jika ada pertanyaan atau kendala selama proses tes
-                                        berlangsung, jangan ragu untuk segera menghubungi tim kami.
-                                        <br />Terima kasih atas perhatian dan partisipasi Anda. Selamat mengerjakan
-                                        tes.</p>
-                                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+                                    <p>Kepada Yth. {{ $trx->nama }}<br/>Peserta Psikotes - Seleksi Penerimaan Karyawan<br/>PT. Alita Praya Mitra</p>
+                                    <p style="text-align: justify">Kami ucapkan selamat datang kepada Anda dalam sesi Psikotes yang diselenggarakan oleh PT Alita Praya Mitra. Kami sangat menghargai waktu dan usaha yang Anda luangkan untuk mengikuti proses Seleksi Penerimaan Karyawan ini. Psikotes ini merupakan bagian penting dari upaya kami untuk mengenal lebih jauh kepribadian, potensi dan kompetensi Anda.</p>
+                                    <p style="text-align: justify">Kami berharap Anda dapat mengikuti seluruh rangkaian tes dengan baik dan menunjukkan kemampuan terbaik Anda. Semoga hasil yang diperoleh dapat memberikan gambaran yang jelas mengenai kecocokan Anda dengan posisi yang dilamar.</p>
+                                    <p style="text-align: justify">Pastikan Anda berada di tempat yang tenang dan memiliki koneksi internet yang stabil. Luangkan waktu dengan baik dan fokus dalam mengerjakan setiap soal.</p>
+                                    <p style="text-align: justify">Proses Psikotes ini terdiri dari beberapa jenis tes dan di setiap jenis tes memiliki petunjuk pengerjaan dan instruksi yang berbeda - beda, mohon untuk membaca dengan baik dan teliti seluruh petunjuk dan instruksi di setiap jenis tes. Seluruh jenis tes memiliki batasan waktu, jadi mohon untuk mengerjakan semaksimal mungkin sesuai dengan batasan waktu yang diberikan.</p>
+                                    <p style="text-align: justify; color:red; text-transform: uppercase; font-weight: bold;">Batasan waktu untuk mengerjakan seluruh psikotes ini adalah {{ round($trx->remain/60) }} menit.<br/>Tes ini akan dimulai setelah anda klik tombol Start</p>
+                                    <p style="text-align: justify">Jika ada pertanyaan atau kendala selama proses tes berlangsung, jangan ragu untuk segera menghubungi tim kami.<br/>Terima kasih atas perhatian dan partisipasi Anda. Selamat mengerjakan tes.</p>
+                                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </div>
                                 <form class="text-end"
                                     action="{{ route('recruitment.psychotest', [Crypt::encrypt(array($trx->id, 'psychotest', $soal->id))]) }}"
@@ -96,8 +71,8 @@
                             <div class="row">
                                 <div class="col-12">
                                     <p>Semangat Pagi!</p>
-                                    <p>Kepada Yth. {{ $trx->nama }}<br />
-                                        Peserta Psikotes - Seleksi Penerimaan Karyawan<br />
+                                    <p>Kepada Yth. {{ $trx->nama }}<br/>
+                                        Peserta Psikotes - Seleksi Penerimaan Karyawan<br/>
                                         PT. Alita Praya Mitra</p>
                                     <p style="text-align: justify">Kami ucapkan selamat datang kepada Anda dalam sesi
                                         Psikotes yang diselenggarakan
@@ -129,7 +104,7 @@
                                         <br/>Tes ini akan dimulai setelah anda klik tombol Start</p>
                                     <p style="text-align: justify">Jika ada pertanyaan atau kendala selama proses tes
                                         berlangsung, jangan ragu untuk segera menghubungi tim kami.
-                                        <br />Terima kasih atas perhatian dan partisipasi Anda. Selamat mengerjakan
+                                        <br/>Terima kasih atas perhatian dan partisipasi Anda. Selamat mengerjakan
                                         tes.</p>
                                         <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
                                 </div>

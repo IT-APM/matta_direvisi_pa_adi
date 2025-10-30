@@ -3,6 +3,7 @@
 <?php $__env->startSection('css'); ?>
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/datatables.css')); ?>">
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/datatable-extension.css')); ?>">
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/vendors/select2.css')); ?>">
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('style'); ?>
@@ -31,13 +32,37 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    <?php if(Session::has('error')): ?>
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h6><?php echo e(session('error')); ?></h6>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <?php endif; ?>
                     <?php if(Session::has('msg')): ?>
                     <div class="alert alert-success dark alert-dismissible fade show" role="alert">
                         <h6><?php echo e(session('msg')); ?></h6>
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <?php endif; ?>
-                    <a href="<?php echo e(route('kebutuhan.create')); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> <?php echo e(__('lang.Tambah Baru')); ?></a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> <?php echo e(__('lang.Saring')); ?></button>
+                    <?php
+                        // $check = App\Models\MtrUtility::
+                        $check = in_array(auth()->user()->nik, explode(',', App\Models\MtrUtility::find(43)->informasi));
+                        // dd($check);
+                    ?>
+                    <?php if($check): ?>
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <select class="form-select js-example-basic-single col-sm-12" id="nik_pengaju" name="nik_pengaju">
+                                <option value="0">Pilih Karyawan...</option>
+                                <?php $__currentLoopData = $karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e(Crypt::encrypt($data->nik)); ?>"><?php echo e($data->nama); ?> - <?php echo e($data->nik); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <button class="btn btn-primary" type="button" onclick="PilihKaryawan()"><i class="fa fa-plus" aria-hidden="true"></i> <?php echo e(__('lang.Tambah Baru')); ?></button> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> <?php echo e(__('lang.Saring')); ?></button>
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="<?php echo e(route('kebutuhan.index')); ?>" method="get" enctype="multipart/form-data">
                             <div class="row">
@@ -88,7 +113,11 @@
                                     <th><?php echo e(__('lang.Area Kerja Kota')); ?></th>
                                     <th><?php echo e(__('lang.Pengaju')); ?></th>
                                     <th><?php echo e(__('lang.NIP')); ?></th>
+                                    <th>Direktorat</th>
+                                    <th>Divisi</th>
+                                    <th>Departemen</th>
                                     <th><?php echo e(__('lang.Nama Jabatan')); ?></th>
+                                    <th>Atasan Langsung Kandidat</th>
                                     <th><?php echo e(__('lang.Status Kerja')); ?></th>
                                     <th><?php echo e(__('lang.Tanggal Mulai Bekerja')); ?></th>
                                     <th><?php echo e(__('lang.Jenis Permintaan')); ?></th>
@@ -96,7 +125,12 @@
                                     <th><?php echo e(__('lang.Jenis Kelamin')); ?></th>
                                     <th><?php echo e(__('lang.Status Pengajuan')); ?></th>
                                     <th><?php echo e(__('lang.Waktu Pembuatan')); ?></th>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
                                     <th><?php echo e(__('lang.Waktu Selesai')); ?></th>
+                                    <th>SLA (hari)</th>
+                                    <th>SLA Status</th>
+                                    <th>Tanggal SLA</th>
+                                    <?php endif; ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -113,19 +147,98 @@
                                         <?php endif; ?>
 
                                     </td>
+                                    <?php
+                                        $pengaju_property = json_decode($data->pengaju_property, true);
+                                        $atasan_property = $data->atasan_property;
+                                        $atasan_property = json_decode($atasan_property, true);
+                                    ?>
                                     <td><?php echo e($data->_area->propinsi); ?></td>
                                     <td><?php if(!empty($data->id_kota)): ?> <?php echo e($data->_kota->kota); ?> <?php endif; ?></td>
-                                    <td><?php echo e($data->_pengaju->nama); ?></td>
-                                    <td><?php echo e($data->_pengaju->nik); ?></td>
+                                    <td><?php echo e($pengaju_property['nama']); ?></td>
+                                    <td><?php echo e($data->pengaju); ?></td>
+                                    <td><?php echo e($pengaju_property['divisi']); ?></td>
+                                    <td><?php echo e($pengaju_property['dep']); ?></td>
+                                    <td><?php echo e($pengaju_property['sub_dep']); ?></td>
                                     <td><?php echo e($data->_pekerjaan->pekerjaan); ?></td>
+                                    <td><?php if(!empty($atasan_property)): ?> <?php echo e($atasan_property['nama']); ?>/<?php echo e($atasan_property['nik']); ?> <?php endif; ?></td>
                                     <td><?php echo e($data->_status_kerja->status_kerja); ?></td>
                                     <td><?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $data->tanggal)->format('d-m-Y')); ?></td>
                                     <td><?php echo e($data->_jenis_permintaan->jenis); ?></td>
-                                    <td><?php echo e($data->jumlah); ?></td>
+                                    <td>
+                                        <?php
+                                        $is_history = App\Models\TrxKebutuhanMasterEdit::where(['id_kebutuhan' => $data->id])->exists();
+                                        ?>
+                                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?><a href="<?php echo e(route('kebutuhan.edit_kolom', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'field'=>'jumlah'])); ?>" data-toggle="tooltip" title='Edit'><span class="badge <?php if($is_history): ?> badge-warning <?php else: ?> badge-success <?php endif; ?>" style="font-size: 11px;"><?php endif; ?> <?php echo e($data->jumlah); ?> <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?></span></a><?php endif; ?>
+                                        
+                                    </td>
                                     <td><?php echo e($data->_kelamin->kelamin); ?></td>
                                     <td><?php echo e($data->_status_pengajuan->status_pengajuan); ?></td>
                                     <td><?php echo e($data->created_at); ?></td>
+                                    
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
                                     <td><?php if($data->status_pengajuan==10): ?> <?php echo e($data->updated_at); ?> <?php endif; ?></td>
+                                    <?php
+                                        $sla = App\Models\TrxRecruitment::where(['id_kebutuhan'=>$data->id, 'id_status'=>2])->first();
+                                        // $detail = App\Models\TrxKebutuhanDetail::where(['id_kebutuhan'=>$data->id])->orderBy('updated_at', 'desc')->get();
+                                        $kandidat = App\Models\TrxRecruitmentIdentitas::where(['id_kebutuhan'=>$data->id])->get();
+                                        $id_identitas = [];
+                                        foreach($kandidat as $_kandidat){
+                                            array_push($id_identitas, $_kandidat->id);
+                                        }
+                                        // 24=Join
+                                        $log = App\Models\TrxRecruitmentLog::whereIn('id_identitas',$id_identitas)->where(['id_status'=>24])->orderBy('created_at', 'desc')->get();
+                                        $sla_start = '';
+                                        $sla_end = '';
+                                        if(!empty($sla->created_at)){
+                                            $sla_start = Carbon\Carbon::parse($sla->created_at)->format('Y-m-d');
+                                        }
+                                        if($log->count() >= $data->jumlah){
+                                            $sla_end = Carbon\Carbon::parse($log[0]->created_at)->format('Y-m-d');
+                                        }
+                                    ?>
+                                    <td>
+                                        <?php if(!empty($sla_start) && !empty($sla_end)): ?>
+                                            <?php
+                                                // $sla_start = Carbon::parse($sla_start)->addDay();
+                                                $period = Carbon\CarbonPeriod::create($sla_start, $sla_end);
+                                                $workingDays = 0;
+                                                $holidays = App\Models\Holiday::whereBetween('tanggal', [$sla_start, $sla_end])->pluck('tanggal')->toArray();
+                                                // $arr_days = [];
+                                                foreach ($period as $date) {
+                                                    // Cek jika hari Sabtu (6) atau Minggu (0)
+                                                    if ($date->isWeekend()) {
+                                                        continue;
+                                                    }
+                                                    // Cek jika tanggal ada di daftar hari libur
+                                                    if (in_array($date->format('Y-m-d'), $holidays)) {
+                                                        continue;
+                                                    }
+                                                    // array_push($arr_days, $date);
+                                                    $workingDays++;
+                                                }
+                                            ?>
+                                            
+                                            <?php echo e($workingDays); ?>
+
+                                            
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if(!empty($sla_start) && !empty($sla_end)): ?>
+                                            <?php if($workingDays <= 14): ?>
+                                            <span class="badge badge-success" style="font-size: 11px;">Ontime</span>
+                                            <?php else: ?>
+                                            <span class="badge badge-danger" style="font-size: 11px;">Overdue</span>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if(!empty($sla_start) && !empty($sla_end)): ?>
+                                            <?php echo e(Carbon\Carbon::parse($sla_start)->format('d-m-Y')); ?> sd <?php echo e(Carbon\Carbon::parse($sla_end)->format('d-m-Y')); ?>
+
+                                        <?php endif; ?>
+                                    </td>
+                                    <?php endif; ?>
                                 </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
@@ -147,7 +260,19 @@
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/vfs_fonts.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.html5.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.print.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/select2/select2.full.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/select2/select2-custom.js')); ?>"></script>
 <script type="text/javascript">
+function PilihKaryawan() {
+    var nik_pengaju = "<?php echo e(Crypt::encrypt(auth()->user()->nik)); ?>";
+    <?php if($check): ?>
+    if($('#nik_pengaju').val() != '0'){
+        nik_pengaju = $('#nik_pengaju').val();
+    }
+    <?php endif; ?>
+    location.href = "<?php echo e(route('kebutuhan.create')); ?>"+"?nik_pengaju="+nik_pengaju;
+}
+// 
 function toggle_status_pengajuan(source) {
     checkboxes = document.getElementsByName('status_pengajuan[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {

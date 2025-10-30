@@ -889,7 +889,10 @@ class TrxPenilaianController extends Controller
         $trx->update();
         // 6=Penilaian Outsourcing
         if($id_tipe == 6){
-            $this->deleteToDoList(['id_trx'=>$id, 'nik'=>auth()->user()->nik, 'pic'=>'hco', 'filename'=>'emails.penilaian0_outsourcing']);
+            // tidak digunakan karena pic_hco menjadi 2 nik sedangkan ini nik sudah ditentukan dari 'nik'=>auth()->user()->nik
+            // $this->deleteToDoList(['id_trx'=>$id, 'nik'=>auth()->user()->nik, 'pic'=>'hco', 'filename'=>'emails.penilaian0_outsourcing']);
+            // ini yang digunakan tidak menggunaka nik
+            $this->deleteToDoList(['id_trx'=>$id, 'pic'=>'hco', 'filename'=>'emails.penilaian0_outsourcing']);
         }
         // selain Penilaian Outsourcing
         else{

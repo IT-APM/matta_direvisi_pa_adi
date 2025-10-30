@@ -220,10 +220,99 @@
                 </div>
             </div>
         </div>
+        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('spv')): ?>
+        <div class="col-xl-4 col-sm-4">
+            <div class="card bg-warning">
+                <div class="card-body">
+                    <div class="media faq-widgets">
+                        <div class="media-body text-center">
+                            <a href="<?php echo e(route('todolist.show', [0, 'filename' => 'emails.recruitment0'])); ?>" style="color: #FFFFFF;">
+                                <h5><span <?php if(count($recruitment)>0): ?> class="badge bg-danger" <?php else: ?> class="badge bg-warning" <?php endif; ?>><?php echo e(count($recruitment)); ?></span><br/><i class="fa fa-file-text-o"></i> RECRUITMENT</h5>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('notif_letter')): ?>
+        <div class="col-xl-4 col-sm-4">
+            <div class="card bg-warning">
+                <div class="card-body">
+                    <div class="media faq-widgets">
+                        <div class="media-body text-center">
+                            <a href="<?php echo e(route('todolist.show', [0, 'filename' => 'emails.penyesuaian_upah0'])); ?>" style="color: #FFFFFF;">
+                                <h5><span <?php if(count($notif_letter)>0): ?> class="badge bg-danger" <?php else: ?> class="badge bg-warning" <?php endif; ?>><?php echo e(count($notif_letter)); ?></span><br/><i class="fa fa-file-text-o"></i> NOTIFICATION LETTER</h5>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
     <!--  -->
 </div>
+
+<div class="modal fade bd-example-modal-lg" id="autoShowModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title w-100 text-center" id="myLargeModalLabel">SURAT PERSETUJUAN PEMROSESAN DATA PRIBADI</h4>
+            
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div style="text-align: justify;font-size: 15px;">
+                            <ol>
+                                <li>Saya memberikan persetujuan kepada PT Alita Praya Mitra (“<b>Alita</b>”) untuk melakukan pemrosesan Data Pribadi yang melekat pada identitas diri (“<b>Data Pribadi</b>”) yang telah saya berikan dan meratifikasi seluruh pemrosesan Data Pribadi yang telah dilakukan sebelum tanggal persetujuan ini.</li>
+                                <li>Bahwa Alita akan menggunakan Data Pribadi tersebut untuk kebutuhan penyimpanan sebagai <i>database</i>, pelaporan kepada pihak ketiga yang diwajibkan oleh Peraturan Perundang-undangan di Indonesia dan/atau kegiatan-kegiatan lain yang berkaitan dengan kepentingan bisnis Alita.</li>
+                                <li>Alita akan menyimpan Data Pribadi tersebut di sistem MATTA  dan sistem database yang lain milik Alita dan Alita menjamin tidak ada penyalahgunaan atau penggunaan di luar kebutuhan yang tercantum dalam Ayat 2 di atas.</li>
+                                <li>Saya telah mengetahui dan/atau menyetujui bahwa terdapat <i>Closed-Circuit Television (CCTV)</i> yang terpasang di lingkungan kerja Alita untuk kepentingan Perlindungan Data Pribadi Alita.</li>
+                                <li>Saya memahami dan setuju bahwa Alita dapat mengungkapkan Data Pribadi tersebut kepada pihak ketiga lainnya dengan tujuan dan tata cara yang telah diatur dalam Peraturan Perundang-undangan yang berlaku, dengan pemberitahuan terlebih dahulu oleh Alita.</li>
+                                <li>Alita akan melakukan penyimpanan Data Pribadi saya selama 10 (sepuluh) tahun sejak saya menyerahkan Data Pribadi saya.</li>
+                                <li>Alita menjamin hak saya sebagai subjek Data Pribadi sesuai Undang-Undang Perlindungan Data Pribadi No. 27/2022, termasuk dengan Peraturan Perundang-undangan turunannya.</li>
+                                <li>Saya menyatakan bahwa Data Pribadi dan dokumen yang saya berikan adalah benar dan sesuai dengan kondisi terkini.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <form action="<?php echo e(route('pdp.store')); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <?php echo csrf_field(); ?>
+                    
+                    <input type="hidden" id="is_setuju" name="is_setuju" value="1">
+                    <input type="hidden" id="back_url" name="back_url" value="<?php echo e(URL::full()); ?>">
+                    <button class="btn btn-warning" type="submit">Setuju</button>
+                </form>
+             </div>
+        </div>
+    </div>
+</div>
+<button id="autoClickBtn" type="button" class="btn btn-warning d-none" data-bs-toggle="modal" data-bs-target="#autoShowModal"></button>
+
+
 <script type="text/javascript">
+<?php if(!$is_pdp['is_pdp'] && $is_pdp['is_aktif']): ?>
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('autoClickBtn').click();
+});
+// document.addEventListener('DOMContentLoaded', function () {
+//     var myModal = new bootstrap.Modal(document.getElementById('autoShowModal'));
+//     myModal.show();
+// });
+// window.addEventListener('DOMContentLoaded', function () {
+//     var myModal = new bootstrap.Modal(document.getElementById('autoShowModal'));
+//     myModal.show();
+// });
+// window.addEventListener('DOMContentLoaded', function () {
+//     document.getElementById('autoShowModal').click();
+//   });
+<?php endif; ?>
+// 
 var session_layout = '<?php echo e(session()->get('layout ')); ?>';
 </script>
 <?php $__env->stopSection(); ?>

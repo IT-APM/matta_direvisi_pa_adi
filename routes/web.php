@@ -262,6 +262,7 @@ Route::post('payroll/review_post', [ TrxPayrollController::class, 'review_post']
 Route::resource('recruitment', TrxRecruitmentController::class)->middleware('can:hc');
 Route::get('recruitment/apply/{id}', [TrxRecruitmentController::class, 'apply'])->name('recruitment.apply');
 Route::get('recruitment/psychotest/{id}', [TrxRecruitmentController::class, 'psychotest'])->name('recruitment.psychotest');
+Route::post('recruitment/psychotest/{id}', [TrxRecruitmentController::class, 'psychotest'])->name('recruitment.psychotest');
 Route::post('recruitment/psychotest_file', [ TrxRecruitmentController::class, 'psychotest_file'])->name('recruitment.psychotest_file');
 Route::post('recruitment/apply_save', [ TrxRecruitmentController::class, 'apply_save'])->name('recruitment.apply_save');
 Route::post('recruitment/applicant_save', [ TrxRecruitmentController::class, 'applicant_save'])->name('recruitment.applicant_save')->middleware('can:hc');
