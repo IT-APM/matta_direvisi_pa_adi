@@ -23,6 +23,7 @@ use App\Models\ToDoListLog;
 use App\Models\Overtime;
 use App\Models\MtrUtility;
 use App\Models\Karyawan;
+use App\Models\KaryawanHistory;
 use App\Models\MtrPayroll;
 use App\Models\MtrPayrollLog;
 use App\Models\MtrPayrollAddsub;
@@ -1289,9 +1290,16 @@ class TrxPayrollController extends Controller
                     TrxPayrollBpjstk::where($where)->delete();
                     TrxPayrollBpjskes::where($where)->delete();
                     TrxPayrollEmail::where($where)->delete();
-                    // 
+                    // default akan menggunakan dari mtr_tbl_karyawan
                     $where = ['nik' => $data0[$x][$_101]];
                     $karyawan = Karyawan::where($where)->first();
+                    // jika tidak maka gunakan data lampau dari mtr_tbl_karyawan_history
+                    $_check = Carbon::create($data0[$x][$_103], $data0[$x][$_102], 25);
+                    $check = $_check->isSameMonth(Carbon::now()) && $_check->isSameYear(Carbon::now());
+                    if(!$check && KaryawanHistory::whereDate('created_at', $_check)->exists()){
+                        $karyawan = KaryawanHistory::whereDate('created_at', $_check)->first();
+                    }
+                    // dd($karyawan);
                     // $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
                     // TrxPayroll::where($where)->delete();
                     $trx = New TrxPayroll;
