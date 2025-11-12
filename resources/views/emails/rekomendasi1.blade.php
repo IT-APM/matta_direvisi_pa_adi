@@ -4,6 +4,10 @@
 <p>Berikut datanya:<br />
 <table width="100%" border="0" cellspacing="1" cellpadding="1">
     <tr>
+        <td>No Formulir</td>
+        <td>: {{ $data['id_trx'] }}</td>
+    </tr>
+    <tr>
         <td width="20%">Nama Karyawan</td>
         <td width="80%">: {{ $data['nama'] }}</td>
     </tr>
