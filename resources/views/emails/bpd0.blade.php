@@ -5,7 +5,7 @@
 <p>Berikut datanya:<br />
 <table width="100%" border="0" cellspacing="1" cellpadding="1">
   <tr>
-    <td>ID Formulir</td>
+    <td>No Formulir</td>
     <td>: {{ Crypt::decrypt($data['id']) }}</td>
   </tr>
   <tr>
