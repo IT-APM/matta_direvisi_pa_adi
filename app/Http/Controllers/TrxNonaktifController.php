@@ -401,7 +401,7 @@ class TrxNonaktifController extends Controller
             $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
             $mailData['filename'] = 'emails.nonaktif0';
             $_kepada = json_decode($value->kepada_property, true);
-            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]), 'id_trx' => $trxM->id ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -420,7 +420,7 @@ class TrxNonaktifController extends Controller
             $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
             $mailData['filename'] = 'emails.nonaktif0';
             $_kepada = json_decode($value->kepada_property, true);
-            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]), 'id_trx' => $trxM->id ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -439,7 +439,7 @@ class TrxNonaktifController extends Controller
             $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
             $mailData['filename'] = 'emails.nonaktif0';
             $_kepada = json_decode($value->kepada_property, true);
-            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]), 'id_trx' => $trxM->id ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -458,7 +458,7 @@ class TrxNonaktifController extends Controller
             $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
             $mailData['filename'] = 'emails.nonaktif0';
             $_kepada = json_decode($value->kepada_property, true);
-            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]), 'id_trx' => $trxM->id ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -477,7 +477,7 @@ class TrxNonaktifController extends Controller
             $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
             $mailData['filename'] = 'emails.nonaktif0';
             $_kepada = json_decode($value->kepada_property, true);
-            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]), 'id_trx' => $trxM->id ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -496,7 +496,7 @@ class TrxNonaktifController extends Controller
             $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
             $mailData['filename'] = 'emails.nonaktif0';
             $_kepada = json_decode($value->kepada_property, true);
-            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]), 'id_trx' => $trxM->id ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
@@ -1134,7 +1134,7 @@ class TrxNonaktifController extends Controller
         $mailData['filename'] = 'emails.nonaktif0';
         $_pengaju = json_decode($trxM->pengaju_property, true);
         $_kepada = json_decode($trxD->kepada_property, true);
-        $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
+        $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]), 'id_trx' => $trxM->id ];
         $mailData['to'] = $_kepada['email'];
         $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
         $this->insertToDoList($todolist, $mailData);
@@ -1186,7 +1186,7 @@ class TrxNonaktifController extends Controller
                 $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
                 $mailData['filename'] = 'emails.nonaktif0';
                 $_pengaju = json_decode($trxM->pengaju_property, true);
-                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]) ];
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'id_trx' => $trxM->id ];
                 $mailData['to'] = $_pengaju['email'];
                 $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
                 $this->insertToDoList($todolist, $mailData);
@@ -1211,7 +1211,7 @@ class TrxNonaktifController extends Controller
                 $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
                 $mailData['filename'] = 'emails.nonaktif0';
                 $_pengaju = json_decode($trxM->pengaju_property, true);
-                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]) ];
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'id_trx' => $trxM->id ];
                 $mailData['to'] = $_pengaju['email'];
                 $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
                 $this->insertToDoList($todolist, $mailData);
@@ -1236,7 +1236,7 @@ class TrxNonaktifController extends Controller
                 $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
                 $mailData['filename'] = 'emails.nonaktif0';
                 $_pengaju = json_decode($trxM->pengaju_property, true);
-                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]) ];
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'id_trx' => $trxM->id ];
                 $mailData['to'] = $_pengaju['email'];
                 $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
                 $this->insertToDoList($todolist, $mailData);
@@ -1261,7 +1261,7 @@ class TrxNonaktifController extends Controller
                 $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
                 $mailData['filename'] = 'emails.nonaktif0';
                 $_pengaju = json_decode($trxM->pengaju_property, true);
-                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]) ];
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'id_trx' => $trxM->id ];
                 $mailData['to'] = $_pengaju['email'];
                 $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
                 $this->insertToDoList($todolist, $mailData);
@@ -1286,7 +1286,7 @@ class TrxNonaktifController extends Controller
                 $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
                 $mailData['filename'] = 'emails.nonaktif0';
                 $_pengaju = json_decode($trxM->pengaju_property, true);
-                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]) ];
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'id_trx' => $trxM->id ];
                 $mailData['to'] = $_pengaju['email'];
                 $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
                 $this->insertToDoList($todolist, $mailData);
@@ -1311,7 +1311,7 @@ class TrxNonaktifController extends Controller
                 $mailData['title'] = 'Formulir Karyawan Non Aktif - '.$pic;
                 $mailData['filename'] = 'emails.nonaktif0';
                 $_pengaju = json_decode($trxM->pengaju_property, true);
-                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]) ];
+                $mailData['data'] = ['pesan' => 'Formulir Karyawan Non Aktif yang anda ajukan harus direvisi', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'id_trx' => $trxM->id ];
                 $mailData['to'] = $_pengaju['email'];
                 $todolist = ['id_trx' => $trxM->id, 'nik' => $_pengaju['nik'], 'id_status' => $status, 'pic' => $pic];
                 $this->insertToDoList($todolist, $mailData);
@@ -1333,7 +1333,7 @@ class TrxNonaktifController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Karyawan Non Aktif';
             $mailData['filename'] = 'emails.nonaktif1';
-            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama']];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'id_trx' => $trxM->id];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // finish
@@ -1393,7 +1393,7 @@ class TrxNonaktifController extends Controller
             $_pengaju = json_decode($trxM->pengaju_property, true);
             $_kepada = json_decode($trxM->atasan_property, true);
             $pic = 'atasan';
-            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
+            $mailData['data'] = ['pesan' => 'Terdapat Formulir Karyawan Non Aktif yang harus anda review', 'nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('nonaktif.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_kepada['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]), 'id_trx' => $trxM->id ];
             $mailData['to'] = $_kepada['email'];
             $todolist = ['id_trx' => $trxM->id, 'nik' => $_kepada['nik'], 'id_status' => $status, 'pic' => $pic];
             $this->insertToDoList($todolist, $mailData);
