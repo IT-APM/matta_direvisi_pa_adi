@@ -301,7 +301,7 @@ class TrxSakitController extends Controller
             $mailData['filename'] = 'emails.sakit0';
             foreach (explode(';', $trx->pic_property) as $value) {
                 $pic_property = json_decode($value, true);
-                $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'link' => route('sakit.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($pic_property['nik']), 'pic' => (new OpenDataController)->encryptWithKey('pic_pengganti')])];
+                $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'link' => route('sakit.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($pic_property['nik']), 'pic' => (new OpenDataController)->encryptWithKey('pic_pengganti')]), 'id_trx' => $trx->id];
                 $mailData['to'] = $pic_property['email'];
                 $todolist = ['id_trx' => $trx->id, 'nik' => $pic_property['nik'], 'id_status' => $trx->status_sakit, 'pic' => 'pic_pengganti'];
                 $this->insertToDoList($todolist, $mailData);
@@ -633,7 +633,7 @@ class TrxSakitController extends Controller
             $mailData['title'] = 'Formulir Permohonan Izin Sakit';
             $mailData['filename'] = 'emails.sakit0';
             // $atasan = json_decode($trx['atasan_property'], true);
-            $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'link' => route('sakit.show', [(new OpenDataController)->encryptWithKey($id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($atasan['nik']), 'pic' => (new OpenDataController)->encryptWithKey('nik_atasan')])];
+            $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'link' => route('sakit.show', [(new OpenDataController)->encryptWithKey($id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($atasan['nik']), 'pic' => (new OpenDataController)->encryptWithKey('nik_atasan')]), 'id_trx' => $id];
             $mailData['to'] = $atasan['email'];
             $todolist = ['id_trx' => $id, 'nik' => $atasan['nik'], 'id_status' => $status_sakit, 'pic' => 'nik_atasan'];
             $this->insertToDoList($todolist, $mailData);
@@ -648,7 +648,7 @@ class TrxSakitController extends Controller
             $mailData['title'] = 'Formulir Permohonan Izin Sakit';
             $mailData['filename'] = 'emails.sakit1';
             $atasan = json_decode($trx['atasan_property'], true);
-            $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama']];
+            $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'id_trx' => $id];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // finish
