@@ -446,7 +446,7 @@ class TrxReimburseController extends Controller
         $karyawan = json_decode($trxM->karyawan_property, true);
         $mailData['title'] = 'Formulir Reimbursement';
         $mailData['filename'] = 'emails.reimburse0';
-        $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval')])];
+        $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval')]), 'id_trx' => $trxM->id];
         // ambil email pic hco untuk reimburse
         $nik_pic = MtrUtility::find(12)->informasi;
         $where = ['nik' => $nik_pic];
@@ -944,7 +944,7 @@ class TrxReimburseController extends Controller
             $mailData['title'] = 'Formulir Reimbursement';
             $mailData['filename'] = 'emails.reimburse_done';
             $mailData['to'] = $karyawan['email'];
-            $mailData['data'] = ['status' => 'disetujui', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
+            $mailData['data'] = ['status' => 'disetujui', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')]), 'id_trx' => $trx->id];
             if($trx->plafon > 0){
                 // jika bukan Ekses
                 if(!$check_ekses){
@@ -960,7 +960,7 @@ class TrxReimburseController extends Controller
             $mailData['title'] = 'Formulir Reimbursement';
             $mailData['filename'] = 'emails.reimburse_done';
             $mailData['to'] = $karyawan['email'];
-            $mailData['data'] = ['status' => 'ditolak', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
+            $mailData['data'] = ['status' => 'ditolak', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')]), 'id_trx' => $trx->id];
             if($trx->plafon > 0){
                 // jika bukan Ekses
                 if(!$check_ekses){
