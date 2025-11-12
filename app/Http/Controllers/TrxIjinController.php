@@ -370,7 +370,7 @@ class TrxIjinController extends Controller
         $_atasan = json_decode($atasan_property, true);
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Formulir Izin';
-        $mailData['data'] = ['nama'=>$_karyawan['nama'].'/'.$_karyawan['nik'], 'jabatan'=>$_karyawan['jabatan'], 'unit_kerja'=>$_karyawan['divisi'].'/'.$_karyawan['dep'].'/'.$_karyawan['sub_dep'], 'atasan'=>$_atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_atasan['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey('atasan')]) ];
+        $mailData['data'] = ['nama'=>$_karyawan['nama'].'/'.$_karyawan['nik'], 'jabatan'=>$_karyawan['jabatan'], 'unit_kerja'=>$_karyawan['divisi'].'/'.$_karyawan['dep'].'/'.$_karyawan['sub_dep'], 'atasan'=>$_atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_atasan['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey('atasan')]), 'id_trx' => $trx->id ];
         $mailData['filename'] = 'emails.izin0';
         $mailData['to'] = $_atasan['email'];
         $todolist = ['id_trx' => $trx->id, 'nik' => $_atasan['nik'], 'id_status' => $status, 'pic' => 'atasan'];
@@ -649,7 +649,7 @@ class TrxIjinController extends Controller
                     // // start
                     // // parameter yang dipassing ke sendemail
                     // $mailData['title'] = 'Formulir Izin';
-                    // $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($layer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey('layer2')]) ];
+                    // $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($layer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey('layer2')]), 'id_trx' => $trx->id ];
                     // $mailData['filename'] = 'emails.izin0';
                     // $mailData['to'] = $layer2['email'];
                     // $todolist = ['id_trx' => $trx->id, 'nik' => $layer2['nik'], 'id_status' => $status, 'pic' => 'layer2'];
@@ -667,7 +667,7 @@ class TrxIjinController extends Controller
                         $mailData['title'] = 'Formulir Izin';
                         // $mailData['filename'] = 'emails.izin1';
                         $mailData['filename'] = 'emails.izin_setuju';
-                        $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link' => route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
+                        $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link' => route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')]), 'id_trx' => $trx->id];
                         // $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
                         $mailData['to'] = $karyawan['email'];
                         $this->sendEmail($mailData);
@@ -678,7 +678,7 @@ class TrxIjinController extends Controller
                         // start
                         // parameter yang dipassing ke sendemail
                         $mailData['title'] = 'Formulir Izin';
-                        $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($layer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey('layer2')]) ];
+                        $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($layer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status), 'pic' => (new OpenDataController)->encryptWithKey('layer2')]), 'id_trx' => $trx->id ];
                         $mailData['filename'] = 'emails.izin0';
                         $mailData['to'] = $layer2['email'];
                         $todolist = ['id_trx' => $trx->id, 'nik' => $layer2['nik'], 'id_status' => $status, 'pic' => 'layer2'];
@@ -690,7 +690,7 @@ class TrxIjinController extends Controller
                     // parameter yang dipassing ke sendemail
                     $mailData['title'] = 'Formulir Izin';
                     $mailData['filename'] = 'emails.izin_setuju';
-                    $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link' => route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
+                    $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link' => route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')]), 'id_trx' => $trx->id];
                     // $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
                     $mailData['to'] = $karyawan['email'];
                     $this->sendEmail($mailData);}
@@ -710,7 +710,7 @@ class TrxIjinController extends Controller
             $mailData['title'] = 'Formulir Izin';
             // $mailData['filename'] = 'emails.izin1';
             $mailData['filename'] = 'emails.izin_setuju';
-            $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link' => route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
+            $mailData['data'] = ['nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link' => route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')]), 'id_trx' => $trx->id];
             // $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $mailData['to'] = $karyawan['email'];
             $this->sendEmail($mailData);
@@ -735,7 +735,7 @@ class TrxIjinController extends Controller
             // start
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Izin';
-            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')])];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('izin.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')]), 'id_trx' => $trx->id];
             $mailData['filename'] = 'emails.izin_cancel';
             $mailData['to'] = $atasan['email'];
             $this->sendEmail($mailData);
