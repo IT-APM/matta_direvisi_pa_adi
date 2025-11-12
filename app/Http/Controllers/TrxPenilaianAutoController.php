@@ -198,7 +198,7 @@ class TrxPenilaianAutoController extends Controller
                 $nik = $atasan['nik'];
                 $pic = 'nik_penilai_1';
             }
-            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($nik), 'id_status' => (new OpenDataController)->encryptWithKey($_data->id_status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($nik), 'id_status' => (new OpenDataController)->encryptWithKey($_data->id_status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]), 'id_trx' => $trx->id ];
             $todolist = ['id_trx' => $trx->id, 'nik' => $nik, 'id_status' => $_data->id_status, 'pic' => $pic];
             (new TrxPenilaianController)->insertToDoList($todolist, $mailData);
             (new TrxPenilaianController)->sendEmail($mailData);
