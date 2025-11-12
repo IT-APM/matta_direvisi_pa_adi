@@ -62,7 +62,7 @@ class TrxPenilaianReminderController extends Controller
                         $mailData['title'] = $data->title;
                         $mailData['filename'] = $data->filename;
                         $mailData['to'] = $data->email;
-                        $mailData['data'] = ['nama'=>$data->nama.'/'.$nik_karyawan, 'jabatan'=>$data->jabatan, 'unit_kerja'=>$data->unit_kerja, 'atasan'=>$layer1->_layer1->nama, 'link'=> $data->link ];
+                        $mailData['data'] = ['nama'=>$data->nama.'/'.$nik_karyawan, 'jabatan'=>$data->jabatan, 'unit_kerja'=>$data->unit_kerja, 'atasan'=>$layer1->_layer1->nama, 'link'=> $data->link, 'id_trx' => $_id ];
                         (new TrxPenilaianController)->sendEmail($mailData);
                         $this->destroy($_id);
                     }
@@ -96,7 +96,7 @@ class TrxPenilaianReminderController extends Controller
                         $mailData['title'] = $data->title;
                         $mailData['filename'] = $data->filename;
                         $mailData['to'] = $data->email;
-                        $mailData['data'] = ['nama'=>$data->nama.'/'.$nik_karyawan, 'jabatan'=>$data->jabatan, 'unit_kerja'=>$data->unit_kerja, 'atasan'=>$layer1->_layer1->nama, 'link'=> $data->link ];
+                        $mailData['data'] = ['nama'=>$data->nama.'/'.$nik_karyawan, 'jabatan'=>$data->jabatan, 'unit_kerja'=>$data->unit_kerja, 'atasan'=>$layer1->_layer1->nama, 'link'=> $data->link, 'id_trx' => $_id ];
                         (new TrxPenilaianController)->sendEmail($mailData);
                         $this->destroy($_id);
                     }
