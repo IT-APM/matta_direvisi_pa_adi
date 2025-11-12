@@ -308,7 +308,7 @@ class TrxKebutuhanController extends Controller
         // 
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Formulir Kebutuhan Karyawan';
-        $mailData['data'] = ['nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('kebutuhan.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_layer1['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_pengajuan), 'pic' => (new OpenDataController)->encryptWithKey('layer1')]) ];
+        $mailData['data'] = ['nama'=>$_pengaju['nama'].'/'.$_pengaju['nik'], 'jabatan'=>$_pengaju['jabatan'], 'unit_kerja'=>$_pengaju['divisi'].'/'.$_pengaju['dep'].'/'.$_pengaju['sub_dep'], 'link'=> route('kebutuhan.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($_layer1['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_pengajuan), 'pic' => (new OpenDataController)->encryptWithKey('layer1')]), 'id_trx' => $trxM->id ];
         $mailData['filename'] = 'emails.kebutuhan0';
         $mailData['to'] = $_layer1['email'];
         $todolist = ['id_trx' => $trxM->id, 'nik' => $_layer1['nik'], 'id_status' => $status_pengajuan, 'pic' => 'layer1'];
@@ -717,13 +717,13 @@ class TrxKebutuhanController extends Controller
             // 5 = Rejected by L1
             if($status_pengajuan == 5){
                 $mailData['filename'] = 'emails.kebutuhan1';
-                $mailData['data'] = ['nama' => $pengaju['nama'], 'jabatan' => $pengaju['jabatan'], 'unit_kerja' => $pengaju['divisi'] . '/' . $pengaju['dep'] . '/' . $pengaju['sub_dep']];
+                $mailData['data'] = ['nama' => $pengaju['nama'], 'jabatan' => $pengaju['jabatan'], 'unit_kerja' => $pengaju['divisi'] . '/' . $pengaju['dep'] . '/' . $pengaju['sub_dep'], 'id_trx' => $id];
                 $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
                 $this->sendEmail($mailData);
             }
             // 2 = Approved by L1
             else if($status_pengajuan == 2){
-                $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('kebutuhan.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($layer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_pengajuan), 'pic' => (new OpenDataController)->encryptWithKey('layer2')]) ];
+                $mailData['data'] = ['nama'=>$pengaju['nama'].'/'.$pengaju['nik'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('kebutuhan.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'nik' => (new OpenDataController)->encryptWithKey($layer2['nik']), 'id_status' => (new OpenDataController)->encryptWithKey($status_pengajuan), 'pic' => (new OpenDataController)->encryptWithKey('layer2')]), 'id_trx' => $trxM->id ];
                 $mailData['filename'] = 'emails.kebutuhan0';
                 $mailData['to'] = $layer2['email'];
                 $todolist = ['id_trx' => $trxM->id, 'nik' => $layer2['nik'], 'id_status' => $status_pengajuan, 'pic' => 'layer2'];
@@ -745,7 +745,7 @@ class TrxKebutuhanController extends Controller
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Formulir Kebutuhan Karyawan';
             $mailData['filename'] = 'emails.kebutuhan1';
-            $mailData['data'] = ['nama' => $pengaju['nama'], 'jabatan' => $pengaju['jabatan'], 'unit_kerja' => $pengaju['divisi'] . '/' . $pengaju['dep'] . '/' . $pengaju['sub_dep']];
+            $mailData['data'] = ['nama' => $pengaju['nama'], 'jabatan' => $pengaju['jabatan'], 'unit_kerja' => $pengaju['divisi'] . '/' . $pengaju['dep'] . '/' . $pengaju['sub_dep'], 'id_trx' => $id];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             return view('emails.kebutuhan_ok');
