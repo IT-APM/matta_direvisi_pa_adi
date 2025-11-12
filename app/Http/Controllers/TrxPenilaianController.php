@@ -273,7 +273,7 @@ class TrxPenilaianController extends Controller
             $pic = 'nik_penilai_1';
             $id_status = 16;
         }
-        $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($nik), 'id_status' => (new OpenDataController)->encryptWithKey($id_status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]) ];
+        $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($nik), 'id_status' => (new OpenDataController)->encryptWithKey($id_status), 'pic' => (new OpenDataController)->encryptWithKey($pic)]), 'id_trx' => $trx->id ];
         $todolist = ['id_trx' => $trx->id, 'nik' => $nik, 'id_status' => $id_status, 'pic' => $pic];
         $this->insertToDoList($todolist, $mailData);
         $this->sendEmail($mailData);
@@ -935,14 +935,14 @@ class TrxPenilaianController extends Controller
             $mailData['filename'] = 'emails.penilaian0_outsourcing';
         }
         if($request->has('penilai_2')){
-            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($trx->nik_penilai_2), 'id_status' => (new OpenDataController)->encryptWithKey($id_status), 'pic' => (new OpenDataController)->encryptWithKey('nik_penilai_2')]) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($trx->nik_penilai_2), 'id_status' => (new OpenDataController)->encryptWithKey($id_status), 'pic' => (new OpenDataController)->encryptWithKey('nik_penilai_2')]), 'id_trx' => $trx->id ];
             $mailData['to'] = $penilai2['email'];
             $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => $id_status, 'pic' => 'nik_penilai_2'];
             $this->insertToDoList($todolist, $mailData);
             $this->sendEmail($mailData);
         }
         if($request->has('penilai_3')){
-            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($trx->nik_penilai_3), 'id_status' => (new OpenDataController)->encryptWithKey($id_status), 'pic' => (new OpenDataController)->encryptWithKey('nik_penilai_3')]) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [(new OpenDataController)->encryptWithKey($trx->id), 'nik' => (new OpenDataController)->encryptWithKey($trx->nik_penilai_3), 'id_status' => (new OpenDataController)->encryptWithKey($id_status), 'pic' => (new OpenDataController)->encryptWithKey('nik_penilai_3')]), 'id_trx' => $trx->id ];
             $mailData['to'] = $penilai3['email'];
             $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => $id_status, 'pic' => 'nik_penilai_3'];
             $this->insertToDoList($todolist, $mailData);
