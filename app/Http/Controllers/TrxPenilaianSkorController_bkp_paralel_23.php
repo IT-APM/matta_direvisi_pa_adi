@@ -323,7 +323,7 @@ class TrxPenilaianSkorController extends Controller
             $karyawan = json_decode($trx->karyawan_property, true);
             $atasan = json_decode($trx->penilai1_property, true);
             $mailData['title'] = 'Formulir Penilaian Karyawan';
-            $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_1, 'id_status' => 2, 'pic' => 'nik_penilai_1']) ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_1, 'id_status' => 2, 'pic' => 'nik_penilai_1']), 'id_trx' => $trx->id ];
             // print_r($mailData['data']);die;
             if($trx->id_tipe == 2 || $trx->id_tipe == 4){
                 $mailData['title'] .= '- Reguler';
@@ -361,7 +361,7 @@ class TrxPenilaianSkorController extends Controller
                 $karyawan = json_decode($trx->karyawan_property, true);
                 $atasan = json_decode($trx->penilai1_property, true);
                 $mailData['title'] = 'Formulir Penilaian Karyawan';
-                $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'] ];
+                $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'id_trx' => $trx->id ];
                 if($trx->id_tipe == 2 || $trx->id_tipe == 4){
                     $mailData['title'] .= '- Reguler';
                 }elseif($trx->id_tipe == 3 || $trx->id_tipe == 5){
@@ -396,7 +396,7 @@ class TrxPenilaianSkorController extends Controller
                 // jika penilai 2 ada maka dilanjut ke penilai 2
                 if(!empty($trx->nik_penilai_2)){
                     $penilai2 = json_decode($trx->penilai2_property, true);
-                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => 5, 'pic' => 'nik_penilai_2']) ];
+                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => 5, 'pic' => 'nik_penilai_2']), 'id_trx' => $trx->id ];
                     $mailData['to'] = $penilai2['email'];
                     $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => 5, 'pic' => 'nik_penilai_2'];
                     $this->insertToDoList($todolist, $mailData);
@@ -406,7 +406,7 @@ class TrxPenilaianSkorController extends Controller
                 // jika penilai 3 ada maka dilanjut ke penilai 3
                 if(!empty($trx->nik_penilai_3)){
                     $penilai3 = json_decode($trx->penilai3_property, true);
-                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 5, 'pic' => 'nik_penilai_3']) ];
+                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 5, 'pic' => 'nik_penilai_3']), 'id_trx' => $trx->id ];
                     $mailData['to'] = $penilai3['email'];
                     $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_3, 'id_status' => 5, 'pic' => 'nik_penilai_3'];
                     $this->insertToDoList($todolist, $mailData);
@@ -434,7 +434,7 @@ class TrxPenilaianSkorController extends Controller
                 // jika penilai 2 ada maka dilanjut ke penilai 2
                 if(!empty($trx->nik_penilai_2)){
                     $penilai2 = json_decode($trx->penilai2_property, true);
-                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => 5, 'pic' => 'nik_penilai_2']) ];
+                    $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaianskor.show', [$trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => 5, 'pic' => 'nik_penilai_2']), 'id_trx' => $trx->id ];
                     $mailData['to'] = $penilai2['email'];
                     $todolist = ['id_trx' => $trx->id, 'nik' => $trx->nik_penilai_2, 'id_status' => 5, 'pic' => 'nik_penilai_2'];
                     $this->insertToDoList($todolist, $mailData);
@@ -448,7 +448,7 @@ class TrxPenilaianSkorController extends Controller
             $karyawan = json_decode($trx->karyawan_property, true);
             $atasan = json_decode($trx->penilai1_property, true);
             $mailData['title'] = 'Formulir Penilaian Karyawan';
-            $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'] ];
+            $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'id_trx' => $trx->id ];
             if($trx->id_tipe == 2 || $trx->id_tipe == 4){
                 $mailData['title'] .= '- Reguler';
             }elseif($trx->id_tipe == 3 || $trx->id_tipe == 5){
@@ -486,7 +486,7 @@ class TrxPenilaianSkorController extends Controller
                 $atasan = json_decode($trx->penilai1_property, true);
                 $mailData['title'] = 'Formulir Penilaian Karyawan';
                 // $mailData['data'] = ['nama'=>$karyawan['nama'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'] ];
-                $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaian.edit', [$trx->id]) ];
+                $mailData['data'] = ['nama'=>$karyawan['nama'].'/'.$karyawan['nik'], 'jabatan'=>$karyawan['jabatan'], 'unit_kerja'=>$karyawan['divisi'].'/'.$karyawan['dep'].'/'.$karyawan['sub_dep'], 'atasan'=>$atasan['nama'], 'link'=> route('penilaian.edit', [$trx->id]), 'id_trx' => $trx->id ];
                 $mailData['title'] .= ' - Outsourcing';
                 // template email tidak ada link done to hco
                 $mailData['filename'] = 'emails.penilaian0_outsourcing';
