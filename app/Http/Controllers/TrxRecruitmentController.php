@@ -2215,6 +2215,8 @@ class TrxRecruitmentController extends Controller
         // dd($trx);
         $trx->id_status = $request->id_status;
         $trx->check_in = $request->check_in;
+        // default
+        $trx->check_out = Carbon::parse($request->check_in)->addMinutes(150);
         // <option value="1">TIU 5</option>
         // jika diberikan tiu5 maka ditambah 30 menit
         if($jenis_psikotes == 1){
