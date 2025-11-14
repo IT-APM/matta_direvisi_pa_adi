@@ -34,6 +34,12 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    @if(Session::has('error'))
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h6>{{ session('error') }}</h6>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
                     @if(Session::has('msg'))
                     <div class="alert alert-success dark alert-dismissible fade show" role="alert">
                         <h6>{{ session('msg') }}</h6>
