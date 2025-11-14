@@ -23,13 +23,25 @@
                 </div>
                 <hr class="mt-2 mb-2" />
                 <div class="row g-0">
+                    <h3 class="text-center">LOWONGAN SUDAH TIDAK TERSEDIA</h3>
+                </div>
+                <hr class="mt-2 mb-2" />
+                <div class="card-body">
+                    <div class="col-12 col-md-12">
+                        <p>Dengan Hormat,</p>
+                        <p>Kami informasikan kepada Bapak/Ibu/Saudara/i bahwa proses rekrutmen untuk posisi yang dimaksud telah ditutup karena kebutuhan telah terpenuhi.<br/>Sehubungan dengan hal tersebut, tautan atau QR Code ini sudah tidak dapat digunakan untuk pengajuan lamaran baru.</p>
+                        <p>Terima kasih.</p>
+                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+                    </div>
+                </div>
+                {{-- <div class="row g-0">
                     <div class="col-12 col-md-2">&nbsp</div>
                     <div class="col-12 col-md-8">
                         <img class="img-fluid rounded-start w-100 h-100 object-fit-cover" loading="lazy"
                             src="{{ asset('assets/recruitment/no_vacancy.jpg') }}" alt="No Vacancy">
                     </div>
                     <div class="col-12 col-md-2">&nbsp</div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </section>
