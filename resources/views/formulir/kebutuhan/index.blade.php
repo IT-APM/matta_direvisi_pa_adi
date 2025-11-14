@@ -167,7 +167,10 @@
                                         @php
                                         $is_history = App\Models\TrxKebutuhanMasterEdit::where(['id_kebutuhan' => $data->id])->exists();
                                         @endphp
-                                        @can('hc')<a href="{{ route('kebutuhan.edit_kolom', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'field'=>'jumlah']) }}" data-toggle="tooltip" title='Edit'><span class="badge @if($is_history) badge-warning @else badge-success @endif" style="font-size: 11px;">@endcan {{ $data->jumlah }} @can('hc')</span></a>@endcan
+                                        {{-- 3=Reject Checked by HC
+                                        10=Done by HC
+                                        28=Terminate Cancel by HC --}}
+                                        @can('hc')@if(!in_array($data->status_pengajuan, [3,10,28]))<a href="{{ route('kebutuhan.edit_kolom', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'field'=>'jumlah']) }}" data-toggle="tooltip" title='Edit'><span class="badge @if($is_history) badge-warning @else badge-success @endif" style="font-size: 11px;">@endcan {{ $data->jumlah }} @can('hc')</span></a>@endif @endcan
                                         
                                     </td>
                                     <td>{{ $data->_kelamin->kelamin }}</td>
