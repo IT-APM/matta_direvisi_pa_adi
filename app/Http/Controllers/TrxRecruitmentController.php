@@ -576,7 +576,10 @@ class TrxRecruitmentController extends Controller
             // 2=Posting
             // 3=Apply
             $where = ['id'=>$id_recruitment, 'id_status'=>2];
-            if(TrxRecruitment::where($where)->exists()){
+            // 3=Reject Checked by HC
+            // 10=Done by HC
+            // 28=Terminate Cancel by HC
+            if(TrxRecruitment::where($where)->exists() && !in_array($trx->status_pengajuan, [3,10,28])){
                 return view('recruitment.application', compact('id'));
             }else{
                 return view('recruitment.no_vacancy', compact('id'));
@@ -1728,12 +1731,6 @@ class TrxRecruitmentController extends Controller
                 $this->insertNegotiationLog($nego, $data);
             }
             // 
-            // $_trx->id_join = $request->id_join;
-            $_trx->id_join = implode(',', $request->input('id_join', []));
-            $_trx->id_status = $id_status;
-            if(empty($request->param)){
-                $_trx->update();
-            }
             $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
             $atasan = json_decode($_trx_->atasan_property, true);
             $posisi = $_trx_->_pekerjaan->pekerjaan;
@@ -1743,13 +1740,20 @@ class TrxRecruitmentController extends Controller
             if($id_status == 24){
                 // sync data Recruitment ke Employee Addition
                 if(!empty($trxD)){
+                    // status dinyatakan join not join
+                    $_trx->id_join = implode(',', $request->input('id_join', []));
+                    $_trx->id_status = $id_status;
+                    if(empty($request->param)){
+                        $_trx->update();
+                    }
+                    // 
                     $trxD->nama_karyawan = $_trx->nama;
                     $trxD->alamat = $_trx->alamat_ktp;
                     $trxD->tanggal_lahir = $_trx->tanggal_lahir;
                     $arr_pendidikan = ['SD', 'SMP', 'SMA/SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3', 'Lainnya'];
                     $trxD->id_pendidikan = array_search($_trx->pendidikan, $arr_pendidikan) + 1;
                     $trxD->tanggal_interview = Carbon::parse($interview->check_in)->format('Y-m-d');
-                    if(!empty($interview->file_interview)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$interview->file_interview))){
                         $trxD->file_interview = $interview->file_interview;
                         File::copy(public_path('assets/recruitment/upload/'.$interview->file_interview), public_path('assets/kebutuhan/'.$interview->file_interview));
                     }
@@ -1767,51 +1771,51 @@ class TrxRecruitmentController extends Controller
                     $trxD->tanggal_peraturan_perusahaan = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
                     $trxD->tanggal_pedoman_prilaku = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
                     $trxD->tanggal_struktur_organisasi = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
-                    if(!empty($_trx->file_dokumen_ttd)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_dokumen_ttd))){
                         $trxD->file_dokumen_ttd = $_trx->file_dokumen_ttd;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_dokumen_ttd), public_path('assets/kebutuhan/'.$_trx->file_dokumen_ttd));
                     }
-                    if(!empty($_trx->cv)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->cv))){
                         $trxD->file_cv = $_trx->cv;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->cv), public_path('assets/kebutuhan/'.$_trx->cv));
                     }
-                    if(!empty($_trx->file_sertifikat_keahlian)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_sertifikat_keahlian))){
                         $trxD->file_sertifikat_keahlian = $_trx->file_sertifikat_keahlian;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_sertifikat_keahlian), public_path('assets/kebutuhan/'.$_trx->file_sertifikat_keahlian));
                     }
-                    if(!empty($_trx->file_ktp)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_ktp))){
                         $trxD->file_ktp = $_trx->file_ktp;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ktp), public_path('assets/kebutuhan/'.$_trx->file_ktp));
                     }
-                    if(!empty($_trx->file_kk)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_kk))){
                         $trxD->file_kk = $_trx->file_kk;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_kk), public_path('assets/kebutuhan/'.$_trx->file_kk));
                     }
-                    if(!empty($_trx->file_npwp)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_npwp))){
                         $trxD->file_npwp = $_trx->file_npwp;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_npwp), public_path('assets/kebutuhan/'.$_trx->file_npwp));
                     }
-                    if(!empty($_trx->file_bpjs_tk)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_tk))){
                         $trxD->file_bpjs_tk = $_trx->file_bpjs_tk;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_tk), public_path('assets/kebutuhan/'.$_trx->file_bpjs_tk));
                     }
-                    if(!empty($_trx->file_bpjs_kes)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_kes))){
                         $trxD->file_bpjs_kes = $_trx->file_bpjs_kes;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_kes), public_path('assets/kebutuhan/'.$_trx->file_bpjs_kes));
                     }
-                    if(!empty($_trx->file_buku_tabungan)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_buku_tabungan))){
                         $trxD->file_buku_tabungan = $_trx->file_buku_tabungan;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_buku_tabungan), public_path('assets/kebutuhan/'.$_trx->file_buku_tabungan));
                     }
-                    if(!empty($_trx->file_ket_sehat)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_ket_sehat))){
                         $trxD->file_ket_sehat = $_trx->file_ket_sehat;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ket_sehat), public_path('assets/kebutuhan/'.$_trx->file_ket_sehat));
                     }
-                    if(!empty($_trx->file_skck)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_skck))){
                         $trxD->file_skck = $_trx->file_skck;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_skck), public_path('assets/kebutuhan/'.$_trx->file_skck));
                     }
-                    if(!empty($_trx->file_ijazah)){
+                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_ijazah))){
                         $trxD->file_ijazah = $_trx->file_ijazah;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ijazah), public_path('assets/kebutuhan/'.$_trx->file_ijazah));
                     }
@@ -1929,64 +1933,86 @@ class TrxRecruitmentController extends Controller
                     $trxD->atasan = $trxM->atasan;
                     $trxD->id_identitas = $id;
                     $trxD->update();
-                }
-                if(empty($request->param)){
-                    // kirim email
-                    $link = route('recruitment.download_offering', Crypt::encrypt($_trx->id));
-                    $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
-                    <p>Sehubungan dengan proses seleksi yang telah Bapak/Ibu/Saudara/i '.$_trx->nama.' ikuti untuk Posisi '.$posisi.', dengan ini kami sampaikan bahwa Bapak/Ibu/Saudara/i diterima di PT. Alita Praya Mitra sebagai '.$posisi.' di Direktorat / Divisi / Departemen '.$trxM->_divisi_kandidat->nama.' / '.$trxM->_dep_kandidat->nama.' / '.$trxM->_sub_dep_kandidat->nama.'.</p>
-                    <p>Klik link berikut untuk mendownload Offering Letter yang telah disepakati.<br/><a target="_blank" href="'.$link.'" data-toggle="tooltip" title="LINK">LINK</a></p>
-                    <p>Kami akan menghubungi Bapak/Ibu/Saudara/i  terkait proses selanjutnya. Mohon untuk memastikan bahwa  email anda '.$_trx->email.' dan nomor telepon yang dicantumkan dalam keadaan aktif untuk korespondensi.</p>
-                    <p>Terima kasih atas kesediaannya mengikuti proses seleksi di PT. Alita Praya Mitra.</p>
-                    <p>Terima kasih atas perhatiannya.<br/>Salam sehat dan sukses selalu.</p>
-                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
-                    // parameter yang dipassing ke sendemail
-                    $mailData['title'] = 'Pemberitahuan Proses Seleksi Diterima';
-                    $mailData['data'] = ['msg'=>$msg];
-                    $mailData['filename'] = 'emails.recruitment0';
-                    $mailData['to'] = $_trx->email;
-                    $this->sendEmail($mailData);
-                    // kirim email ke atasan langsung jika ada
-                    // <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut dan klik link berikut untuk melakukan persetujuan<br/><a href="'.$link.'" data-toggle="tooltip" title="Link Persetujuan">Link Persetujuan</a>.</p>
-                    if(!empty($atasan)){
-                        $link = route('recruitment.get_offering', [Crypt::encrypt([$_trx->id, 'view', 'atasan'])]);
-                        $msg = '<p>Yth. '.$atasan['nama'].',<br/>Dengan hormat,</p>
-                        <p>Kami informasikan bahwa proses negosiasi atas Formulir Kebutuhan Karyawan nomor '.$_trx->id_kebutuhan.' telah dilakukan dan disetujui oleh calon karyawan atas nama berikut:</p>
-                        <p><table border="0" cellpadding="1" cellspacing="1">	
-                            <tr>
-                                <td width="150">Nama</td>
-                                <td width="5">:</td>
-                                <td>'.$_trx->nama.'</td>
-                            </tr>
-                            <tr>
-                                <td>Posisi</td>
-                                <td>:</td>
-                                <td>'.$posisi.'</td>
-                            </tr>
-                            <tr>
-                                <td>Tanggal Bergabung</td>
-                                <td>:</td>
-                                <td>'.Carbon::parse($nego->tgl_bergabung)->format('d-m-Y').'</td>
-                            </tr>
-                        </table></p>
-                        <p>Calon karyawan tersebut telah melalui seluruh tahapan seleksi, termasuk seleksi CV, wawancara HC, wawancara user, Psikotest, dll., dan dinyatakan memenuhi kualifikasi yang dibutuhkan.</p>
-                        <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut. Klik link dibawah ini untuk melakukan persetujuan terhadap Formulir Kebutuhan Karyawan tersebut.<br/><a href="'.$link.'" data-toggle="tooltip" title="LINK">LINK</a></p>
-                        <p>Demikian informasi ini kami sampaikan untuk diketahui. Jika terdapat perkembangan lebih lanjut, kami akan memberikan pembaruan.<br/>Terima kasih.</p>
+                    // 
+                    $check = TrxKebutuhanDetail::where(['id_kebutuhan' => $_trx->id_kebutuhan])->whereNull('id_identitas')->exists();
+                    // check apakah masih ada tempat kosong jika tidak ada maka dinyatakan 10=Done by HC
+                    if(!$check){
+                        // 10=Done by HC
+                        $_trx_->status_pengajuan = 10;
+                        $_trx_->update();
+                    }
+                    // 
+                    // email ke kandidat dinyatakan diterima
+                    if(empty($request->param)){
+                        // kirim email
+                        $link = route('recruitment.download_offering', Crypt::encrypt($_trx->id));
+                        $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
+                        <p>Sehubungan dengan proses seleksi yang telah Bapak/Ibu/Saudara/i '.$_trx->nama.' ikuti untuk Posisi '.$posisi.', dengan ini kami sampaikan bahwa Bapak/Ibu/Saudara/i diterima di PT. Alita Praya Mitra sebagai '.$posisi.' di Direktorat / Divisi / Departemen '.$trxM->_divisi_kandidat->nama.' / '.$trxM->_dep_kandidat->nama.' / '.$trxM->_sub_dep_kandidat->nama.'.</p>
+                        <p>Klik link berikut untuk mendownload Offering Letter yang telah disepakati.<br/><a target="_blank" href="'.$link.'" data-toggle="tooltip" title="LINK">LINK</a></p>
+                        <p>Kami akan menghubungi Bapak/Ibu/Saudara/i  terkait proses selanjutnya. Mohon untuk memastikan bahwa  email anda '.$_trx->email.' dan nomor telepon yang dicantumkan dalam keadaan aktif untuk korespondensi.</p>
+                        <p>Terima kasih atas kesediaannya mengikuti proses seleksi di PT. Alita Praya Mitra.</p>
+                        <p>Terima kasih atas perhatiannya.<br/>Salam sehat dan sukses selalu.</p>
                         <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
                         // parameter yang dipassing ke sendemail
-                        $mailData['title'] = 'Pemberitahuan Proses Seleksi Penerimaan Karyawan';
-                        // $mailData['data'] = ['msg'=>$msg];
+                        $mailData['title'] = 'Pemberitahuan Proses Seleksi Diterima';
+                        $mailData['data'] = ['msg'=>$msg];
                         $mailData['filename'] = 'emails.recruitment0';
-                        $mailData['to'] = $atasan['email'];
-                        $todolist = ['id_trx' => $_trx->id, 'nik' => $atasan['nik'], 'id_status' => $id_status, 'pic' => 'atasan'];
-                        $mailData['data'] = ['msg'=>$msg, 'nama' => $atasan['nama'].'/'.$atasan['nik'], 'jabatan' => $atasan['jabatan'], 'unit_kerja' => $atasan['divisi'] . '/' . $atasan['dep'] . '/' . $atasan['sub_dep'], 'link' => $link];
-                        $this->insertToDoList($todolist, $mailData);
+                        $mailData['to'] = $_trx->email;
                         $this->sendEmail($mailData);
+                        // kirim email ke atasan langsung jika ada
+                        // <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut dan klik link berikut untuk melakukan persetujuan<br/><a href="'.$link.'" data-toggle="tooltip" title="Link Persetujuan">Link Persetujuan</a>.</p>
+                        if(!empty($atasan)){
+                            $link = route('recruitment.get_offering', [Crypt::encrypt([$_trx->id, 'view', 'atasan'])]);
+                            $msg = '<p>Yth. '.$atasan['nama'].',<br/>Dengan hormat,</p>
+                            <p>Kami informasikan bahwa proses negosiasi atas Formulir Kebutuhan Karyawan nomor '.$_trx->id_kebutuhan.' telah dilakukan dan disetujui oleh calon karyawan atas nama berikut:</p>
+                            <p><table border="0" cellpadding="1" cellspacing="1">	
+                                <tr>
+                                    <td width="150">Nama</td>
+                                    <td width="5">:</td>
+                                    <td>'.$_trx->nama.'</td>
+                                </tr>
+                                <tr>
+                                    <td>Posisi</td>
+                                    <td>:</td>
+                                    <td>'.$posisi.'</td>
+                                </tr>
+                                <tr>
+                                    <td>Tanggal Bergabung</td>
+                                    <td>:</td>
+                                    <td>'.Carbon::parse($nego->tgl_bergabung)->format('d-m-Y').'</td>
+                                </tr>
+                            </table></p>
+                            <p>Calon karyawan tersebut telah melalui seluruh tahapan seleksi, termasuk seleksi CV, wawancara HC, wawancara user, Psikotest, dll., dan dinyatakan memenuhi kualifikasi yang dibutuhkan.</p>
+                            <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut. Klik link dibawah ini untuk melakukan persetujuan terhadap Formulir Kebutuhan Karyawan tersebut.<br/><a href="'.$link.'" data-toggle="tooltip" title="LINK">LINK</a></p>
+                            <p>Demikian informasi ini kami sampaikan untuk diketahui. Jika terdapat perkembangan lebih lanjut, kami akan memberikan pembaruan.<br/>Terima kasih.</p>
+                            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                            // parameter yang dipassing ke sendemail
+                            $mailData['title'] = 'Pemberitahuan Proses Seleksi Penerimaan Karyawan';
+                            // $mailData['data'] = ['msg'=>$msg];
+                            $mailData['filename'] = 'emails.recruitment0';
+                            $mailData['to'] = $atasan['email'];
+                            $todolist = ['id_trx' => $_trx->id, 'nik' => $atasan['nik'], 'id_status' => $id_status, 'pic' => 'atasan'];
+                            $mailData['data'] = ['msg'=>$msg, 'nama' => $atasan['nama'].'/'.$atasan['nik'], 'jabatan' => $atasan['jabatan'], 'unit_kerja' => $atasan['divisi'] . '/' . $atasan['dep'] . '/' . $atasan['sub_dep'], 'link' => $link];
+                            $this->insertToDoList($todolist, $mailData);
+                            $this->sendEmail($mailData);
+                        }
                     }
+                }
+                // jika sudah terpenuhi
+                else
+                {
+                    return redirect('recruitment/applicant_list/0')->with('error', 'No data is saved successfully. Add Employess are comply.');
                 }
             }
             // 25=Not Join
             elseif($id_status == 25){
+                // status dinyatakan join not join
+                $_trx->id_join = implode(',', $request->input('id_join', []));
+                $_trx->id_status = $id_status;
+                if(empty($request->param)){
+                    $_trx->update();
+                }
+                // email ke kandidat dinyatakan tidak diterima
                 // kirim email
                 $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
                 <p>Sehubungan dengan proses seleksi yang telah Bapak/Ibu/Saudara/i '.$_trx->nama.' ikuti untuk Posisi '.$posisi.', dengan ini kami sampaikan bahwa Bapak/Ibu/Saudara/i, dengan berat hari kami sampaikan bahwa Bapak/Ibu/Saudara/i belum dapat bergabung di PT. Alita Praya Mitra dikarenakan belum memenuhi kualifikasi yang dibutuhkan untuk posisi tersebut.</p>
