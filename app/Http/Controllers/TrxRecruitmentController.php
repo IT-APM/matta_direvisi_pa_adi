@@ -1753,7 +1753,7 @@ class TrxRecruitmentController extends Controller
                     $arr_pendidikan = ['SD', 'SMP', 'SMA/SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3', 'Lainnya'];
                     $trxD->id_pendidikan = array_search($_trx->pendidikan, $arr_pendidikan) + 1;
                     $trxD->tanggal_interview = Carbon::parse($interview->check_in)->format('Y-m-d');
-                    if(File::exists(public_path('assets/recruitment/upload/'.$interview->file_interview))){
+                    if(!empty($interview->file_interview) && File::exists(public_path('assets/recruitment/upload/'.$interview->file_interview))){
                         $trxD->file_interview = $interview->file_interview;
                         File::copy(public_path('assets/recruitment/upload/'.$interview->file_interview), public_path('assets/kebutuhan/'.$interview->file_interview));
                     }
@@ -1771,51 +1771,51 @@ class TrxRecruitmentController extends Controller
                     $trxD->tanggal_peraturan_perusahaan = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
                     $trxD->tanggal_pedoman_prilaku = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
                     $trxD->tanggal_struktur_organisasi = Carbon::parse($tanggal_coc->created_at)->format('Y-m-d');
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_dokumen_ttd))){
+                    if(!empty($_trx->file_dokumen_ttd) && File::exists(public_path('assets/recruitment/upload/'.$_trx->file_dokumen_ttd))){
                         $trxD->file_dokumen_ttd = $_trx->file_dokumen_ttd;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_dokumen_ttd), public_path('assets/kebutuhan/'.$_trx->file_dokumen_ttd));
                     }
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->cv))){
+                    if(!empty($_trx->cv) && File::exists(public_path('assets/recruitment/upload/'.$_trx->cv))){
                         $trxD->file_cv = $_trx->cv;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->cv), public_path('assets/kebutuhan/'.$_trx->cv));
                     }
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_sertifikat_keahlian))){
+                    if(!empty($_trx->file_sertifikat_keahlian) && File::exists(public_path('assets/recruitment/upload/'.$_trx->file_sertifikat_keahlian))){
                         $trxD->file_sertifikat_keahlian = $_trx->file_sertifikat_keahlian;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_sertifikat_keahlian), public_path('assets/kebutuhan/'.$_trx->file_sertifikat_keahlian));
                     }
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_ktp))){
+                    if(!empty($_trx->file_ktp) && File::exists(public_path('assets/recruitment/upload/'.$_trx->file_ktp))){
                         $trxD->file_ktp = $_trx->file_ktp;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ktp), public_path('assets/kebutuhan/'.$_trx->file_ktp));
                     }
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_kk))){
+                    if(!empty($_trx->file_kk) && File::exists(public_path('assets/recruitment/upload/'.$_trx->file_kk))){
                         $trxD->file_kk = $_trx->file_kk;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_kk), public_path('assets/kebutuhan/'.$_trx->file_kk));
                     }
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_npwp))){
+                    if(!empty($_trx->file_npwp) && File::exists(public_path('assets/recruitment/upload/'.$_trx->file_npwp))){
                         $trxD->file_npwp = $_trx->file_npwp;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_npwp), public_path('assets/kebutuhan/'.$_trx->file_npwp));
                     }
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_tk))){
+                    if(!empty($_trx->file_bpjs_tk) && File::exists(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_tk))){
                         $trxD->file_bpjs_tk = $_trx->file_bpjs_tk;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_tk), public_path('assets/kebutuhan/'.$_trx->file_bpjs_tk));
                     }
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_kes))){
+                    if(!empty($_trx->file_bpjs_kes) && File::exists(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_kes))){
                         $trxD->file_bpjs_kes = $_trx->file_bpjs_kes;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_bpjs_kes), public_path('assets/kebutuhan/'.$_trx->file_bpjs_kes));
                     }
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_buku_tabungan))){
+                    if(!empty($_trx->file_buku_tabungan) && File::exists(public_path('assets/recruitment/upload/'.$_trx->file_buku_tabungan))){
                         $trxD->file_buku_tabungan = $_trx->file_buku_tabungan;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_buku_tabungan), public_path('assets/kebutuhan/'.$_trx->file_buku_tabungan));
                     }
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_ket_sehat))){
+                    if(!empty($_trx->file_ket_sehat) && File::exists(public_path('assets/recruitment/upload/'.$_trx->file_ket_sehat))){
                         $trxD->file_ket_sehat = $_trx->file_ket_sehat;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ket_sehat), public_path('assets/kebutuhan/'.$_trx->file_ket_sehat));
                     }
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_skck))){
+                    if(!empty($_trx->file_skck) && File::exists(public_path('assets/recruitment/upload/'.$_trx->file_skck))){
                         $trxD->file_skck = $_trx->file_skck;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_skck), public_path('assets/kebutuhan/'.$_trx->file_skck));
                     }
-                    if(File::exists(public_path('assets/recruitment/upload/'.$_trx->file_ijazah))){
+                    if(!empty($_trx->file_ijazah) && File::exists(public_path('assets/recruitment/upload/'.$_trx->file_ijazah))){
                         $trxD->file_ijazah = $_trx->file_ijazah;
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ijazah), public_path('assets/kebutuhan/'.$_trx->file_ijazah));
                     }
@@ -2001,7 +2001,7 @@ class TrxRecruitmentController extends Controller
                 // jika sudah terpenuhi
                 else
                 {
-                    return redirect('recruitment/applicant_list/0')->with('error', 'No data is saved successfully. Add Employess are comply.');
+                    return redirect('recruitment/applicant_list/0')->with('error', 'No data is saved successfully. Add Employess are not comply.');
                 }
             }
             // 25=Not Join
