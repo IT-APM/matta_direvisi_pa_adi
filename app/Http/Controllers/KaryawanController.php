@@ -26,6 +26,7 @@ use App\Models\MtrFindimDivisi;
 use App\Models\MtrFindimDepartemen;
 use App\Models\MtrFindimSubdepartemen;
 use App\Models\KaryawanGrade;
+use App\Models\TrxPenilaian;
 // 
 use App\Models\MtrUtility;
 use App\Mail\MattaRebornMail;
@@ -548,7 +549,8 @@ class KaryawanController extends Controller
         $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","tanggal_tidak_aktif"=>"Tanggal Tidak Aktif","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama","findim_project"=>"Findim Project","findim_divisi"=>"Findim Divisi","findim_departemen"=>"Findim Departemen","findim_subdepartemen"=>"Findim Sub Departemen","id_grade"=>"Grade"];
         // $folder = 'matta\karyawan'.$karyawan->nik;
         // return response()->json( [ 'data' => public_path($folder) ], 200 );
-        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'pendidikan', 'no_pendidikan', 'pelatihan', 'no_pelatihan', 'sertifikasi', 'no_sertifikasi', 'anak', 'no_anak', 'history', 'no_history', 'lbl_history', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen', 'id_grade' ) );
+        $penilaian = TrxPenilaian::where(['nik_karyawan' => $karyawan->nik])->orderBy( 'id', 'desc' )->get();
+        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'pendidikan', 'no_pendidikan', 'pelatihan', 'no_pelatihan', 'sertifikasi', 'no_sertifikasi', 'anak', 'no_anak', 'history', 'no_history', 'lbl_history', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen', 'id_grade', 'penilaian' ) );
     }
 
     /**
