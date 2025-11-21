@@ -523,6 +523,8 @@
                                     href="#pills-emp_lat" role="tab" aria-controls="pills-emp_lat" aria-selected="false">Pelatihan</a></li>
                             <li class="nav-item"><a class="nav-link" id="pills-emp_ser-tab" data-bs-toggle="pill"
                                     href="#pills-emp_ser" role="tab" aria-controls="pills-emp_ser" aria-selected="false">Sertifikasi</a></li>
+                            <li class="nav-item"><a class="nav-link" id="pills-emp_penilaian-tab" data-bs-toggle="pill"
+                                    href="#pills-emp_penilaian" role="tab" aria-controls="pills-emp_penilaian" aria-selected="false">Penilaian</a></li>
                         </ul>
                         <div class="tab-content" id="pills-warningtabContent">
                             <div class="tab-pane fade show active" id="pills-emp_photo" role="tabpanel" aria-labelledby="pills-emp_photo-tab">
@@ -668,6 +670,67 @@
                                     </div>
                                 </p>
                             </div>
+                            <div class="tab-pane fade" id="pills-emp_penilaian" role="tabpanel" aria-labelledby="pills-emp_penilaian-tab">
+                                <p class="mb-0 mt-2">
+                                    <div class="table-responsive">
+                                        <table class="display" id="basic-penilaian">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>NIP</th>
+                                                    <th>Nama</th>
+                                                    <th>Penilaian Ke</th>
+                                                    <th>Tanggal Selesai PKWT</th>
+                                                    <th>Tanggal Selesai Penilaian</th>
+                                                    <th>Nilai Total Karyawan</th>
+                                                    <th>Nilai Total Penilai</th>
+                                                    <th>Durasi Perpanjangan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $no = 0; @endphp
+                                                @foreach ($penilaian as $data)
+                                                @php
+                                                    $karyawan_property = json_decode($data->karyawan_property, true);
+                                                    $urutan = App\Models\TrxPenilaian::where('nik_karyawan', $karyawan_property['nik'])->where('id', '<=', $data->id)->count();
+                                                @endphp
+                                                <tr>
+                                                    <td>{{ ++$no }}</td>
+                                                    <td>{{ $data->nik_karyawan }}</td>
+                                                    <td>{{ $karyawan_property['nama'] }}</td>
+                                                    <td>{{ $urutan }}</td>
+                                                    <td>
+                                                        @if (!empty($karyawan_property['tanggal_berakhir']))
+                                                            {{ Carbon\Carbon::parse($karyawan_property['tanggal_berakhir'])->format('d-m-Y') }}
+                                                        @endif
+                                                    </td>
+                                                    {{-- timestamp hco --}}
+                                                    @php
+                                                        $created_at = App\Models\TrxPenilaianLog::where(['id_trx' => $data->id])->whereIn('id_status', [4, 8])->orderBy('created_at', 'desc')->first();
+                                                    @endphp
+                                                    <td>
+                                                        @if (!empty($created_at))
+                                                            {{ $created_at->created_at }}
+                                                        @endif
+                                                    </td>
+                                                    {{-- Nilai Total Karyawan --}}
+                                                    @php
+                                                        $skor = App\Models\TrxPenilaianSkor::where(['id_trx' => $data->id])->sum('skor_karyawan');
+                                                    @endphp
+                                                    <td>@if($skor > 0){{ $skor }}@endif</td>
+                                                    {{-- Nilai Total Penilai 1 --}}
+                                                    @php
+                                                        $skor = App\Models\TrxPenilaianSkor::where(['id_trx' => $data->id])->sum('skor_penilai_1');
+                                                    @endphp
+                                                    <td>{{ $skor }}</td>
+                                                    <td>{{ $data->_perpanjang->informasi }} @if ($data->is_perpanjang == 1){{ $data->bulan }} Bulan @endif</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -746,6 +809,7 @@ $(document).ready(function() {
     $('#basic-pendidikan').DataTable();
     $('#basic-pelatihan').DataTable();
     $('#basic-sertifikasi').DataTable();
+    $('#basic-penilaian').DataTable();
     $('#basic-anak').DataTable();
     $('#emp-history').DataTable();
     // 
