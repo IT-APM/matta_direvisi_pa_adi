@@ -193,7 +193,7 @@
 				@endphp
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr>
-						<td>@if(!empty($catatan)){{ $catatan->keterangan }}@endif</td>
+						<td>@if(!empty($catatan)){!! $catatan->keterangan !!}@endif</td>
 					</tr>
 				</table>
 				<hr />
