@@ -366,6 +366,7 @@
                                 <li><a href="{{ route('hcouser.index') }}">HCO Team</a></li>
                                 <li><a href="{{ route('plafon.index') }}">Health Reimbursement<br />Limits</a></li>
                                 <li><a href="{{ route('iphoneuser.index') }}">iPhone Users</a></li>
+                                <li><a href="{{ route('pekerjaan_bidang.index') }}">Job Field</a></li>
                                 <li><a href="{{ route('jabatan.index') }}">Job Position</a></li>
                                 <li><a href="{{ route('join.index') }}">Join Status</a></li>
                                 <li><a href="{{ route('holiday.index') }}">National Holiday</a></li>
