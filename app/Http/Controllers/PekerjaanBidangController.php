@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Pekerjaan;
+use Illuminate\Support\Facades\Log;
 
 class PekerjaanBidangController extends Controller
 {
@@ -14,6 +16,9 @@ class PekerjaanBidangController extends Controller
     public function index()
     {
         //
+        $no = 0;
+        $trx = Pekerjaan::orderBy( 'bidang', 'asc' )->get();
+        return view( 'master.pekerjaan_bidang.index', compact( 'trx', 'no' ) );
     }
 
     /**
@@ -24,6 +29,8 @@ class PekerjaanBidangController extends Controller
     public function create()
     {
         //
+        $status = 'create';
+        return view( 'master.pekerjaan_bidang.upsert', compact( 'status' ) );
     }
 
     /**
@@ -35,6 +42,11 @@ class PekerjaanBidangController extends Controller
     public function store(Request $request)
     {
         //
+        $trx = New Pekerjaan;
+        $trx->bidang = $request->bidang;
+        $trx->keterangan = $request->keterangan;
+        $trx->save();
+        return redirect( 'pekerjaan_bidang' )->with( 'msg', 'Data is saved successfully.' );
     }
 
     /**
@@ -57,6 +69,9 @@ class PekerjaanBidangController extends Controller
     public function edit($id)
     {
         //
+        $status = 'edit';
+        $trx = Pekerjaan::find($id);
+        return view( 'master.pekerjaan_bidang.upsert', compact( 'trx', 'status' ) );
     }
 
     /**
@@ -69,6 +84,11 @@ class PekerjaanBidangController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $trx = Pekerjaan::find($id);
+        $trx->bidang = $request->bidang;
+        $trx->keterangan = $request->keterangan;
+        $trx->update();
+        return redirect( 'pekerjaan_bidang' )->with( 'msg', 'Data is saved successfully.' );
     }
 
     /**
@@ -80,5 +100,15 @@ class PekerjaanBidangController extends Controller
     public function destroy($id)
     {
         //
+        $trx = Pekerjaan::find($id);
+        try {
+            $trx->delete();
+            return redirect( 'pekerjaan_bidang' )->with( 'msg', 'Data is deleted successfully.' );
+         } catch (\Exception $e) {
+            //   var_dump( $e->errorInfo );
+            Log::error($e->errorInfo);
+            Log::error($trx);
+            return redirect()->route('error_db');
+         }
     }
 }
