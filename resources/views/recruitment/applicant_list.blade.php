@@ -142,6 +142,7 @@
                                                 <th>Offering Letter</th>
                                                 <th>Upload</th>
                                                 <th>Status</th>
+                                                <th>Detail</th>
                                                 <th>Created_at</th>
                                             </tr>
                                         </thead>
@@ -246,8 +247,8 @@
                                                     {{-- 20=COC and File Upload Done --}}
                                                     @if(in_array(20, $log))<a href="{{ route('recruitment.upload_dokumen_get', [Crypt::encrypt([$data->id, 'view'])]) }}" target="_blank" data-toggle="tooltip" title="File Upload"><i class="fa fa-file-text-o"></i></a>@endif
                                                 </td>
-                                                {{-- <td>{{ $data->_status->status }} @if(!empty($data->id_join)) (@foreach (explode(',', $data->id_join) as $_data){{ App\Models\MtrJoin::find($_data)->nama }}, @endforeach) @endif</td> --}}
-                                                <td>{{ $data->_status->status }} @if(!empty($data->id_join))<br/>({{ implode(',', App\Models\MtrJoin::whereIn('id', explode(',', $data->id_join))->orderBy('nama', 'asc')->pluck('nama')->toArray()) }}) @endif</td>
+                                                <td>{{ $data->_status->status }}</td>
+                                                <td>@if(!empty($data->id_join)) {!! implode('<br/>', App\Models\MtrJoin::whereIn('id', explode(',', $data->id_join))->orderBy('nama', 'asc')->pluck('nama')->toArray()) !!} @endif</td>
                                                 <td>{{ $data->created_at }}</td>
                                             </tr>
                                             @endforeach
