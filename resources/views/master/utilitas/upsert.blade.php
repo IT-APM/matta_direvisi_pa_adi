@@ -35,7 +35,7 @@
                     <form action="{{ route('utilitas.update', 0) }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to save this data?');">
                     @method('PATCH')
                     @csrf
-                        <div class="row mt-2">
+                        <div class="row">
                             <div class="col-md-6">
                                 @php $no=1; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
@@ -46,168 +46,152 @@
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=6; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=7; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=12; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=13; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=14; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=15; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=16; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=17; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=20; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=23; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=18; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=19; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=21; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=22; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=42; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=24; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=25; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=26; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=27; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=28; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=38; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=31; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=33; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=29; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=37; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=39; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=40; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=41; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=43; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=44; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
@@ -219,12 +203,12 @@
                             </div>
                         </div>
                     </form>
-                    {{--  --}}
-                    <h5 class="mt-3">Surat Teguran dan Peringatan</h5>
+                    <hr>
+                    <h5>Surat Teguran dan Peringatan</h5>
                     <form action="{{ route('utilitas.update_sp', 0) }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to save this data?');">
                     @method('POST')
                     @csrf
-                        <div class="row mt-2">
+                        <div class="row">
                             <div class="col-md-6">
                                 @php $no=1; @endphp
                                 <label class="form-label" for="sp_{{ $no }}">{{ $reminder[$no-1]->judul }}</label>
@@ -235,9 +219,7 @@
                                 <label class="form-label" for="sp_{{ $no }}">{{ $reminder[$no-1]->judul }}</label>
                                 <input name="sp_{{ $no }}" id="sp_{{ $no }}" class="form-control" type="text" required="" value="{{ $reminder[$no-1]->isi }}">
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=2; @endphp
                                 <label class="form-label" for="sp_{{ $no }}">{{ $reminder[$no-1]->judul }}</label>
                                 <textarea name="sp_{{ $no }}" id="sp_{{ $no }}" class="form-control" rows="4" required="">{{ $reminder[$no-1]->isi }}</textarea>
@@ -251,11 +233,12 @@
                     </form>
                     {{--  --}}
                     @can('payroll')
-                    <h5 class="mt-3">Payroll</h5>
+                    <hr>
+                    <h5>Payroll</h5>
                     <form action="{{ route('utilitas.update_payroll', 0) }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to save this data?');">
                     @method('POST')
                     @csrf
-                        <div class="row mt-2">
+                        <div class="row">
                             <div class="col-md-6">
                                 @php $no=32; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
@@ -266,7 +249,7 @@
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-2">
                                 @php $no=45; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
