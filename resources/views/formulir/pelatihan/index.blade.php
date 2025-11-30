@@ -39,14 +39,14 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    <a href="{{ route('pelatihan.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                    <a href="{{ route('pelatihan.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="{{ route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey(4), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('list_certificate')]) }}" class="btn btn-primary" type="button"><i class="fa fa-file-text-o" aria-hidden="true"></i> Certificates</a>
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="{{ route('pelatihan.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-sm-3">
                                     <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_pengajuan(this)" /> Check All
                                     <label class="d-block" for="status_pengajuan">
-                                        @foreach ($status_pengajuan as $data)
+                                        @foreach($status_pengajuan as $data)
                                         <input class="checkbox_animated" id="status_pengajuan[]" name="status_pengajuan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_status_pengajuan)) checked @endif> {{ $data->status_pengajuan }}<br/>
                                         @endforeach
                                     </label>
@@ -80,7 +80,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($trx as $data)
+                                @foreach($trx as $data)
                                 <tr>
                                     <td>{{ ++$no }}</td>
                                     <td>{{ $data->id }}</td>
@@ -88,7 +88,8 @@
                                         <a href="{{ route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('detail')]) }}" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>
                                         &nbsp;<a href="{{ route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         @can('hc')
-                                        &nbsp;<a href="{{ route('pelatihan.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Update'><i class="icon-pencil-alt"></i></a>
+                                        <br/><a href="{{ route('pelatihan.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Update'><i class="icon-pencil-alt"></i></a>
+                                        &nbsp;<a href="{{ route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('peserta'), 'back_url' => url()->full()]) }}" data-toggle="tooltip" title="Sertifikat"><i class="fa fa-file-text-o"></i></a>
                                         @endcan
                                     </td>
                                     <td>{{ $data->_pengaju->nama }}</td>
@@ -96,13 +97,13 @@
                                     <td>{{ $data->_atasan->nama }}</td>
                                     <td>{{ $data->_atasan->nik }}</td>
                                     <td>
-                                        @foreach (explode(';', $data->peserta_property) as $value)
-                                        {{ json_decode($value, true)['nama'] }}<br/>
+                                        @foreach(explode(';', $data->peserta_property) as $value)
+                                            {{ json_decode($value, true)['nama'] }} @if(!$loop->last) <br/> @endif
                                         @endforeach
                                     </td>
                                     <td>
-                                        @foreach (explode(';', $data->atasan_peserta_property) as $value)
-                                        {{ json_decode($value, true)['nama'] }}<br/>
+                                        @foreach(explode(';', $data->atasan_peserta_property) as $value)
+                                            {{ json_decode($value, true)['nama'] }} @if(!$loop->last) <br/> @endif
                                         @endforeach
                                     </td>
                                     <td>{{ $data->judul }}</td>
