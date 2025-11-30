@@ -15,9 +15,13 @@ use App\Models\PelatihanJenis;
 use App\Models\PelatihanAnggaran;
 use App\Models\PelatihanBenefit;
 use App\Models\PelatihanStatus;
+use App\Models\MtrPelatihanPenilaian;
 use App\Models\TrxPelatihan;
 use App\Models\TrxPelatihanLog;
 use App\Models\TrxPelatihanSertifikat;
+use App\Models\TrxPelatihanPeserta;
+use App\Models\TrxPelatihanDokumen;
+use App\Models\TrxPelatihanPenilaian;
 // 
 use App\Models\ToDoList;
 use App\Models\ToDoListLog;
@@ -330,9 +334,14 @@ class TrxPelatihanController extends Controller
     public function create()
     {
         //
+        $status = 'create';
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
+        $int_ext = collect([
+            'int' => 'Internal',
+            'ext' => 'Eksternal',
+        ]);
         $anggaran = PelatihanAnggaran::orderBy('anggaran', 'asc')->get();
         // tidak digunakan
         // 2=Sertifikat
@@ -340,7 +349,8 @@ class TrxPelatihanController extends Controller
         // reviewer level minimal 3 = spv
         $where = [ 'is_aktif' => 1];
         $reviewer = Karyawan::where($where)->where('kode_level','>=',3)->orderBy('nama', 'asc')->get();
-        return view('formulir.pelatihan.insert', compact('karyawan', 'jenis', 'anggaran', 'benefit', 'reviewer'));
+        // dd($int_ext);
+        return view('formulir.pelatihan.insert', compact('karyawan', 'jenis', 'anggaran', 'benefit', 'reviewer', 'status', 'int_ext'));
     }
 
     /**
@@ -400,6 +410,7 @@ class TrxPelatihanController extends Controller
         $trx->ke = $ke;
         $trx->tahun = $request->tahun;
         $trx->jenis = implode(';', $request->jenis);
+        $trx->int_ext = $request->int_ext;
         $trx->judul = $request->judul;
         $trx->penyelenggara = $request->penyelenggara;
         // tidak digunakan diganti dengan tanggal_range
@@ -413,7 +424,7 @@ class TrxPelatihanController extends Controller
         $trx->keterangan = $request->keterangan;
         $trx->status_pengajuan = $status_pengajuan;
         $trx->save();
-        $this->insertLog($trx->id, $status_pengajuan, $pengaju, 'new insert');
+        $this->insertLog($trx->id, $status_pengajuan, $pengaju, $request->keterangan);
         // 
         $_pengaju_ = json_decode($_pengaju, true);
         $_atasan_pengaju_ = json_decode($_atasan_pengaju, true);
@@ -499,6 +510,7 @@ class TrxPelatihanController extends Controller
 
     public function sendEmail($mailData)
     {
+        // disable ketika uji coba
         $ccEmails = explode(',', MtrUtility::find(11)->informasi);
         Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
     }
@@ -507,7 +519,7 @@ class TrxPelatihanController extends Controller
     {
         // check para approver, jika sudah semua kirimkan email ke pengaju
         // start
-        $trx = TrxPelatihan::find( $id );
+        $trx = TrxPelatihan::find($id);
         $check = true;
         $approver = array();
         $approver['atasan_pengaju'] = $trx->atasan_pengaju;
@@ -565,11 +577,14 @@ class TrxPelatihanController extends Controller
             // $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.edit', [(new OpenDataController)->encryptWithKey($id)]), 'trx'=>$trx];
             // diganti dengan ini
             $mailData['data'] = ['nama'=>$pengaju['nama'], 'jabatan'=>$pengaju['jabatan'], 'unit_kerja'=>$pengaju['divisi'].'/'.$pengaju['dep'].'/'.$pengaju['sub_dep'], 'link'=> route('pelatihan.show', [(new OpenDataController)->encryptWithKey($id), 'view' => (new OpenDataController)->encryptWithKey('detail')]), 'trx'=>$trx];
-            $hco = explode('/', MtrUtility::find(29)->informasi);
-            $mailData['to'] = $hco[1];
-            $todolist = ['id_trx' => $trx->id, 'nik' => $hco[0], 'id_status' => $trx->status_pengajuan, 'pic' => 'hco'];
-            $this->insertToDoList($todolist, $mailData);
-            $this->sendEmail($mailData);
+            $hco = explode(',', MtrUtility::find(29)->informasi);
+            foreach($hco as $data){
+                $_hco = explode('/', $data);
+                $mailData['to'] = $_hco[1];
+                $todolist = ['id_trx' => $trx->id, 'nik' => $_hco[0], 'id_status' => $trx->status_pengajuan, 'pic' => 'hco'];
+                $this->insertToDoList($todolist, $mailData);
+                $this->sendEmail($mailData);
+            }
         }
         // finish
     }
@@ -582,13 +597,15 @@ class TrxPelatihanController extends Controller
      */
     public function show(Request $request, $id)
     {
-        //
+        // dd($request->all(), $id);
+        // dd($request->all(), (new OpenDataController)->decryptWithKey($request->view), (new OpenDataController)->decryptWithKey($request->nik), (new OpenDataController)->decryptWithKey($request->id_status), (new OpenDataController)->decryptWithKey($request->pic), (new OpenDataController)->decryptWithKey($id));
         $linkAction = route('pelatihan.update', $id);
         $id = (new OpenDataController)->decryptWithKey($id);
+        $back_url = $request->back_url;
         // 
         $where = ['id_trx' => $id];
         $history = TrxPelatihanLog::where($where)->orderBy('created_at', 'desc')->get();
-        $trx = TrxPelatihan::find( $id );
+        $trx = TrxPelatihan::find($id);
         // ambil property para pihak
         $pengaju = json_decode($trx->pengaju_property, true);
         $atasan_pengaju = json_decode($trx->atasan_pengaju_property, true);
@@ -617,6 +634,11 @@ class TrxPelatihanController extends Controller
         foreach ($arr_benefit as $value) {
             array_push($arrBenefit, PelatihanBenefit::select('benefit')->find( $value ));
         }
+        // 
+        $int_ext = collect([
+            'int' => 'Internal',
+            'ext' => 'Eksternal',
+        ]);
         // 
         $reviewer1 = '';
         $reviewer2 = '';
@@ -664,7 +686,7 @@ class TrxPelatihanController extends Controller
                     // 3 = Reject by L1 Requestor
                     $approve = 2;
                     $reject = 3;
-                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history'));
+                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history', 'int_ext'));
                 } 
                 // atasan_peserta - 2 = Approve by L1 Requestor
                 else if ($pic == 'atasan_peserta' && in_array($nik, explode(';', $trx->atasan_peserta)) && $nAtasanPeserta == 0 && $id_status == 2) {
@@ -672,7 +694,7 @@ class TrxPelatihanController extends Controller
                     // 6 = Reject by L1 Participants
                     $approve = 5;
                     $reject = 6;
-                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history'));
+                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history', 'int_ext'));
                 } 
                 // reviewer1 - 5 = Approve by L1 Participants
                 else if ($pic == 'reviewer1' && $nik == $trx->reviewer1 && $nReviewer1 == 0 && $id_status == 5) {
@@ -680,7 +702,7 @@ class TrxPelatihanController extends Controller
                     // 8 = Reject by Reviewer 2
                     $approve = 10;
                     $reject = 8;
-                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history'));
+                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history', 'int_ext'));
                 } 
                 // reviewer2 - 5 = Approve by L1 Participants
                 else if ($pic == 'reviewer2' && $nik == $trx->reviewer2 && $nReviewer2 == 0 && $id_status == 5) {
@@ -688,7 +710,7 @@ class TrxPelatihanController extends Controller
                     // 12 = Reject by Reviewer 3
                     $approve = 14;
                     $reject = 12;
-                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history'));
+                    return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history', 'int_ext'));
                 } 
                 // selainnya
                 else {
@@ -701,17 +723,144 @@ class TrxPelatihanController extends Controller
             //     return view('emails.pelatihan', compact('trx', 'nik', 'pic', 'approve', 'reject', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'linkAction', 'history'));
             //     break;
             case 'detail':
-                $this->authorize('auth');
+                // $this->authorize('auth');
+                if (!auth()->check()) {
+                    session(['url.intended' => url()->full()]);
+                    return redirect()->route('login-one');
+                }
+                // $karyawan = Karyawan::select('nik', 'nama')->orderBy('nama', 'asc')->get();
                 $where = ['id_trx' => $id];
                 $history = TrxPelatihanLog::where($where)->orderBy('created_at', 'desc')->get();
+                // $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
+                // $anggaran = PelatihanAnggaran::orderBy('anggaran', 'asc')->get();
+                // $benefit = PelatihanBenefit::orderBy('benefit', 'asc')->get();
+                $status_pengajuan = PelatihanStatus::whereIn('id', [11,$trx->status_pengajuan])->orderBy('id', 'asc')->get();
+                // return view('formulir.pelatihan.view', compact('trx', 'pengaju', 'arrPeserta', 'arrAtasanPeserta', 'history', 'arrJenis', 'arrBenefit', 'jenis', 'anggaran', 'benefit', 'status_pengajuan', 'karyawan'));
+                return view('formulir.pelatihan.view', compact('trx', 'pengaju', 'arrPeserta', 'arrAtasanPeserta', 'history', 'arrJenis', 'arrBenefit', 'status_pengajuan', 'int_ext'));
+                break;
+            case 'edit':
+                // $this->authorize('auth');
+                $status = $view;
+                if (!auth()->check()) {
+                    session(['url.intended' => url()->full()]);
+                    return redirect()->route('login-one');
+                }
+                $karyawan = Karyawan::select('nik', 'nama')->orderBy('nama', 'asc')->get();
                 $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
                 $anggaran = PelatihanAnggaran::orderBy('anggaran', 'asc')->get();
                 $benefit = PelatihanBenefit::orderBy('benefit', 'asc')->get();
-                $status_pengajuan = PelatihanStatus::whereIn('id', [11,$trx->status_pengajuan])->orderBy('id', 'asc')->get();
-                return view('formulir.pelatihan.view', compact('trx', 'pengaju', 'arrPeserta', 'arrAtasanPeserta', 'history', 'arrJenis', 'arrBenefit', 'jenis', 'anggaran', 'benefit', 'status_pengajuan'));
+                return view('formulir.pelatihan.insert', compact('trx', 'jenis', 'anggaran', 'benefit', 'karyawan', 'status', 'back_url', 'int_ext'));
+                break;
+            case 'peserta':
+                if (!auth()->check()) {
+                    session(['url.intended' => url()->full()]);
+                    return redirect()->route('login-one');
+                }
+                $trx = TrxPelatihanPeserta::where(['id_trx'=>$id])->orderBy('id', 'asc')->get();
+                $no = 0;
+                return view('formulir.pelatihan.peserta_index', compact('trx', 'no', 'arrJenis', 'back_url', 'int_ext'));
+                break;
+            case 'sertifikat':
+                if (!auth()->check()) {
+                    session(['url.intended' => url()->full()]);
+                    return redirect()->route('login-one');
+                }
+                $id_peserta = (new OpenDataController)->decryptWithKey($request->id_peserta);
+                $trx = TrxPelatihanPeserta::find($id_peserta);
+                $_trx = TrxPelatihanDokumen::where(['id_peserta'=>$id_peserta])->orderBy('id', 'asc')->get();
+                $no = 0;
+                return view('formulir.pelatihan.doc_index', compact('trx', '_trx', 'no', 'arrJenis', 'back_url', 'int_ext'));
+                break;
+            case 'list_certificate':
+                if (!auth()->check()) {
+                    session(['url.intended' => url()->full()]);
+                    return redirect()->route('login-one');
+                }
+                $trx = TrxPelatihanSertifikat::orderBy('nama', 'asc')->get();
+                $no = 0;
+                return view('formulir.pelatihan.index_sertifikat', compact('trx', 'no'));
+                break;
+            case 'evaluasi':
+                $id_peserta = (new OpenDataController)->decryptWithKey($request->id_peserta);
+                $_trx = TrxPelatihanPeserta::find($id_peserta);
+                // $_trx = TrxPelatihanDokumen::where(['id_peserta'=>$id_peserta])->orderBy('id', 'asc')->get();
+                $materi = TrxPelatihanPenilaian::where(['id_peserta'=>$id_peserta])->orderBy('urutan', 'asc')->get();
+                // check apakah sudah melakukan evaluasi jika sudah maka diarahkan ke terima kasih
+                $check = TrxPelatihanPenilaian::where(['id_peserta'=>$id_peserta])->whereNotIn('tipe', ['readonly'])->whereNotNull('jawaban')->exists();
+                if($check){
+                    return view('emails.pelatihan_ok');
+                }
+                return view('formulir.pelatihan.evaluasi', compact('trx', '_trx', 'arrJenis', 'int_ext', 'materi'));
+                break;
+            case 'evaluasi_pdf':
+                if (!auth()->check()) {
+                    session(['url.intended' => url()->full()]);
+                    return redirect()->route('login-one');
+                }
+                // 
+                $_int_ext = '';
+                foreach($int_ext as $key => $value){
+                    if($key == $trx->int_ext){
+                        $_int_ext = $value;
+                    }
+                }
+                $id_peserta = (new OpenDataController)->decryptWithKey($request->id_peserta);
+                $_trx = TrxPelatihanPeserta::find($id_peserta);
+                // $_trx = TrxPelatihanDokumen::where(['id_peserta'=>$id_peserta])->orderBy('id', 'asc')->get();
+                $materi = TrxPelatihanPenilaian::where(['id_peserta'=>$id_peserta])->orderBy('urutan', 'asc')->get();
+                // print to pdf
+                $waktu = date('YmdHis');
+                $filename = $waktu . '_formulir_evaluasi_pelatihan.pdf';
+                $pdf = new TCPDF;
+                $pdf::SetTitle('Formulir Evaluasi Pelatihan');
+                $pdf::SetFont('times', '', 10, '', true);
+                $pdf::AddPage();
+                $html = \View::make('formulir.pelatihan.evaluasi_pdf', compact('trx', '_trx', 'arrJenis', '_int_ext', 'materi'))->render();
+                $pdf::writeHTML($html, true, false, true, false, '');
+                $pdf::AddPage();
+                $html = \View::make('formulir.pelatihan.evaluasi_pdf_next', compact('trx', '_trx', 'arrJenis', '_int_ext', 'materi'))->render();
+                $pdf::writeHTML($html, true, false, true, false, '');
+                $pdf::Output(public_path($filename), 'I');
+                return response()->download(public_path($filename));
+                break;
+            case 'sertifikat_detail':
+                $status = 'create';
+                if (!auth()->check()) {
+                    session(['url.intended' => url()->full()]);
+                    return redirect()->route('login-one');
+                }
+                $id_peserta = $request->id_peserta;
+                $id_peserta = (new OpenDataController)->decryptWithKey($id_peserta);
+                $trx = TrxPelatihanPeserta::find($id_peserta);
+                return view('formulir.pelatihan.doc_update', compact('trx', 'back_url', 'arrJenis', 'status', 'int_ext'));
+                break;
+            case 'sertifikat_update':
+                $status = 'edit';
+                if (!auth()->check()) {
+                    session(['url.intended' => url()->full()]);
+                    return redirect()->route('login-one');
+                }
+                $id_peserta = $request->id_peserta;
+                $id_peserta = (new OpenDataController)->decryptWithKey($id_peserta);
+                $trx = TrxPelatihanPeserta::find($id_peserta);
+                $id_sertifikat = $request->id_sertifikat;
+                $id_sertifikat = (new OpenDataController)->decryptWithKey($id_sertifikat);
+                $_trx = TrxPelatihanDokumen::find($id_sertifikat);
+                return view('formulir.pelatihan.doc_update', compact('trx', '_trx', 'back_url', 'arrJenis', 'status', 'int_ext'));
                 break;
             case 'pdf':
-                $this->authorize('auth');
+                // $this->authorize('auth');
+                if (!auth()->check()) {
+                    session(['url.intended' => url()->full()]);
+                    return redirect()->route('login-one');
+                }
+                // 
+                $_int_ext = '';
+                foreach($int_ext as $key => $value){
+                    if($key == $trx->int_ext){
+                        $_int_ext = $value;
+                    }
+                }
                 // print to pdf
                 $waktu = date('YmdHis');
                 $no = 0;
@@ -827,12 +976,11 @@ class TrxPelatihanController extends Controller
                 // end looping satu baris terdiri dari $pembagi
                 // 
                 $filename = $waktu . '_formulir_pelatihan_karyawan.pdf';
-                $view = \View::make('formulir.pelatihan.pdf', compact('trx', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'htmlLog'));
-                $html = $view->render();
                 $pdf = new TCPDF;
                 $pdf::SetTitle('Formulir Pengajuan Pelatihan');
                 $pdf::SetFont('times', '', 10, '', true);
                 $pdf::AddPage();
+                $html = \View::make('formulir.pelatihan.pdf', compact('trx', 'pengaju', 'arrPeserta', 'arrJenis', 'arrBenefit', 'htmlLog', '_int_ext'))->render();
                 $pdf::writeHTML($html, true, false, true, false, '');
                 $pdf::Output(public_path($filename), 'I');
                 return response()->download(public_path($filename));
@@ -855,7 +1003,7 @@ class TrxPelatihanController extends Controller
         $id = (new OpenDataController)->decryptWithKey($id);
         $where = ['id_trx' => $id];
         $history = TrxPelatihanLog::where($where)->orderBy('created_at', 'desc')->get();
-        $trx = TrxPelatihan::find( $id );
+        $trx = TrxPelatihan::find($id);
         // 
         $status_pengajuan = PelatihanStatus::whereIn('id', [11,$trx->status_pengajuan])->orderBy('id', 'asc')->get();
         // return response()->json(['status_pengajuan' => $status_pengajuan]);die;
@@ -896,13 +1044,130 @@ class TrxPelatihanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // 
+        if($request->type == 'doc_insert'){
+            $id = (new OpenDataController)->decryptWithKey($id);
+            $trx = TrxPelatihanPeserta::find($id);
+            $data = new TrxPelatihanDokumen;
+            $data->id_trx = $trx->id_trx;
+            $data->id_peserta = $id;
+            $data->nik = $trx->nik;
+            $data->nik_property = $trx->nik_property;
+            $tanggal_ujian = $request->input('tanggal_ujian', []);
+            if(!empty($tanggal_ujian) && !in_array(null, $tanggal_ujian, true)){
+                $data->tanggal_ujian = json_encode($tanggal_ujian, JSON_UNESCAPED_SLASHES);
+            }
+            $is_lulus = $request->is_lulus;
+            $data->is_lulus = $is_lulus;
+            $tanggal_berlaku = $request->input('tanggal_berlaku', []);
+            if(!empty($tanggal_berlaku) && !in_array(null, $tanggal_berlaku, true)){
+                $data->tanggal_berlaku = json_encode($tanggal_berlaku, JSON_UNESCAPED_SLASHES);
+            }
+            $no_sertifikat = $request->no_sertifikat;
+            $data->no_sertifikat = $no_sertifikat;
+            $penerbit = $request->penerbit;
+            $data->penerbit = $penerbit;
+            if($request->has('file_anggota')){
+                $file_anggota = $request->file('file_anggota');
+                $namafile = 'file_anggota_'.$id . '_' . time() . '.' . $file_anggota->getClientOriginalExtension();
+                $file_anggota->move('public/assets/pelatihan/', $namafile);
+                $data->file_anggota = $namafile;
+            }
+            if($request->has('file_lisensi')){
+                $file_lisensi = $request->file('file_lisensi');
+                $namafile = 'file_lisensi_'.$id . '_' . time() . '.' . $file_lisensi->getClientOriginalExtension();
+                $file_lisensi->move('public/assets/pelatihan/', $namafile);
+                $data->file_lisensi = $namafile;
+            }
+            if($request->has('file_modul')){
+                $file_modul = $request->file('file_modul');
+                $namafile = 'file_modul_'.$id . '_' . time() . '.' . $file_modul->getClientOriginalExtension();
+                $file_modul->move('public/assets/pelatihan/', $namafile);
+                $data->file_modul = $namafile;
+            }
+            if($request->has('file_pelatihan')){
+                $file_pelatihan = $request->file('file_pelatihan');
+                $namafile = 'file_pelatihan_'.$id . '_' . time() . '.' . $file_pelatihan->getClientOriginalExtension();
+                $file_pelatihan->move('public/assets/pelatihan/', $namafile);
+                $data->file_pelatihan = $namafile;
+            }
+            if($request->has('file_keahlian')){
+                $file_keahlian = $request->file('file_keahlian');
+                $namafile = 'file_keahlian_'.$id . '_' . time() . '.' . $file_keahlian->getClientOriginalExtension();
+                $file_keahlian->move('public/assets/pelatihan/', $namafile);
+                $data->file_keahlian = $namafile;
+            }
+            $data->save();
+            return redirect()->to($request->back_url)->with( 'msg', 'Data is saved successfully.' );
+        }
+        elseif($request->type == 'doc_update'){
+            $id = (new OpenDataController)->decryptWithKey($id);
+            $data = TrxPelatihanDokumen::find($id);
+            $tanggal_ujian = $request->input('tanggal_ujian', []);
+            if(!empty($tanggal_ujian) && !in_array(null, $tanggal_ujian, true)){
+                $data->tanggal_ujian = json_encode($tanggal_ujian, JSON_UNESCAPED_SLASHES);
+            }
+            $is_lulus = $request->is_lulus;
+            $data->is_lulus = $is_lulus;
+            $tanggal_berlaku = $request->input('tanggal_berlaku', []);
+            if(!empty($tanggal_berlaku) && !in_array(null, $tanggal_berlaku, true)){
+                $data->tanggal_berlaku = json_encode($tanggal_berlaku, JSON_UNESCAPED_SLASHES);
+            }
+            $no_sertifikat = $request->no_sertifikat;
+            $data->no_sertifikat = $no_sertifikat;
+            $penerbit = $request->penerbit;
+            $data->penerbit = $penerbit;
+            if($request->has('file_anggota')){
+                $file_anggota = $request->file('file_anggota');
+                $namafile = 'file_anggota_'.$id . '_' . time() . '.' . $file_anggota->getClientOriginalExtension();
+                $file_anggota->move('public/assets/pelatihan/', $namafile);
+                $data->file_anggota = $namafile;
+            }
+            if($request->has('file_lisensi')){
+                $file_lisensi = $request->file('file_lisensi');
+                $namafile = 'file_lisensi_'.$id . '_' . time() . '.' . $file_lisensi->getClientOriginalExtension();
+                $file_lisensi->move('public/assets/pelatihan/', $namafile);
+                $data->file_lisensi = $namafile;
+            }
+            if($request->has('file_modul')){
+                $file_modul = $request->file('file_modul');
+                $namafile = 'file_modul_'.$id . '_' . time() . '.' . $file_modul->getClientOriginalExtension();
+                $file_modul->move('public/assets/pelatihan/', $namafile);
+                $data->file_modul = $namafile;
+            }
+            if($request->has('file_pelatihan')){
+                $file_pelatihan = $request->file('file_pelatihan');
+                $namafile = 'file_pelatihan_'.$id . '_' . time() . '.' . $file_pelatihan->getClientOriginalExtension();
+                $file_pelatihan->move('public/assets/pelatihan/', $namafile);
+                $data->file_pelatihan = $namafile;
+            }
+            if($request->has('file_keahlian')){
+                $file_keahlian = $request->file('file_keahlian');
+                $namafile = 'file_keahlian_'.$id . '_' . time() . '.' . $file_keahlian->getClientOriginalExtension();
+                $file_keahlian->move('public/assets/pelatihan/', $namafile);
+                $data->file_keahlian = $namafile;
+            }
+            $data->update();
+            return redirect()->to($request->back_url)->with( 'msg', 'Data is saved successfully.' );
+        }
+        elseif($request->type == 'evaluasi'){
+            $id = (new OpenDataController)->decryptWithKey($id);
+            $jawaban = collect($request->all())->filter(fn($value, $key) => str_starts_with($key, 'jawaban'));
+            foreach($jawaban as $key => $value){
+                $id = explode('_', $key)[1];
+                $data = TrxPelatihanPenilaian::find($id);
+                $data->jawaban = $value;
+                $data->update();
+            }
+            return view('emails.pelatihan_ok');
+            // return redirect()->to($request->back_url)->with( 'msg', 'Data is saved successfully.' );
+        }
         // masih di hardcode pic hco -> Khatrin Rismasany
         // $hco = '01031908799';
         // $hco = auth()->user()->nik;
         $id = (new OpenDataController)->decryptWithKey($id);
-		$hco = explode('/', MtrUtility::find(29)->informasi);
-        $trx = TrxPelatihan::find( $id );
+        // dd($request->all(), $id);
+		$hco = explode(',', MtrUtility::find(29)->informasi);
+        $trx = TrxPelatihan::find($id);
         $pengaju = json_decode($trx->pengaju_property, true);
         // 
         $pic = $request->pic;
@@ -1087,10 +1352,44 @@ class TrxPelatihanController extends Controller
             $trx->status_pengajuan = $status_pengajuan;
             // 
             $trx->update();
-            $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$hco[0], 'pic'=>'hco', 'filename'=>'emails.pelatihan0']);
+            // $this->deleteToDoList(['id_trx'=>$id, 'nik'=>$hco[0], 'pic'=>'hco', 'filename'=>'emails.pelatihan0']);
+            $this->deleteToDoList(['id_trx'=>$id, 'pic'=>'hco', 'filename'=>'emails.pelatihan0']);
             // $this->insertLog($id, $status_pengajuan, $hco[0], 'Done by HC');
-            $this->insertLog($id, $status_pengajuan, $hco[0], '');
-            // 
+            $this->insertLog($id, $status_pengajuan, auth()->user()->nik, $request->keterangan);
+            // jika belum ada maka dimasukkan
+            $check = TrxPelatihanPeserta::where(['id_trx'=>$id])->exists();
+            if(!$check){
+                $peserta = explode(';', $trx->peserta);
+                foreach($peserta as $_peserta){
+                    $_data = new TrxPelatihanPeserta;
+                    // $_data->file_formulir = NULL;
+                    $_data->id_trx = $id;
+                    $_data->nik = $_peserta;
+                    // $_data->nik_property = $this->getNikProperty($_peserta);
+                    $items = array_filter(array_map('trim', explode(';', $trx->peserta_property)));
+                    $_items = [];
+                    foreach ($items as $item) {
+                        $_items[] = json_decode($item, true);
+                    }
+                    $_data->nik_property = json_encode(collect($_items)->firstWhere('nik', $_peserta));
+                    $_data->save();
+                    // 
+                    $materi = MtrPelatihanPenilaian::orderBy('id', 'asc')->get();
+                    foreach($materi as $_materi){
+                        $data = new TrxPelatihanPenilaian;
+                        $data->id_trx = $id;
+                        $data->id_peserta = $_data->id;
+                        $data->nik = $_peserta;
+                        $data->urutan = $_materi->id;
+                        $data->label = $_materi->label;
+                        $data->nomor = $_materi->nomor;
+                        $data->materi1 = $_materi->materi1;
+                        $data->materi2 = $_materi->materi2;
+                        $data->tipe = $_materi->tipe;
+                        $data->save();
+                    }
+                }
+            }
             return redirect('pelatihan')->with('msg', 'Data is saved successfully.');
         }
         // 
@@ -1103,9 +1402,16 @@ class TrxPelatihanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        // dd($request->all(), $id);
+        $type = $request->type;
+        if(!empty($type) && $type == 'doc_delete'){
+            $back_url = $request->back_url;
+            $id = (new OpenDataController)->decryptWithKey($id);
+            TrxPelatihanDokumen::find($id)->delete();
+            return redirect()->to($back_url)->with( 'msg', 'Data is deleted successfully.' );
+        }
     }
 
     public function save_update(Request $request, $id)
@@ -1113,17 +1419,20 @@ class TrxPelatihanController extends Controller
         // dd($request->all(), $id);
         $this->authorize('hc');
         $back_url = $request->back_url;
-        $trx = TrxPelatihan::find( $id );
+        $trx = TrxPelatihan::find($id);
         $trx->tahun = $request->tahun;
         $trx->jenis = implode(';', $request->jenis);
+        $trx->int_ext = $request->int_ext;
         $trx->judul = $request->judul;
         $trx->penyelenggara = $request->penyelenggara;
-        $trx->tanggal_mulai = $request->tanggal_mulai;
-        $trx->tanggal_akhir = $request->tanggal_akhir;
-        $trx->tempat = $request->tempat;
+        // tidak digunakan diganti dengan tanggal_range
+        // $trx->tanggal_mulai = $request->tanggal_mulai;
+        // $trx->tanggal_akhir = $request->tanggal_akhir;
+        $trx->tanggal_range = json_encode($request->input('tanggal_range', []), JSON_UNESCAPED_SLASHES);
+        $trx->anggaran = $request->anggaran;
         $trx->biaya = str_replace(',', '', $request->biaya);
         $trx->benefit = implode(';', $request->benefit);
-        $trx->anggaran = $request->anggaran;
+        $trx->tempat = $request->tempat;
         $trx->keterangan = $request->keterangan;
         $trx->update();
         return redirect()->to($back_url)->with( 'msg', 'Data is saved successfully.' );
