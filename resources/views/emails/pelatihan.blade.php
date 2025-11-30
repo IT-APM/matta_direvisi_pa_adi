@@ -119,10 +119,20 @@
                                     <td>Jenis</td>
                                     <td>
                                         @foreach ($arrJenis as $value)
-                                        {{ $value->jenis }}<br />
+                                        {{ $value->jenis }} @if(!$loop->last) <br/> @endif
                                         @endforeach
                                     </td>
                                 </tr>
+                                @if(!empty($trx->int_ext))
+                                <tr>
+                                    <td>Mode</td>
+                                    <td>
+                                        @foreach ($int_ext as $key => $value)
+                                        @if($key == $trx->int_ext) {{ $value }} @endif
+                                        @endforeach
+                                    </td>
+                                </tr>
+                                @endif
                                 <tr>
                                     <td>Judul</td>
                                     <td>{{ $trx->judul }}</td>
@@ -162,7 +172,7 @@
                                     <td>Benefit</td>
                                     <td>
                                         @foreach ($arrBenefit as $value)
-                                        {{ $value->benefit }}<br />
+                                        {{ $value->benefit }} @if(!$loop->last) <br/> @endif
                                         @endforeach
                                     </td>
                                 </tr>
