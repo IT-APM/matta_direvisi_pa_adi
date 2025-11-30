@@ -28,7 +28,7 @@
                         <td align="center"><strong>DIAJUKAN OLEH</strong></td>
                     </tr>
                 </table>
-                <hr />
+                <hr/>
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
                         <td width="30%">Nama<br/>NIP<br/>Jabatan<br/>Direktorat / Divisi / Departemen</td>
@@ -37,7 +37,7 @@
                             {{ $pengaju['sub_dep'] }}</td>
                     </tr>
                 </table>
-                <hr />
+                <hr/>
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
                         <td align="center"><strong>PESERTA</strong></td>
@@ -49,7 +49,7 @@
                         <th width="45%">Direktorat / Divisi / Departemen</th>
                         <th width="25%">Jabatan</th>
                     </tr>
-                    @foreach ($arrPeserta as $value)
+                    @foreach($arrPeserta as $value)
                     <tr>
                         <td>{{ $value['nama'] }} / {{ $value['nik'] }}</td>
                         <td>{{ $value['divisi'] }} / {{ $value['dep'] }} / {{ $value['sub_dep'] }}</td>
@@ -62,7 +62,7 @@
                         <td align="center"><strong>PELATIHAN</strong></td>
                     </tr>
                 </table>
-                <hr />
+                <hr/>
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
                         <td width="30%">Pengajuan Pelatihan ke</td>
@@ -77,8 +77,15 @@
                     <tr>
                         <td>Jenis</td>
                         <td>:</td>
-                        <td>@foreach ($arrJenis as $value){{ $value->jenis }} @if(!$loop->last) / @endif @endforeach</td>
+                        <td>@foreach($arrJenis as $value){{ $value->jenis }} @if(!$loop->last) <br/> @endif @endforeach</td>
                     </tr>
+                    @if(!empty($trx->int_ext))
+                    <tr>
+                        <td>Mode</td>
+                        <td>:</td>
+                        <td>{{ $_int_ext }}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <td>Judul</td>
                         <td>:</td>
@@ -90,23 +97,23 @@
                         <td>{{ $trx->penyelenggara }}</td>
                     </tr>
                     @php
-                    $tanggal_range = [];
-                    if(!empty($trx->tanggal_range)){
+                    // $tanggal_range = [];
+                    // if(!empty($trx->tanggal_range)){
                         $tanggal_range = json_decode($trx->tanggal_range, true);
                         $formatted_ranges = array_map(function($range) {
                             [$mulai, $selesai] = array_map('trim', explode('s/d', $range));
                             return Carbon\Carbon::createFromFormat('Y-m-d', $mulai)->format('d-m-Y') . ' s/d ' . Carbon\Carbon::createFromFormat('Y-m-d', $selesai)->format('d-m-Y');
                         }, $tanggal_range);
-                    }
+                    // }
                     @endphp
                     <tr>
                         <td>Tanggal Pelaksanaan</td>
                         <td>:</td>
-                        @if(empty($trx->tanggal_range))
+                        {{-- @if(empty($trx->tanggal_range))
                         <td>{{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y') }} s/d {{ Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y') }}</td>
-                        @else
-                        <td>@foreach ($formatted_ranges as $_tanggal_range){{ $_tanggal_range }} @if(!$loop->last) <br/> @endif @endforeach</td>
-                        @endif
+                        @else --}}
+                        <td>@foreach($formatted_ranges as $_tanggal_range){{ $_tanggal_range }} @if(!$loop->last) <br/> @endif @endforeach</td>
+                        {{-- @endif --}}
                     </tr>
                     <tr>
                         <td>Tempat</td>
@@ -121,7 +128,7 @@
                     <tr>
                         <td>Benefit</td>
                         <td>:</td>
-                        <td>@foreach ($arrBenefit as $value){{ $value->benefit }} @if(!$loop->last) / @endif @endforeach</td>
+                        <td>@foreach($arrBenefit as $value){{ $value->benefit }} @if(!$loop->last) <br/> @endif @endforeach</td>
                     </tr>
                     <tr>
                         <td>Anggaran</td>
@@ -134,7 +141,7 @@
                         <td>{!! $trx->keterangan !!}</td>
                     </tr>
                 </table>
-                <hr />
+                <hr/>
                 @php
                 $log = App\Models\TrxPelatihanLog::where(['id_trx' => $trx->id])->whereNotIn('id_status', [1])->orderBy('id_trx', 'desc')->get();
                 @endphp
@@ -153,7 +160,7 @@
                         <td width="68%">{{ App\Models\Karyawan::where(['nik'=>$_log->nik_pic])->first()->nama }} / {{ $_log->nik_pic }}<br/>{{ $_log->keterangan }}</td>
                     </tr>
                 </table>
-                <hr />
+                <hr/>
                 @endif
                 @endforeach
                 @endif
