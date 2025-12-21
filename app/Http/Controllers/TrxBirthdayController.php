@@ -98,7 +98,8 @@ class TrxBirthdayController extends Controller
         // img-responsive
         $body .= '<img class="img-responsive" src="'.$images.'" alt="Happy Birthday">';
         $body .= '<br/><br/><br/>';
-        $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+        // $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+        $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
         $body .= '</div>';
         return $body;
     }
@@ -121,7 +122,7 @@ class TrxBirthdayController extends Controller
         if($request->submit == 'execute'){
             $id = $request->input('id_current', []);
             if(count($id)==0){
-                return redirect( 'birthday' )->with( 'msg', 'No Payroll Email is executed.' );
+                return redirect( 'birthday' )->with( 'msg', 'No Birthday Email is executed.' );
             }else{
                 foreach($id as $_id){
                     $_trx = TrxBirthday::find($_id);
@@ -143,18 +144,18 @@ class TrxBirthdayController extends Controller
                     // delete
                     TrxBirthday::find($_id)->delete();
                 }
-                return redirect( 'birthday' )->with( 'msg', 'Payroll Email is executed successfully.' );
+                return redirect( 'birthday' )->with( 'msg', 'Birthday Email is executed successfully.' );
             }
         }
         elseif($request->submit == 'delete'){
             $id = $request->input('id_current', []);
             if(count($id)==0){
-                return redirect( 'birthday' )->with( 'msg', 'No Payroll Email is deleted.' );
+                return redirect( 'birthday' )->with( 'msg', 'No Birthday Email is deleted.' );
             }else{
                 foreach($id as $_id){
                     TrxBirthday::find($_id)->delete();
                 }
-                return redirect( 'birthday' )->with( 'msg', 'Payroll Email is deleted successfully.' );
+                return redirect( 'birthday' )->with( 'msg', 'Birthday Email is deleted successfully.' );
             }
         }
     }
