@@ -46,8 +46,34 @@ $koordinator_property = json_decode($trxMaster->koordinator_property, true);
 				<hr/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr>
-						<td width="30%">Nama Karyawan<br/>NIP<br/>Jabatan<br/>Level<br/>Direktorat / Divisi / Departemen<br/>Nama Atasan Langsung</td>
-						<td width="70%">: {{ $pengaju_property['nama'] }}<br/>: {{ $pengaju_property['nik'] }}<br/>: {{ $pengaju_property['jabatan'] }}<br/>: {{ $pengaju_property['level'] }}<br/>: {{ $pengaju_property['divisi'] }} / {{ $pengaju_property['dep'] }} / {{ $pengaju_property['sub_dep'] }}<br/>: {{ $atasan_property['nama'] }} / {{ $atasan_property['nik'] }}</td>
+						<td width="30%">Nama Karyawan</td>
+						<td width="2%">:</td>
+						<td width="68%">{{ $pengaju_property['nama'] }}</td>
+					</tr>
+					<tr>
+						<td>NIP</td>
+						<td>:</td>
+						<td>{{ $pengaju_property['nik'] }}</td>
+					</tr>
+					<tr>
+						<td>Jabatan</td>
+						<td>:</td>
+						<td>{{ $pengaju_property['jabatan'] }}</td>
+					</tr>
+					<tr>
+						<td>Level</td>
+						<td>:</td>
+						<td>{{ $pengaju_property['level'] }}</td>
+					</tr>
+					<tr>
+						<td>Direktorat / Divisi / Departemen</td>
+						<td>:</td>
+						<td>{{ $pengaju_property['divisi'] }} / {{ $pengaju_property['dep'] }} / {{ $pengaju_property['sub_dep'] }}</td>
+					</tr>
+					<tr>
+						<td>Nama Atasan Langsung</td>
+						<td>:</td>
+						<td>{{ $atasan_property['nama'] }} / {{ $atasan_property['nik'] }}</td>
 					</tr>
 				</table>
 				<hr/>
@@ -60,15 +86,44 @@ $koordinator_property = json_decode($trxMaster->koordinator_property, true);
 				<hr/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr>
-						<td width="30%">Tahun Pengajuan<br/>Golongan<br/>Kelompok Perjalanan Dinas<br/>Uraian Tugas Perjalanan Dinas</td>
-						<td width="70%">: {{ $trxMaster->periode }}<br/>: @if($trxMaster->is_leader==1) Leader @elseif($trxMaster->is_leader==2) Member @elseif($trxMaster->is_leader==3) Management @endif<br/>: @if($trxMaster->is_project==1)Project: @else Corporate: @endif {{ $trxMaster->_kelompok->kelompok }}<br/>: {!! nl2br(str_replace('<', ' ', $trxMaster->uraian)) !!}</td>
+						<td width="30%">Tahun Pengajuan</td>
+						<td width="2%">:</td>
+						<td width="68%">{{ $trxMaster->periode }}</td>
+					</tr>
+					<tr>
+						<td>Golongan</td>
+						<td>:</td>
+						<td>@if($trxMaster->is_leader==1) Leader @elseif($trxMaster->is_leader==2) Member @elseif($trxMaster->is_leader==3) Management @endif</td>
+					</tr>
+					<tr>
+						<td>Kelompok Perjalanan Dinas</td>
+						<td>:</td>
+						<td>@if($trxMaster->is_project==1)Project: @else Corporate: @endif {{ $trxMaster->_kelompok->kelompok }}</td>
+					</tr>
+					<tr>
+						<td>Uraian Tugas Perjalanan Dinas</td>
+						<td>:</td>
+						<td>{!! nl2br(str_replace('<', ' ', $trxMaster->uraian)) !!}</td>
 					</tr>
 				</table>
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr>
-						<td width="30%">Jenis BPD<br/>Project ID @if($trxMaster->is_project == 1)<br/>Coordinator @endif</td>
-						<td width="70%">: @if($trxMaster->is_project == 1) Project @else Corporate @endif<br/>: {{ $trxMaster->_project->project_id }} / {{ $trxMaster->_project->name }} / {{ $trxMaster->_project->group }} @if($trxMaster->is_project == 1)<br/>: {{ $koordinator_property['nama'] }} / {{ $koordinator_property['nik'] }} @endif</td>
+						<td width="30%">Jenis BPD</td>
+						<td width="2%">:</td>
+						<td width="68%">@if($trxMaster->is_project == 1) Project @else Corporate @endif</td>
 					</tr>
+					<tr>
+						<td>Project ID</td>
+						<td>:</td>
+						<td>{{ $trxMaster->_project->project_id }} / {{ $trxMaster->_project->name }} / {{ $trxMaster->_project->group }}</td>
+					</tr>
+					@if($trxMaster->is_project == 1)
+					<tr>
+						<td>Coordinator</td>
+						<td>:</td>
+						<td>{{ $koordinator_property['nama'] }} / {{ $koordinator_property['nik'] }}</td>
+					</tr>
+					@endif
 				</table>
 				<table width="100%" border="1" cellspacing="0" cellpadding="2">
 					<tr align="center">
