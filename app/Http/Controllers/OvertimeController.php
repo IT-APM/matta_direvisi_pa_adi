@@ -96,6 +96,9 @@ class OvertimeController extends Controller
         $type_code = OvertimeType::orderBy( 'ot_type', 'asc' )->get();
         $status = 'edit';
         $overtime = Overtime::find($id);
+        if(auth()->user()->nik <> $overtime->ot_approver_by){
+            return redirect()->route('error-403');
+        }
         $karyawan = Karyawan::where('nik', $overtime->ot_maker_by)->first();
         $history = OvertimeLog::where('id_ot', $id)->orderBy( 'id', 'desc' )->get();
         // return response()->json( [ 'OT log' => $log ], 200 );
@@ -617,6 +620,9 @@ class OvertimeController extends Controller
         $type_code = OvertimeType::orderBy( 'ot_type', 'asc' )->get();
         $status = 'edit';
         $overtime = Overtime::find($id);
+        if(auth()->user()->nik <> $overtime->ot_maker_by){
+            return redirect()->route('error-403');
+        }
         $history = OvertimeLog::where('id_ot', $id)->orderBy( 'id', 'desc' )->get();
         return view( 'overtime.propose.upsert', compact( 'type_code', 'overtime', 'status', 'history' ) );
     }
