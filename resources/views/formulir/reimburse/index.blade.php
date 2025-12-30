@@ -52,11 +52,11 @@
                         </div>
                     </div>
                     @endcan
-                    @if($isPlafon)
                     @php
                         $start_date = '2025-12-16';
                         $end_date = '2026-01-01';
                     @endphp
+                    @if($isPlafon)
                     {{-- @if(\Carbon\Carbon::now()->toDateString() >= '2024-12-16' && \Carbon\Carbon::now()->toDateString() <= '2025-01-02') --}}
                     {{-- @if(\Carbon\Carbon::now()->toDateString() >= '2025-03-17' && \Carbon\Carbon::now()->toDateString() <= '2025-04-08') --}}
                     @if(\Carbon\Carbon::now()->toDateString() >= $start_date && \Carbon\Carbon::now()->toDateString() <= $end_date)

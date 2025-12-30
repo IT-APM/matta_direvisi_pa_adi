@@ -762,7 +762,7 @@ class TrxRecruitmentController extends Controller
                 </tr>
             </table></p>
             <p>Demikian informasi ini kami sampaikan untuk diketahui. Jika terdapat perkembangan lebih lanjut, kami akan memberikan pembaruan.<br/>Terima kasih.</p>
-            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Atasan Menyetujui Proses Seleksi Penerimaan Karyawan';
             $mailData['data'] = ['msg'=>$msg];
@@ -898,14 +898,14 @@ class TrxRecruitmentController extends Controller
             <p>Kami ingin menginformasikan bahwa proses negosiasi dengan Bapak/Ibu/Saudara/i '.$_trx->nama.' telah disetujui. Kandidat menyatakan kesediaannya untuk menerima ketentuan yang telah disepakati.</p>
             <p>Kami akan melanjutkan ke tahap berikutnya sesuai dengan prosedur yang berlaku. Apabila ada hal lain yang perlu ditanyakan, mohon disampaikan kepada kami.</p>
             <p>Terima kasih,</p>
-            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
             // 18=Negotiation No Deal by Candidate
             if($id_status == 18){
                 $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan Hormat,</p>
                 <p>Kami ingin menginformasikan bahwa proses negosiasi dengan Bapak/Ibu/Saudara/i '.$_trx->nama.' belum mencapai kesepakatan. Kandidat menyatakan ketidaksediaannya untuk menerima ketentuan yang telah diajukan.</p>
                 <p>Kami akan meninjau kembali langkah selanjutnya terkait proses ini dan segera memberikan pembaharuan apabila diperlukan. Jika ada saran atau hal lain yang perlu dipertimbangkan, kami siap untuk mendiskusikannya lebih lanjut.</p>
                 <p>Terima kasih,</p>
-                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
             }
             // parameter yang dipassing ke sendemail
             $mailData['title'] = $info;
@@ -919,7 +919,7 @@ class TrxRecruitmentController extends Controller
         elseif($id_status == 14){
             // $msg = '<p>Hai '.$_trx->nama.',<br/>Mohon maaf, '.$info.'.
             // <br/>Terima kasih,</p>
-            // <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            // <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
             // // parameter yang dipassing ke sendemail
             // $mailData['title'] = $info;
             // $mailData['data'] = ['msg'=>$msg];
@@ -972,7 +972,7 @@ class TrxRecruitmentController extends Controller
             $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan Hormat,</p>
             <p>Proses saat ini tidak/belum tersedia.</p>
             <p>Terima kasih,</p>
-            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
             return view('recruitment.thank', compact('msg'));
         }
     }
@@ -1254,7 +1254,7 @@ class TrxRecruitmentController extends Controller
         <p>Kami informasikan bahwa proses upload dokumen telah selesai dilakukan. Seluruh dokumen Bapak/Ibu/Saudara/i '.$_trx->nama.' telah berhasil kami terima sesuai kebutuhan.</p>
         <p>Apabila terdapat hal lain yang perlu dikonfirmasikan kembali, mohon menghubungi kami kembali.</p>
         <p>Terima kasih,</p>
-        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Upload Dokumen Selesai';
         $mailData['data'] = ['msg'=>$msg];
@@ -1354,7 +1354,7 @@ class TrxRecruitmentController extends Controller
                 </tr>
             </table></p>
             <p>Demikian informasi ini kami sampaikan untuk diketahui. Jika terdapat perkembangan lebih lanjut, kami akan memberikan pembaruan.<br/>Terima kasih.</p>
-            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
             return view('recruitment.thank', compact('msg'));
         }
         return view('recruitment.get_offering', compact('trx', '_trx', 'trxM', '_id'));
@@ -1440,7 +1440,7 @@ class TrxRecruitmentController extends Controller
                 $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan Hormat,</p>
                 <p>Proses saat ini tidak/belum tersedia.</p>
                 <p>Terima kasih,</p>
-                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
                 return view('recruitment.thank', compact('msg'));
             }
         }
@@ -1952,7 +1952,7 @@ class TrxRecruitmentController extends Controller
                         <p>Kami akan menghubungi Bapak/Ibu/Saudara/i  terkait proses selanjutnya. Mohon untuk memastikan bahwa  email anda '.$_trx->email.' dan nomor telepon yang dicantumkan dalam keadaan aktif untuk korespondensi.</p>
                         <p>Terima kasih atas kesediaannya mengikuti proses seleksi di PT. Alita Praya Mitra.</p>
                         <p>Terima kasih atas perhatiannya.<br/>Salam sehat dan sukses selalu.</p>
-                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
                         // parameter yang dipassing ke sendemail
                         $mailData['title'] = 'Pemberitahuan Proses Seleksi Diterima';
                         $mailData['data'] = ['msg'=>$msg];
@@ -1985,7 +1985,7 @@ class TrxRecruitmentController extends Controller
                             <p>Calon karyawan tersebut telah melalui seluruh tahapan seleksi, termasuk seleksi CV, wawancara HC, wawancara user, Psikotest, dll., dan dinyatakan memenuhi kualifikasi yang dibutuhkan.</p>
                             <p>Mohon mempersiapkan alat kerja dan kebutuhan kerja lainnya untuk calon karyawan tersebut. Klik link dibawah ini untuk melakukan persetujuan terhadap Formulir Kebutuhan Karyawan tersebut.<br/><a href="'.$link.'" data-toggle="tooltip" title="LINK">LINK</a></p>
                             <p>Demikian informasi ini kami sampaikan untuk diketahui. Jika terdapat perkembangan lebih lanjut, kami akan memberikan pembaruan.<br/>Terima kasih.</p>
-                            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
                             // parameter yang dipassing ke sendemail
                             $mailData['title'] = 'Pemberitahuan Proses Seleksi Penerimaan Karyawan';
                             // $mailData['data'] = ['msg'=>$msg];
@@ -2018,7 +2018,7 @@ class TrxRecruitmentController extends Controller
                 <p>Sehubungan dengan proses seleksi yang telah Bapak/Ibu/Saudara/i '.$_trx->nama.' ikuti untuk Posisi '.$posisi.', dengan ini kami sampaikan bahwa Bapak/Ibu/Saudara/i, dengan berat hari kami sampaikan bahwa Bapak/Ibu/Saudara/i belum dapat bergabung di PT. Alita Praya Mitra dikarenakan belum memenuhi kualifikasi yang dibutuhkan untuk posisi tersebut.</p>
                 <p>Terimakasih atas kesediaannya mengikuti proses seleksi di PT. Alita Praya Mitra.<br/>Kami harap Bapak/Ibu/Saudara/i dapat bekerjasama dengan kami di lain kesempatan.</p>
                 <p>Terima kasih atas perhatiannya.<br/>Salam sehat dan sukses selalu.</p>
-                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
                 // parameter yang dipassing ke sendemail
                 $mailData['title'] = 'Pemberitahuan Proses Seleksi Ditolak';
                 $mailData['data'] = ['msg'=>$msg];
@@ -2108,7 +2108,7 @@ class TrxRecruitmentController extends Controller
             <p>Kami ucapkan terima kasih atas partisipasi Bapak/Ibu/Saudara/i dalam proses Interview untuk posisi '.$posisi.' di PT. Alita Praya Mitra. Kami telah menerima hasil interview Bapak/Ibu/Saudara/i dan saat ini kami sedang melakukan proses evaluasi lebih lanjut.</p>
             <p>Kami akan segera menghubungi Bapak/Ibu/Saudara/i apabila terdapat informasi tambahan atau informasi jika ada tahapan seleksi selanjutnya.</p>
             <p>Demikian kami sampaikan, terima kasih atas perhatian dan kerja samanya.</p>
-            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Interview Selesai';
             $mailData['data'] = ['msg'=>$msg];
@@ -2631,7 +2631,7 @@ class TrxRecruitmentController extends Controller
                         <p>Kami ingin menginformasikan bahwa psikotest belum dapat dimulai karena belum sesuai dengan jadwal dan waktu yang telah diinformasikan.</p>
                         <p>Mohon kesediaannya untuk menunggu sesuai jadwal dan waktu yang telah diinformasikan. Apabila ada pertanyaan atau kebutuhan lainnya, jangan ragu untuk menghubungi kami melalui [nomor telepon/email].</p>
                         <p>Terima kasih,</p>
-                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
                         return view('recruitment.thank', compact('msg'));
                     }
                 }else{
@@ -2640,7 +2640,7 @@ class TrxRecruitmentController extends Controller
                         <p>Kami ingin menginformasikan bahwa psikotest belum dapat dimulai karena belum sesuai dengan jadwal dan waktu yang telah diinformasikan.</p>
                         <p>Mohon kesediaannya untuk menunggu sesuai jadwal dan waktu yang telah diinformasikan. Apabila ada pertanyaan atau kebutuhan lainnya, jangan ragu untuk menghubungi kami melalui [nomor telepon/email].</p>
                         <p>Terima kasih,</p>
-                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
                         return view('recruitment.thank', compact('msg'));
                     }
                 }
@@ -2699,7 +2699,7 @@ class TrxRecruitmentController extends Controller
                     <p>Kami ingin menginformasikan bahwa psikotest belum dapat dimulai karena belum sesuai dengan jadwal dan waktu yang telah diinformasikan.</p>
                     <p>Mohon kesediaannya untuk menunggu sesuai jadwal dan waktu yang telah diinformasikan. Apabila ada pertanyaan atau kebutuhan lainnya, jangan ragu untuk menghubungi kami melalui [nomor telepon/email].</p>
                     <p>Terima kasih,</p>
-                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
                     return view('recruitment.thank', compact('msg'));
                 }
             }else{
@@ -2708,14 +2708,14 @@ class TrxRecruitmentController extends Controller
                     <p>Kami ingin menginformasikan bahwa psikotest belum dapat dimulai karena belum sesuai dengan jadwal dan waktu yang telah diinformasikan.</p>
                     <p>Mohon kesediaannya untuk menunggu sesuai jadwal dan waktu yang telah diinformasikan. Apabila ada pertanyaan atau kebutuhan lainnya, jangan ragu untuk menghubungi kami melalui [nomor telepon/email].</p>
                     <p>Terima kasih,</p>
-                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
                     return view('recruitment.thank', compact('msg'));
                 }else{
                     $msg = '<p>Yth. '.$trx->nama.',<br/>Dengan hormat,</p>
                     <p>Kami ucapkan terima kasih atas partisipasi Bapak/Ibu/Saudara/i dalam proses psikotes untuk posisi '.$posisi.' di PT. Alita Praya Mitra. Kami telah menerima hasil pengerjaan psikotes Bapak/Ibu/Saudara/i dan saat ini kami sedang melakukan proses evaluasi lebih lanjut.</p>
                     <p>Kami akan segera menghubungi Bapak/Ibu/Saudara/i apabila terdapat informasi tambahan atau informasi jika ada tahapan seleksi selanjutnya.</p>
                     <p>Demikian kami sampaikan, terima kasih atas perhatian dan kerja samanya.</p>
-                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                    <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
                     // jika sudah tidak ada lagi soal setelah soal terakhir maka dikirimkan email ke kandidat
                     if(!empty($_id[2]) && !empty($request->je) && !empty($request->no) && !empty($request->a)){
                         $headers = [];
@@ -2816,7 +2816,7 @@ class TrxRecruitmentController extends Controller
                 <p>Kami ucapkan terima kasih atas partisipasi Bapak/Ibu/Saudara/i dalam proses psikotes untuk posisi '.$posisi.' di PT. Alita Praya Mitra. Kami telah menerima hasil pengerjaan psikotes Bapak/Ibu/Saudara/i dan saat ini kami sedang melakukan proses evaluasi lebih lanjut.</p>
                 <p>Kami akan segera menghubungi Bapak/Ibu/Saudara/i apabila terdapat informasi tambahan atau informasi jika ada tahapan seleksi selanjutnya.</p>
                 <p>Demikian kami sampaikan, terima kasih atas perhatian dan kerja samanya.</p>
-                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
                 // parameter yang dipassing ke sendemail
                 $mailData['title'] = 'Psikotes Selesai';
                 $mailData['data'] = ['msg'=>$msg];
@@ -2872,7 +2872,7 @@ class TrxRecruitmentController extends Controller
     //             // $posisi = $trx->_kebutuhan->_pekerjaan->pekerjaan;
     //             $msg = '<p>Hai '.$trx->nama.',<br/>Psikotes anda sudah selesai.
     //             <br/>Kami akan menggunakan email anda ('.$trx->email.') sebagai alamat email untuk korespondensi.<br/>Terima kasih,</p>
-    //             <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+    //             <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
     //             // parameter yang dipassing ke sendemail
     //             $mailData['title'] = 'Psikotes Selesai';
     //             $mailData['data'] = ['msg'=>$msg];
@@ -2915,7 +2915,7 @@ class TrxRecruitmentController extends Controller
             $error = '<p>Yth. '.$request->nama.',<br/>Dengan hormat,</p>
             <p>Lamaran kerja Bapak/Ibu/Saudara/i sebelumnya telah kami terima dan tidak dapat mengajukan kembali untuk info lowongan yang sama.</p>
             <p>Terima kasih,</p>
-            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+            <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
             return redirect()->back()->with('error', $error);
         }
         $trx = TrxRecruitment::find($id_recruitment);
@@ -3091,7 +3091,7 @@ class TrxRecruitmentController extends Controller
         <p>Kami sampaikan terima kasih atas minat Bapak/Ibu/Saudara/i dengan melamar pada posisi '.$posisi.' di PT. Alita Praya Mitra. Lamaran kerja Bapak/Ibu/Saudara/i telah kami terima dan akan kami pelajari lebih lanjut sesuai kualifikasi yang dibutuhkan.</p>
         <p>Proses seleksi akan memerlukan waktu. Jika dalam kurun waktu 14 (empat belas) hari kerja kami belum menghubungi Bapak/Ibu/Saudara/i, kami sampaikan bahwa lamaran Bapak/Ibu/Saudara/i belum memenuhi kualifikasi yang kami butuhkan. Mohon untuk memastikan bahwa  email anda  '.$trx->email.' dan nomor telepon yang di cantumkan dalam keadaan aktif untuk korespondensi.</p>
         <p>Terima kasih,</p>
-        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
+        <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Lamaran Pekerjaan';
         $mailData['data'] = ['msg'=>$msg];

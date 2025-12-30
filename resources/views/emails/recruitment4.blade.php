@@ -6,4 +6,5 @@
 <p><a href="{{ route('recruitment.upload_dokumen_get', [Crypt::encrypt([$data['trx']->id, 'negotiation'])]) }}" data-toggle="tooltip" title='Link Penawaran'>UPLOAD</a></p>
 <p>Jika ada pertanyaan atau kendala terkait daftar dokumen di atas, silahkan menghubungi tim kami (sesuai yang tercantum dalam email).</p>
 <p>Terima kasih atas perhatian dan partisipasi Anda.<br/>Selamat bergabung dan menjadi bagian dari Keluarga Alita.</p>
-<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+{{-- <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p> --}}
+@include('emails.footer0')

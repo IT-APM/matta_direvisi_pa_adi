@@ -32,6 +32,12 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    <?php if(Session::has('error')): ?>
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h6><?php echo e(session('error')); ?></h6>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <?php endif; ?>
                     <?php if(Session::has('msg')): ?>
                     <div class="alert alert-success dark alert-dismissible fade show" role="alert">
                         <h6><?php echo e(session('msg')); ?></h6>
@@ -120,7 +126,8 @@
                                                 <th>Departemen</th>
                                                 <th>Nama Jabatan</th>
                                                 <th>Atasan Langsung Kandidat</th>
-                                                <th>Nama/Email</th>
+                                                <th>Nama</th>
+                                                <th>Email</th>
                                                 <th>Telepon</th>
                                                 <th><div class="d-flex align-items-center"><input type="checkbox" onClick="toggle_cv(this)" />&nbsp; CV &nbsp;<a href="#" onClick="download_cv()" data-toggle="tooltip" title="Download"><i class="fa fa-file-pdf-o"></i></a></div></th>
                                                 <th>Check_in</th>
@@ -129,6 +136,7 @@
                                                 <th>Offering Letter</th>
                                                 <th>Upload</th>
                                                 <th>Status</th>
+                                                <th>Detail</th>
                                                 <th>Created_at</th>
                                             </tr>
                                         </thead>
@@ -214,7 +222,8 @@
                                                 <td><?php echo e($pengaju_property['sub_dep']); ?></td>
                                                 <td><?php echo e($recruitment->_pekerjaan->pekerjaan); ?></td>
                                                 <td><?php if(!empty($atasan_property)): ?> <?php echo e($atasan_property['nama']); ?>/<?php echo e($atasan_property['nik']); ?> <?php endif; ?></td>
-                                                <td><?php echo e($data->nama); ?><br/><?php echo e($data->email); ?>&nbsp;<a href="<?php echo e(route('recruitment.edit', [Crypt::encrypt($data->id), 'type'=>'email', 'back_url'=>URL::full()])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt" style="color:green"></i></a></td>
+                                                <td><?php echo e($data->nama); ?></td>
+                                                <td><?php echo e($data->email); ?>&nbsp;<a href="<?php echo e(route('recruitment.edit', [Crypt::encrypt($data->id), 'type'=>'email', 'back_url'=>URL::full()])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt" style="color:green"></i></a></td>
                                                 <td><?php echo e($data->telepon); ?></td>
                                                 <td><div class="d-flex align-items-center"><input id="id_cv[]" name="id_cv[]" type="checkbox" value="<?php echo e($data->id); ?>">&nbsp;&nbsp;<a href="<?php echo e(asset('assets/recruitment/upload/'.$data->cv)); ?>" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></div></td>
                                                 
@@ -233,8 +242,8 @@
                                                     
                                                     <?php if(in_array(20, $log)): ?><a href="<?php echo e(route('recruitment.upload_dokumen_get', [Crypt::encrypt([$data->id, 'view'])])); ?>" target="_blank" data-toggle="tooltip" title="File Upload"><i class="fa fa-file-text-o"></i></a><?php endif; ?>
                                                 </td>
-                                                
-                                                <td><?php echo e($data->_status->status); ?> <?php if(!empty($data->id_join)): ?><br/>(<?php echo e(implode(',', App\Models\MtrJoin::whereIn('id', explode(',', $data->id_join))->orderBy('nama', 'asc')->pluck('nama')->toArray())); ?>) <?php endif; ?></td>
+                                                <td><?php echo e($data->_status->status); ?></td>
+                                                <td><?php if(!empty($data->id_join)): ?> <?php echo implode('<br/>', App\Models\MtrJoin::whereIn('id', explode(',', $data->id_join))->orderBy('nama', 'asc')->pluck('nama')->toArray()); ?> <?php endif; ?></td>
                                                 <td><?php echo e($data->created_at); ?></td>
                                             </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

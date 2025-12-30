@@ -5,4 +5,5 @@
 <p><a href="{{ route('recruitment.negotiation_process', [Crypt::encrypt(array($data['trx']->id, 'negotiation'))]) }}" data-toggle="tooltip" title='Link Penawaran'>PENAWARAN</a></p>
 <p>Kami persilahkan Bapak/Ibu/Saudara/i untuk menginformasikan waktu kepada kami, dengan menghubungi tim kami, guna melanjutkan diskusi ini atau menyampaikan hal-hal yang ingin dibahas terlebih dahulu. Kami berharap proses ini dapat berjalan lancar dan mencapai kesepakatan terbaik.</p>
 <p>Terima kasih,</p>
-<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+{{-- <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p> --}}
+@include('emails.footer0')

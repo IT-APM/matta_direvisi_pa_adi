@@ -520,9 +520,11 @@
                             <li class="nav-item"><a class="nav-link" id="pills-emp_edu-tab" data-bs-toggle="pill"
                                     href="#pills-emp_edu" role="tab" aria-controls="pills-emp_edu" aria-selected="false">Pendidikan</a></li>
                             <li class="nav-item"><a class="nav-link" id="pills-emp_lat-tab" data-bs-toggle="pill"
-                                    href="#pills-emp_lat" role="tab" aria-controls="pills-emp_lat" aria-selected="false">Pelatihan</a></li>
+                                    href="#pills-emp_lat" role="tab" aria-controls="pills-emp_lat" aria-selected="false">Pelatihan / Training</a></li>
                             <li class="nav-item"><a class="nav-link" id="pills-emp_ser-tab" data-bs-toggle="pill"
                                     href="#pills-emp_ser" role="tab" aria-controls="pills-emp_ser" aria-selected="false">Sertifikasi</a></li>
+                            <li class="nav-item"><a class="nav-link" id="pills-emp_sem-tab" data-bs-toggle="pill"
+                                    href="#pills-emp_sem" role="tab" aria-controls="pills-emp_sem" aria-selected="false">Seminar / Workshop</a></li>
                             <li class="nav-item"><a class="nav-link" id="pills-emp_penilaian-tab" data-bs-toggle="pill"
                                     href="#pills-emp_penilaian" role="tab" aria-controls="pills-emp_penilaian" aria-selected="false">Penilaian</a></li>
                         </ul>
@@ -596,9 +598,10 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @php $no=0; @endphp
                                                 @foreach ($pendidikan as $data)
                                                 <tr>
-                                                    <td>{{ ++$no_pendidikan }}</td>
+                                                    <td>{{ ++$no }}</td>
                                                     <td>{{ $data->_jenjang->jenjang }}</td>
                                                     <td>{{ $data->nama }}</td>
                                                     <td>{{ $data->jurusan_prodi }}</td>
@@ -612,9 +615,10 @@
                                     </div>
                                 </p>
                             </div>
+                            {{-- Pelatihan / Training --}}
                             <div class="tab-pane fade" id="pills-emp_lat" role="tabpanel" aria-labelledby="pills-emp_lat-tab">
                             <p class="mb-0 mt-2">
-                                    <a href="{{ route('karyawanpelatihan.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
+                                    {{-- <a href="{{ route('karyawanpelatihan.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br /> --}}
                                     <div class="table-responsive">
                                         <table class="display" id="basic-pelatihan">
                                             <thead>
@@ -622,18 +626,19 @@
                                                     <th>No</th>
                                                     <th>Nama Pelatihan</th>
                                                     <th>Keterangan</th>
-                                                    <th>Action</th>
+                                                    {{-- <th>Action</th> --}}
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @php $no=0; @endphp
                                                 @foreach ($pelatihan as $data)
                                                 <tr>
-                                                    <td>{{ ++$no_pelatihan }}</td>
-                                                    <td>{{ $data->nama }}</td>
+                                                    <td>{{ ++$no }}</td>
+                                                    <td>{{ $data->judul }}</td>
                                                     <td>{{ $data->keterangan }}</td>
-                                                    <td>
+                                                    {{-- <td>
                                                         <a href="{{ route('karyawanpelatihan.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
-                                                    </td>
+                                                    </td> --}}
                                                 </tr>
                                                 @endforeach
                                             </tbody>
@@ -641,9 +646,10 @@
                                     </div>
                                 </p>
                             </div>
+                            {{-- Sertifikasi --}}
                             <div class="tab-pane fade" id="pills-emp_ser" role="tabpanel" aria-labelledby="pills-emp_ser-tab">
                             <p class="mb-0 mt-2">
-                                    <a href="{{ route('karyawansertifikasi.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
+                                    {{-- <a href="{{ route('karyawansertifikasi.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br /> --}}
                                     <div class="table-responsive">
                                         <table class="display" id="basic-sertifikasi">
                                             <thead>
@@ -651,18 +657,50 @@
                                                     <th>No</th>
                                                     <th>Nama Sertifikasi</th>
                                                     <th>Keterangan</th>
-                                                    <th>Action</th>
+                                                    {{-- <th>Action</th> --}}
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @php $no=0; @endphp
                                                 @foreach ($sertifikasi as $data)
                                                 <tr>
-                                                    <td>{{ ++$no_sertifikasi }}</td>
-                                                    <td>{{ $data->nama }}</td>
+                                                    <td>{{ ++$no }}</td>
+                                                    <td>{{ $data->judul }}</td>
                                                     <td>{{ $data->keterangan }}</td>
-                                                    <td>
+                                                    {{-- <td>
                                                         <a href="{{ route('karyawansertifikasi.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
-                                                    </td>
+                                                    </td> --}}
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </p>
+                            </div>
+                            {{-- Seminar / Workshop --}}
+                            <div class="tab-pane fade" id="pills-emp_sem" role="tabpanel" aria-labelledby="pills-emp_sem-tab">
+                            <p class="mb-0 mt-2">
+                                    {{-- <a href="{{ route('karyawansertifikasi.create', ['nik'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->nik), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)] ) }}" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br /> --}}
+                                    <div class="table-responsive">
+                                        <table class="display" id="basic-seminar">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Nama Seminar</th>
+                                                    <th>Keterangan</th>
+                                                    {{-- <th>Action</th> --}}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $no=0; @endphp
+                                                @foreach ($seminar as $data)
+                                                <tr>
+                                                    <td>{{ ++$no }}</td>
+                                                    <td>{{ $data->judul }}</td>
+                                                    <td>{{ $data->keterangan }}</td>
+                                                    {{-- <td>
+                                                        <a href="{{ route('karyawansertifikasi.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'karyawan_id'=>(new App\Http\Controllers\OpenDataController)->encryptWithKey($karyawan->id)]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
+                                                    </td> --}}
                                                 </tr>
                                                 @endforeach
                                             </tbody>
@@ -809,6 +847,7 @@ $(document).ready(function() {
     $('#basic-pendidikan').DataTable();
     $('#basic-pelatihan').DataTable();
     $('#basic-sertifikasi').DataTable();
+    $('#basic-seminar').DataTable();
     $('#basic-penilaian').DataTable();
     $('#basic-anak').DataTable();
     $('#emp-history').DataTable();

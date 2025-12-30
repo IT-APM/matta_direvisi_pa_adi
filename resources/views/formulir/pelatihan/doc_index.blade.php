@@ -55,11 +55,12 @@
                                     {{-- <th>Peserta</th> --}}
                                     {{-- <th>Jenis Pelatihan</th>
                                     <th>Judul Pelatihan/Sertifikasi</th> --}}
+                                    <th>Nama Sertifikat</th>
+                                    <th>No Sertifikat</th>
+                                    <th>Penerbit</th>
                                     <th>Tanggal Ujian</th>
                                     <th>Lulus</th>
                                     <th>Tanggal Berlaku</th>
-                                    <th>No Sertifikat</th>
-                                    <th>Penerbit</th>
                                     {{-- <th>File Kartu Anggota</th>
                                     <th>File Kartu Lisensi</th>
                                     <th>File Modul</th>
@@ -76,6 +77,9 @@
                                     {{-- <td>{{ $nik_property['nama'] }} / {{ $nik_property['nik'] }}</td> --}}
                                     {{-- <td>@foreach($arrJenis as $value){{ $value->jenis }} @if(!$loop->last) <br/> @endif @endforeach</td>
                                     <td>{{ $data->judul }}</td> --}}
+                                    <td>{{ $data->nama_sertifikat }}</td>
+                                    <td>{{ $data->no_sertifikat }}</td>
+                                    <td>{{ $data->penerbit }}</td>
                                     @php
                                     $tanggal_ujian = [];
                                     $formatted_ranges = [];
@@ -101,8 +105,6 @@
                                     }
                                     @endphp
                                     <td>@if(!empty($formatted_ranges)) @foreach($formatted_ranges as $_tanggal){{ $_tanggal }} @if(!$loop->last) <br/> @endif @endforeach @endif</td>
-                                    <td>{{ $data->no_sertifikat }}</td>
-                                    <td>{{ $data->penerbit }}</td>
                                     {{-- <td>@if(!empty($data->file_anggota)) <a href="{{ asset('assets/pelatihan/'.$data->file_anggota) }}" target="_blank">File Kartu Anggota</a> @endif</td>
                                     <td>@if(!empty($data->file_lisensi)) <a href="{{ asset('assets/pelatihan/'.$data->file_lisensi) }}" target="_blank">File Kartu Lisensi</a> @endif</td>
                                     <td>@if(!empty($data->file_modul))  <a href="{{ asset('assets/pelatihan/'.$data->file_modul) }}" target="_blank">File Modul</a> @endif</td>

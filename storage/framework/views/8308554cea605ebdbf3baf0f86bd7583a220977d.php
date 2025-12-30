@@ -7,6 +7,7 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('style'); ?>
+
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('breadcrumb-title'); ?>
@@ -20,7 +21,7 @@
 
 <?php $__env->startSection('content'); ?>
 <div class="container-fluid">
-    <div class="row project-cards">
+    
         <div class="col-sm-12">
             <?php if(Session::has('msg')): ?>
             <div class="alert alert-success dark alert-dismissible fade show" role="alert">
@@ -30,23 +31,21 @@
             <?php endif; ?>
             <div class="row">
                 <!--  -->
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <div class="card">
+                        
                         <div class="card-header">
                             <h5>Pengaju</h5>
                         </div>
                         <div class="card-header">
-                            <a href="<?php echo e(asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg')); ?>"
-                                target="_blank"><img class="img-thumbnail" width="20%"
-                                    src="<?php echo e(asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg')); ?>"
-                                    alt="user"></a>
+                            <a href="<?php echo e(asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg')); ?>" target="_blank"><img class="img-thumbnail" width="20%" src="<?php echo e(asset('assets/images/matta/karyawan/'.$pengaju['nik'].'/'.$pengaju['nik'].'.jpg')); ?>" alt="user"></a>
                         </div>
                         <div class="card-body typography">
                             <table class="table table-striped">
                                 <tbody>
                                     <tr>
-                                        <td width="30%">Nama</td>
-                                        <td width="70%"><?php echo e($pengaju['nama']); ?></td>
+                                        <td width="40%">Nama</td>
+                                        <td width="60%"><?php echo e($pengaju['nama']); ?></td>
                                     </tr>
                                     <tr>
                                         <td>NIP</td>
@@ -57,7 +56,7 @@
                                         <td><?php echo e($pengaju['jabatan']); ?></td>
                                     </tr>
                                     <tr>
-                                        <td>Direktorat / Divisi / Departemen</td>
+                                        <td>Direktorat/Divisi/Departemen</td>
                                         <td><?php echo e($pengaju['divisi'] . '/' . $pengaju['dep'] . '/' . $pengaju['sub_dep']); ?>
 
                                         </td>
@@ -65,28 +64,21 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                </div>
-                <!--  -->
-                <div class="col-sm-4">
-                    <div class="card">
-                        <!-- start -->
+                        
+                        
                         <div class="card-header">
                             <h5>Peserta</h5>
                         </div>
                         <?php $__currentLoopData = $arrPeserta; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="card-header">
-                            <a href="<?php echo e(asset('assets/images/matta/karyawan/'.$value['nik'].'/'.$value['nik'].'.jpg')); ?>"
-                                target="_blank"><img class="img-thumbnail" width="20%"
-                                    src="<?php echo e(asset('assets/images/matta/karyawan/'.$value['nik'].'/'.$value['nik'].'.jpg')); ?>"
-                                    alt="user"></a>
+                            <a href="<?php echo e(asset('assets/images/matta/karyawan/'.$value['nik'].'/'.$value['nik'].'.jpg')); ?>" target="_blank"><img class="img-thumbnail" width="20%" src="<?php echo e(asset('assets/images/matta/karyawan/'.$value['nik'].'/'.$value['nik'].'.jpg')); ?>" alt="user"></a>
                         </div>
                         <div class="card-body typography">
                             <table class="table table-striped">
                                 <tbody>
                                     <tr>
-                                        <td width="30%">Nama</td>
-                                        <td width="70%"><?php echo e($value['nama']); ?></td>
+                                        <td width="40%">Nama</td>
+                                        <td width="60%"><?php echo e($value['nama']); ?></td>
                                     </tr>
                                     <tr>
                                         <td>NIP</td>
@@ -97,31 +89,28 @@
                                         <td><?php echo e($value['jabatan']); ?></td>
                                     </tr>
                                     <tr>
-                                        <td>Direktorat / Divisi / Departemen</td>
+                                        <td>Direktorat/Divisi/Departemen</td>
                                         <td><?php echo e($value['divisi'] . '/' . $value['dep'] . '/' . $value['sub_dep']); ?></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        <!-- end -->
-                        <!-- start -->
+                        
+                        
                         <div class="card-header">
                             <h5>Atasan Peserta</h5>
                         </div>
                         <?php $__currentLoopData = $arrAtasanPeserta; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="card-header">
-                            <a href="<?php echo e(asset('assets/images/matta/karyawan/'.$value['nik'].'/'.$value['nik'].'.jpg')); ?>"
-                                target="_blank"><img class="img-thumbnail" width="20%"
-                                    src="<?php echo e(asset('assets/images/matta/karyawan/'.$value['nik'].'/'.$value['nik'].'.jpg')); ?>"
-                                    alt="user"></a>
+                            <a href="<?php echo e(asset('assets/images/matta/karyawan/'.$value['nik'].'/'.$value['nik'].'.jpg')); ?>" target="_blank"><img class="img-thumbnail" width="20%" src="<?php echo e(asset('assets/images/matta/karyawan/'.$value['nik'].'/'.$value['nik'].'.jpg')); ?>" alt="user"></a>
                         </div>
                         <div class="card-body typography">
                             <table class="table table-striped">
                                 <tbody>
                                     <tr>
-                                        <td width="30%">Nama</td>
-                                        <td width="70%"><?php echo e($value['nama']); ?></td>
+                                        <td width="40%">Nama</td>
+                                        <td width="60%"><?php echo e($value['nama']); ?></td>
                                     </tr>
                                     <tr>
                                         <td>NIP</td>
@@ -132,58 +121,32 @@
                                         <td><?php echo e($value['jabatan']); ?></td>
                                     </tr>
                                     <tr>
-                                        <td>Direktorat / Divisi / Departemen</td>
+                                        <td>Direktorat/Divisi/Departemen</td>
                                         <td><?php echo e($value['divisi'] . '/' . $value['dep'] . '/' . $value['sub_dep']); ?></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        <!-- end -->
+                        
                     </div>
                 </div>
                 <!--  -->
-                <div class="col-sm-4 notification">
+                
+                <!--  -->
+                <div class="col-sm-6">
                     <div class="card">
-                        <!-- start -->
+                        
                         <div class="card-header">
-                            <h5>History</h5>
-                        </div>
-                        <div class="card-body">
-                            <ul>
-                                <?php $__currentLoopData = $history; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_history): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <li class="d-flex">
-                                    <?php if($loop->first): ?>
-                                    <div class="activity-dot-success"></div>
-                                    <?php elseif($loop->last): ?>
-                                    <div class="activity-dot-warning"></div>
-                                    <?php else: ?>
-                                    <div class="activity-dot-primary"></div>
-                                    <?php endif; ?>
-                                    <div class="ms-3">
-                                        <p class="d-flex justify-content-between mb-2"><span
-                                                class="date-content light-background"><?php echo e($_history->created_at); ?></span>
-                                        </p>
-                                        <h6><?php echo e($_history->_status->status_pengajuan); ?><span
-                                                class="dot-notification"></span></h6>
-                                        <p class="f-light">Oleh <?php echo e($_history->_pic->nama); ?> /
-                                            <?php echo e($_history->nik_pic); ?></p>
-                                    </div>
-                                </li>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </ul>
-                        </div>
-                        <!-- end -->
-                        <!-- start -->
-                        <div class="card-header">
-                            <h5>Pelatihan <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?><a data-bs-toggle="modal" data-bs-target="#modal_edit" href="#modal_edit" title="Edit"><i class="icon-pencil-alt"></i></a><?php endif; ?></h5>
+                            
+                            <h5>Pelatihan <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?> <a href="<?php echo e(route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('edit'), 'back_url' => url()->full()])); ?>" data-toggle="tooltip" title="Edit"><i class="icon-pencil-alt"></i></a> <?php endif; ?></h5>
                         </div>
                         <div class="card-body typography">
                             <table class="table table-striped">
                                 <tbody>
                                     <tr>
-                                        <td width="30%">Pengajuan Pelatihan ke</td>
-                                        <td width="70%"><?php echo e($trx->ke); ?></td>
+                                        <td width="40%">Pengajuan Pelatihan ke</td>
+                                        <td width="60%"><?php echo e($trx->ke); ?></td>
                                     </tr>
                                     <tr>
                                         <td>Tahun</td>
@@ -193,10 +156,20 @@
                                         <td>Jenis</td>
                                         <td>
                                             <?php $__currentLoopData = $arrJenis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <?php echo e($value->jenis); ?><br />
+                                                <?php echo e($value->jenis); ?> <?php if(!$loop->last): ?> <br/> <?php endif; ?>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </td>
                                     </tr>
+                                    <?php if(!empty($trx->int_ext)): ?>
+                                    <tr>
+                                        <td>Mode</td>
+                                        <td>
+                                            <?php $__currentLoopData = $int_ext; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <?php if($key == $trx->int_ext): ?> <?php echo e($value); ?> <?php endif; ?>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </td>
+                                    </tr>
+                                    <?php endif; ?>
                                     <tr>
                                         <td>Judul</td>
                                         <td><?php echo e($trx->judul); ?></td>
@@ -206,22 +179,20 @@
                                         <td><?php echo e($trx->penyelenggara); ?></td>
                                     </tr>
                                     <?php
-                                    $tanggal_range = [];
-                                    if(!empty($trx->tanggal_range)){
+                                    // $tanggal_range = [];
+                                    // if(!empty($trx->tanggal_range)){
                                         $tanggal_range = json_decode($trx->tanggal_range, true);
                                         $formatted_ranges = array_map(function($range) {
                                             [$mulai, $selesai] = array_map('trim', explode('s/d', $range));
                                             return Carbon\Carbon::createFromFormat('Y-m-d', $mulai)->format('d-m-Y') . ' s/d ' . Carbon\Carbon::createFromFormat('Y-m-d', $selesai)->format('d-m-Y');
                                         }, $tanggal_range);
-                                    }
+                                    // }
                                     ?>
                                     <tr>
                                         <td>Tanggal Pelaksanaan</td>
-                                        <?php if(empty($trx->tanggal_range)): ?>
-                                        <td><?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_mulai)->format('d-m-Y')); ?> s/d <?php echo e(Carbon\Carbon::createFromFormat('Y-m-d', $trx->tanggal_akhir)->format('d-m-Y')); ?></td>
-                                        <?php else: ?>
+                                        
                                         <td><?php $__currentLoopData = $formatted_ranges; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_tanggal_range): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php echo e($_tanggal_range); ?> <?php if(!$loop->last): ?> <br/> <?php endif; ?> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></td>
-                                        <?php endif; ?>
+                                        
                                     </tr>
                                     <tr>
                                         <td>Tempat</td>
@@ -235,7 +206,7 @@
                                         <td>Benefit</td>
                                         <td>
                                             <?php $__currentLoopData = $arrBenefit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <?php echo e($value->benefit); ?><br />
+                                                <?php echo e($value->benefit); ?> <?php if(!$loop->last): ?> <br/> <?php endif; ?>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </td>
                                     </tr>
@@ -250,111 +221,63 @@
                                 </tbody>
                             </table>
                         </div>
-                        <!-- end -->
+                        
+                    </div>
+                    <div class="card">
+                        
+                        <div class="card-header">
+                            <h5>History</h5>
+                        </div>
+                        <div class="card-body notification">
+                            <ul>
+                                <?php $__currentLoopData = $history; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_history): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <li class="d-flex">
+                                    <?php if($loop->first): ?>
+                                    <div class="activity-dot-success"></div>
+                                    <?php elseif($loop->last): ?>
+                                    <div class="activity-dot-warning"></div>
+                                    <?php else: ?>
+                                    <div class="activity-dot-primary"></div>
+                                    <?php endif; ?>
+                                    <div class="ms-3">
+                                        <p class="d-flex justify-content-between mb-2"><span class="date-content light-background"><?php echo e($_history->created_at); ?></span></p>
+                                        <h6><?php echo e($_history->_status->status_pengajuan); ?><span class="dot-notification"></span></h6>
+                                        <p class="f-light">Oleh <?php echo e($_history->_pic->nama); ?> / <?php echo e($_history->nik_pic); ?></p>
+                                    </div>
+                                </li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </ul>
+                        </div>
+                        
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+                            <form action="<?php echo e(route('pelatihan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id))); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                            <?php echo method_field('PATCH'); ?>
+                            <?php echo csrf_field(); ?>
+                            
+                                    <label class="form-label" for="status_pengajuan">Status Pengajuan</label>
+                                    <select class="form-select" id="status_pengajuan" name="status_pengajuan" required="">
+                                        <option selected="" disabled="" value="">Pilih...</option>
+                                        <?php $__currentLoopData = $status_pengajuan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($data->id); ?>" <?php if($data->id == $trx->status_pengajuan): ?> selected <?php endif; ?> ><?php echo e($data->status_pengajuan); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
+                                
+                            <button class="btn btn-success mt-2 mb-2" type="submit">Update</button> | <a href="<?php echo e(route('pelatihan.index')); ?>" class="btn btn-warning mt-2 mb-2" type="button">Back</a>
+                            </form>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
                 <!--  -->
                 
-                <form action="<?php echo e(route('pelatihan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id))); ?>" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
-                <?php echo method_field('PATCH'); ?>
-                <?php echo csrf_field(); ?>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <label class="form-label" for="status_pengajuan">Status Pengajuan</label>
-                        <select class="form-select" id="status_pengajuan" name="status_pengajuan" required="">
-                            <option selected="" disabled="" value="">Pilih...</option>
-                            <?php $__currentLoopData = $status_pengajuan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($data->id); ?>" <?php if($data->id == $trx->status_pengajuan): ?> selected <?php endif; ?> ><?php echo e($data->status_pengajuan); ?></option>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </select>
-                    </div>
-                </div>
-                <button class="btn btn-success mt-2 mb-2" type="submit">Update</button> | <a href="<?php echo e(route('pelatihan.index')); ?>" class="btn btn-warning mt-2 mb-2" type="button">Back</a>
-                </form>
             </div>
         </div>
-    </div>
+    
 </div>
-<div class="modal fade" id="modal_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-       <div class="modal-content">
-        <form action="<?php echo e(route('pelatihan.save_update', [$trx->id, 'data_type' => 'biaya', 'back_url' => URL::full()])); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
-        <?php echo csrf_field(); ?>
-          <div class="modal-header">
-             <h5 class="modal-title" id="exampleModalLabel2">Edit</h5>
-             <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-                <div class="mt-0">
-                    <label class="form-label" for="tahun">Tahun*</label>
-                    <input min=0 type="number" name="tahun" id="tahun" class="form-control numbers" required="" value="<?php echo e($trx->tahun); ?>">
-                </div>
-                <div class="mt-2">
-                    <label class="form-label" for="jenis[]">Jenis Pelatihan*</label>
-                    <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="jenis[]" name="jenis[]" required="">
-                        <?php $__currentLoopData = $jenis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, explode(';', $trx->jenis))): ?> selected <?php endif; ?>><?php echo e($data->jenis); ?></option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </select>
-                    <div class="invalid-feedback txt-danger">Jenis Pelatihan is required.</div>
-                </div>
-                <div class="mt-2">
-                    <label class="form-label" for="judul">Judul Pelatihan*</label>
-                    <input name="judul" id="judul" class="form-control" type="text" required="" value="<?php echo e($trx->judul); ?>">
-                </div>
-                <div class="mt-2">
-                    <label class="form-label" for="penyelenggara">Penyelenggara*</label>
-                    <input name="penyelenggara" id="penyelenggara" class="form-control" type="text" required="" value="<?php echo e($trx->penyelenggara); ?>">
-                </div>
-                <div class="row mt-2">
-                    <div class="col-md-6">
-                        <label class="form-label" for="tanggal_mulai">Tanggal Mulai*</label>
-                        <input class="form-control" name="tanggal_mulai" id="tanggal_mulai" type="date" required="" value="<?php echo e($trx->tanggal_mulai); ?>">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="tanggal_akhir">Tanggal Akhir*</label>
-                        <input class="form-control" name="tanggal_akhir" id="tanggal_akhir" type="date" required="" value="<?php echo e($trx->tanggal_akhir); ?>">
-                    </div>
-                </div>
-                <div class="mt-2">
-                    <label class="form-label" for="tempat">Tempat*</label>
-                    <textarea class="form-control" id="tempat" name="tempat" rows="4" required=""><?php echo e($trx->tempat); ?></textarea>
-                </div>
-                <div class="mt-2">
-                    <label class="form-label" for="biaya">Biaya (Termasuk PPN, jika ada)*</label>
-                    <input min=0 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="biaya" id="biaya" class="form-control numbers" required="" value="<?php echo e($trx->biaya); ?>">
-                </div>
-                <div class="mt-2">
-                    <label class="form-label" for="benefit[]">Benefit*</label>
-                    <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="benefit[]" name="benefit[]" required="">
-                        <?php $__currentLoopData = $benefit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, explode(';', $trx->benefit))): ?> selected <?php endif; ?>><?php echo e($data->benefit); ?></option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </select>
-                    <div class="invalid-feedback txt-danger">Benefit is required.</div>
-                </div>
-                <div class="mt-2">
-                    <label class="form-label" for="anggaran">Anggaran*</label>
-                    <select class="form-select col-sm-12" id="anggaran" name="anggaran" required="">
-                        <option selected="" disabled="" value="">Pilih...</option>
-                        <?php $__currentLoopData = $anggaran; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($data->id); ?>" <?php if($data->id==$trx->anggaran): ?> selected <?php endif; ?>><?php echo e($data->anggaran); ?></option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </select>
-                </div>
-                <div class="mt-2">
-                    <label class="form-label" for="keterangan">Keterangan</label>
-                    <textarea class="form-control" id="keterangan" name="keterangan" rows="4" ><?php echo e($trx->keterangan); ?></textarea>
-                </div>
-          </div>
-          <div class="modal-footer">
-             <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
-             <button class="btn btn-primary" type="submit">Submit</button>
-          </div>
-        </form>
-       </div>
-    </div>
- </div>
+
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('script'); ?>
@@ -388,6 +311,7 @@ function use_text(node) {
   if (!empty_val)
     node.value = value.toLocaleString('en');  // or other formatting
 }
+// 
 </script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.simple.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\matta\resources\views/formulir/pelatihan/view.blade.php ENDPATH**/ ?>

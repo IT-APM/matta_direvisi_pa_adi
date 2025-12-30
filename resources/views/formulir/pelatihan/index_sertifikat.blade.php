@@ -105,11 +105,27 @@
                                     <td>{{ $data->judul }}@if(!empty($data->int_ext))<br/> ({{ $data->int_ext }}) @endif</td>
                                     <td>{{ $data->lembaga }}</td>
                                     <td>{{ $data->biaya }}</td>
-                                    <td>{{ $data->tanggal_mulai }}</td>
-                                    <td>{{ $data->tanggal_akhir }}</td>
+                                    <td>
+                                        @if(!empty($data->tanggal_mulai) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $data->tanggal_mulai))
+                                        {{ Carbon\Carbon::createFromFormat('Y-m-d', $data->tanggal_mulai)->format('d-m-Y') }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if(!empty($data->tanggal_akhir) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $data->tanggal_akhir))
+                                        {{ Carbon\Carbon::createFromFormat('Y-m-d', $data->tanggal_akhir)->format('d-m-Y') }}
+                                        @endif
+                                    </td>
                                     <td>{{ $data->nomor_sertifikat }}</td>
-                                    <td>{{ $data->tanggal_sertifikat }}</td>
-                                    <td>{{ $data->tanggal_kadaluarsa }}</td>
+                                    <td>
+                                        @if(!empty($data->tanggal_sertifikat) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $data->tanggal_sertifikat))
+                                        {{ Carbon\Carbon::createFromFormat('Y-m-d', $data->tanggal_sertifikat)->format('d-m-Y') }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if(!empty($data->tanggal_kadaluarsa) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $data->tanggal_kadaluarsa))
+                                        {{ Carbon\Carbon::createFromFormat('Y-m-d', $data->tanggal_kadaluarsa)->format('d-m-Y') }}
+                                        @endif
+                                    </td>
                                     <td>@if(!empty($data->sertifikat_link))<a href="{{ $data->sertifikat_link }}" data-toggle="tooltip" title="Sertifikat" target="_blank"><i class="fa fa-file-text-o"></i></a>@endif</td>
                                 </tr>
                                 @endforeach

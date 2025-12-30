@@ -366,6 +366,7 @@
                                 <li><a href="<?php echo e(route('hcouser.index')); ?>">HCO Team</a></li>
                                 <li><a href="<?php echo e(route('plafon.index')); ?>">Health Reimbursement<br />Limits</a></li>
                                 <li><a href="<?php echo e(route('iphoneuser.index')); ?>">iPhone Users</a></li>
+                                <li><a href="<?php echo e(route('pekerjaan_bidang.index')); ?>">Job Field</a></li>
                                 <li><a href="<?php echo e(route('jabatan.index')); ?>">Job Position</a></li>
                                 <li><a href="<?php echo e(route('join.index')); ?>">Join Status</a></li>
                                 <li><a href="<?php echo e(route('holiday.index')); ?>">National Holiday</a></li>

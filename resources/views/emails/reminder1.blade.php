@@ -36,7 +36,8 @@
                 <p>Informasi ini juga sebagai Surat Teguran {{ $data['teguran_ke'] }} untuk Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }}. Kami harap dapat melakukan Absensi Kehadiran setiap hari ke depannya.</p>
                 @endif
                 <p>Terima kasih atas perhatiannya.</p>
-                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+                {{-- <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p> --}}
+                @include('emails.footer0')
                 <p>{{ $data['datetime'] }}</p>
             </div>
         </div>

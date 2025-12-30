@@ -24,6 +24,7 @@
 </p>
 <p>Klik link berikut untuk melakukannya:</p>
 <h1><strong>Klik <a href="{{ $data['link'] }}" target="_blank">Formulir Karyawan Non Aktif</a></strong></h1>
-<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+{{-- <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
 </body>
-</html>
+</html> --}}
+@include('emails.footer')

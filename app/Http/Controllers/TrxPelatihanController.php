@@ -778,6 +778,175 @@ class TrxPelatihanController extends Controller
                 }
                 $trx = TrxPelatihanSertifikat::orderBy('nama', 'asc')->get();
                 $no = 0;
+                // start cleansing data
+                // $return_data = [];
+                // $bulan_en = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                // $bulan_id = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                // $bulan_en3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                // // tanggal_mulai => 954
+                // $trx = TrxPelatihanSertifikat::where('tanggal_mulai', '!=', '')->orderBy('id', 'asc')->get();
+                // foreach($trx as $data){
+                //     $tanggal_mulai = $data->tanggal_mulai;
+                //     $parts = explode('-', $tanggal_mulai);
+                //     if (count($parts) == 3) {
+                //         list($d, $m, $y) = explode('-', $tanggal_mulai);
+                //         $isValid = false;
+                //         try {
+                //             $isValid = true;
+                //             if(in_array($m, $bulan_en)){
+                //                 $index = array_search($m, $bulan_en);
+                //             }
+                //             elseif(in_array($m, $bulan_id)){
+                //                 $index = array_search($m, $bulan_id);
+                //             }
+                //             elseif(in_array($m, $bulan_en3)){
+                //                 $index = array_search($m, $bulan_en3);
+                //             }
+                //             $eng = $index + 1;
+                //             if(strlen($y) == 2){
+                //                 $y = "20$y";
+                //             }
+                //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
+                //             if($isValid){
+                //                 $hasil = $parsed->format('Y-m-d');
+                //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
+                //                 $_trx->tanggal_mulai = $hasil;
+                //                 $_trx->update();
+                //                 $return_data[] = ['id'=>$data->id, 'tanggal_mulai_before'=>$tanggal_mulai, 'tanggal_mulai_after'=>$hasil];
+                //             }
+                //         } catch (\Exception $e) {
+                //             $isValid = false;
+                //         }
+                //     }
+// manual => 4
+// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2022-08-02,2022-08-04' WHERE `id`=593;
+// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2022-08-06,2022-08-13' WHERE `id`=594;
+// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2025-11-04,2025-11-05,2025-11-06,2025-11-07' WHERE `id`=1205;
+// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2022-08-30,2022-08-31,2022-09-01,2022-09-02,2022-09-06,2022-09-07,2022-09-08,2022-09-09' WHERE `id`=602;
+                // }
+                // // tanggal_akhir => 1050
+                // $trx = TrxPelatihanSertifikat::where('tanggal_akhir', '!=', '')->orderBy('id', 'asc')->get();
+                // foreach($trx as $data){
+                //     $tanggal_akhir = $data->tanggal_akhir;
+                //     $parts = explode('-', $tanggal_akhir);
+                //     if (count($parts) == 3) {
+                //         list($d, $m, $y) = explode('-', $tanggal_akhir);
+                //         $isValid = false;
+                //         try {
+                //             $isValid = true;
+                //             if(in_array($m, $bulan_en)){
+                //                 $index = array_search($m, $bulan_en);
+                //             }
+                //             elseif(in_array($m, $bulan_id)){
+                //                 $index = array_search($m, $bulan_id);
+                //             }
+                //             elseif(in_array($m, $bulan_en3)){
+                //                 $index = array_search($m, $bulan_en3);
+                //             }
+                //             $eng = $index + 1;
+                //             if(strlen($y) == 2){
+                //                 $y = "20$y";
+                //             }
+                //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
+                //             if($isValid){
+                //                 $hasil = $parsed->format('Y-m-d');
+                //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
+                //                 $_trx->tanggal_akhir = $hasil;
+                //                 $_trx->update();
+                //                 $return_data[] = ['id'=>$data->id, 'tanggal_akhir_before'=>$tanggal_akhir, 'tanggal_akhir_after'=>$hasil];
+                //             }
+                //         } catch (\Exception $e) {
+                //             $isValid = false;
+                //         }
+                //     }
+// manual => 4
+// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2022-08-09,2022-08-11' WHERE `id`=593;
+// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2022-08-06,2022-08-13' WHERE `id`=594;
+// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2022-09-13,2022-09-14,2022-09-15' WHERE `id`=602;
+// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2025-11-10,2025-11-11,2025-11-12' WHERE `id`=1205;
+                // }
+                // // tanggal_sertifikat => 780
+                // $trx = TrxPelatihanSertifikat::where('tanggal_sertifikat', '!=', '')->orderBy('id', 'asc')->get();
+                // foreach($trx as $data){
+                //     $tanggal_sertifikat = $data->tanggal_sertifikat;
+                //     $parts = explode('-', $tanggal_sertifikat);
+                //     if (count($parts) == 3) {
+                //         list($d, $m, $y) = explode('-', $tanggal_sertifikat);
+                //         $isValid = false;
+                //         try {
+                //             $isValid = true;
+                //             if(in_array($m, $bulan_en)){
+                //                 $index = array_search($m, $bulan_en);
+                //             }
+                //             elseif(in_array($m, $bulan_id)){
+                //                 $index = array_search($m, $bulan_id);
+                //             }
+                //             elseif(in_array($m, $bulan_en3)){
+                //                 $index = array_search($m, $bulan_en3);
+                //             }
+                //             $eng = $index + 1;
+                //             if(strlen($y) == 2){
+                //                 $y = "20$y";
+                //             }
+                //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
+                //             if($isValid){
+                //                 $hasil = $parsed->format('Y-m-d');
+                //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
+                //                 $_trx->tanggal_sertifikat = $hasil;
+                //                 $_trx->update();
+                //                 $return_data[] = ['id'=>$data->id, 'tanggal_sertifikat_before'=>$tanggal_sertifikat, 'tanggal_sertifikat_after'=>$hasil];
+                //             }
+                //         } catch (\Exception $e) {
+                //             $isValid = false;
+                //         }
+                //     }
+// manual => 1
+// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_sertifikat`='2018-07-01' WHERE `id`=188;
+                // }
+                // // tanggal_kadaluarsa => 196 '-' + 14 ' '
+                // $trx = TrxPelatihanSertifikat::where('tanggal_kadaluarsa', '!=', '')->orderBy('id', 'asc')->get();
+                // foreach($trx as $data){
+                //     $tanggal_kadaluarsa = $data->tanggal_kadaluarsa;
+                //     $parts = explode('-', $tanggal_kadaluarsa);
+                //     if (count($parts) == 3) {
+                //         list($d, $m, $y) = explode('-', $tanggal_kadaluarsa);
+                //         $isValid = false;
+                //         try {
+                //             $isValid = true;
+                //             if(in_array($m, $bulan_en)){
+                //                 $index = array_search($m, $bulan_en);
+                //             }
+                //             elseif(in_array($m, $bulan_id)){
+                //                 $index = array_search($m, $bulan_id);
+                //             }
+                //             elseif(in_array($m, $bulan_en3)){
+                //                 $index = array_search($m, $bulan_en3);
+                //             }
+                //             $eng = $index + 1;
+                //             if(strlen($y) == 2){
+                //                 $y = "20$y";
+                //             }
+                //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
+                //             if($isValid){
+                //                 $hasil = $parsed->format('Y-m-d');
+                //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
+                //                 $_trx->tanggal_kadaluarsa = $hasil;
+                //                 $_trx->update();
+                //                 $return_data[] = ['id'=>$data->id, 'tanggal_kadaluarsa_before'=>$tanggal_kadaluarsa, 'tanggal_kadaluarsa_after'=>$hasil];
+                //             }
+                //         } catch (\Exception $e) {
+                //             $isValid = false;
+                //         }
+                //     }
+// manual => 29
+// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_kadaluarsa`='2027-07-31' WHERE `tanggal_kadaluarsa`='Juli 2027';
+                // }
+                // $json = json_encode($return_data, JSON_PRETTY_PRINT);
+                // $timestamp = now()->format('YmdHis');
+                // $filePath = storage_path("app/{$timestamp}.json");
+                // file_put_contents($filePath, $json);
+                // return $json;
+                // end cleansing data
                 return view('formulir.pelatihan.index_sertifikat', compact('trx', 'no'));
                 break;
             case 'evaluasi':
@@ -1062,6 +1231,8 @@ class TrxPelatihanController extends Controller
             if(!empty($tanggal_berlaku) && !in_array(null, $tanggal_berlaku, true)){
                 $data->tanggal_berlaku = json_encode($tanggal_berlaku, JSON_UNESCAPED_SLASHES);
             }
+            $nama_sertifikat = $request->nama_sertifikat;
+            $data->nama_sertifikat = $nama_sertifikat;
             $no_sertifikat = $request->no_sertifikat;
             $data->no_sertifikat = $no_sertifikat;
             $penerbit = $request->penerbit;
@@ -1112,6 +1283,8 @@ class TrxPelatihanController extends Controller
             if(!empty($tanggal_berlaku) && !in_array(null, $tanggal_berlaku, true)){
                 $data->tanggal_berlaku = json_encode($tanggal_berlaku, JSON_UNESCAPED_SLASHES);
             }
+            $nama_sertifikat = $request->nama_sertifikat;
+            $data->nama_sertifikat = $nama_sertifikat;
             $no_sertifikat = $request->no_sertifikat;
             $data->no_sertifikat = $no_sertifikat;
             $penerbit = $request->penerbit;

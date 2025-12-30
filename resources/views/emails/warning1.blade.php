@@ -41,7 +41,8 @@
                 <p>Jika bulan selanjutnya belum menunjukan peningkatan absensi kehadiran, maka akan kami terbitkan Surat Peringatan Ketiga. Kami harap kedisplinan absensi kehadiran dapat menunjukan peningkatan.</p>
                 @endif
                 <p>Terima kasih atas perhatiannya.</p>
-                <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+                {{-- <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p> --}}
+                @include('emails.footer0')
                 <p>{{ $data['datetime'] }}</p>
             </div>
         </div>

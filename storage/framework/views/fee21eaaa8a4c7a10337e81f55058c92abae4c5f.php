@@ -168,7 +168,8 @@
                                         <?php
                                         $is_history = App\Models\TrxKebutuhanMasterEdit::where(['id_kebutuhan' => $data->id])->exists();
                                         ?>
-                                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?><a href="<?php echo e(route('kebutuhan.edit_kolom', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'field'=>'jumlah'])); ?>" data-toggle="tooltip" title='Edit'><span class="badge <?php if($is_history): ?> badge-warning <?php else: ?> badge-success <?php endif; ?>" style="font-size: 11px;"><?php endif; ?> <?php echo e($data->jumlah); ?> <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?></span></a><?php endif; ?>
+                                        
+                                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?><?php if(!in_array($data->status_pengajuan, [3,10,28])): ?><a href="<?php echo e(route('kebutuhan.edit_kolom', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'field'=>'jumlah'])); ?>" data-toggle="tooltip" title='Edit'><span class="badge <?php if($is_history): ?> badge-warning <?php else: ?> badge-success <?php endif; ?>" style="font-size: 11px;"><?php endif; ?> <?php echo e($data->jumlah); ?> <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?></span></a><?php endif; ?> <?php endif; ?>
                                         
                                     </td>
                                     <td><?php echo e($data->_kelamin->kelamin); ?></td>

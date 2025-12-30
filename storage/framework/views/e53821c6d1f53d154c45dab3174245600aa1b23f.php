@@ -1,3 +1,4 @@
-<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>
+
+<?php echo $__env->make('emails.footer0', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 </body>
 </html><?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/footer.blade.php ENDPATH**/ ?>

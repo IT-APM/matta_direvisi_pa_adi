@@ -133,7 +133,8 @@
                                                 <th>Departemen</th>
                                                 <th>Nama Jabatan</th>
                                                 <th>Atasan Langsung Kandidat</th>
-                                                <th>Nama/Email</th>
+                                                <th>Nama</th>
+                                                <th>Email</th>
                                                 <th>Telepon</th>
                                                 <th><div class="d-flex align-items-center"><input type="checkbox" onClick="toggle_cv(this)" />&nbsp; CV &nbsp;<a href="#" onClick="download_cv()" data-toggle="tooltip" title="Download"><i class="fa fa-file-pdf-o"></i></a></div></th>
                                                 <th>Check_in</th>
@@ -228,7 +229,8 @@
                                                 <td>{{ $pengaju_property['sub_dep'] }}</td>
                                                 <td>{{ $recruitment->_pekerjaan->pekerjaan }}</td>
                                                 <td>@if(!empty($atasan_property)) {{ $atasan_property['nama'] }}/{{ $atasan_property['nik'] }} @endif</td>
-                                                <td>{{ $data->nama }}<br/>{{ $data->email }}&nbsp;<a href="{{ route('recruitment.edit', [Crypt::encrypt($data->id), 'type'=>'email', 'back_url'=>URL::full()]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt" style="color:green"></i></a></td>
+                                                <td>{{ $data->nama }}</td>
+                                                <td>{{ $data->email }}&nbsp;<a href="{{ route('recruitment.edit', [Crypt::encrypt($data->id), 'type'=>'email', 'back_url'=>URL::full()]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt" style="color:green"></i></a></td>
                                                 <td>{{ $data->telepon }}</td>
                                                 <td><div class="d-flex align-items-center"><input id="id_cv[]" name="id_cv[]" type="checkbox" value="{{ $data->id }}">&nbsp;&nbsp;<a href="{{ asset('assets/recruitment/upload/'.$data->cv) }}" target="_blank" data-toggle="tooltip" title="File CV"><i class="fa fa-file-pdf-o"></i></a></div></td>
                                                 {{-- $check3 adalah pengecekan apakah psikotes sudah berjalan, jika belum maka bisa reschedule --}}

@@ -119,10 +119,20 @@
                                     <td>Jenis</td>
                                     <td>
                                         <?php $__currentLoopData = $arrJenis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php echo e($value->jenis); ?><br />
+                                        <?php echo e($value->jenis); ?> <?php if(!$loop->last): ?> <br/> <?php endif; ?>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </td>
                                 </tr>
+                                <?php if(!empty($trx->int_ext)): ?>
+                                <tr>
+                                    <td>Mode</td>
+                                    <td>
+                                        <?php $__currentLoopData = $int_ext; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php if($key == $trx->int_ext): ?> <?php echo e($value); ?> <?php endif; ?>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </td>
+                                </tr>
+                                <?php endif; ?>
                                 <tr>
                                     <td>Judul</td>
                                     <td><?php echo e($trx->judul); ?></td>
@@ -162,7 +172,7 @@
                                     <td>Benefit</td>
                                     <td>
                                         <?php $__currentLoopData = $arrBenefit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php echo e($value->benefit); ?><br />
+                                        <?php echo e($value->benefit); ?> <?php if(!$loop->last): ?> <br/> <?php endif; ?>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </td>
                                 </tr>

@@ -10,7 +10,8 @@ use App\Models\KaryawanPendidikan;
 use App\Models\KaryawanSertifikasi;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
-use File;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class KaryawanCopyController extends Controller
 {
@@ -45,13 +46,16 @@ class KaryawanCopyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        // $data = DB::table('mtr_tbl_karyawan_nik_2_nkp')->select('nik', 'nik_nkp')->get();
+        // foreach($data as $_data){
+        // $nik_karyawan_baru = $_data->nik_nkp;
+        // $nik_karyawan_lama = $_data->nik;
+        // File::deleteDirectory(public_path('assets/images/matta/karyawan/'.$nik_karyawan_baru));
         // ambil data karyawan lama
         $nik_karyawan_baru = $request->nik_karyawan_baru;
         $nik_karyawan_lama = $request->nik_karyawan_lama;
         $_karyawan = Karyawan::where('nik', $nik_karyawan_lama)->first();
-        // 
-        // return response()->json( [ 'data' => File::exists(public_path('assets/images/matta/karyawan/'.$nik_karyawan_lama.'/'.$nik_karyawan_lama.'.jpg')) ], 200 );
         $karyawan = New Karyawan;
         $karyawan->nik = $nik_karyawan_baru;
         $karyawan->password = $_karyawan->password;
@@ -84,7 +88,7 @@ class KaryawanCopyController extends Controller
         $karyawan->gaji_pokok = $_karyawan->gaji_pokok;
         $karyawan->kode_level = $_karyawan->kode_level;
         $karyawan->kode_jabatan = $_karyawan->kode_jabatan;
-        $karyawan->tanggal_mulai = $request->tanggal_mulai;
+        $karyawan->tanggal_mulai = $_karyawan->tanggal_mulai;
         $karyawan->tanggal_bergabung = $_karyawan->tanggal_bergabung;
         $karyawan->tanggal_berakhir = $_karyawan->tanggal_berakhir;
         $karyawan->tanggal_karyawan_tetap = $_karyawan->tanggal_karyawan_tetap;
@@ -156,8 +160,17 @@ class KaryawanCopyController extends Controller
             File::makeDirectory(public_path('assets/images/matta/karyawan/'.$nik_karyawan_baru, 0777, true, true));
             File::copy(public_path('assets/images/matta/karyawan/'.$nik_karyawan_lama.'/'.$nik_karyawan_lama.'.jpg'), public_path('assets/images/matta/karyawan/'.$nik_karyawan_baru.'/'.$nik_karyawan_baru.'.jpg'));
         }
-        // File::copy(public_path('exist/test.png'), public_path('copy/test_copy.png'));
-        // 
+        // 5 = PT NASIO KARYA PRATAMA
+        // 38 = Operation
+        // 101 = Operation
+        // 349 = Operation
+        // DB::table('mtr_tbl_karyawan')->where('nik', $nik_karyawan_baru)->update(
+        //     ['kode_perusahaan' => 5, 'kode_divisi' => 38, 'kode_departemen' => 101, 'kode_sub_departemen' => 349,
+        // ]);
+        // DB::table('mtr_tbl_karyawan')->where('nik', $nik_karyawan_lama)->update(
+        //     ['is_aktif' => 0,
+        // ]);
+        // }
         return redirect( 'karyawan' )->with( 'msg', 'Data is copied successfully.' );
     }
 

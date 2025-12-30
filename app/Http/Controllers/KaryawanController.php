@@ -7,6 +7,7 @@ use App\Models\KaryawanLog;
 use App\Models\KaryawanPendidikan;
 use App\Models\KaryawanPelatihan;
 use App\Models\KaryawanSertifikasi;
+use App\Models\TrxPelatihanSertifikat;
 use App\Models\KaryawanAnak;
 use App\Models\Kelamin;
 use App\Models\Agama;
@@ -310,17 +311,17 @@ class KaryawanController extends Controller
         }
     }
 
-    public function get_divisi( $id ) {
+    public function get_divisi($id) {
         $data = Divisi::where(['kode_perusahaan'=>$id, 'is_active'=>1])->orderBy( 'nama', 'asc' )->get();
         return json_decode($data, true);
     }
 
-    public function get_departemen( $id ) {
+    public function get_departemen($id) {
         $data = Departemen::where(['kode_divisi'=>$id, 'is_active'=>1])->orderBy( 'nama', 'asc' )->get();
         return json_decode($data, true);
     }
 
-    public function get_sub_departemen( $id ) {
+    public function get_sub_departemen($id) {
         $data = SubDepartemen::where(['kode_departemen'=>$id, 'is_active'=>1])->orderBy( 'nama', 'asc' )->get();
         return json_decode($data, true);
     }
@@ -504,7 +505,7 @@ class KaryawanController extends Controller
     {
         // dd($id);
         $status = 'edit';
-        $karyawan = Karyawan::find( $id );
+        $karyawan = Karyawan::find($id);
         $layer = Karyawan::all();
         // $kelamin = Kelamin::all();
         $kelamin = Kelamin::whereIn('id', [2,3])->get();
@@ -537,10 +538,14 @@ class KaryawanController extends Controller
         $where = ['nik' => $karyawan->nik];
         $pendidikan = KaryawanPendidikan::where($where)->orderBy( 'id_jenjang', 'asc' )->get();
         $no_pendidikan = 0;
-        $pelatihan = KaryawanPelatihan::where($where)->orderBy( 'nama', 'asc' )->get();
-        $no_pelatihan = 0;
-        $sertifikasi = KaryawanSertifikasi::where($where)->orderBy( 'nama', 'asc' )->get();
-        $no_sertifikasi = 0;
+        // $pelatihan = KaryawanPelatihan::where($where)->orderBy( 'nama', 'asc' )->get();
+        // $no_pelatihan = 0;
+        // $sertifikasi = KaryawanSertifikasi::where($where)->orderBy( 'nama', 'asc' )->get();
+        // $no_sertifikasi = 0;
+        $pelatihan = TrxPelatihanSertifikat::where(['nik'=>$karyawan->nik, 'jenis'=>'Pelatihan / Training'])->orderBy('judul', 'asc')->get();
+        $sertifikasi = TrxPelatihanSertifikat::where(['nik'=>$karyawan->nik, 'jenis'=>'Sertifikasi'])->orderBy('judul', 'asc')->get();
+        $seminar = TrxPelatihanSertifikat::where(['nik'=>$karyawan->nik, 'jenis'=>'Seminar / Workshop'])->orderBy('judul', 'asc')->get();
+        // 
         $anak = KaryawanAnak::where($where)->orderBy( 'id_anakke', 'asc' )->get();
         $no_anak = 0;
         $history = KaryawanLog::where($where)->orderBy( 'id', 'desc' )->get();
@@ -550,7 +555,8 @@ class KaryawanController extends Controller
         // $folder = 'matta\karyawan'.$karyawan->nik;
         // return response()->json( [ 'data' => public_path($folder) ], 200 );
         $penilaian = TrxPenilaian::where(['nik_karyawan' => $karyawan->nik])->orderBy( 'id', 'desc' )->get();
-        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'pendidikan', 'no_pendidikan', 'pelatihan', 'no_pelatihan', 'sertifikasi', 'no_sertifikasi', 'anak', 'no_anak', 'history', 'no_history', 'lbl_history', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen', 'id_grade', 'penilaian' ) );
+        // return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'pendidikan', 'no_pendidikan', 'pelatihan', 'no_pelatihan', 'sertifikasi', 'no_sertifikasi', 'anak', 'no_anak', 'history', 'no_history', 'lbl_history', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen', 'id_grade', 'penilaian' ) );
+        return view( 'master.karyawan.profile-tab', compact( 'status', 'karyawan', 'layer', 'kelamin','agama', 'warga', 'kawin', 'perusahaan', 'divisi', 'dep', 'sub_dep', 'kar_status', 'wg', 'is_aktif', 'level', 'jabatan', 'alamat_kantor', 'pendidikan', 'no_pendidikan', 'pelatihan', 'sertifikasi', 'seminar', 'anak', 'no_anak', 'history', 'no_history', 'lbl_history', 'findim_project', 'findim_divisi', 'findim_departemen', 'findim_subdepartemen', 'id_grade', 'penilaian' ) );
     }
 
     /**
@@ -563,7 +569,7 @@ class KaryawanController extends Controller
     public function update(Request $request, $id)
     {
         // dd($request->all(), $id);
-        $karyawan = Karyawan::find( $id );
+        $karyawan = Karyawan::find($id);
         $karyawan->nama = $request->nama;
         $karyawan->tempat_lahir = Str::title($request->tempat_lahir);
         $karyawan->tanggal_lahir = $request->tanggal_lahir;
@@ -705,7 +711,7 @@ class KaryawanController extends Controller
     public function update_profile(Request $request, $id){
         // dd($request->all(), $id);
         $id = (new OpenDataController)->decryptWithKey($id);
-        // $karyawan = Karyawan::find( $id );
+        // $karyawan = Karyawan::find($id);
         if($id != auth()->user()->nik){
             return redirect()->route('error-403');
         }
@@ -810,7 +816,7 @@ class KaryawanController extends Controller
     public function destroy($id)
     {
         //
-        $karyawan = Karyawan::find( $id );
+        $karyawan = Karyawan::find($id);
         try {
             $karyawan->delete();
             return redirect( 'karyawan' )->with( 'msg', 'Data is deleted successfully.' );

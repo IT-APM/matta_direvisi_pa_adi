@@ -76,6 +76,21 @@
                                     <label class="form-label" for="judul">Judul Pelatihan/Sertifikasi</label>
                                     <input name="judul" id="judul" class="form-control" type="text" value="{{ $trx->_trx->judul }}" disabled>
                                 </div>
+                                <div class="col-md-12 pb-2">
+                                    <label class="form-label" for="nama_sertifikat">Nama Sertifikat</label>
+                                    <input name="nama_sertifikat" id="nama_sertifikat" class="form-control" type="text" @if($status == 'edit') value="{{ $_trx->nama_sertifikat }}" @endif required>
+                                    <div class="invalid-feedback txt-danger">Nama Sertifikat is required.</div>
+                                </div>
+                                <div class="col-md-12 pb-2">
+                                    <label class="form-label" for="no_sertifikat">No Sertifikat</label>
+                                    <input name="no_sertifikat" id="no_sertifikat" class="form-control" type="text" @if($status == 'edit') value="{{ $_trx->no_sertifikat }}" @endif required>
+                                    <div class="invalid-feedback txt-danger">No Sertifikat is required.</div>
+                                </div>
+                                <div class="col-md-12 pb-2">
+                                    <label class="form-label" for="penerbit">Penerbit Sertifikat</label>
+                                    <input name="penerbit" id="penerbit" class="form-control" type="text" @if($status == 'edit') value="{{ $_trx->penerbit }}" @endif required>
+                                    <div class="invalid-feedback txt-danger">No Sertifikat is required.</div>
+                                </div>
                                 <div class="col-md-12" id="tanggal-container">
                                     <label class="form-label" for="tanggal_ujian">Tanggal Ujian</label>
                                     {{-- jika insert --}}
@@ -122,7 +137,7 @@
                                 </div>
                                 <div class="col-md-12 pb-2">
                                     <label class="form-label" for="is_lulus">Lulus Sertifikasi</label>
-                                    <select class="form-select col-sm-12" id="is_lulus" name="is_lulus">
+                                    <select class="form-select col-sm-12" id="is_lulus" name="is_lulus" required>
                                         <option selected="" disabled="" value="">Pilih...</option>
                                         <option value="1" @if($status == 'edit') @if("1" == $_trx->is_lulus) selected @endif @endif>Lulus</option>
                                         <option value="0" @if($status == 'edit') @if("0" == $_trx->is_lulus) selected @endif @endif>Tidak Lulus</option>
@@ -133,16 +148,6 @@
                                     <label class="form-label" for="tanggal_berlaku">Tanggal Berlaku</label>
                                     <input type="text" name="tanggal_berlaku[]" id="tanggal_berlaku[]" class="form-control tanggal-berlaku" readonly @if($status == 'edit') @if(!empty($_trx->tanggal_berlaku)) value="{{ json_decode($_trx->tanggal_berlaku, true)[0] }}" @endif @endif>
                                     <div class="invalid-feedback txt-danger">Tanggal Berlaku is required.</div>
-                                </div>
-                                <div class="col-md-12 pb-2">
-                                    <label class="form-label" for="no_sertifikat">No Sertifikat</label>
-                                    <input name="no_sertifikat" id="no_sertifikat" class="form-control" type="text" @if($status == 'edit') value="{{ $_trx->no_sertifikat }}" @endif>
-                                    <div class="invalid-feedback txt-danger">No Sertifikat is required.</div>
-                                </div>
-                                <div class="col-md-12 pb-2">
-                                    <label class="form-label" for="penerbit">Penerbit Sertifikat</label>
-                                    <input name="penerbit" id="penerbit" class="form-control" type="text" @if($status == 'edit') value="{{ $_trx->penerbit }}" @endif>
-                                    <div class="invalid-feedback txt-danger">No Sertifikat is required.</div>
                                 </div>
                             </div>
                         </div>
@@ -179,7 +184,7 @@
                         </div>
                         <!-- finish -->
                     </div>
-                    <div class="col-md-12 ms-4">
+                    <div class="col-md-12 ms-4 mb-2">
                         {{-- <div class="card-body"> --}}
                             <button class="btn btn-success" type="submit">Submit</button> | <a href="{{ $back_url }}" class="btn btn-warning" type="button">Back</a>
                         {{-- </div> --}}
