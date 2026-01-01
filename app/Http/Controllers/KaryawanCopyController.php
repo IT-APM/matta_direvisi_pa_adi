@@ -163,7 +163,7 @@ class KaryawanCopyController extends Controller
         // 5 = PT NASIO KARYA PRATAMA
         // 38 = Operation
         // 101 = Operation
-        // 349 = Operation
+        // 349 = Internal Resource
         // DB::table('mtr_tbl_karyawan')->where('nik', $nik_karyawan_baru)->update(
         //     ['kode_perusahaan' => 5, 'kode_divisi' => 38, 'kode_departemen' => 101, 'kode_sub_departemen' => 349,
         // ]);
