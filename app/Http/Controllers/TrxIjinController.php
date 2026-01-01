@@ -239,8 +239,9 @@ class TrxIjinController extends Controller
      */
     public function create()
     {
-        //
-        $tipe = IjinTipe::whereNotIn('id', [1])->orderBy('tipe', 'asc')->get();
+        // 1=Izin 1 hari
+        // 2=Izin 1/2 hari
+        $tipe = IjinTipe::whereIn('id', [1,2])->orderBy('tipe', 'asc')->get();
         return view('formulir.izin.insert', compact('tipe'));
     }
     
@@ -278,6 +279,7 @@ class TrxIjinController extends Controller
             $layer2 = null;
             $layer2_property = null;
         }
+        // 1=Izin 1 hari
         // 2=Izin 1/2 hari
         // 3=Work From Anywhere (WFA)
         // 4=Work From Home (WFH)
@@ -285,7 +287,8 @@ class TrxIjinController extends Controller
         // 3=Reject by L1
         // 7=Reject by L2
         // 8=Cancel by Requestor
-        $check = TrxIjin::where($where)->whereIn('tipe', [2,3,4])->whereNotIn('status', [3,7,8])->exists();
+        // $check = TrxIjin::where($where)->whereIn('tipe', [2,3,4])->whereNotIn('status', [3,7,8])->exists();
+        $check = TrxIjin::where($where)->whereIn('tipe', [1,2])->whereNotIn('status', [3,7,8])->exists();
         // Izin tidak boleh di tanggal yang sama
         if($check){
             return redirect()->back()->with('error', 'Izin tidak boleh di tanggal yang sama');
@@ -293,61 +296,85 @@ class TrxIjinController extends Controller
         // 
         $where = [ 'nik' => $karyawan, 'is_aktif' => 1, 'wg_id' => 1 ];
         $isreguler = Karyawan::where($where)->exists();
-        $check = Carbon::parse($request->tanggal)->isMonday() || Carbon::parse($request->tanggal)->isFriday();
+        // $check = Carbon::parse($request->tanggal)->isMonday() || Carbon::parse($request->tanggal)->isFriday();
         $isPast = Carbon::createFromFormat('Y-m-d', $request->tanggal)->isPast();
         // dd($isPast, $request->tanggal);
         $where = [ 'tanggal' => $request->tanggal ];
         $isholiday = Holiday::where($where)->exists();
+        // tidak digunakan
         // Untuk karyawan reguler, Izin Work From Anywhere (WFA)/Work From Home (WFH) hanya di Hari Selasa, Rabu dan Kamis dan bukan libur nasional
-        if($isreguler){
-            if($check && in_array($request->tipe, [3,4])){
-                if($isPast){
-                    return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) tidak bisa backdate');
-                }
-                else{
-                    return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) hanya di Hari Selasa, Rabu dan Kamis dan bukan libur nasional');
-                }
-            }else if(Carbon::parse($request->tanggal)->isWeekend() || $isholiday){
-                return redirect()->back()->with('error', 'Izin hanya di hari kerja dan bukan libur nasional');
-            }
-        }
+        // if($isreguler){
+        //     if($check && in_array($request->tipe, [3,4])){
+        //         if($isPast){
+        //             return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) tidak bisa backdate');
+        //         }
+        //         else{
+        //             return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) hanya di Hari Selasa, Rabu dan Kamis dan bukan libur nasional');
+        //         }
+        //     }else if(Carbon::parse($request->tanggal)->isWeekend() || $isholiday){
+        //         return redirect()->back()->with('error', 'Izin hanya di hari kerja dan bukan libur nasional');
+        //     }
+        // }
         // 
-        $startDate = Carbon::parse($request->tanggal)->startOfWeek()->format('Y-m-d');
-        $endDate = Carbon::parse($request->tanggal)->endOfWeek()->format('Y-m-d');
-        $where = [ 'karyawan' => $karyawan ];
-        $check = TrxIjin::where($where)->whereBetween('tanggal', [$startDate, $endDate])->whereNotIn('status', [3,7])->count();
-        // Work From Anywhere (WFA)/Work From Home (WFH) tidak boleh lebih dari 2x dalam 1 minggu pengajuan
-        if($check==2 && in_array($request->tipe, [3,4])){
-            return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) maksimal 2x dalam 1 minggu');
+        if($isPast){
+            return redirect()->back()->with('error', 'Izin tidak bisa backdate');
         }
-        // menuggu penjelasan lebih lanjut
-        $where = [ 'is_aktif' => 1, 'wg_id' => 1, 'kode_sub_departemen' => $dataKaryawan->kode_sub_departemen ];
-        $jumlah = Karyawan::where($where)->count();
+        if($isreguler && (Carbon::parse($request->tanggal)->isWeekend() || $isholiday)){
+            return redirect()->back()->with('error', 'Izin hanya di hari kerja dan bukan libur nasional');
+        }
+        // tidak digunakan
+        // $startDate = Carbon::parse($request->tanggal)->startOfWeek()->format('Y-m-d');
+        // $endDate = Carbon::parse($request->tanggal)->endOfWeek()->format('Y-m-d');
+        // Work From Anywhere (WFA)/Work From Home (WFH) tidak boleh lebih dari 2x dalam 1 minggu pengajuan
+        // if($check==2 && in_array($request->tipe, [3,4])){
+        //     return redirect()->back()->with('error', 'Izin Work From Anywhere (WFA)/Work From Home (WFH) maksimal 2x dalam 1 minggu');
+        // }
+        // Maksimal 1 bulan => 2x
+        $startDate = Carbon::parse($request->tanggal)->startOfMonth()->format('Y-m-d');
+        $endDate = Carbon::parse($request->tanggal)->endOfMonth()->format('Y-m-d');
+        $where = [ 'karyawan' => $karyawan ];
+        $check = TrxIjin::where($where)->whereBetween('tanggal', [$startDate, $endDate])->whereNotIn('status', [3,7,8])->count();
+        if($check==2 && in_array($request->tipe, [1,2])){
+            return redirect()->back()->with('error', 'Izin maksimal 2x dalam 1 bulan');
+        }
+        // Maksimal 1 tahun => 12x
+        $startDate = Carbon::parse($request->tanggal)->startOfYear()->format('Y-m-d');
+        $endDate = Carbon::parse($request->tanggal)->endOfYear()->format('Y-m-d');
+        $where = [ 'karyawan' => $karyawan ];
+        $check = TrxIjin::where($where)->whereBetween('tanggal', [$startDate, $endDate])->whereNotIn('status', [3,7,8])->count();
+        if($check==12 && in_array($request->tipe, [1,2])){
+            return redirect()->back()->with('error', 'Izin maksimal 12x dalam 1 tahun');
+        }
+        // menunggu penjelasan lebih lanjut
+        // $where = [ 'is_aktif' => 1, 'wg_id' => 1, 'kode_sub_departemen' => $dataKaryawan->kode_sub_departemen ];
+        // $jumlah = Karyawan::where($where)->count();
         // dd($jumlah);
         // 2=Izin 1/2 hari
-        $where = [ 'karyawan' => $karyawan, 'tanggal' => $request->tanggal ];
+        // $where = [ 'karyawan' => $karyawan, 'tanggal' => $request->tanggal ];
         // 3=Reject by L1
         // 7=Reject by L2
-        $check = TrxIjin::where($where)->whereIn('tipe', [2])->whereNotIn('status', [3,7])->orderBy('id', 'desc')->first();
-        if(!empty($check)){
-            $startA = Carbon::parse($check->tanggal.' '.$check->jam_awal);
-            $endA = Carbon::parse($check->tanggal.' '.$check->jam_akhir);
-            $startB = Carbon::parse($request->tanggal.' '.$request->jam_awal);
-            $endB = Carbon::parse($request->tanggal.' '.$request->jam_akhir);
-            // Izin 1/2 hari tidak boleh waktunya beririsan
-            if($this->isOverlapping($startA, $endA, $startB, $endB) && in_array($request->tipe, [2])){
-                return redirect()->back()->with('error', 'Izin 1/2 hari tidak boleh beririsan dengan pengajuan izin sebelumnya');
-            }
-        }
-        // 2=Izin 1/2 hari
-        $where = [ 'karyawan' => $karyawan, 'tanggal' => $request->tanggal ];
+        // 8=Cancel by Requestor
+        // $check = TrxIjin::where($where)->whereIn('tipe', [2])->whereNotIn('status', [3,7,8])->orderBy('id', 'desc')->first();
+        // if(!empty($check)){
+        //     $startA = Carbon::parse($check->tanggal.' '.$check->jam_awal);
+        //     $endA = Carbon::parse($check->tanggal.' '.$check->jam_akhir);
+        //     $startB = Carbon::parse($request->tanggal.' '.$request->jam_awal);
+        //     $endB = Carbon::parse($request->tanggal.' '.$request->jam_akhir);
+        //     // Izin 1/2 hari tidak boleh waktunya beririsan
+        //     if($this->isOverlapping($startA, $endA, $startB, $endB) && in_array($request->tipe, [2])){
+        //         return redirect()->back()->with('error', 'Izin 1/2 hari tidak boleh beririsan dengan pengajuan izin sebelumnya');
+        //     }
+        // }
+        // // 2=Izin 1/2 hari
+        // $where = [ 'karyawan' => $karyawan, 'tanggal' => $request->tanggal ];
         // 3=Reject by L1
         // 7=Reject by L2
-        $check = TrxIjin::where($where)->whereIn('tipe', [2])->whereNotIn('status', [3,7])->count();
-        // Izin 1/2 hari tidak boleh lebih 2x sehari
-        if($check == 2 && in_array($request->tipe, [2])){
-            return redirect()->back()->with('error', 'Izin 1/2 hari tidak boleh melebihi 2x');
-        }
+        // 8=Cancel by Requestor
+        // $check = TrxIjin::where($where)->whereIn('tipe', [2])->whereNotIn('status', [3,7,8])->count();
+        // // Izin 1/2 hari tidak boleh lebih 2x sehari
+        // if($check == 2 && in_array($request->tipe, [2])){
+        //     return redirect()->back()->with('error', 'Izin 1/2 hari tidak boleh melebihi 2x');
+        // }
         // 1 = Submit by Requestor
         $status = 1;
         // 
