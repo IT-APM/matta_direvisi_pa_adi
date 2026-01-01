@@ -369,13 +369,21 @@ class TrxCutiController extends Controller
         // if(Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->between(Carbon::now()->year.'-01-01', Carbon::now()->year.'-01-31')){
         // jika menggunakan ini maka tanggal 31 Januari termasuk karena waktunya adalah 00
         // contoh: date: 2025-01-31 00:00:00.0 Asia/Jakarta (+07:00)
-        if(Carbon::parse($tanggal_mulai)->between(Carbon::now()->year.'-01-01', Carbon::now()->year.'-01-31')){
+        // if(Carbon::parse($tanggal_mulai)->between(Carbon::now()->year.'-01-01', Carbon::now()->year.'-01-31')){
+        if(Carbon::parse($tanggal_mulai)->month == 1){
             // gunakan sisa cuti tahun lalu
             $periode_cuti = Carbon::createFromFormat('Y-m-d', $tanggal_mulai)->subYear()->year;
             $where = ['periode_cuti' => $periode_cuti, 'nik_karyawan' => $nik_karyawan, 'tipe_cuti' => 0];
             $jumlah = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->sum('jumlah_hari');
-            $where = ['is_cuti' => 1];
-            $cuti_bersama = Holiday::whereYear('tanggal', $periode_cuti)->where($where)->count();
+            // cek apakah karyawan reguler atau tidak, jika iya maka dihitung cuti bersama
+            $where = [ 'nik' => $nik_karyawan, 'is_aktif' => 1, 'wg_id' => 1 ];
+            $check = Karyawan::where($where)->exists();
+            $cuti_bersama = 0;
+            if($check){
+                $where = ['is_cuti' => 1];
+                $cuti_bersama = Holiday::whereYear('tanggal', $periode_cuti)->where($where)->count();
+            }
+            // 
             $jumlah += $cuti_bersama;
             if ($jumlah + $jumlah_hari < 13) {
                 $cek = true;
