@@ -58,6 +58,7 @@
                         <div class="col-md-4">
                             <input name="template" id="template" class="form-control" type="file" required="">
                             <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                            <br/><a href="{{ asset('assets/template/Template Data Master Plafon Kesehatan.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
                         </div>
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
