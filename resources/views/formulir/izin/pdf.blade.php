@@ -55,7 +55,7 @@
                         <td>Tanggal</td>
                         <td>: {{ App\Http\Controllers\TrxIjinController::getTanggalIndonesia($trx->tanggal) }}</td>
                     </tr>
-                    @if($trx->tipe == 1 || $trx->tipe == 2)
+                    @if($trx->tipe == 2)
                     <tr>
                         <td>Jam Mulai</td>
                         <td>: {{ $trx->jam_awal }}</td>
