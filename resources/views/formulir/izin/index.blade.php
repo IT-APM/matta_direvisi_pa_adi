@@ -128,7 +128,7 @@
                                     <td>@if(!empty($data->layer2)){{ $layer2_property['nama'] }}@endif</td>
                                     <td>
                                         {{ $data->_tipe->tipe }}
-                                        @if($data->tipe == 1 || $data->tipe == 2)
+                                        @if($data->tipe == 2)
                                         <br/>Jam {{ $data->jam_awal }} s/d {{ $data->jam_akhir }}
                                         @endif
                                     </td>
