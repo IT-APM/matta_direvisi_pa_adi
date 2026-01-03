@@ -76,11 +76,11 @@
                                     <tr>
                                        <td>{{ ++$no }}</td>
                                        <td>{{ \Carbon\Carbon::parse($data['trx_m']->tanggal_input) ->format('d-m-Y') }}</td>
-                                       <td>{{ $karyawan_property['nama'] }} / {{ $karyawan_property['nik'] }}</td>
-                                       <td>{{ $karyawan_property['perusahaan'] }}</td>
-                                       <td>{{ $karyawan_property['divisi'] }}</td>
-                                       <td>{{ $karyawan_property['dep'] }}</td>
-                                       <td>{{ $karyawan_property['sub_dep'] }}</td>
+                                       <td>@if(!empty($karyawan_property)){{ $karyawan_property['nama'] }} / {{ $karyawan_property['nik'] }}@endif</td>
+                                       <td>@if(!empty($karyawan_property)){{ $karyawan_property['perusahaan'] }}@endif</td>
+                                       <td>@if(!empty($karyawan_property)){{ $karyawan_property['divisi'] }}@endif</td>
+                                       <td>@if(!empty($karyawan_property)){{ $karyawan_property['dep'] }}@endif</td>
+                                       <td>@if(!empty($karyawan_property)){{ $karyawan_property['sub_dep'] }}@endif</td>
                                        <td>
                                             @foreach ($data['trx_d'] as $_data)
                                             @if($_data->ring_ke == 'ring1')
