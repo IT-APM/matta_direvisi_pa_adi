@@ -75,7 +75,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mt-2">
                                 <div class="col-sm-12">
                                     <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
                                 </div>
