@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\BpdCoa;
 
 class MtrDataBpdCoaController extends Controller
@@ -14,7 +15,9 @@ class MtrDataBpdCoaController extends Controller
      */
     public function index()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $trx = BpdCoa::orderBy( 'account', 'asc' )->get();
         return view( 'master.bpd.coa.index', compact( 'trx', 'no' ) );
@@ -27,7 +30,9 @@ class MtrDataBpdCoaController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'create';
         return view( 'master.bpd.coa.upsert', compact( 'status' ) );
     }
@@ -70,7 +75,9 @@ class MtrDataBpdCoaController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $trx = BpdCoa::find( $id );
         return view( 'master.bpd.coa.upsert', compact( 'trx', 'status' ) );

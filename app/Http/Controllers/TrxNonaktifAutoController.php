@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Karyawan;
 use App\Models\TrxNonaktifAuto;
 use App\Models\NonaktifStatus;
@@ -30,8 +31,13 @@ class TrxNonaktifAutoController extends Controller
             }
             return $collection;
         }
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no = 0;
         $trx = TrxNonaktifAuto::orderBy( 'end_date', 'asc' )->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxNonaktifAuto::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy( 'end_date', 'asc' )->get();
+        }
         // filter parameter
         $nama = '';
         $atasan = '';
@@ -61,6 +67,9 @@ class TrxNonaktifAutoController extends Controller
             $_atasan = Karyawan::select('nik')->where('nama','LIKE','%'.$atasan.'%')->get();
             $nik_karyawan = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get()->toArray();
             $trx = TrxNonaktifAuto::whereIn('nik_karyawan', $nik_karyawan)->whereIn('nik_karyawan', $_nama)->whereIn('nik_atasan', $_atasan)->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxNonaktifAuto::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $nik_karyawan)->whereIn('nik_karyawan', $_nama)->whereIn('nik_atasan', $_atasan)->orderBy('id', 'desc')->get();
+            }
             foreach ($trx as $_trx) {
                 $where = ['nik_karyawan' => $_trx->nik_karyawan];
                 $check = TrxPenilaian::where($where)->whereIn('id_status', [4,8])->whereIn('is_perpanjang', $arr_perpanjangan)->get();
@@ -83,9 +92,13 @@ class TrxNonaktifAutoController extends Controller
      */
     public function create()
     {
-        //
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereIn('kode_perusahaan', [1,2,6])->whereIn('kode_status', [2])->orderBy('nama', 'asc')->get();
+        if(Gate::allows('hc_nkp')){
+            $karyawan = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->orderBy('nama', 'asc')->get();
+        }
         return view( 'formulir.nonaktif.auto.insert', compact( 'karyawan' ) );
     }
 

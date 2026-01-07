@@ -54,7 +54,10 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                     <?php endif; ?>
                     <div class="row mb-2">
                         <div class="col-md-12">
-                            <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?> | <a href="<?php echo e(route('payroll.master',[6, 'tipe'=>'trxpayroll'])); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a> | <button class="btn btn-info" type="button" data-bs-toggle="modal" data-original-title="test" data-bs-target="#exampleModal"><i class="fa fa-calendar"></i> Paid Date</button> <?php endif; ?>
+                            <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                            <?php if(!Gate::allows('hc_nkp')): ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?> | <a href="<?php echo e(route('payroll.master',[6, 'tipe'=>'trxpayroll'])); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a> | <button class="btn btn-info" type="button" data-bs-toggle="modal" data-original-title="test" data-bs-target="#exampleModal"><i class="fa fa-calendar"></i> Paid Date</button> <?php endif; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="collapse mb-2" id="collapse_filter">
@@ -111,6 +114,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                             </div>
                         </form>
                     </div>
+                    <?php if(!Gate::allows('hc_nkp')): ?>
                     <h4>Alita</h4>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
@@ -888,9 +892,29 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         </div>
                         
                     </div>
-                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                     <hr class="mt-4 mb-2" />
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('payroll')): ?>
                     <h4>Out Source</h4>
+                    <?php if(Gate::allows('hc_nkp')): ?>
+                    <div class="col-sm-6">
+                        <h6>Upload Payroll</h6>
+                        <form action="<?php echo e(route('payroll.upload_payroll')); ?>" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" id="jenis" name="jenis" value="trx">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <input name="template" id="template" class="form-control" type="file" required="">
+                                <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                <br/><a href="<?php echo e(asset('assets/template/template_import_payroll_outsource_v1.xlsx')); ?>" target="_blank"><i class="icon-file"></i>&nbsp;Download template Out Source</a>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                    <?php endif; ?>
                     <p class="mb-0 m-t-10">
                         <div class="table-responsive">
                             <table class="display nowrap" id="_datatable6">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 // 
 use App\Models\Karyawan;
@@ -89,12 +90,17 @@ class TrxCutiController extends Controller
         //     $this->sendEmail($mailData);
         // }
         // die;
-        // 
-        $where = ['is_aktif' => 1];
-        $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         // halaman index kali pertama dibuka
         $no = 0;
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
+        $where = ['is_aktif' => 1];
+        $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $trx = TrxCuti::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $karyawan = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
+            $trx = TrxCuti::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         // foreach ($trx as $value) {
         //     $trxM = TrxCuti::find( $value->id );
         //     $trxM->karyawan_property = $this->getNikProperty($value->nik_karyawan);
@@ -199,6 +205,9 @@ class TrxCutiController extends Controller
                 $arr_tipe_cuti = array();
             }
             $trx = TrxCuti::where('nik_karyawan','LIKE','%'.$_nik_karyawan.'%')->where('nik_atasan','LIKE','%'.$_nik_atasan.'%')->whereIn('status_cuti', $arr_status_cuti)->whereIn('tipe_cuti', $arr_tipe_cuti)->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxCuti::whereIn('nik_karyawan',$arr_nik_nkp)->where('nik_karyawan','LIKE','%'.$_nik_karyawan.'%')->where('nik_atasan','LIKE','%'.$_nik_atasan.'%')->whereIn('status_cuti', $arr_status_cuti)->whereIn('tipe_cuti', $arr_tipe_cuti)->orderBy('id', 'desc')->get();
+            }
             if(auth()->user()->userrole == 'nhc'){
                 // $layer1 = auth()->user()->nik;
                 // $where = ['layer1' => $layer1];

@@ -127,6 +127,11 @@
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
                             </div>
                             <div class="col-md-6 mt-2">
+                                @php $no=46; @endphp
+                                <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
+                                <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">
+                            </div>
+                            <div class="col-md-6 mt-2">
                                 @php $no=25; @endphp
                                 <label class="form-label" for="_{{ $no }}">{{ $utilitas[$no-1]->keterangan }}</label>
                                 <input name="_{{ $no }}" id="_{{ $no }}" class="form-control" type="text" required="" value="{{ $utilitas[$no-1]->informasi }}">

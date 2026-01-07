@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -263,8 +264,13 @@ class TrxRecruitmentController extends Controller
 
         // }
         // // end
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $id_trx = [];
         $trx = TrxKebutuhanMaster::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxKebutuhanMaster::whereIn('pengaju',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         foreach($trx as $data){
             // 9=Approved by L2 to HC
             $where = ['id_trx' => $data->id, 'id_status' => 9];
@@ -591,10 +597,16 @@ class TrxRecruitmentController extends Controller
 
     public function applicant_list(Request $request, $id)
     {
-        // dd($id);
-        $trx = TrxRecruitmentIdentitas::orderBy('updated_at', 'desc')->get();
-        $trx1 = TrxRecruitmentInterview::orderBy('updated_at', 'desc')->get();
-        $trx2 = TrxRecruitmentNegosiasiLog::orderBy('updated_at', 'desc')->get();
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
+        $id_kebutuhan = TrxKebutuhanMaster::pluck('id')->toArray();
+        if(Gate::allows('hc_nkp')){
+            $id_kebutuhan = TrxKebutuhanMaster::whereIn('pengaju',$arr_nik_nkp)->pluck('id')->toArray();
+        }
+        $trx = TrxRecruitmentIdentitas::whereIn('id_kebutuhan',$id_kebutuhan)->orderBy('updated_at', 'desc')->get();
+        $id_identitas = $trx->pluck('id')->toArray();
+        $trx1 = TrxRecruitmentInterview::whereIn('id_identitas',$id_identitas)->orderBy('updated_at', 'desc')->get();
+        $trx2 = TrxRecruitmentNegosiasiLog::whereIn('id_identitas',$id_identitas)->orderBy('updated_at', 'desc')->get();
         $nama = TrxRecruitmentIdentitas::distinct()->orderBy('nama', 'asc')->get(['nama']);
         $arr_nama = array();
         $id_kebutuhan = array();
@@ -637,6 +649,9 @@ class TrxRecruitmentController extends Controller
                 $arr_id_status = array();
             }
             $trx0 = TrxKebutuhanMaster::whereIn('id_pekerjaan', $arr_id_pekerjaan)->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx0 = TrxKebutuhanMaster::whereIn('pengaju',$arr_nik_nkp)->whereIn('id_pekerjaan', $arr_id_pekerjaan)->orderBy('id', 'desc')->get();
+            }
             $id_kebutuhan = array();
             foreach($trx0 as $data){
                 array_push($id_kebutuhan, $data->id);

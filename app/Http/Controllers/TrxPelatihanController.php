@@ -37,91 +37,92 @@ use Illuminate\Support\Facades\Gate;
 
 class TrxPelatihanController extends Controller
 {
-    public function __construct(Gate $gate)
+    // public function __construct(Gate $gate)
+    public function __construct()
     {
         $this->middleware('can:spv', ['except' => ['show','update']]);
     }
 
     public function downloadDriveFile(Request $request)
     {
-        $driveUrl = 'https://drive.google.com/file/d/1bdhv9OAr6jEWsClt5Me7mqeJ1K3CnNru/view?usp=sharing';
+        // $driveUrl = 'https://drive.google.com/file/d/1bdhv9OAr6jEWsClt5Me7mqeJ1K3CnNru/view?usp=sharing';
 
-        if (!preg_match('/\/d\/(.*?)\//', $driveUrl, $matches)) {
-            return response('Invalid Google Drive URL.', 400);
-        }
+        // if (!preg_match('/\/d\/(.*?)\//', $driveUrl, $matches)) {
+        //     return response('Invalid Google Drive URL.', 400);
+        // }
 
-        $fileId = $matches[1];
-        $downloadUrl = "https://drive.google.com/uc?export=download&id={$fileId}";
-        $filename = $fileId . '.pdf';
-        $savePath = public_path("assets/pelatihan/{$filename}");
+        // $fileId = $matches[1];
+        // $downloadUrl = "https://drive.google.com/uc?export=download&id={$fileId}";
+        // $filename = $fileId . '.pdf';
+        // $savePath = public_path("assets/pelatihan/{$filename}");
 
-        // Download file pakai cURL
-        $fp = fopen($savePath, 'w+');
-        $ch = curl_init($downloadUrl);
+        // // Download file pakai cURL
+        // $fp = fopen($savePath, 'w+');
+        // $ch = curl_init($downloadUrl);
 
-        curl_setopt($ch, CURLOPT_FILE, $fp);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_exec($ch);
+        // curl_setopt($ch, CURLOPT_FILE, $fp);
+        // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // curl_exec($ch);
 
-        if (curl_errno($ch)) {
-            fclose($fp);
-            unlink($savePath);
-            return response('Gagal download file: ' . curl_error($ch), 500);
-        }
+        // if (curl_errno($ch)) {
+        //     fclose($fp);
+        //     unlink($savePath);
+        //     return response('Gagal download file: ' . curl_error($ch), 500);
+        // }
 
-        curl_close($ch);
-        fclose($fp);
+        // curl_close($ch);
+        // fclose($fp);
 
-        // Setelah disimpan, kirim file ke user
-        return response()->download($savePath);
+        // // Setelah disimpan, kirim file ke user
+        // return response()->download($savePath);
     }
 
     public function autoSave(Request $request)
     {
-        // Contoh file Google Drive
-        $fileId = '1bdhv9OAr6jEWsClt5Me7mqeJ1K3CnNru';
-        $downloadUrl = "https://drive.google.com/uc?export=download&id={$fileId}";
+        // // Contoh file Google Drive
+        // $fileId = '1bdhv9OAr6jEWsClt5Me7mqeJ1K3CnNru';
+        // $downloadUrl = "https://drive.google.com/uc?export=download&id={$fileId}";
 
-        // Lokasi penyimpanan
-        $fileName = $fileId . '.pdf';
-        $savePath = public_path("assets/pelatihan/{$fileName}");
+        // // Lokasi penyimpanan
+        // $fileName = $fileId . '.pdf';
+        // $savePath = public_path("assets/pelatihan/{$fileName}");
 
-        // Buat folder jika belum ada
-        // if (!file_exists(dirname($savePath))) {
-        //     mkdir(dirname($savePath), 0755, true);
+        // // Buat folder jika belum ada
+        // // if (!file_exists(dirname($savePath))) {
+        // //     mkdir(dirname($savePath), 0755, true);
+        // // }
+
+        // // Download & simpan menggunakan cURL
+        // $fp = fopen($savePath, 'w+');
+        // $ch = curl_init($downloadUrl);
+
+        // curl_setopt($ch, CURLOPT_FILE, $fp);
+        // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+        // curl_exec($ch);
+
+        // // Error handling
+        // if (curl_errno($ch)) {
+        //     fclose($fp);
+        //     unlink($savePath);
+        //     return response()->json(['error' => curl_error($ch)], 500);
         // }
 
-        // Download & simpan menggunakan cURL
-        $fp = fopen($savePath, 'w+');
-        $ch = curl_init($downloadUrl);
+        // curl_close($ch);
+        // fclose($fp);
 
-        curl_setopt($ch, CURLOPT_FILE, $fp);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // // Optional: Auto kirim file ke user
+        // // return response()->download($savePath);
 
-        curl_exec($ch);
-
-        // Error handling
-        if (curl_errno($ch)) {
-            fclose($fp);
-            unlink($savePath);
-            return response()->json(['error' => curl_error($ch)], 500);
-        }
-
-        curl_close($ch);
-        fclose($fp);
-
-        // Optional: Auto kirim file ke user
-        // return response()->download($savePath);
-
-        // Atau hanya info sukses
-        return response()->json([
-            'message' => 'File berhasil disimpan.',
-            'saved_to' => "assets/pelatihan/{$fileName}"
-        ]);
+        // // Atau hanya info sukses
+        // return response()->json([
+        //     'message' => 'File berhasil disimpan.',
+        //     'saved_to' => "assets/pelatihan/{$fileName}"
+        // ]);
     }
 
     /**
@@ -224,7 +225,12 @@ class TrxPelatihanController extends Controller
         // echo($this->downloadDriveFile($request));
         // dd($trx);
         $no = 0;
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $trx = TrxPelatihan::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxPelatihan::whereIn('pengaju',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         // foreach ($trx as $value) {
         //     $trxM = TrxPelatihan::find( $value->id );
         //     $trxM->pengaju_property = $this->getNikProperty($value->pengaju);
@@ -300,6 +306,9 @@ class TrxPelatihanController extends Controller
             //     $arr_atasan_pengaju = array();
             // }
             $trx = TrxPelatihan::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('pengaju', $arr_pengaju)->whereIn('atasan_pengaju', $arr_atasan_pengaju)->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxPelatihan::whereIn('pengaju',$arr_nik_nkp)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('pengaju', $arr_pengaju)->whereIn('atasan_pengaju', $arr_atasan_pengaju)->orderBy('id', 'desc')->get();
+            }
             if(auth()->user()->userrole == 'nhc'){
 				$where = ['pengaju' => auth()->user()->nik];
                 $trx = TrxPelatihan::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('pengaju', $arr_pengaju)->whereIn('atasan_pengaju', $arr_atasan_pengaju)->where($where)->orderBy('id', 'desc')->get();
@@ -772,12 +781,17 @@ class TrxPelatihanController extends Controller
                 return view('formulir.pelatihan.doc_index', compact('trx', '_trx', 'no', 'arrJenis', 'back_url', 'int_ext'));
                 break;
             case 'list_certificate':
+                $arr_nik_nkp = new Karyawan();
+                $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
                 if (!auth()->check()) {
                     session(['url.intended' => url()->full()]);
                     return redirect()->route('login-one');
                 }
-                $trx = TrxPelatihanSertifikat::orderBy('nama', 'asc')->get();
                 $no = 0;
+                $trx = TrxPelatihanSertifikat::orderBy('nama', 'asc')->get();
+                if(Gate::allows('hc_nkp')){
+                    $trx = TrxPelatihanSertifikat::whereIn('nik',$arr_nik_nkp)->orderBy('nama', 'asc')->get();
+                }
                 // start cleansing data
                 // $return_data = [];
                 // $bulan_en = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

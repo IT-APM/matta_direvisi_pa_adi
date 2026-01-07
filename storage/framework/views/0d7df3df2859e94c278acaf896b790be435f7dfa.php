@@ -55,7 +55,7 @@
                         <td>Tanggal</td>
                         <td>: <?php echo e(App\Http\Controllers\TrxIjinController::getTanggalIndonesia($trx->tanggal)); ?></td>
                     </tr>
-                    <?php if($trx->tipe == 1 || $trx->tipe == 2): ?>
+                    <?php if($trx->tipe == 2): ?>
                     <tr>
                         <td>Jam Mulai</td>
                         <td>: <?php echo e($trx->jam_awal); ?></td>

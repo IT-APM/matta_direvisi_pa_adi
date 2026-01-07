@@ -126,6 +126,11 @@
                                 <input name="_<?php echo e($no); ?>" id="_<?php echo e($no); ?>" class="form-control" type="text" required="" value="<?php echo e($utilitas[$no-1]->informasi); ?>">
                             </div>
                             <div class="col-md-6 mt-2">
+                                <?php $no=46; ?>
+                                <label class="form-label" for="_<?php echo e($no); ?>"><?php echo e($utilitas[$no-1]->keterangan); ?></label>
+                                <input name="_<?php echo e($no); ?>" id="_<?php echo e($no); ?>" class="form-control" type="text" required="" value="<?php echo e($utilitas[$no-1]->informasi); ?>">
+                            </div>
+                            <div class="col-md-6 mt-2">
                                 <?php $no=25; ?>
                                 <label class="form-label" for="_<?php echo e($no); ?>"><?php echo e($utilitas[$no-1]->keterangan); ?></label>
                                 <input name="_<?php echo e($no); ?>" id="_<?php echo e($no); ?>" class="form-control" type="text" required="" value="<?php echo e($utilitas[$no-1]->informasi); ?>">

@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use App\Models\WorkingDay;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class RecapAttendanceController extends Controller
 {
@@ -49,6 +50,8 @@ class RecapAttendanceController extends Controller
         $date_to = '';
         // start filter
         if ($request->filter == true) {
+            $arr_nik_nkp = new Karyawan();
+            $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
             $date_from = $request->date_from;
             $date_to = $request->date_to;
             $_perusahaan = $request->input('kode_perusahaan', []);
@@ -77,6 +80,9 @@ class RecapAttendanceController extends Controller
             $departemen = Departemen::whereIn('kode_divisi', $arr_divisi)->get();
             $sub_departemen = SubDepartemen::whereIn('kode_departemen', $arr_departemen)->get();
             $karyawan = Karyawan::whereIn('kode_sub_departemen', $arr_sub_departemen)->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get();
+            if(Gate::allows('hc_nkp')){
+                $karyawan = Karyawan::whereIn('nik',$arr_nik_nkp)->whereIn('kode_sub_departemen', $arr_sub_departemen)->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get();
+            }
             if(auth()->user()->userrole == 'nhc'){
                 // hanya karyawan saja
                 // $where = ['nik' => auth()->user()->nik];

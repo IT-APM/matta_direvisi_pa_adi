@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 // 
 use App\Models\Propinsi;
 use App\Models\PropinsiKota;
@@ -50,7 +51,9 @@ class MtrDataBpdProjectAdminController extends Controller
      */
     public function index()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $trx = BpdProyek::orderBy( 'project_id', 'asc' )->get();
         return view( 'master.bpd.project_admin.index', compact( 'trx', 'no' ) );
@@ -63,7 +66,9 @@ class MtrDataBpdProjectAdminController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'create';
         return view( 'master.bpd.project_admin.upsert', compact( 'status' ) );
     }
@@ -100,10 +105,13 @@ class MtrDataBpdProjectAdminController extends Controller
      */
     public function show($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
+        $id = Crypt::decrypt($id);
         $no = 0;
         $status = 'edit';
-        $project = BpdProyek::find( $id );
+        $project = BpdProyek::find($id);
         $where = ['id_proyek' => $id];
         $trx = BpdProyekAdmin::where($where)->orderBy( 'id', 'asc' )->get();
         // dd($trx);
@@ -118,9 +126,12 @@ class MtrDataBpdProjectAdminController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
+        $id = Crypt::decrypt($id);
         $status = 'edit';
-        $trx = BpdProyek::find( $id );
+        $trx = BpdProyek::find($id);
         return view( 'master.bpd.project_admin.upsert', compact( 'trx', 'status' ) );
     }
 
@@ -134,7 +145,7 @@ class MtrDataBpdProjectAdminController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $trx = BpdProyek::find( $id );
+        $trx = BpdProyek::find($id);
         $trx->project_id = $request->project_id;
         $trx->name = $request->name;
         $trx->divisi = $request->divisi;
@@ -157,8 +168,8 @@ class MtrDataBpdProjectAdminController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $trx = BpdProyek::find( $id );
+        $id = Crypt::decrypt($id);
+        $trx = BpdProyek::find($id);
         $trx->delete();
         return redirect( 'mtrdataprojectadmin' )->with( 'msg', 'Data is deleted successfully.' );
     }

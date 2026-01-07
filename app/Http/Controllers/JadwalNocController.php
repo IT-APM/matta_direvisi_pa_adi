@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\WorkingDay;
 use App\Models\Karyawan;
 use App\Models\JadwalNocShift;
@@ -19,7 +20,9 @@ class JadwalNocController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $tahun = Carbon::parse(now())->format('Y');
         // 10 = NOC Group
@@ -62,6 +65,9 @@ class JadwalNocController extends Controller
      */
     public function create()
     {
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         // 10 = NOC Group
         $status = 'create';
         $where = ['is_aktif' => 1, 'wg_id'=>10];
@@ -97,7 +103,9 @@ class JadwalNocController extends Controller
      */
     public function show($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         // 10 = NOC Group
         $trx = JadwalNoc::orderBy( 'id_shift', 'asc' )->get();
@@ -112,7 +120,9 @@ class JadwalNocController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $trx = JadwalNoc::find( $id );
         $where = ['is_aktif' => 1, 'wg_id'=>10];

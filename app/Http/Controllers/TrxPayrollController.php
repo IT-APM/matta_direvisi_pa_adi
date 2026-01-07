@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\MattaRebornMail;
@@ -195,8 +196,14 @@ class TrxPayrollController extends Controller
 
     public function send_email(Request $request, $id)
     {
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $trx_current = TrxPayrollEmail::orderBy('id', 'desc')->get();
         $trx_history = TrxPayrollEmailLog::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx_current = TrxPayrollEmail::whereIn('nik',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx_history = TrxPayrollEmailLog::whereIn('nik',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         return view('payroll.send_email', compact('trx_current', 'trx_history'));
     }
     
@@ -260,9 +267,14 @@ class TrxPayrollController extends Controller
     
     public function get_employee_gap($bulan, $tahun, $periode)
     {
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $submonth = Carbon::createFromFormat('Y-m-d', $tahun."-".$bulan."-01")->subMonth();
         $where = ['bulan'=>$bulan, 'tahun'=>$tahun];
         $payroll = TrxPayroll::where(['status'=>'apm'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $payroll = TrxPayroll::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        }
         // cek jika jumlah gapok + id_addsub IN (1,2,3,4,5) = 0 maka dikeluarkan
         $reject_nik = array();
         foreach($payroll as $data){
@@ -280,6 +292,9 @@ class TrxPayrollController extends Controller
         }
         if($periode == 'past'){
             $payroll = TrxPayrollLog::where(['status'=>'apm'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $payroll = TrxPayrollLog::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+            }
             // cek jika jumlah gapok + id_addsub IN (1,2,3,4,5) = 0 maka dikeluarkan
             $reject_nik = array();
             foreach($payroll as $data){
@@ -298,6 +313,9 @@ class TrxPayrollController extends Controller
         }
         $where = ['bulan'=>$submonth->month, 'tahun'=>$submonth->year];
         $payroll_h = TrxPayrollLog::where(['status'=>'apm'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $payroll_h = TrxPayrollLog::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        }
         // cek jika jumlah gapok + id_addsub IN (1,2,3,4,5) = 0 maka dikeluarkan
         $reject_nik = array();
         foreach($payroll_h as $data){
@@ -328,11 +346,20 @@ class TrxPayrollController extends Controller
         // 
         $where = ['bulan'=>$bulan, 'tahun'=>$tahun];
         $payroll = TrxPayroll::where(['status'=>'apm'])->where($where)->whereIn('nik', $diff_after)->orderByRaw('tahun desc, bulan desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $payroll = TrxPayroll::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->where($where)->whereIn('nik', $diff_after)->orderByRaw('tahun desc, bulan desc')->get();
+        }
         if($periode == 'past'){
             $payroll = TrxPayrollLog::where(['status'=>'apm'])->where($where)->whereIn('nik', $diff_after)->orderByRaw('tahun desc, bulan desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $payroll = TrxPayrollLog::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->where($where)->whereIn('nik', $diff_after)->orderByRaw('tahun desc, bulan desc')->get();
+            }
         }
         $where = ['bulan'=>$submonth->month, 'tahun'=>$submonth->year];
         $payroll_h = TrxPayrollLog::where(['status'=>'apm'])->where($where)->whereIn('nik', $diff_before)->orderByRaw('tahun desc, bulan desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $payroll_h = TrxPayrollLog::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->where($where)->whereIn('nik', $diff_before)->orderByRaw('tahun desc, bulan desc')->get();
+        }
         // 
         return ['bulan'=>$bulan, 'tahun'=>$tahun, 'after'=>$payroll, 'before'=>$payroll_h];
     }
@@ -807,7 +834,12 @@ class TrxPayrollController extends Controller
     {
         // dd($id, $request->all());
         // $payroll = TrxPayrollLog::where(['status'=>'apm'])->orderByRaw('tahun desc, bulan desc')->get();
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $payroll = TrxPayrollLog::orderByRaw('tahun desc, bulan desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $payroll = TrxPayrollLog::whereIn('nik',$arr_nik_nkp)->orderByRaw('tahun desc, bulan desc')->get();
+        }
         if(in_array(auth()->user()->nik, explode(',', MtrUtility::find(36)->informasi))){
             $payroll = TrxPayrollLog::where(['status'=>'apm'])->orderByRaw('tahun desc, bulan desc')->get();
         }
@@ -865,8 +897,11 @@ class TrxPayrollController extends Controller
         // default only one month before and year displayed
         $where = ['bulan'=>Carbon::now()->subMonth()->month, 'tahun'=>Carbon::now()->subMonth()->year];
         $payroll = TrxPayrollLog::where(['status'=>'apm'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
-        // 
         $payroll_out = TrxPayrollLog::where(['status'=>'osc'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $payroll = TrxPayrollLog::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+            $payroll_out = TrxPayrollLog::whereIn('nik',$arr_nik_nkp)->where(['status'=>'osc'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        }
         // start filter
         if($request->filter == true){
             $bulan_tahun_dari = $request->bulan_tahun_dari;
@@ -901,6 +936,27 @@ class TrxPayrollController extends Controller
             ->whereIn('level', $_arr_level)
             ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
             ->orderByRaw('tahun desc, bulan desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $payroll = TrxPayrollLog::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->whereIn('nik', $_arr_nik)
+                // ->whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
+                // ->whereIn('findim_departemen', $_arr_findim_departemen)
+                // ->whereIn('findim_divisi', $_arr_findim_divisi)
+                // ->whereIn('findim_project', $_arr_findim_project)
+                // ->whereIn('divisi', $_arr_divisi)
+                // ->whereIn('departemen', $_arr_departemen)
+                // ->whereIn('subdepartemen', $_arr_subdepartemen)
+                ->whereIn('status_karyawan', $_arr_status_karyawan)
+                // ->whereIn('jabatan', $_arr_jabatan)
+                ->whereIn('level', $_arr_level)
+                ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                ->orderByRaw('tahun desc, bulan desc')->get();
+                // 
+                $payroll_out = TrxPayrollLog::whereIn('nik',$arr_nik_nkp)->where(['status'=>'osc'])->whereIn('nik', $_arr_nik)
+                ->whereIn('status_karyawan', $_arr_status_karyawan)
+                ->whereIn('level', $_arr_level)
+                ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                ->orderByRaw('tahun desc, bulan desc')->get();
+            }
             // 
             if(in_array('0', $_arr_nik)){
                 // $payroll = TrxPayrollLog::where(['status'=>'apm'])->whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
@@ -920,6 +976,18 @@ class TrxPayrollController extends Controller
                 ->whereIn('level', $_arr_level)
                 ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
                 ->orderByRaw('tahun desc, bulan desc')->get();
+                if(Gate::allows('hc_nkp')){
+                    $payroll = TrxPayrollLog::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->whereIn('status_karyawan', $_arr_status_karyawan)
+                    // ->whereIn('jabatan', $_arr_jabatan)
+                    ->whereIn('level', $_arr_level)
+                    ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                    ->orderByRaw('tahun desc, bulan desc')->get();
+                    // 
+                    $payroll_out = TrxPayrollLog::whereIn('nik',$arr_nik_nkp)->where(['status'=>'osc'])->whereIn('status_karyawan', $_arr_status_karyawan)
+                    ->whereIn('level', $_arr_level)
+                    ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                    ->orderByRaw('tahun desc, bulan desc')->get();
+                }
             }
         }
         // end filter
@@ -2053,6 +2121,9 @@ class TrxPayrollController extends Controller
     public function master($id, Request $request)
     {
         // dd($id, $request->all());
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $id_data = $request->input('id_data');
         if(!empty($id_data)){
             $id_data = (new OpenDataController)->decryptWithKey($id_data);
@@ -2351,7 +2422,12 @@ class TrxPayrollController extends Controller
         // dd(Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->subMonth()->startOfMonth()->format('Y-m-d'));
         // dd(Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->subMonth()->endOfMonth()->format('Y-m-d'));
         // $payroll = TrxPayroll::where(['status'=>'apm'])->orderByRaw('tahun desc, bulan desc')->get();
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $payroll = TrxPayroll::orderByRaw('tahun desc, bulan desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $payroll = TrxPayroll::whereIn('nik',$arr_nik_nkp)->orderByRaw('tahun desc, bulan desc')->get();
+        }
         if(in_array(auth()->user()->nik, explode(',', MtrUtility::find(36)->informasi))){
             $payroll = TrxPayroll::where(['status'=>'apm'])->orderByRaw('tahun desc, bulan desc')->get();
         }
@@ -2410,6 +2486,10 @@ class TrxPayrollController extends Controller
         $where = ['bulan'=>Carbon::now()->month, 'tahun'=>Carbon::now()->year];
         $payroll = TrxPayroll::where(['status'=>'apm'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
         $payroll_out = TrxPayroll::where(['status'=>'osc'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $payroll = TrxPayroll::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+            $payroll_out = TrxPayroll::whereIn('nik',$arr_nik_nkp)->where(['status'=>'osc'])->where($where)->orderByRaw('tahun desc, bulan desc')->get();
+        }
         // start filter
         if($request->filter == true){
             $bulan_tahun_dari = $request->bulan_tahun_dari;
@@ -2444,6 +2524,28 @@ class TrxPayrollController extends Controller
             ->whereIn('level', $_arr_level)
             ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
             ->orderByRaw('tahun desc, bulan desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $payroll = TrxPayroll::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->whereIn('nik', $_arr_nik)
+                // ->whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
+                // ->whereIn('findim_departemen', $_arr_findim_departemen)
+                // ->whereIn('findim_divisi', $_arr_findim_divisi)
+                // ->whereIn('findim_project', $_arr_findim_project)
+                // ->whereIn('divisi', $_arr_divisi)
+                // ->whereIn('departemen', $_arr_departemen)
+                // ->whereIn('subdepartemen', $_arr_subdepartemen)
+                ->whereIn('status_karyawan', $_arr_status_karyawan)
+                // ->whereIn('jabatan', $_arr_jabatan)
+                ->whereIn('level', $_arr_level)
+                ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                ->orderByRaw('tahun desc, bulan desc')->get();
+                // 
+                $payroll_out = TrxPayroll::whereIn('nik',$arr_nik_nkp)->where(['status'=>'osc'])->whereIn('nik', $_arr_nik)
+                ->whereIn('status_karyawan', $_arr_status_karyawan)
+                ->whereIn('level', $_arr_level)
+                ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                ->orderByRaw('tahun desc, bulan desc')->get();
+
+            }
             if(in_array('0', $_arr_nik)){
                 // $payroll = TrxPayroll::where(['status'=>'apm'])->whereIn('findim_subdepartemen', $_arr_findim_subdepartemen)
                 // ->whereIn('findim_departemen', $_arr_findim_departemen)
@@ -2462,6 +2564,18 @@ class TrxPayrollController extends Controller
                 ->whereIn('level', $_arr_level)
                 ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
                 ->orderByRaw('tahun desc, bulan desc')->get();
+                if(Gate::allows('hc_nkp')){
+                    $payroll = TrxPayroll::whereIn('nik',$arr_nik_nkp)->where(['status'=>'apm'])->whereIn('status_karyawan', $_arr_status_karyawan)
+                    // ->whereIn('jabatan', $_arr_jabatan)
+                    ->whereIn('level', $_arr_level)
+                    ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                    ->orderByRaw('tahun desc, bulan desc')->get();
+                    // 
+                    $payroll_out = TrxPayroll::whereIn('nik',$arr_nik_nkp)->where(['status'=>'osc'])->whereIn('status_karyawan', $_arr_status_karyawan)
+                    ->whereIn('level', $_arr_level)
+                    ->whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                    ->orderByRaw('tahun desc, bulan desc')->get();
+                }
             }
         }
         // end filter

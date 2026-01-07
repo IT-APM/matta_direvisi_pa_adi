@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
 use App\Models\TrxPdp;
 use App\Models\Karyawan;
@@ -24,7 +25,12 @@ class TrxPdpController extends Controller
             $data->nik_property = $this->getNikProperty($_trx->nik);
             $data->update();
         }
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $trx = TrxPdp::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxPdp::whereIn('nik',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         // dd($trx);
         return view('master.pdp.index', compact('trx'));
     }

@@ -68,7 +68,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4">
-                            <a href="{{ route('mtrdataprojectadminpic.create', ['project_id'=>$project->id]) }}" class="btn btn-primary" type="button">Add new</a> | 
+                            <a href="{{ route('mtrdataprojectadminpic.create', ['project_id'=>Crypt::encrypt($project->id)]) }}" class="btn btn-primary" type="button">Add new</a> | 
                             <a href="{{ route('mtrdataprojectadmin.index') }}" class="btn btn-warning" type="button">Back</a><br /><br />
                         </div>
                     </div>
@@ -89,11 +89,11 @@
                                     <td>{{ $data->_admin->nama }}</td>
                                     <td>{{ $data->admin }}</td>
                                     <td>
-                                        <form action="{{ route('mtrdataprojectadminpic.destroy', [$data->id, 'project_id'=>$project->id]) }}" method="POST">
+                                        <form action="{{ route('mtrdataprojectadminpic.destroy', [$data->id, 'project_id'=>Crypt::encrypt($project->id)]) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <ul class="action">
-                                                <li class="edit"><a href="{{ route('mtrdataprojectadminpic.edit', [$data->id, 'project_id'=>$project->id]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                <li class="edit"><a href="{{ route('mtrdataprojectadminpic.edit', [$data->id, 'project_id'=>Crypt::encrypt($project->id)]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                 <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                             </ul>
                                         </form>

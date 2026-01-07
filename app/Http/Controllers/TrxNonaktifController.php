@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Gate;
 // 
 use App\Models\Karyawan;
 use App\Models\Perusahaan;
@@ -54,8 +55,13 @@ class TrxNonaktifController extends Controller
             }
             return $collection;
         }
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no = 0;
         $trx = TrxNonaktifMaster::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxNonaktifMaster::whereIn('pengaju',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         // foreach ($trx as $value) {
         //     $trxM = TrxNonaktifMaster::find( $value->id );
         //     $trxM->pengaju_property = $this->getNikProperty($value->pengaju);
@@ -135,6 +141,9 @@ class TrxNonaktifController extends Controller
             $_atasan = Karyawan::select('nik')->where('nama','LIKE','%'.$atasan.'%')->get();
             $nik_karyawan = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get()->toArray();
             $trx = TrxNonaktifMaster::whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_nama)->whereIn('atasan', $_atasan)->whereIn('status', $arr_status)->whereIn('alasan', $arr_alasan)->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxNonaktifMaster::whereIn('pengaju',$arr_nik_nkp)->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_nama)->whereIn('atasan', $_atasan)->whereIn('status', $arr_status)->whereIn('alasan', $arr_alasan)->orderBy('id', 'desc')->get();
+            }
             foreach ($trx as $_trx) {
                 $where = ['nik_karyawan' => $_trx->pengaju];
                 $check = TrxPenilaian::where($where)->whereIn('id_status', [4,8])->whereIn('is_perpanjang', $arr_perpanjangan)->get();

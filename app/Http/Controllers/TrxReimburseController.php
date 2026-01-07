@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 // 
 use App\Models\Karyawan;
 // 
@@ -42,12 +43,18 @@ class TrxReimburseController extends Controller
      */
     public function index(Request $request)
     {
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $nik_karyawan = ReimbursePlafon::pluck('nik_karyawan')->toArray();
-        // ambil semua data reimburse
+        $no = 0;
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
-        $no = 0;
+        // ambil semua data reimburse
         $trx = TrxReimburseMaster::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $karyawan = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
+            $trx = TrxReimburseMaster::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         // 
         $trxD = TrxReimburseDetail::whereIn('id_reimburse', $trx->pluck('id')->toArray())->get();
         $layanan = ReimburseLayanan::whereIn('id', $trxD->pluck('id_layanan')->toArray())->orderBy('layanan', 'asc')->get();
@@ -116,6 +123,9 @@ class TrxReimburseController extends Controller
             //     $arr_nik_karyawan = array();
             // }
             $trx = TrxReimburseMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxReimburseMaster::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->orderBy('id', 'desc')->get();
+            }
             $trxD = TrxReimburseDetail::whereIn('id_layanan', $arr_layanan)->whereIn('id_reimburse', $trx->pluck('id')->toArray())->get();
             $trx = TrxReimburseMaster::whereIn('id', $trxD->pluck('id_reimburse')->toArray())->orderBy('id', 'desc')->get();
             if(auth()->user()->userrole == 'nhc'){

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\MtrUtility;
 use App\Models\MtrReminderSp;
 
@@ -15,7 +16,9 @@ class UtilitasController extends Controller
      */
     public function index()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $utilitas = MtrUtility::get();
         $reminder = MtrReminderSp::get();
         // return response()->json( [ 'utilitas' => $utilitas ], 200);
@@ -175,6 +178,9 @@ class UtilitasController extends Controller
         $utilitas->update();
         $utilitas = MtrUtility::find(44);
         $utilitas->informasi = $request->_44;
+        $utilitas->update();
+        $utilitas = MtrUtility::find(46);
+        $utilitas->informasi = $request->_46;
         $utilitas->update();
         return redirect('utilitas')->with('msg', 'Data is saved successfully.');
     }

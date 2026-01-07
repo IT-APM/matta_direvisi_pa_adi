@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 // 
 use App\Models\Propinsi;
 use App\Models\PropinsiKota;
@@ -50,7 +51,9 @@ class MtrDataBpdCoordinatorController extends Controller
      */
     public function index()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $trx = BpdNikPC::select('mtr_tbl_bpd_nik_pc.id','mtr_tbl_bpd_nik_pc.nik','mtr_tbl_bpd_nik_pc.is_active')->leftJoin('mtr_tbl_karyawan', 'mtr_tbl_karyawan.nik','=','mtr_tbl_bpd_nik_pc.nik')->orderBy( 'mtr_tbl_karyawan.nama', 'asc' )->get();
         return view( 'master.bpd.coordinator.index', compact( 'trx', 'no' ) );
@@ -63,7 +66,9 @@ class MtrDataBpdCoordinatorController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'create';
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::where($where)->orderBy( 'nama', 'asc' )->get();
@@ -109,7 +114,9 @@ class MtrDataBpdCoordinatorController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $trx = BpdNikPC::find( $id );
         $where = ['is_aktif' => 1];

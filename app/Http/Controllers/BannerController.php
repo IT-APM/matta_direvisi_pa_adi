@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use App\Models\Banner;
 
@@ -15,7 +16,9 @@ class BannerController extends Controller
      */
     public function index()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $banner = Banner::orderBy( 'id', 'asc' )->get();
         return view( 'master.banner.index', compact( 'banner', 'no' ) );
@@ -61,7 +64,9 @@ class BannerController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $banner = Banner::find( $id );
         // dd(asset('assets/banner').'/'.$banner->image);

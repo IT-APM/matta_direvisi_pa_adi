@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\IphoneUser;
 use App\Models\Karyawan;
 use Illuminate\Support\Facades\Log;
@@ -17,9 +18,13 @@ class IphoneUserController extends Controller
      */
     public function index()
     {
-        //
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no = 0;
         $iphoneuser = IphoneUser::leftJoin('mtr_tbl_karyawan', 'mtr_tbl_iphone_users.nik', '=', 'mtr_tbl_karyawan.nik')->orderBy( 'nama', 'asc' )->get();
+        if(Gate::allows('hc_nkp')){
+            $iphoneuser = IphoneUser::leftJoin('mtr_tbl_karyawan', 'mtr_tbl_iphone_users.nik', '=', 'mtr_tbl_karyawan.nik')->whereIn('mtr_tbl_iphone_users.nik',$arr_nik_nkp)->orderBy( 'nama', 'asc' )->get();
+        }
         return view( 'master.iphoneuser.index', compact( 'iphoneuser', 'no' ) );
     }
 
@@ -35,6 +40,9 @@ class IphoneUserController extends Controller
         // $where = ['is_aktif' => 1];
         // $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $karyawan = DB::select(DB::raw("SELECT nik,nama FROM mtr_tbl_karyawan WHERE is_aktif=1 AND nik NOT IN (SELECT nik FROM mtr_tbl_iphone_users) ORDER BY nama"));
+        if(Gate::allows('hc_nkp')){
+            $karyawan = DB::select(DB::raw("SELECT nik,nama FROM mtr_tbl_karyawan WHERE is_aktif=1 AND nik NOT IN (SELECT nik FROM mtr_tbl_iphone_users) AND kode_perusahaan IN (5) ORDER BY nama"));
+        }
         return view( 'master.iphoneuser.upsert', compact( 'status', 'karyawan' ) );
     }
 

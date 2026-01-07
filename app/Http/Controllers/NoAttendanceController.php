@@ -8,6 +8,7 @@ use App\Models\Perusahaan;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Support\Facades\Gate;
 
 class NoAttendanceController extends Controller
 {
@@ -28,6 +29,8 @@ class NoAttendanceController extends Controller
         $date_to = '';
         // start filter
         if($request->filter == true){
+            $arr_nik_nkp = new Karyawan();
+            $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
             $date_from = $request->date_from;
             $date_to = $request->date_to;
             $_is_aktif = $request->input('is_aktif', []);
@@ -38,8 +41,11 @@ class NoAttendanceController extends Controller
                 $arr_is_aktif = array();
             }
             $nik = Karyawan::whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get();
-            // 
             $att_nik = Attendance::whereIn('att_data_src', ['Regular', 'Leave'])->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+            if(Gate::allows('hc_nkp')){
+                $nik = Karyawan::whereIn('nik',$arr_nik_nkp)->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get();
+                $att_nik = Attendance::whereIn('att_nik',$arr_nik_nkp)->whereIn('att_data_src', ['Regular', 'Leave'])->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+            }
             // 
             $arr_att_nik = array();
             foreach($att_nik as $data){

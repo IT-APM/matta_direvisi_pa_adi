@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 // 
 use App\Models\Karyawan;
 use App\Models\Jabatan;
@@ -40,11 +41,17 @@ class TrxRekomendasiController extends Controller
      */
     public function index(Request $request)
     {
-        // role asm kode_level >= 4
-        $where = ['is_aktif' => 1];
-        $layer1 = Karyawan::select('nik', 'nama')->where($where)->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $no = 0;
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
+        $where = ['is_aktif' => 1];
+        // role asm kode_level >= 4
+        $layer1 = Karyawan::select('nik', 'nama')->where($where)->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $trx = TrxRekomendasiMaster::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $layer1 = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
+            $trx = TrxRekomendasiMaster::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         if(auth()->user()->userrole == 'nhc'){
             // $where = ['nik_atasan' => auth()->user()->nik];
             // $trx = TrxRekomendasiMaster::where($where)->orderBy('id', 'desc')->get();
@@ -110,6 +117,9 @@ class TrxRekomendasiController extends Controller
             //     $arr_nik_atasan = array();
             // }
             $trx = TrxRekomendasiMaster::whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxRekomendasiMaster::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->orderBy('id', 'desc')->get();
+            }
             if(auth()->user()->userrole == 'nhc'){
                 // $where = ['nik_atasan' => auth()->user()->nik];
                 // $trx = TrxRekomendasiMaster::whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->where($where)->orderBy('id', 'desc')->get();

@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Karyawan;
 use App\Models\TrxPenilaian;
 use App\Models\MtrPenilaianTipe;
 use App\Models\TrxPenilaianAuto;
-// 
 use App\Http\Controllers\TrxPenilaianController;
-// 
 use URL;
 
 class TrxPenilaianAutoController extends Controller
@@ -27,9 +26,16 @@ class TrxPenilaianAutoController extends Controller
         $no_non_outsource = 0;
         $no_outsource = 0;
         $no_kt = 0;
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $trx_kt = TrxPenilaianAuto::whereIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'id', 'asc' )->get();
         $trx_non_outsource = TrxPenilaianAuto::whereNotIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
         $trx_outsource = TrxPenilaianAuto::whereNotIn('nik_karyawan', $kt)->whereIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+        if(Gate::allows('hc_nkp')){
+            $trx_kt = TrxPenilaianAuto::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'id', 'asc' )->get();
+            $trx_non_outsource = TrxPenilaianAuto::whereIn('nik_karyawan',$arr_nik_nkp)->whereNotIn('nik_karyawan', $kt)->whereNotIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+            $trx_outsource = TrxPenilaianAuto::whereIn('nik_karyawan',$arr_nik_nkp)->whereNotIn('nik_karyawan', $kt)->whereIn('id_tipe', [6])->whereNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+        }
         // dd($trx_outsource);
         return view( 'formulir.penilaian.auto.index', compact( 'trx_non_outsource', 'trx_outsource', 'no_non_outsource', 'no_outsource', 'trx_kt', 'no_kt'));
     }
@@ -225,12 +231,17 @@ class TrxPenilaianAutoController extends Controller
      */
     public function edit($id)
     {
-        //
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $id = (new OpenDataController)->decryptWithKey($id);
         $trx = TrxPenilaianAuto::find( $id );
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $tipe = MtrPenilaianTipe::orderBy('tipe_penilaian', 'asc')->get();
+        if(Gate::allows('hc_nkp')){
+            $karyawan = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->orderBy('nama', 'asc')->get();
+            $tipe = MtrPenilaianTipe::whereIn('id',[6])->orderBy('tipe_penilaian', 'asc')->get();
+        }
         // return response()->json(['trx' => $trx]);
         return view( 'formulir.penilaian.auto.insert', compact( 'trx', 'karyawan', 'tipe' ) );
     }

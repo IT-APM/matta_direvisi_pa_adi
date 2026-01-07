@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\MtrReminderSp;
 use App\Models\TrxReminderSp;
 use App\Models\TrxReminderSpSend;
@@ -168,8 +169,12 @@ class ReminderSpController extends Controller
         // $mail = Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
         // dd($mail);
         // end uji coba
-        //
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $trx = TrxReminderSp::orderBy( 'persentase', 'asc' )->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxReminderSp::whereIn('nik',$arr_nik_nkp)->orderBy( 'persentase', 'asc' )->get();
+        }
         return view( 'reminder_sp.index', compact( 'trx' ) );
     }
 
@@ -309,7 +314,12 @@ class ReminderSpController extends Controller
      */
     public function show(Request $request, $id)
     {
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $trx = TrxReminderSpSend::orderBy( 'date_from', 'desc', 'persentase', 'asc' )->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxReminderSpSend::whereIn('nik',$arr_nik_nkp)->orderBy( 'date_from', 'desc', 'persentase', 'asc' )->get();
+        }
         $arr_nik = [];
         $arr_wg = [];
         $arr_level = [];
@@ -375,6 +385,40 @@ class ReminderSpController extends Controller
             ->whereIn('nik', $_arr_nik)
             ->whereBetween(DB::raw('date_from'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
             ->orderBy( 'date_from', 'desc', 'persentase', 'asc' )->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = $query->where(function($query) use ($patterns_level) {
+                    // jika level ada pilihan
+                    if(count($patterns_level)>0){
+                        foreach ($patterns_level as $index => $pattern) {
+                            if($index == 0){
+                                $query->where('nik_property', 'like', '%' . $pattern . '%');
+                            }else{
+                                $query->orWhere('nik_property', 'like', '%' . $pattern . '%');
+                            }
+                        }
+                    }else{
+                        $query->whereNull('nik_property');
+                    }
+                })
+                ->where(function($query) use ($patterns_wg) {
+                    // jika wg ada pilihan
+                    if(count($patterns_wg)>0){
+                        foreach ($patterns_wg as $index => $pattern) {
+                            if($index == 0){
+                                $query->where('nik_property', 'like', '%' . $pattern . '%');
+                            }else{
+                                $query->orWhere('nik_property', 'like', '%' . $pattern . '%');
+                            }
+                        }
+                    }else{
+                        $query->whereNull('nik_property');
+                    }
+                })
+                ->whereIn('nik',$arr_nik_nkp)
+                ->whereIn('nik', $_arr_nik)
+                ->whereBetween(DB::raw('date_from'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                ->orderBy( 'date_from', 'desc', 'persentase', 'asc' )->get();
+            }
             // jika semua karyawan dipilih
             if(in_array('0', $_arr_nik)){
                 $query = TrxReminderSpSend::query();
@@ -408,6 +452,39 @@ class ReminderSpController extends Controller
                 })
                 ->whereBetween(DB::raw('date_from'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
                 ->orderBy( 'date_from', 'desc', 'persentase', 'asc' )->get();
+                if(Gate::allows('hc_nkp')){
+                    $trx = $query->where(function($query) use ($patterns_level) {
+                        // jika level ada pilihan
+                        if(count($patterns_level)>0){
+                            foreach ($patterns_level as $index => $pattern) {
+                                if($index == 0){
+                                    $query->where('nik_property', 'like', '%' . $pattern . '%');
+                                }else{
+                                    $query->orWhere('nik_property', 'like', '%' . $pattern . '%');
+                                }
+                            }
+                        }else{
+                            $query->whereNull('nik_property');
+                        }
+                    })
+                    ->where(function($query) use ($patterns_wg) {
+                        // jika wg ada pilihan
+                        if(count($patterns_wg)>0){
+                            foreach ($patterns_wg as $index => $pattern) {
+                                if($index == 0){
+                                    $query->where('nik_property', 'like', '%' . $pattern . '%');
+                                }else{
+                                    $query->orWhere('nik_property', 'like', '%' . $pattern . '%');
+                                }
+                            }
+                        }else{
+                            $query->whereNull('nik_property');
+                        }
+                    })
+                    ->whereIn('nik',$arr_nik_nkp)
+                    ->whereBetween(DB::raw('date_from'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                    ->orderBy( 'date_from', 'desc', 'persentase', 'asc' )->get();
+                }
             }
             // $sql = $query->toSql();
             // $bindings = $query->getBindings();

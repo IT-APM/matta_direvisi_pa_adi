@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 use App\Models\Karyawan;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +18,9 @@ class HcoUserController extends Controller
      */
     public function index()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $where = ['users.userrole' => 'hc'];
         $hcouser = User::select('users.*','mtr_tbl_karyawan.is_aktif')->leftJoin('mtr_tbl_karyawan', 'users.nik', '=', 'mtr_tbl_karyawan.nik')
@@ -32,7 +35,9 @@ class HcoUserController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $karyawan = DB::select(DB::raw("SELECT nik,nama FROM mtr_tbl_karyawan WHERE is_aktif=1 AND nik NOT IN (SELECT nik FROM users WHERE userrole='hc') ORDER BY nama"));
         return view( 'master.hcouser.upsert', compact( 'karyawan' ) );
     }

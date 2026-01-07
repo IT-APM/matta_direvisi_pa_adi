@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\WorkingDay;
 use App\Models\Karyawan;
 use App\Models\JadwalQatsShift;
@@ -19,7 +20,9 @@ class JadwalQatsController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $tahun = Carbon::parse(now())->format('Y');
         // 15 = Qats Group
@@ -62,6 +65,9 @@ class JadwalQatsController extends Controller
      */
     public function create()
     {
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         // 15 = Qats Group
         $status = 'create';
         $where = ['is_aktif' => 1, 'wg_id'=>15];
@@ -95,7 +101,9 @@ class JadwalQatsController extends Controller
      */
     public function show($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         // 15 = Qats Group
         $trx = JadwalQats::orderBy( 'id_shift', 'asc' )->get();
@@ -110,7 +118,9 @@ class JadwalQatsController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $trx = JadwalQats::find( $id );
         $where = ['is_aktif' => 1, 'wg_id'=>15];

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\TrxBirthday;
 use App\Models\TrxBirthdayLog;
 use App\Models\Karyawan;
@@ -110,8 +111,14 @@ class TrxBirthdayController extends Controller
      */
     public function index()
     {
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $trx_current = TrxBirthday::orderBy('id', 'desc')->get();
         $trx_history = TrxBirthdayLog::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx_current = TrxBirthday::whereIn('nik',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx_history = TrxBirthdayLog::whereIn('nik',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         // dd($trx_current, $trx_history);
         return view('birthday.index', compact('trx_current', 'trx_history'));
     }

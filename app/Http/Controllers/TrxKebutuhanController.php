@@ -63,10 +63,14 @@ class TrxKebutuhanController extends Controller
      */
     public function index(Request $request)
     {
-        //
-        $karyawan = Karyawan::select('nik', 'nama')->where(['is_aktif' => 1])->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $no = 0;
+        $karyawan = Karyawan::select('nik', 'nama')->where(['is_aktif' => 1])->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $trx = TrxKebutuhanMaster::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxKebutuhanMaster::whereIn('pengaju',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         // foreach ($trx as $value) {
         //     $trxM = TrxKebutuhanMaster::find($value->id);
         //     // $trxM->pengaju_property = $this->getNikProperty($value->pengaju);
@@ -135,6 +139,9 @@ class TrxKebutuhanController extends Controller
             }
             // return response()->json(['trx' => $request->input('status_pengajuan', [])]);
             $trx = TrxKebutuhanMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('id_area', $arr_id_area)->whereIn('id_jenis_permintaan', $arr_id_jenis_permintaan)->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxKebutuhanMaster::whereIn('pengaju',$arr_nik_nkp)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('id_area', $arr_id_area)->whereIn('id_jenis_permintaan', $arr_id_jenis_permintaan)->orderBy('id', 'desc')->get();
+            }
             if(auth()->user()->userrole == 'nhc'){
                 $where = ['pengaju' => auth()->user()->nik];
                 $trx = TrxKebutuhanMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('id_area', $arr_id_area)->whereIn('id_jenis_permintaan', $arr_id_jenis_permintaan)->where($where)->orderBy('id', 'desc')->get();

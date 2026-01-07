@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 // 
 use App\Models\Karyawan;
 use App\Models\Jabatan;
@@ -50,6 +51,8 @@ class TrxIjinController extends Controller
     
     public function recap(Request $request)
     {
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         // 0=NA
         // 3=SMS Project
         $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy('nama', 'asc')->get();
@@ -108,6 +111,9 @@ class TrxIjinController extends Controller
             // dd($karyawan);
             // $trx = DB::select("SELECT COUNT(karyawan) AS jumlah,karyawan,tipe FROM trx_tbl_ijin WHERE tanggal BETWEEN '".$date_from."' AND '".$date_to."' AND karyawan IN ('01021403097','CV2023681') GROUP BY karyawan,tipe");
             $trx = TrxIjin::select('karyawan','karyawan_property','tipe', DB::raw('COUNT(karyawan) AS jumlah'))->whereIn('karyawan', $_karyawan)->whereIn('tipe', $arr_tipe)->whereBetween('tanggal', [$date_from, $date_to])->groupBy('karyawan', 'tipe')->orderBy('jumlah', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxIjin::select('karyawan','karyawan_property','tipe', DB::raw('COUNT(karyawan) AS jumlah'))->whereIn('karyawan',$arr_nik_nkp)->whereIn('karyawan', $_karyawan)->whereIn('tipe', $arr_tipe)->whereBetween('tanggal', [$date_from, $date_to])->groupBy('karyawan', 'tipe')->orderBy('jumlah', 'desc')->get();
+            }
         }
         // end filter
         return view( 'formulir.izin.recap.index', compact('trx', 'date_from', 'date_to', 'arr_is_aktif', 'is_aktif', 'perusahaan', 'divisi', 'departemen', 'sub_departemen', 'tipe', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_sub_departemen', 'arr_tipe'));
@@ -119,8 +125,12 @@ class TrxIjinController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $trx = TrxIjin::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxIjin::whereIn('karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         // foreach ($trx as $value) {
         //     $trxM = TrxIjin::find( $value->id );
         //     $trxM->karyawan_property = $this->getNikProperty($value->karyawan);
@@ -201,6 +211,9 @@ class TrxIjinController extends Controller
                 $arr_is_aktif = [];
             }
             $trx = TrxIjin::whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', Karyawan::select('nik')->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get())->whereBetween('tanggal', [$date_from, $date_to])->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxIjin::whereIn('karyawan',$arr_nik_nkp)->whereIn('status', $arr_status)->whereIn('tipe', $arr_tipe)->whereIn('karyawan', Karyawan::select('nik')->whereNotIn('nik', ['Hco.all', 'IT.BM'])->whereIn('is_aktif', $arr_is_aktif)->get())->whereBetween('tanggal', [$date_from, $date_to])->orderBy('id', 'desc')->get();
+            }
             if(auth()->user()->userrole == 'nhc'){
                 // $where = ['layer1' => auth()->user()->nik];
                 // $bawahan = Karyawan::select('nik')->where($where)->get();

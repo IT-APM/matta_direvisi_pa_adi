@@ -164,6 +164,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                             </div>
                         </form>
                     </div>
+                    @if(!Gate::allows('hc_nkp'))
                     <h4>Alita</h4>
                     @can('payroll')
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
@@ -172,7 +173,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         <li class="nav-item"><a class="nav-link" id="pills-potongan-tab" data-bs-toggle="pill" href="#pills-potongan" role="tab" aria-controls="pills-potongan" aria-selected="true">Potongan</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-bpjstk-tab" data-bs-toggle="pill" href="#pills-bpjstk" role="tab" aria-controls="pills-bpjstk" aria-selected="true">BPJS TK</a></li>
                         <li class="nav-item"><a class="nav-link" id="pills-bpjskes-tab" data-bs-toggle="pill" href="#pills-bpjskes" role="tab" aria-controls="pills-bpjskes" aria-selected="true">BPJS Kesehatan</a></li>
-                         {{-- @if(Session::has('tab') && Session::has('tab')=='kerja') active @endif --}}
+                        {{-- @if(Session::has('tab') && Session::has('tab')=='kerja') active @endif --}}
                         <li class="nav-item"><a class="nav-link" id="pills-kerja-tab" data-bs-toggle="pill" href="#pills-kerja" role="tab" aria-controls="pills-kerja" aria-selected="true">PPh21</a></li>
                     </ul>
                     @endcan
@@ -572,7 +573,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                             </p>
                         </div>
                         {{-- PPh21 --}}
-                         {{-- @if(Session::has('tab') && Session::has('tab')=='kerja') show active @endif --}}
+                        {{-- @if(Session::has('tab') && Session::has('tab')=='kerja') show active @endif --}}
                         <div class="tab-pane fade @can('payroll_fin') show active @endcan" id="pills-kerja" role="tabpanel" aria-labelledby="pills-kerja-tab">
                             <p class="mb-0 m-t-10">
                                 <div class="row g-3 mb-2">
@@ -868,8 +869,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         </div>
                         {{--  --}}
                     </div>
-                    @can('payroll')
                     <hr class="mt-4 mb-2" />
+                    @endif
+                    @can('payroll')
                     <h4>Out Source</h4>
                     <p class="mb-0 m-t-10">
                         <div class="table-responsive">

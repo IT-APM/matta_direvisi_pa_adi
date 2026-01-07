@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Karyawan;
 use DB;
 use App\Models\Perusahaan;
@@ -77,6 +78,8 @@ class DashboardController extends Controller
     public function biaya_lain(Request $request)
     {
         // dd($request->all());
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $tahun = TrxPayrollLog::distinct()->orderBy('tahun', 'asc')->get(['tahun'])->toArray();
         $bulan = [['bulan'=>'Januari','angka'=>1],['bulan'=>'Februari','angka'=>2],['bulan'=>'Maret','angka'=>3],['bulan'=>'April','angka'=>4],['bulan'=>'Mei','angka'=>5],['bulan'=>'Juni','angka'=>6],['bulan'=>'Juli','angka'=>7],['bulan'=>'Agustus','angka'=>8],['bulan'=>'September','angka'=>9],['bulan'=>'Oktober','angka'=>10],['bulan'=>'November','angka'=>11],['bulan'=>'Desember','angka'=>12]];
         // 
@@ -169,6 +172,18 @@ class DashboardController extends Controller
             ->whereIn('departemen', $arr_departemen)
             ->whereIn('subdepartemen', $arr_subdepartemen)
             ->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+            if(Gate::allows('hc_nkp')){
+                $payroll = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                // whereIn('tahun', $arr_tahun)
+                // ->whereIn('bulan', $arr_bulan)
+                ->whereIn('nik',$arr_nik_nkp)
+                ->whereIn('status_karyawan', $arr_status_karyawan)
+                ->whereIn('perusahaan', $arr_perusahaan)
+                ->whereIn('divisi', $arr_divisi)
+                ->whereIn('departemen', $arr_departemen)
+                ->whereIn('subdepartemen', $arr_subdepartemen)
+                ->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+            }
         }
         // end filter
         return view( 'dashboard.biaya_lain', compact('payroll', 'perusahaan', 'divisi', 'departemen', 'subdepartemen', 'tahun', 'bulan', 'status_karyawan', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_subdepartemen', 'arr_tahun', 'arr_bulan', 'arr_status_karyawan', 'bulan_tahun_dari', 'bulan_tahun_sampai'));
@@ -177,6 +192,8 @@ class DashboardController extends Controller
     public function biaya(Request $request)
     {
         // dd($request->all());
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $tahun = TrxPayrollLog::distinct()->orderBy('tahun', 'asc')->get(['tahun'])->toArray();
         $bulan = [['bulan'=>'Januari','angka'=>1],['bulan'=>'Februari','angka'=>2],['bulan'=>'Maret','angka'=>3],['bulan'=>'April','angka'=>4],['bulan'=>'Mei','angka'=>5],['bulan'=>'Juni','angka'=>6],['bulan'=>'Juli','angka'=>7],['bulan'=>'Agustus','angka'=>8],['bulan'=>'September','angka'=>9],['bulan'=>'Oktober','angka'=>10],['bulan'=>'November','angka'=>11],['bulan'=>'Desember','angka'=>12]];
         // 
@@ -269,6 +286,18 @@ class DashboardController extends Controller
             ->whereIn('departemen', $arr_departemen)
             ->whereIn('subdepartemen', $arr_subdepartemen)
             ->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+            if(Gate::allows('hc_nkp')){
+                $payroll = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
+                // whereIn('tahun', $arr_tahun)
+                // ->whereIn('bulan', $arr_bulan)
+                ->whereIn('nik',$arr_nik_nkp)
+                ->whereIn('status_karyawan', $arr_status_karyawan)
+                ->whereIn('perusahaan', $arr_perusahaan)
+                ->whereIn('divisi', $arr_divisi)
+                ->whereIn('departemen', $arr_departemen)
+                ->whereIn('subdepartemen', $arr_subdepartemen)
+                ->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+            }
         }
         // end filter
         return view( 'dashboard.biaya', compact('payroll', 'perusahaan', 'divisi', 'departemen', 'subdepartemen', 'tahun', 'bulan', 'status_karyawan', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_subdepartemen', 'arr_tahun', 'arr_bulan', 'arr_status_karyawan', 'bulan_tahun_dari', 'bulan_tahun_sampai'));

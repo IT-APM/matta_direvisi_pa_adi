@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Perusahaan;
 use App\Models\Divisi;
 use App\Models\Departemen;
@@ -137,6 +138,9 @@ class PerusahaanController extends Controller
         //     $trx->save();
         // }
         // dd($arr_data1);
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $perusahaan = Perusahaan::orderBy( 'nama', 'asc' )->get();
         return view( 'master.perusahaan.index', compact( 'perusahaan', 'no' ) );
@@ -149,7 +153,9 @@ class PerusahaanController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'create';
         return view( 'master.perusahaan.upsert', compact( 'status' ) );
     }
@@ -194,7 +200,9 @@ class PerusahaanController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $perusahaan = Perusahaan::find( $id );
         return view( 'master.perusahaan.upsert', compact( 'perusahaan', 'status' ) );

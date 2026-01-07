@@ -47,7 +47,7 @@
                                 <label class="form-label" for="admin">Admin</label>
                                 <select class="form-select js-example-basic-single col-sm-12" id="admin" name="admin" required="">
                                     <option selected="" value="">Pilih...</option>
-                                    @foreach ($karyawan as $data)
+                                    @foreach ($admin as $data)
                                     <option value="{{ $data->nik }}" @if ($status=='edit' ) @if($data->nik == $trx->admin) selected @endif @endif >{{ $data->nama }} / {{ $data->nik }}</option>
                                     @endforeach
                                 </select>

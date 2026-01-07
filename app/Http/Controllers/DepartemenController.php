@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Perusahaan;
 use App\Models\Divisi;
 use App\Models\Departemen;
@@ -17,7 +18,9 @@ class DepartemenController extends Controller
      */
     public function index()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $departemen = Departemen::orderBy( 'nama', 'asc' )->get();
         return view( 'master.departemen.index', compact( 'departemen', 'no' ) );
@@ -30,7 +33,9 @@ class DepartemenController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'create';
         $perusahaan = Perusahaan::all();
         $divisi = Divisi::all();
@@ -77,7 +82,9 @@ class DepartemenController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         // $where = ['mtr_tbl_departemen.id' => $id];
         $departemen = Departemen::select('mtr_tbl_departemen.*', 'mtr_tbl_divisi.kode_perusahaan')

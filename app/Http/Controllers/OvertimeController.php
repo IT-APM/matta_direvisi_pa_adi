@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Overtime;
 use App\Models\OvertimeLog;
 use App\Models\OvertimeHistory;
@@ -38,7 +39,12 @@ class OvertimeController extends Controller
         $tahun = Carbon::parse(now())->format('Y');
         $bulan = Carbon::parse(now())->format('m');
         // $ot = Overtime::orderBy( 'ot_maker_at', 'desc' )->limit(100)->get();
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $ot = Overtime::whereYear('ot_start_at', $tahun)->whereMonth('ot_start_at', $bulan)->orderBy( 'ot_maker_at', 'desc' )->get();
+        if(Gate::allows('hc_nkp')){
+            $ot = Overtime::whereIn('ot_maker_by',$arr_nik_nkp)->whereYear('ot_start_at', $tahun)->whereMonth('ot_start_at', $bulan)->orderBy( 'ot_maker_at', 'desc' )->get();
+        }
         if(auth()->user()->userrole == 'nhc'){
             $where = ['ot_approver_by' => auth()->user()->nik];
             // $ot = Overtime::where($where)->orderBy( 'ot_maker_at', 'desc' )->limit(100)->get();
@@ -78,6 +84,9 @@ class OvertimeController extends Controller
             $_ot_maker_by = Karyawan::select('nik')->where('nama','LIKE','%'.$ot_maker_by.'%')->get();
             $_ot_approver_by = Karyawan::select('nik')->where('nama','LIKE','%'.$ot_approver_by.'%')->get();
             $ot = Overtime::whereIn('ot_approver_status', $arr_ot_approver_status)->whereIn('ot_maker_by', $_ot_maker_by)->whereIn('ot_approver_by', $_ot_approver_by)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_maker_at', 'desc' )->get();
+            if(Gate::allows('hc_nkp')){
+                $ot = Overtime::whereIn('ot_maker_by',$arr_nik_nkp)->whereIn('ot_approver_status', $arr_ot_approver_status)->whereIn('ot_maker_by', $_ot_maker_by)->whereIn('ot_approver_by', $_ot_approver_by)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_maker_at', 'desc' )->get();
+            }
             if(auth()->user()->userrole == 'nhc'){
                 $where = ['ot_approver_by' => auth()->user()->nik];
                 $ot = Overtime::whereIn('ot_approver_status', $arr_ot_approver_status)->whereIn('ot_maker_by', $_ot_maker_by)->whereIn('ot_approver_by', $_ot_approver_by)->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_maker_at', 'desc' )->get();
@@ -193,7 +202,12 @@ class OvertimeController extends Controller
         $tahun = Carbon::parse(now())->format('Y');
         $bulan = Carbon::parse(now())->format('m');
         // $ot = Overtime::orderBy( 'ot_maker_at', 'desc' )->limit(100)->get();
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $ot = Overtime::whereYear('ot_start_at', $tahun)->whereMonth('ot_start_at', $bulan)->orderBy( 'ot_maker_at', 'desc' )->get();
+        if(Gate::allows('hc_nkp')){
+            $ot = Overtime::whereIn('ot_maker_by',$arr_nik_nkp)->whereYear('ot_start_at', $tahun)->whereMonth('ot_start_at', $bulan)->orderBy( 'ot_maker_at', 'desc' )->get();
+        }
         if(auth()->user()->userrole == 'nhc'){
             $where = ['ot_maker_by' => auth()->user()->nik];
             // $ot = Overtime::where($where)->orderBy( 'ot_maker_at', 'desc' )->limit(100)->get();
@@ -228,6 +242,9 @@ class OvertimeController extends Controller
             $_ot_maker_by = Karyawan::select('nik')->where('nama','LIKE','%'.$ot_maker_by.'%')->get();
             $_ot_approver_by = Karyawan::select('nik')->where('nama','LIKE','%'.$ot_approver_by.'%')->get();
             $ot = Overtime::whereIn('ot_approver_status', $arr_ot_approver_status)->whereIn('ot_maker_by', $_ot_maker_by)->whereIn('ot_approver_by', $_ot_approver_by)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_maker_at', 'desc' )->get();
+            if(Gate::allows('hc_nkp')){
+                $ot = Overtime::whereIn('ot_maker_by',$arr_nik_nkp)->whereIn('ot_approver_status', $arr_ot_approver_status)->whereIn('ot_maker_by', $_ot_maker_by)->whereIn('ot_approver_by', $_ot_approver_by)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_maker_at', 'desc' )->get();
+            }
             if(auth()->user()->userrole == 'nhc'){
                 $where = ['ot_maker_by' => auth()->user()->nik];
                 $ot = Overtime::whereIn('ot_approver_status', $arr_ot_approver_status)->whereIn('ot_maker_by', $_ot_maker_by)->whereIn('ot_approver_by', $_ot_approver_by)->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_maker_at', 'desc' )->get();
@@ -248,8 +265,14 @@ class OvertimeController extends Controller
         $tahun = Carbon::parse(now())->format('Y');
         $bulan = Carbon::parse(now())->format('m');
         $where = ['ot_approver_status' => 'Approve'];
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $ot = Overtime::where($where)->whereYear('ot_start_at', $tahun)->whereMonth('ot_start_at', $bulan)->orderBy( 'ot_start_at', 'desc' )->get();
         $otrecap = Overtime::select('ot_maker_property', 'ot_maker_by', 'ot_approver_by', DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereYear('ot_start_at', $tahun)->whereMonth('ot_start_at', $bulan)->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
+        if(Gate::allows('hc_nkp')){
+            $ot = Overtime::whereIn('ot_maker_by',$arr_nik_nkp)->where($where)->whereYear('ot_start_at', $tahun)->whereMonth('ot_start_at', $bulan)->orderBy( 'ot_start_at', 'desc' )->get();
+            $otrecap = Overtime::select('ot_maker_property', 'ot_maker_by', 'ot_approver_by', DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->whereIn('ot_maker_by',$arr_nik_nkp)->where($where)->whereYear('ot_start_at', $tahun)->whereMonth('ot_start_at', $bulan)->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
+        }
         // $ot = Overtime::where($where)->whereYear('ot_start_at', $tahun)->whereMonth('ot_start_at', $bulan)->orderBy( 'ot_start_at', 'desc' )->limit(100)->get();
         if(auth()->user()->userrole == 'nhc'){
             $where = ['ot_approver_status' => 'Approve', 'ot_approver_by' => auth()->user()->nik];
@@ -325,6 +348,10 @@ class OvertimeController extends Controller
             $_ot_approver_by = Karyawan::select('nik')->where('nama','LIKE','%'.$ot_approver_by.'%')->get();
             $ot = Overtime::whereIn('ot_maker_by', $_ot_maker_by_)->whereIn('ot_approver_status', $_status)->whereIn('ot_approver_status', $arr_ot_approver_status)->whereIn('ot_maker_by', $_ot_maker_by)->whereIn('ot_approver_by', $_ot_approver_by)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_maker_at', 'desc' )->get();
             $otrecap = Overtime::select('ot_maker_property', 'ot_maker_by', 'ot_approver_by', DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->whereIn('ot_maker_by', $_ot_maker_by_)->whereIn('ot_approver_status', $_status)->whereIn('ot_approver_status', $arr_ot_approver_status)->whereIn('ot_maker_by', $_ot_maker_by)->whereIn('ot_approver_by', $_ot_approver_by)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->groupBy('ot_maker_by')->get();
+            if(Gate::allows('hc_nkp')){
+                $ot = Overtime::whereIn('ot_maker_by',$arr_nik_nkp)->whereIn('ot_maker_by', $_ot_maker_by_)->whereIn('ot_approver_status', $_status)->whereIn('ot_approver_status', $arr_ot_approver_status)->whereIn('ot_maker_by', $_ot_maker_by)->whereIn('ot_approver_by', $_ot_approver_by)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_maker_at', 'desc' )->get();
+                $otrecap = Overtime::select('ot_maker_property', 'ot_maker_by', 'ot_approver_by', DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->whereIn('ot_maker_by',$arr_nik_nkp)->whereIn('ot_maker_by', $_ot_maker_by_)->whereIn('ot_approver_status', $_status)->whereIn('ot_approver_status', $arr_ot_approver_status)->whereIn('ot_maker_by', $_ot_maker_by)->whereIn('ot_approver_by', $_ot_approver_by)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->groupBy('ot_maker_by')->get();
+            }
             if(auth()->user()->userrole == 'nhc'){
                 $where = ['ot_approver_by' => auth()->user()->nik];
                 $ot = Overtime::whereIn('ot_maker_by', $_ot_maker_by_)->whereIn('ot_approver_status', $_status)->whereIn('ot_approver_status', $arr_ot_approver_status)->whereIn('ot_maker_by', $_ot_maker_by)->whereIn('ot_approver_by', $_ot_approver_by)->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_maker_at', 'desc' )->get();
@@ -342,9 +369,11 @@ class OvertimeController extends Controller
     
     public function adj_ot($id)
     {
-        //
         $this->authorize('spv');
         $data = Overtime::find($id);
+        if(auth()->user()->nik <> $data->ot_approver_by){
+            return redirect()->route('error-403');
+        }
         $init = $data->ot_length_adj;
         $hours = floor($init / 3600);
         $minutes = floor(($init / 60) % 60);

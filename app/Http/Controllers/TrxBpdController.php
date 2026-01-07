@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Gate;
 // 
 use App\Models\Propinsi;
 use App\Models\PropinsiKota;
@@ -60,7 +61,8 @@ class TrxBpdController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no = 0;
         // id_peran=2 adalah Project Admin
         $nik = auth()->user()->nik;
@@ -72,6 +74,10 @@ class TrxBpdController extends Controller
         $mgt = BpdNikPeran::where($where)->get();
         $trx = TrxBpdMaster::where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get();
         $_trx = TrxBpdMaster::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxBpdMaster::whereIn('pengaju',$arr_nik_nkp)->where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get();
+            $_trx = TrxBpdMaster::whereIn('pengaju',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         if(auth()->user()->userrole == 'nhc'){
             $trx = TrxBpdMaster::where('admin', $nik)->where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get();
             $_trx = TrxBpdMaster::where('admin', $nik)->orderBy('id', 'desc')->get();
@@ -128,6 +134,9 @@ class TrxBpdController extends Controller
             $_pengaju = Karyawan::select('nik')->where('nama','LIKE','%'.$pengaju.'%')->get();
             $nik_karyawan = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get()->toArray();
             $trx = TrxBpdMaster::whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_pengaju)->whereIn('luar_dalam', $arr_luar_dalam)->whereIn('status_id', $arr_status_id)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxBpdMaster::whereIn('pengaju',$arr_nik_nkp)->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_pengaju)->whereIn('luar_dalam', $arr_luar_dalam)->whereIn('status_id', $arr_status_id)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
+            }
             if(auth()->user()->userrole == 'nhc'){
                 $trx = TrxBpdMaster::where('admin', $nik)->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_pengaju)->whereIn('luar_dalam', $arr_luar_dalam)->whereIn('status_id', $arr_status_id)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
                 // jika bukan admin
@@ -1714,6 +1723,8 @@ class TrxBpdController extends Controller
         //
         $id = Crypt::decrypt($id);
         // dd($request->all(), $id);
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $view = $request->view;
         $is_project = $request->is_project;
         $nik = $request->nik;
@@ -1947,6 +1958,10 @@ class TrxBpdController extends Controller
             }
             // 24 = PIC BPD Non Manajemen
             $hco = MtrUtility::find(24)->informasi;
+            if (in_array($trxMaster->pengaju, $arr_nik_nkp)){
+                // 46 = NIP PIC BPD Non Manajemen (Nasio)
+                $hco = MtrUtility::find(46)->informasi;
+            }
             // id_peran=3 adalah Management
             $where = ['nik' => $pengaju, 'id_peran' => 3, 'is_active' => 1];
             $is_mgt = BpdNikPeran::where($where)->exists();
@@ -2845,6 +2860,10 @@ class TrxBpdController extends Controller
             }
             // 24 = PIC BPD Non Manajemen
             $hco = MtrUtility::find(24)->informasi;
+            if (in_array($trxMaster->pengaju, $arr_nik_nkp)){
+                // 46 = NIP PIC BPD Non Manajemen (Nasio)
+                $hco = MtrUtility::find(46)->informasi;
+            }
             // id_peran=3 adalah Management
             $where = ['nik' => $pengaju, 'id_peran' => 3, 'is_active' => 1];
             $is_mgt = BpdNikPeran::where($where)->exists();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\SubDepartemen;
 use App\Models\Perusahaan;
 use App\Models\Divisi;
@@ -18,7 +19,9 @@ class SubDepartemenController extends Controller
      */
     public function index()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $subdepartemen = SubDepartemen::orderBy( 'nama', 'asc' )->get();
         return view( 'master.sub_departemen.index', compact( 'subdepartemen', 'no' ) );
@@ -31,7 +34,9 @@ class SubDepartemenController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'create';
         $perusahaan = Perusahaan::all();
         $divisi = Divisi::all();
@@ -79,7 +84,9 @@ class SubDepartemenController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $subdepartemen = SubDepartemen::select('mtr_tbl_sub_departemen.*', 'mtr_tbl_departemen.kode_divisi', 'mtr_tbl_divisi.kode_perusahaan')
             ->leftJoin('mtr_tbl_departemen', 'mtr_tbl_departemen.id', '=', 'mtr_tbl_sub_departemen.kode_departemen')

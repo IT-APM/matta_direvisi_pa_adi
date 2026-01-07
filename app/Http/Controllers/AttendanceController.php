@@ -13,6 +13,7 @@ use App\Exports\AttendanceExport;
 use App\Exports\AttendanceMultiSheetExport;
 use App\Models\TrxDebug;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Gate;
 
 class AttendanceController extends Controller
 {
@@ -115,6 +116,8 @@ class AttendanceController extends Controller
         $date_to = '';
         // start filter
         if($request->filter == true || $request->download == true){
+            $arr_nik_nkp = new Karyawan();
+            $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
             // $this->into_debug(['nomor'=>1, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
             $date_from = $request->date_from;
             $date_to = $request->date_to;
@@ -156,11 +159,17 @@ class AttendanceController extends Controller
             $att_nik = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get();
             $nik_wg_id = Karyawan::select('nik')->whereIn('wg_id', $arr_wg_id)->get();
             $att = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+            if(Gate::allows('hc_nkp')){
+                $att = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+            }
             // $att = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
             // start hitung durasi
             $duration = array();
             $_att_data_src = 'Regular';
             $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            if(Gate::allows('hc_nkp')){
+                $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            }
             // $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             foreach($raw as $_raw){
                 // $this->into_debug(['nomor'=>2, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
@@ -177,6 +186,9 @@ class AttendanceController extends Controller
             }
             $_att_data_src = 'Overtime';
             $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            if(Gate::allows('hc_nkp')){
+                $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            }
             // $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             foreach($raw as $_raw){
                 // $this->into_debug(['nomor'=>3, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);

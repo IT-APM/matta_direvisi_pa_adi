@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Karyawan;
 use App\Models\TrxPenilaian;
 use App\Models\MtrPenilaianTipe;
@@ -20,10 +21,16 @@ class TrxPenilaianReminderController extends Controller
      */
     public function index()
     {
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no_non_outsource = 0;
         $no_outsource = 0;
         $trx_non_outsource = TrxPenilaianAuto::whereNotIn('id_tipe', [6])->whereNotNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
         $trx_outsource = TrxPenilaianAuto::whereIn('id_tipe', [6])->whereNotNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+        if(Gate::allows('hc_nkp')){
+            $trx_non_outsource = TrxPenilaianAuto::whereIn('nik_karyawan',$arr_nik_nkp)->whereNotIn('id_tipe', [6])->whereNotNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+            $trx_outsource = TrxPenilaianAuto::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('id_tipe', [6])->whereNotNull('id_trx')->orderBy( 'end_date', 'asc' )->get();
+        }
         return view( 'formulir.penilaian.reminder.index', compact( 'trx_non_outsource', 'trx_outsource', 'no_non_outsource', 'no_outsource'));
     }
 

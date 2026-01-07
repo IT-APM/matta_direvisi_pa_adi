@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Perusahaan;
 use App\Models\Karyawan;
 use App\Models\TrxPenilaian;
@@ -36,9 +37,13 @@ class TrxPenilaianController extends Controller
      */
     public function index(Request $request)
     {
-        // halaman index kali pertama dibuka
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no = 0;
         $trx = TrxPenilaian::orderBy( 'id', 'desc' )->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy( 'id', 'desc' )->get();
+        }
         if(auth()->user()->userrole == 'nhc'){
             // nik_karyawan
             $where = ['nik_karyawan' => auth()->user()->nik];
@@ -116,8 +121,14 @@ class TrxPenilaianController extends Controller
             }
             $nik_karyawan = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get()->toArray();
             $trx = TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->orderBy('id', 'desc')->get();
+            }
             if(count($_id_status_lengkap) > 0){
                 $trx = TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', [6, 7])->whereIn('is_perpanjang', $arr_is_perpanjang)->orderBy('id', 'desc')->get();
+                if(Gate::allows('hc_nkp')){
+                    $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', [6, 7])->whereIn('is_perpanjang', $arr_is_perpanjang)->orderBy('id', 'desc')->get();
+                }
                 foreach ($trx as $data){
                     // Done By Reviewer 2
                     $where = ['id_status' => 6, 'id_trx' => $data->id];
@@ -166,9 +177,15 @@ class TrxPenilaianController extends Controller
     {
         $this->authorize('hc');
         //passing parameter ke formulir page
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $tipe = MtrPenilaianTipe::orderBy('tipe_penilaian', 'asc')->get();
+        if(Gate::allows('hc_nkp')){
+            $karyawan = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->orderBy('nama', 'asc')->get();
+            $tipe = MtrPenilaianTipe::whereIn('id',[6])->orderBy('tipe_penilaian', 'asc')->get();
+        }
         $status = 'create';
         return view( 'formulir.penilaian.insert', compact( 'karyawan', 'tipe', 'status' ) );
     }
@@ -733,6 +750,8 @@ class TrxPenilaianController extends Controller
     public function edit($id)
     {
         $this->authorize('hc');
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $id = (new OpenDataController)->decryptWithKey($id);
         // dd($id);
         $where = [ 'id_trx' => $id ];
@@ -740,6 +759,9 @@ class TrxPenilaianController extends Controller
         $penilaian = TrxPenilaian::find( $id );
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
+        if(Gate::allows('hc_nkp')){
+            $karyawan = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->orderBy('nama', 'asc')->get();
+        }
         $_karyawan = json_decode($penilaian->karyawan_property, true);
         $penilai1 = json_decode($penilaian->penilai1_property, true);
         $penilai2 = '';

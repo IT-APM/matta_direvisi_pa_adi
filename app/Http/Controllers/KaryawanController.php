@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\Mail;
 // 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
 // 
 use Illuminate\Http\Request;
 use DB;
@@ -44,13 +45,17 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class KaryawanController extends Controller
 {
-    public function __construct(Gate $gate)
+    // public function __construct(Gate $gate)
+    public function __construct()
     {
         $this->middleware('can:hc', ['except' => ['show', 'get_divisi', 'get_departemen', 'get_sub_departemen', 'update_profile']]);
     }
     
     public function upload_data($id)
     {
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         return view('master.karyawan.upload_data');
     }
     
@@ -188,8 +193,13 @@ class KaryawanController extends Controller
             }
         }
         // $karyawan = Karyawan::all();
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no = 0;
         $karyawan = Karyawan::where('is_aktif', 1)->orderBy( 'nama', 'asc' )->get();
+        if(Gate::allows('hc_nkp')){
+            $karyawan = Karyawan::whereIn('nik',$arr_nik_nkp)->where('is_aktif', 1)->orderBy( 'nama', 'asc' )->get();
+        }
         // $karyawan = Karyawan::orderBy( 'nama', 'asc' )->limit(100)->get();
         // $karyawan = Karyawan::orderBy( 'nama', 'asc' )->pluck('is_aktif','nik','nama','email');
         // $karyawan = DB::select('SELECT * FROM mtr_tbl_karyawan ORDER BY nama');
@@ -261,6 +271,9 @@ class KaryawanController extends Controller
             $_layer2 = Karyawan::select('nik')->where('nama','LIKE','%'.$layer2.'%')->get();
             $_layer3 = Karyawan::select('nik')->where('nama','LIKE','%'.$layer3.'%')->get();
             $karyawan = Karyawan::whereIn('nik', $_nama)->whereIn('layer1', $_layer1)->whereIn('layer2', $_layer2)->whereIn('layer3', $_layer3)->whereIn('is_aktif', $arr_is_aktif)->whereIn('kode_status', $arr_kode_status)->whereIn('wg_id', $arr_wg_id)->whereIn('kode_perusahaan', $arr_kode_perusahaan)->whereIn('kode_level', $arr_kode_level)->orderBy( 'nama', 'asc' )->get();
+            if(Gate::allows('hc_nkp')){
+                $karyawan = Karyawan::whereIn('nik',$arr_nik_nkp)->whereIn('nik', $_nama)->whereIn('layer1', $_layer1)->whereIn('layer2', $_layer2)->whereIn('layer3', $_layer3)->whereIn('is_aktif', $arr_is_aktif)->whereIn('kode_status', $arr_kode_status)->whereIn('wg_id', $arr_wg_id)->whereIn('kode_perusahaan', $arr_kode_perusahaan)->whereIn('kode_level', $arr_kode_level)->orderBy( 'nama', 'asc' )->get();
+            }
         }else{
             $arr_is_aktif = array();
             $arr_kode_status = array();
@@ -346,7 +359,11 @@ class KaryawanController extends Controller
         // $divisi = Divisi::all();
         // $dep = Departemen::all();
         // $sub_dep = SubDepartemen::all();
+        // $perusahaan = perusahaan::where('is_active', 1)->get();
         $perusahaan = perusahaan::where('is_active', 1)->get();
+        if(Gate::allows('hc_nkp')){
+            $perusahaan = perusahaan::whereIn('id', [5])->where('is_active', 1)->get();
+        }
         $divisi = Divisi::where('is_active', 1)->get();
         $dep = Departemen::where('is_active', 1)->get();
         $sub_dep = SubDepartemen::where('is_active', 1)->get();
@@ -503,7 +520,7 @@ class KaryawanController extends Controller
      */
     public function edit($id)
     {
-        // dd($id);
+        $id = Crypt::decrypt($id);
         $status = 'edit';
         $karyawan = Karyawan::find($id);
         $layer = Karyawan::all();
@@ -525,7 +542,11 @@ class KaryawanController extends Controller
         // $divisi = Divisi::where('kode_perusahaan', $karyawan->kode_perusahaan)->get();
         // $dep = Departemen::where('kode_divisi', $karyawan->kode_divisi)->get();
         // $sub_dep = SubDepartemen::where('kode_departemen', $karyawan->kode_departemen)->get();
+        // $perusahaan = perusahaan::where('is_active', 1)->get();
         $perusahaan = perusahaan::where('is_active', 1)->get();
+        if(Gate::allows('hc_nkp')){
+            $perusahaan = perusahaan::whereIn('id', [5])->where('is_active', 1)->get();
+        }
         $divisi = Divisi::where(['kode_perusahaan'=>$karyawan->kode_perusahaan, 'is_active'=>1])->get();
         $dep = Departemen::where(['kode_divisi'=>$karyawan->kode_divisi, 'is_active'=>1])->get();
         $sub_dep = SubDepartemen::where(['kode_departemen'=>$karyawan->kode_departemen, 'is_active'=>1])->get();
@@ -815,7 +836,7 @@ class KaryawanController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $id = Crypt::decrypt($id);
         $karyawan = Karyawan::find($id);
         try {
             $karyawan->delete();

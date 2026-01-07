@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\MtrFindimProject;
 use Illuminate\Support\Facades\Log;
 
@@ -15,7 +16,9 @@ class TrxFindimProjectController extends Controller
      */
     public function index()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $findim_project = MtrFindimProject::orderBy( 'project_id', 'asc' )->get();
         return view( 'master.findim.project.index', compact( 'findim_project', 'no' ) );
@@ -28,7 +31,9 @@ class TrxFindimProjectController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'create';
         return view( 'master.findim.project.upsert', compact( 'status' ) );
     }
@@ -68,7 +73,9 @@ class TrxFindimProjectController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $findim_project = MtrFindimProject::find( $id );
         return view( 'master.findim.project.upsert', compact( 'findim_project', 'status' ) );

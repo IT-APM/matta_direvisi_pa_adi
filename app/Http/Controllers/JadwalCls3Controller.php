@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\WorkingDay;
 use App\Models\Karyawan;
 use App\Models\JadwalCls3Shift;
@@ -19,7 +20,9 @@ class JadwalCls3Controller extends Controller
      */
     public function index(Request $request)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $tahun = Carbon::parse(now())->format('Y');
         // 17 = CLS 3 Group
@@ -62,6 +65,9 @@ class JadwalCls3Controller extends Controller
      */
     public function create()
     {
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         // 17 = CLS 3 Group
         $status = 'create';
         $where = ['is_aktif' => 1, 'wg_id'=>17];
@@ -97,7 +103,9 @@ class JadwalCls3Controller extends Controller
      */
     public function show($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         // 17 = CLS 3 Group
         $trx = JadwalCls3::orderBy( 'id_shift', 'asc' )->get();
@@ -112,7 +120,9 @@ class JadwalCls3Controller extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $trx = JadwalCls3::find( $id );
         $where = ['is_aktif' => 1, 'wg_id'=>17];

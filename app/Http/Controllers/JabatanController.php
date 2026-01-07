@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Jabatan;
 use Illuminate\Support\Facades\Log;
 
@@ -15,7 +16,9 @@ class JabatanController extends Controller
      */
     public function index()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $jabatan = Jabatan::orderBy( 'jabatan', 'asc' )->get();
         return view( 'master.jabatan.index', compact( 'jabatan', 'no' ) );
@@ -28,7 +31,9 @@ class JabatanController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'create';
         return view( 'master.jabatan.upsert', compact( 'status' ) );
     }
@@ -67,7 +72,9 @@ class JabatanController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $jabatan = Jabatan::find( $id );
         return view( 'master.jabatan.upsert', compact( 'jabatan', 'status' ) );

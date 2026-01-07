@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Karyawan;
 use App\Models\KaryawanAnak;
 use App\Models\KaryawanPelatihan;
@@ -32,7 +33,9 @@ class KaryawanCopyController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         return view( 'master.karyawan.copy.insert', compact( 'karyawan' ) );

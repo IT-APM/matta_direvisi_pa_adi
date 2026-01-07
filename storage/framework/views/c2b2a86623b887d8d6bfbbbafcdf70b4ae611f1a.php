@@ -171,7 +171,7 @@
                                     <td><?php echo e($data->_findim_project->project_id); ?>-<?php echo e($data->_findim_project->project_desc); ?></td>
                                     <td>
                                         <!-- <a href="#" data-toggle="tooltip" title="Detail"><i class="icon-eye"></i></a>&nbsp; -->
-                                        <form action="<?php echo e(route('karyawan.destroy', $data->id)); ?>" method="POST">
+                                        <form action="<?php echo e(route('karyawan.destroy', Crypt::encrypt($data->id))); ?>" method="POST">
                                             <?php echo csrf_field(); ?>
                                             <?php echo method_field('DELETE'); ?>
                                             <!-- <a href="<?php echo e(route('plafon.edit', $data->id)); ?>"><i class="icon-pencil-alt"></i></a>&nbsp; -->
@@ -180,7 +180,7 @@
                                             <!-- <a href="#"><i class="icon-trash show_confirm"></i></a> -->
                                             <!-- <button type="submit" class="btn btn-xs btn-danger btn-flat show_confirm" data-toggle="tooltip" title='Delete'>Delete</button> -->
                                             <ul class="action">
-                                                <li class="edit"><a href="<?php echo e(route('karyawan.edit', $data->id)); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                <li class="edit"><a href="<?php echo e(route('karyawan.edit', Crypt::encrypt($data->id))); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                 <li class="delete"><a href="#" data-toggle="tooltip" title='Delete'><i class="icon-trash show_confirm"></i></a></li>
                                             </ul>
                                         </form>

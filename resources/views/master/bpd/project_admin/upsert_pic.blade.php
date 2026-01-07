@@ -33,7 +33,7 @@
                     @endif
                     @csrf
                         <div class="row g-3">
-                            <input type="hidden" id="project_id" name="project_id" value="{{ $project_id }}">
+                            <input type="hidden" id="project_id" name="project_id" value="{{ Crypt::encrypt($project_id) }}">
                             <div class="col-md-4">
                                 <label class="form-label" for="admin">Admin</label>
                                 <select class="form-select js-example-basic-single col-sm-12" id="admin" name="admin" required="">
@@ -46,7 +46,7 @@
                             </div>
                         </div>
                         <br/>
-                        <button class="btn btn-success" type="submit">Submit</button> | <a href="{{ route('mtrdataprojectadmin.show', $project_id) }}" class="btn btn-warning" type="button">Cancel</a>
+                        <button class="btn btn-success" type="submit">Submit</button> | <a href="{{ route('mtrdataprojectadmin.show', Crypt::encrypt($project_id)) }}" class="btn btn-warning" type="button">Cancel</a>
                     </form>
                 </div>
             </div>

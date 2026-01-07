@@ -78,12 +78,12 @@
                                     </td>
                                     <td><?php if($data->is_active==1): ?> <span class="badge bg-success">Aktif</span> <?php else: ?> <span class="badge bg-danger">Non Aktif</span> <?php endif; ?></td>
                                     <td>
-                                        <form action="<?php echo e(route('mtrdataprojectadmin.destroy', $data->id)); ?>" method="POST">
+                                        <form action="<?php echo e(route('mtrdataprojectadmin.destroy', Crypt::encrypt($data->id))); ?>" method="POST">
                                             <?php echo csrf_field(); ?>
                                             <?php echo method_field('DELETE'); ?>
                                             <ul class="action">
-                                                <li class="new"><a href="<?php echo e(route('mtrdataprojectadmin.show', $data->id)); ?>" data-toggle="tooltip" title='Admin'><i class="fa fa-user-plus" aria-hidden="true"></i></a>&nbsp;</li>
-                                                <li class="edit"><a href="<?php echo e(route('mtrdataprojectadmin.edit', $data->id)); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
+                                                <li class="new"><a href="<?php echo e(route('mtrdataprojectadmin.show', Crypt::encrypt($data->id))); ?>" data-toggle="tooltip" title='Admin'><i class="fa fa-user-plus" aria-hidden="true"></i></a>&nbsp;</li>
+                                                <li class="edit"><a href="<?php echo e(route('mtrdataprojectadmin.edit', Crypt::encrypt($data->id))); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
                                                 <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                             </ul>
                                         </form>

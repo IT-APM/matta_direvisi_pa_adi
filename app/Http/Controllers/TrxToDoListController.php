@@ -13,6 +13,7 @@ use DB;
 use App\Models\TrxPdp;
 use App\Models\MtrUtility;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Gate;
 
 class TrxToDoListController extends Controller
 {
@@ -44,7 +45,12 @@ class TrxToDoListController extends Controller
         $arr_departemen = [];
         $arr_sub_departemen = [];
         // 
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $trx = ToDoList::select('*', DB::raw('COUNT(nik) AS jumlah'))->groupBy('nik', 'title')->orderBy('jumlah', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = ToDoList::select('*', DB::raw('COUNT(nik) AS jumlah'))->whereIn('nik',$arr_nik_nkp)->groupBy('nik', 'title')->orderBy('jumlah', 'desc')->get();
+        }
         // start filter
         if ($request->filter == true) {
             $_title = $request->input('title', []);
@@ -76,6 +82,9 @@ class TrxToDoListController extends Controller
                 array_push($_karyawan, $data->nik);
             }
             $trx = ToDoList::select('*', DB::raw('COUNT(nik) AS jumlah'))->whereIn('nik', $_karyawan)->whereIn('title', $arr_title)->groupBy('nik', 'title')->orderBy('jumlah', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = ToDoList::select('*', DB::raw('COUNT(nik) AS jumlah'))->whereIn('nik',$arr_nik_nkp)->whereIn('nik', $_karyawan)->whereIn('title', $arr_title)->groupBy('nik', 'title')->orderBy('jumlah', 'desc')->get();
+            }
         }
         return view( 'todolist.recap', compact('trx', 'perusahaan', 'divisi', 'departemen', 'sub_departemen', 'title', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_sub_departemen', 'arr_title'));
     }

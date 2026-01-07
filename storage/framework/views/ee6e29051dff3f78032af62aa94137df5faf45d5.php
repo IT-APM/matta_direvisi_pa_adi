@@ -39,7 +39,8 @@
                     </div>
                     <?php endif; ?>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('staf_only')): ?>
-                    <a href="<?php echo e(route('overtime.create')); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | 
+                    
+                    <button class="btn btn-primary" type="button" onclick="PilihKaryawan()"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button> |
                     <?php endif; ?>
                     <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                     <div class="collapse" id="collapse_filter">
@@ -257,6 +258,10 @@
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.html5.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/datatable/datatable-extension/buttons.print.min.js')); ?>"></script>
 <script type="text/javascript">
+function PilihKaryawan() {
+    var ot_maker_by = "<?php echo e(Crypt::encrypt(auth()->user()->nik)); ?>";
+    location.href = "<?php echo e(route('overtime.create')); ?>"+"?ot_maker_by="+ot_maker_by;
+}
 function toggle_ot_approver_status(source) {
     checkboxes = document.getElementsByName('ot_approver_status[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {

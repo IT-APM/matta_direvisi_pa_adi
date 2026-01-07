@@ -48,7 +48,7 @@ class KaryawanPelatihanController extends Controller
         if($request->src=='open'){
             return redirect()->route('karyawan.show', $request->nik)->with('success','Data is saved successfully.');
         }else{
-            return redirect()->route('karyawan.edit', (new OpenDataController)->decryptWithKey($request->karyawan_id))->with('success','Data is saved successfully.');
+            return redirect()->route('karyawan.edit', $request->karyawan_id)->with('success','Data is saved successfully.');
         }
     }
 
@@ -95,7 +95,7 @@ class KaryawanPelatihanController extends Controller
         if($request->src=='open'){
             return redirect()->route('karyawan.show', $request->nik)->with('success','Data is saved successfully.');
         }else{
-            return redirect()->route('karyawan.edit', (new OpenDataController)->decryptWithKey($request->karyawan_id))->with('success','Data is saved successfully.');
+            return redirect()->route('karyawan.edit', $request->karyawan_id)->with('success','Data is saved successfully.');
         }
     }
 
@@ -113,7 +113,7 @@ class KaryawanPelatihanController extends Controller
         if($request->src=='open'){
             return redirect()->route('karyawan.show', $request->nik)->with('success','Data is deleted successfully.');
         }else{
-            return redirect()->route('karyawan.edit', (new OpenDataController)->decryptWithKey($request->karyawan_id))->with('success','Data is deleted successfully.');
+            return redirect()->route('karyawan.edit', $request->karyawan_id)->with('success','Data is deleted successfully.');
         }
     }
 }

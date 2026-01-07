@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 // 
 use App\Models\Propinsi;
 use App\Models\PropinsiKota;
@@ -50,9 +51,13 @@ class MtrDataBpdController extends Controller
      */
     public function index()
     {
-        //
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no = 0;
         $trx = BpdNikPeran::orderBy( 'id', 'asc' )->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = BpdNikPeran::whereIn('nik',$arr_nik_nkp)->orderBy( 'id', 'asc' )->get();
+        }
         return view( 'master.bpd.nip_admin.index', compact( 'trx', 'no' ) );
     }
 
@@ -62,12 +67,17 @@ class MtrDataBpdController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        //
+    {   
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $status = 'create';
         $where = ['is_aktif' => 1];
+        $admin = Karyawan::where($where)->orderBy( 'nama', 'asc' )->get();
         $karyawan = Karyawan::where($where)->orderBy( 'nama', 'asc' )->get();
-        return view( 'master.bpd.nip_admin.upsert', compact( 'status','karyawan' ) );
+        if(Gate::allows('hc_nkp')){
+            $karyawan = Karyawan::whereIn('nik',$arr_nik_nkp)->where($where)->orderBy( 'nama', 'asc' )->get();
+        }
+        return view( 'master.bpd.nip_admin.upsert', compact( 'status','karyawan', 'admin' ) );
     }
 
     /**
@@ -193,12 +203,18 @@ class MtrDataBpdController extends Controller
      */
     public function edit($id)
     {
-        //
+        $id = Crypt::decrypt($id);
         $status = 'edit';
-        $trx = BpdNikPeran::find( $id );
+        $trx = BpdNikPeran::find($id);
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $where = ['is_aktif' => 1];
+        $admin = Karyawan::where($where)->orderBy( 'nama', 'asc' )->get();
         $karyawan = Karyawan::where($where)->orderBy( 'nama', 'asc' )->get();
-        return view( 'master.bpd.nip_admin.upsert', compact( 'trx', 'status', 'karyawan' ) );
+        if(Gate::allows('hc_nkp')){
+            $karyawan = Karyawan::whereIn('nik',$arr_nik_nkp)->where($where)->orderBy( 'nama', 'asc' )->get();
+        }
+        return view( 'master.bpd.nip_admin.upsert', compact( 'trx', 'status', 'karyawan', 'admin' ) );
     }
 
     /**
@@ -211,7 +227,7 @@ class MtrDataBpdController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $trx = BpdNikPeran::find( $id );
+        $trx = BpdNikPeran::find($id);
         $trx->nik = $request->nik;
         $trx->admin = $request->admin;
         $trx->id_peran = $request->id_peran;
@@ -232,8 +248,8 @@ class MtrDataBpdController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $trx = BpdNikPeran::find( $id );
+        $id = Crypt::decrypt($id);
+        $trx = BpdNikPeran::find($id);
         $trx->delete();
         return redirect( 'mtrdatabpd' )->with( 'msg', 'Data is deleted successfully.' );
     }

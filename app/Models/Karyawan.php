@@ -103,4 +103,9 @@ class Karyawan extends Model
     {
         return \Carbon\Carbon::parse($this->attributes['updated_at']) ->format('d-m-Y H:i:s');
     }
+
+    public function getNikNkp()
+    {
+        return self::where(['kode_perusahaan'=>5])->pluck('nik')->toArray();
+    }
 }

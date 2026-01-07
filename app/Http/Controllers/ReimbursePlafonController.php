@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\ReimbursePlafon;
 use App\Models\TrxReimburseMaster;
 use App\Models\Karyawan;
@@ -47,7 +48,9 @@ class ReimbursePlafonController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $plafon = ReimbursePlafon::orderBy( 'periode', 'desc' )->get();
         // filter parameter
@@ -91,7 +94,9 @@ class ReimbursePlafonController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'create';
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::where($where)->orderBy('nama', 'asc')->get();
@@ -155,7 +160,9 @@ class ReimbursePlafonController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $plafon = ReimbursePlafon::find( $id );
         $where = ['is_aktif' => 1];

@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\TrxBpdMaster;
 use App\Models\TrxBpdDetailBiaya;
 use App\Models\TrxBpdDetailInfo;
@@ -53,9 +54,14 @@ class TrxBpdMasterExportInfo implements FromCollection, WithHeadings, WithTitle
         else{
             $arr_status_id = array();
         }
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $_pengaju = Karyawan::select('nik')->where('nama','LIKE','%'.$pengaju.'%')->get();
         $nik_karyawan = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get()->toArray();
         $trx = TrxBpdMaster::whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_pengaju)->whereIn('luar_dalam', $arr_luar_dalam)->whereIn('status_id', $arr_status_id)->orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxBpdMaster::whereIn('pengaju',$arr_nik_nkp)->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_pengaju)->whereIn('luar_dalam', $arr_luar_dalam)->whereIn('status_id', $arr_status_id)->orderBy('id', 'desc')->get();
+        }
         // 
         $arr = array();
         foreach ($trx as $data) {

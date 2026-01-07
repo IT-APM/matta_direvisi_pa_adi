@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\IphoneUser;
 use App\Models\BpdNikPeran;
 use App\Models\MtrUtility;
+use App\Models\Karyawan;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -84,6 +85,10 @@ class AuthServiceProvider extends ServiceProvider
         
         Gate::define('notif_letter', function(User $user) {
             return in_array($user->nik, explode(',', MtrUtility::find(45)->informasi));
+        });
+        
+        Gate::define('hc_nkp', function(User $user) {
+            return auth()->user()->userrole == 'hc' && Karyawan::where(['nik'=>auth()->user()->nik, 'kode_perusahaan'=>5])->exists();
         });
         //
     }

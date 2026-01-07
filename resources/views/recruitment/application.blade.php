@@ -228,6 +228,23 @@
                                             <input type="text" class="form-control" name="telepon" id="telepon" placeholder="Nomor Telepon" required="">
                                         </div>
                                         <div class="col-12">
+                                            <label for="telepon_emergency" class="form-label">Nomor Darurat<span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <select class="form-select" name="emergency" id="emergency" required="">
+                                                    <option selected disabled value="">-Pilih-</option>
+                                                    <option value="1">Ayah</option>
+                                                    <option value="2">Ibu</option>
+                                                    <option value="3">Suami</option>
+                                                    <option value="4">Istri</option>
+                                                    <option value="5">Saudara Kandung (Kakak/Adik)</option>
+                                                    <option value="6">Lainnya</option>
+                                                </select>
+                                                &nbsp;&nbsp;
+                                                <input type="text" class="form-control" name="emergency_lain" id="emergency_lain" placeholder="Lainnya" required="">
+                                            </div>
+                                            <input type="text" class="form-control mt-2" name="telepon_emergency" id="telepon_emergency" placeholder="Nomor Darurat" required="">
+                                        </div>
+                                        <div class="col-12">
                                             <label for="status_hidup" class="form-label">Status<span class="text-danger">*</span></label>
                                             <select class="form-select" name="status_hidup" id="status_hidup" required="">
                                                 <option selected disabled value="">-Pilih-</option>
@@ -240,7 +257,7 @@
                                             <div class="row mt-2" id="row_status">
                                                 <div class="col-6">
                                                     <label for="tanggal_status" class="form-label">Sejak</label>
-                                                    <input type="date" class="form-control" name="tanggal_status" id="tanggal_status" placeholder="Sejak">
+                                                    <input type="date" class="form-control" name="tanggal_status" id="tanggal_status" placeholder="Sejak" required="">
                                                 </div>
                                             </div>
                                         </div>
@@ -728,15 +745,16 @@
                                             </select>
                                             <div class="row" id="row_sakit">
                                                 <label for="is_sakit" class="form-label mt-2">Jika Pernah Sakit:</label>
-                                                <div class="col-6">
-                                                    <input type="text" class="form-control" name="sakit_apa" id="sakit_apa" placeholder="Sakit apa?">
-                                                </div>
-                                                <div class="col-6">
-                                                    <input type="number" class="form-control" name="sakit_tahun" id="sakit_tahun" placeholder="Tahun berapa?">
+                                                <div class="input-group">
+                                                {{-- <div class="col-6"> --}}
+                                                    <input type="text" class="form-control" name="sakit_apa" id="sakit_apa" placeholder="Sakit apa?" required="">
+                                                {{-- </div>
+                                                <div class="col-6"> --}}
+                                                    &nbsp;&nbsp;<input type="number" class="form-control" name="sakit_tahun" id="sakit_tahun" placeholder="Tahun berapa?" required="">
                                                 </div>
                                                 <div class="col-12">
                                                     <label for="sakit_kondisi" class="form-label mt-2">Kondisi saat ini apakah sudah sembuh atau masih dalam proses pengobatan?</label>
-                                                    <textarea class="form-control" rows="5" id="sakit_kondisi" name="sakit_kondisi"></textarea>
+                                                    <textarea class="form-control" rows="5" id="sakit_kondisi" name="sakit_kondisi" required=""></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -1259,22 +1277,47 @@
         });
         // 
         $("#row_sakit").hide();
+        $("#sakit_apa").prop('disabled', true);
+        $("#sakit_tahun").prop('disabled', true);
+        $("#sakit_kondisi").prop('disabled', true);
         $("#is_sakit").change(function () {
             $value = $("#is_sakit").val();
             if ($value == 'Pernah Sakit') {
                 $("#row_sakit").show();
+                $("#sakit_apa").prop('disabled', false);
+                $("#sakit_tahun").prop('disabled', false);
+                $("#sakit_kondisi").prop('disabled', false);
             } else {
                 $("#row_sakit").hide();
+                $("#sakit_apa").prop('disabled', true);
+                $("#sakit_tahun").prop('disabled', true);
+                $("#sakit_kondisi").prop('disabled', true);
             }
         });
         // 
         $("#row_status").hide();
+        $("#tanggal_status").prop('disabled', true);
         $("#status_hidup").change(function () {
             $value = $("#status_hidup").val();
             if ($value == 'Belum Menikah' || $value == 'Bertunangan') {
                 $("#row_status").hide();
+                $("#tanggal_status").prop('disabled', true);
             } else {
                 $("#row_status").show();
+                $("#tanggal_status").prop('disabled', false);
+            }
+        });
+        // 
+        $("#emergency_lain").hide();
+        $("#emergency_lain").prop('disabled', true);
+        $("#emergency").change(function () {
+            $value = $("#emergency").val();
+            if ($value == '6') {
+                $("#emergency_lain").show();
+                $("#emergency_lain").prop('disabled', false);
+            } else {
+                $("#emergency_lain").hide();
+                $("#emergency_lain").prop('disabled', true);
             }
         });
         // 

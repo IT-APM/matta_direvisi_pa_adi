@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\MtrStrukturGaji;
@@ -17,6 +18,9 @@ class MtrStrukturGajiController extends Controller
      */
     public function index()
     {
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $trx = MtrStrukturGaji::orderBy('id', 'asc')->get();
         return view('master.salary.index', compact('trx'));
     }
@@ -29,6 +33,9 @@ class MtrStrukturGajiController extends Controller
     public function create()
     {
         // dd(Route::getCurrentRoute()->getActionName());
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'create';
         $grade = KaryawanGrade::orderBy('id', 'asc')->get();
         $arr_tingkat = [];
@@ -94,6 +101,9 @@ class MtrStrukturGajiController extends Controller
     public function edit($id)
     {
         // dd(Route::getCurrentRoute()->getActionName());
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $trx = MtrStrukturGaji::find( $id );
         $grade = KaryawanGrade::orderBy('id', 'asc')->get();

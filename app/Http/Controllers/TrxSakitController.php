@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 // 
 use App\Models\Karyawan;
 use App\Models\TrxSakit;
@@ -38,12 +39,17 @@ class TrxSakitController extends Controller
      */
     public function index(Request $request)
     {
-        // 
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $auth_user = auth()->user()->nik;
+        $no = 0;
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
-        $no = 0;
         $trx = TrxSakit::orderBy('id', 'desc')->get();
+        if(Gate::allows('hc_nkp')){
+            $karyawan = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
+            $trx = TrxSakit::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+        }
         if(auth()->user()->userrole == 'nhc'){
             // $trx = TrxSakit::whereIn('nik_karyawan', $arr_nik)->orderBy('id', 'desc')->get();
             $trx = TrxSakit::where('pic_pengganti','LIKE','%'.$auth_user.'%')->orWhere('nik_karyawan', [$auth_user])->orWhere('nik_atasan', [$auth_user])->orderBy('id', 'desc')->get();
@@ -98,6 +104,9 @@ class TrxSakitController extends Controller
             }
             $_nama = Karyawan::select('nik')->where('nama','LIKE','%'.$nama.'%')->get();
             $trx = TrxSakit::whereIn('nik_karyawan', $_nama)->whereIn('status_sakit', $arr_status_sakit)->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxSakit::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $_nama)->whereIn('status_sakit', $arr_status_sakit)->orderBy('id', 'desc')->get();
+            }
             if(auth()->user()->userrole == 'nhc'){
                 // $trx = TrxSakit::whereIn('nik_karyawan', $_nama)->whereIn('status_sakit', $arr_status_sakit)->whereIn('nik_karyawan', $arr_nik)->orderBy('id', 'desc')->get();
                 $trx = TrxSakit::whereIn('nik_karyawan', $_nama)->whereIn('status_sakit', $arr_status_sakit)->where(function ($query) use ($auth_user) {

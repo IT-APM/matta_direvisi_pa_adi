@@ -63,11 +63,11 @@ class MtrDataBpdProjectAdminPicController extends Controller
      */
     public function create(Request $request)
     {
-        //
+        // dd($request->all());
         $status = 'create';
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::where($where)->orderBy( 'nama', 'asc' )->get();
-        $project_id  = $request->project_id;
+        $project_id  = Crypt::decrypt($request->project_id);
         return view( 'master.bpd.project_admin.upsert_pic', compact( 'status','karyawan', 'project_id' ) );
     }
 
@@ -79,12 +79,12 @@ class MtrDataBpdProjectAdminPicController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $project_id = Crypt::decrypt($request->project_id);
         $trx = New BpdProyekAdmin;
-        $trx->id_proyek = $request->project_id;
+        $trx->id_proyek = $project_id;
         $trx->admin = $request->admin;
         $trx->save();
-        return redirect()->route('mtrdataprojectadmin.show', $request->project_id)->with( 'msg', 'Data is saved successfully.' );
+        return redirect()->route('mtrdataprojectadmin.show', Crypt::encrypt($project_id))->with( 'msg', 'Data is saved successfully.' );
     }
 
     /**
@@ -108,10 +108,10 @@ class MtrDataBpdProjectAdminPicController extends Controller
     {
         //
         $status = 'edit';
-        $trx = BpdProyekAdmin::find( $id );
+        $trx = BpdProyekAdmin::find($id);
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::where($where)->orderBy( 'nama', 'asc' )->get();
-        $project_id  = $request->project_id;
+        $project_id  = Crypt::decrypt($request->project_id);
         return view( 'master.bpd.project_admin.upsert_pic', compact( 'trx', 'status', 'karyawan', 'project_id' ) );
     }
 
@@ -124,12 +124,12 @@ class MtrDataBpdProjectAdminPicController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-        $trx = BpdProyekAdmin::find( $id );
-        $trx->id_proyek = $request->project_id;
+        $project_id = Crypt::decrypt($request->project_id);
+        $trx = BpdProyekAdmin::find($id);
+        $trx->id_proyek = $project_id;
         $trx->admin = $request->admin;
         $trx->update();
-        return redirect()->route('mtrdataprojectadmin.show', $request->project_id)->with( 'msg', 'Data is saved successfully.' );
+        return redirect()->route('mtrdataprojectadmin.show', Crypt::encrypt($project_id))->with( 'msg', 'Data is saved successfully.' );
     }
 
     /**
@@ -141,7 +141,7 @@ class MtrDataBpdProjectAdminPicController extends Controller
     public function destroy(Request $request, $id)
     {
         //
-        $trx = BpdProyekAdmin::find( $id );
+        $trx = BpdProyekAdmin::find($id);
         $trx->delete();
         return redirect()->route('mtrdataprojectadmin.show', $request->project_id)->with( 'msg', 'Data is deleted successfully.' );
     }

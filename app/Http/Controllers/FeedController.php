@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Feeds;
 use App\Models\Karyawan;
 use URL;
@@ -34,7 +35,9 @@ class FeedController extends Controller
 
     public function index()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $feed = Feeds::orderBy( 'id', 'desc' )->get();
         return view( 'feeds.index', compact( 'feed', 'no' ) );
@@ -47,7 +50,9 @@ class FeedController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'create';
         return view( 'feeds.upsert', compact( 'status' ) );
     }
@@ -117,7 +122,9 @@ class FeedController extends Controller
      */
     public function show($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $feed = Feeds::orderBy( 'id', 'desc' )->get();
         $path = public_path('feeds/images/');
@@ -134,7 +141,9 @@ class FeedController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $status = 'edit';
         $feed = Feeds::find( $id );
         return view( 'feeds.upsert', compact( 'feed', 'status' ) );
