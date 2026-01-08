@@ -159,6 +159,19 @@
                                         <label for="telepon" class="form-label">Nomor Telepon<span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="telepon" id="telepon" value="{{ $trx->telepon }}">
                                     </div>
+                                    @if(!empty($trx->telepon_darurat))
+                                    @php
+                                        $telepon_darurat = array_map('trim', explode(',', $trx->telepon_darurat));
+                                        $str_telepon_darurat = $telepon_darurat[1].', '.$telepon_darurat[2];
+                                        if(count($telepon_darurat) > 3){
+                                            $str_telepon_darurat = $telepon_darurat[2].', '.$telepon_darurat[3];
+                                        }
+                                    @endphp
+                                    <div class="col-12">
+                                        <label for="telepon_darurat" class="form-label">Nomor Telepon Darurat<span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="telepon_darurat" id="telepon_darurat" value="{{ $str_telepon_darurat }}">
+                                    </div>
+                                    @endif
                                     <div class="col-12">
                                         <label for="status_hidup" class="form-label">Status<span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="status_hidup" id="status_hidup" value="{{ $trx->status_hidup }}">
