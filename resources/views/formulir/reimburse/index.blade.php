@@ -90,33 +90,66 @@
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2 mb-2" action="{{ route('reimburse.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
-                                <div class="col-sm-4">
-                                    <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_pengajuan(this)" /> Check All
-                                    <label class="d-block" for="status_pengajuan">
-                                        @foreach ($status_pengajuan as $data)
-                                        <input class="checkbox_animated" id="status_pengajuan[]" name="status_pengajuan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_status_pengajuan)) checked @endif> {{ $data->status }}<br/>
+                                <div class="col-sm-3">
+                                    <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox"
+                                        onClick="toggle_perusahaan(this)" /> Check All
+                                    <label class="d-block" for="kode_perusahaan">
+                                        @foreach ($perusahaan as $data)
+                                            <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan()" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>
+                                            {{ $data->nama }}<br />
                                         @endforeach
                                     </label>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label class="h6">Direktorat</label>&nbsp;<input type="checkbox"
+                                        onClick="toggle_divisi(this)" /> Check All
+                                    <label class="d-block" for="kode_divisi">
+                                        <div id="div_kode_divisi">
+                                            @foreach ($divisi as $data)
+                                                <input class="checkbox_animated" id="kode_divisi[]" name="kode_divisi[]" type="checkbox" onClick="get_kode_divisi()" value="{{ $data->id }}" @if (in_array($data->id, $arr_divisi)) checked @endif>
+                                                {{ $data->nama }}<br />
+                                            @endforeach
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="h6" for="nama">Bulan-Tahun</label>
+                                    <div>
+                                        <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_dari }}">
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                    sampai
+                                    <div>
+                                        <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_sampai }}">
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                </div>
+                                {{-- <div class="col-sm-3">
                                     <label class="h6">Tahun</label>&nbsp;<input type="checkbox" onClick="toggle_tahun(this)" /> Check All
                                     <label class="d-block" for="tahun">
                                         @foreach ($tahun as $data)
                                         <input class="checkbox_animated" id="tahun[]" name="tahun[]" type="checkbox" value="{{ $data }}" @if(in_array($data, $arr_tahun)) checked @endif> {{ $data }}<br/>
                                         @endforeach
-                                    </label>
-                                    <!-- <label class="h6">Nama Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_nik_karyawan(this)" /> Check All
+                                    </label> --}}
+                                    {{-- tidak digunakan --}}
+                                    {{-- <label class="h6">Nama Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_nik_karyawan(this)" /> Check All
                                     <label class="d-block" for="nik_karyawan">
                                         @foreach ($nik_karyawan as $data)
                                         <input class="checkbox_animated" id="nik_karyawan[]" name="nik_karyawan[]" type="checkbox" value="{{ $data->nik }}" @if(in_array($data->nik, $arr_nik_karyawan)) checked @endif> {{ $data->nama }}<br/>
                                         @endforeach
-                                    </label> -->
-                                </div>
-                                <div class="col-sm-4">
+                                    </label> --}}
+                                {{-- </div> --}}
+                                <div class="col-sm-3">
                                     <label class="h6">Layanan</label>&nbsp;<input type="checkbox" onClick="toggle_layanan(this)" /> Check All
                                     <label class="d-block" for="layanan">
                                         @foreach ($layanan as $data)
                                         <input class="checkbox_animated" id="layanan[]" name="layanan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_layanan)) checked @endif> {{ $data->layanan }}<br/>
+                                        @endforeach
+                                    </label>
+                                    <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_pengajuan(this)" /> Check All
+                                    <label class="d-block" for="status_pengajuan">
+                                        @foreach ($status_pengajuan as $data)
+                                        <input class="checkbox_animated" id="status_pengajuan[]" name="status_pengajuan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_status_pengajuan)) checked @endif> {{ $data->status }}<br/>
                                         @endforeach
                                     </label>
                                 </div>
@@ -230,6 +263,51 @@ function toggle_nik_karyawan(source) {
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
+}
+// 
+function get_kode_perusahaan() {
+    getDivisi();
+}
+function toggle_perusahaan(source) {
+    checkboxes = document.getElementsByName('kode_perusahaan[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+    getDivisi();
+}
+// 
+function toggle_divisi(source) {
+    checkboxes = document.getElementsByName('kode_divisi[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function getDivisi() {
+    var _kode_perusahaan = [];
+    $('input[id="kode_perusahaan[]"]:checked').each(function() {
+        _kode_perusahaan.push($(this).val());
+    });
+    $('#div_kode_divisi').empty();
+    // AJAX request 
+    $.ajax({
+        url: "{{ route('getDivisi') }}" + "/" + _kode_perusahaan,
+        type: 'get',
+        dataType: 'json',
+        success: function(response) {
+            var len = 0;
+            if (response != null) {
+                len = response.length;
+            }
+            if (len > 0) {
+                for (var i = 0; i < len; i++) {
+                    var id = response[i]['id'];
+                    var nama = response[i]['nama'];
+                    var option = "<input class='checkbox_animated' id='kode_divisi[]' name='kode_divisi[]' type='checkbox' onClick='get_kode_divisi()' value='" + id + "'> " + nama + "<br/>";
+                    $("#div_kode_divisi").append(option);
+                }
+            }
+        }
+    });
 }
 // 
 $('#_datatable').DataTable({

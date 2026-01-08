@@ -1,1 +1,2 @@
-<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p><?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/footer0.blade.php ENDPATH**/ ?>
+
+<?php echo App\Models\MtrUtility::find(47)->informasi; ?><?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/footer0.blade.php ENDPATH**/ ?>

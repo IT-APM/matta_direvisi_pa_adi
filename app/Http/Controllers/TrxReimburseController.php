@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 // 
 use App\Models\Karyawan;
+use App\Models\Perusahaan;
+use App\Models\Divisi;
 // 
 use App\Models\ReimburseHubungan;
 use App\Models\ReimburseLampiran;
@@ -45,6 +47,10 @@ class TrxReimburseController extends Controller
     {
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
+        // 0=NA
+        // 3=SMS Project
+        $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy( 'nama', 'asc' )->get();
+        $divisi = array();
         $nik_karyawan = ReimbursePlafon::pluck('nik_karyawan')->toArray();
         $no = 0;
         $where = ['is_aktif' => 1];
@@ -81,6 +87,8 @@ class TrxReimburseController extends Controller
         $arr_tahun = array();
         $arr_layanan = array();
         $arr_nik_karyawan = array();
+        $arr_perusahaan = array();
+        $arr_divisi = array();
         foreach ($trx as $data){
             array_push($arr_status_pengajuan, $data->status_pengajuan);
             if(!in_array($data->periode, $arr_tahun)){
@@ -92,12 +100,21 @@ class TrxReimburseController extends Controller
         $status_pengajuan = ReimburseStatus::whereIn('id', $arr_status_pengajuan)->orderBy('id', 'asc')->get();
         $tahun = $arr_tahun;
         $nik_karyawan = Karyawan::whereIn('nik', $arr_nik_karyawan)->orderBy('nama', 'asc')->get();
+        $bulan_tahun_dari = '';
+        $bulan_tahun_sampai = '';
         // start filter
         if($request->filter == true){
+            // dd($request->all());
             $_status_pengajuan = $request->input('status_pengajuan', []);
             $_tahun = $request->input('tahun', []);
             $_layanan = $request->input('layanan', []);
             $_nik_karyawan = $request->input('nik_karyawan', []);
+            $_perusahaan = $request->input('kode_perusahaan', []);
+            $_divisi = $request->input('kode_divisi', []);
+            $bulan_tahun_dari = $request->bulan_tahun_dari;
+            $bulan_tahun_sampai = $request->bulan_tahun_sampai;
+            $tanggal_dari = Carbon::createFromFormat('Y-m', $bulan_tahun_dari)->startOfMonth()->startOfDay();
+            $tanggal_sampai = Carbon::createFromFormat('Y-m', $bulan_tahun_sampai)->endOfMonth()->endOfDay();
             if(count($_status_pengajuan) > 0){
                 $arr_status_pengajuan = $_status_pengajuan;
             }
@@ -122,15 +139,35 @@ class TrxReimburseController extends Controller
             // else{
             //     $arr_nik_karyawan = array();
             // }
-            $trx = TrxReimburseMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->orderBy('id', 'desc')->get();
+            if (count($_perusahaan) > 0) {
+                $arr_perusahaan = $_perusahaan;
+            }
+            else{
+                $arr_perusahaan = array();
+            }
+            if (count($_divisi) > 0) {
+                $arr_divisi = $_divisi;
+            }
+            else{
+                $arr_divisi = array();
+            }
+            $divisi = Divisi::whereIn('kode_perusahaan', $arr_perusahaan)->get();
+            $div_karyawan = Karyawan::whereIn('kode_divisi', $arr_divisi)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->pluck('nik')->toArray();
             if(Gate::allows('hc_nkp')){
-                $trx = TrxReimburseMaster::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->orderBy('id', 'desc')->get();
+                $div_karyawan = Karyawan::whereIn('nik',$arr_nik_nkp)->whereIn('kode_divisi', $arr_divisi)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->pluck('nik')->toArray();
+            }
+            // $trx = TrxReimburseMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->orderBy('id', 'desc')->get();
+            $trx = TrxReimburseMaster::whereIn('nik_karyawan', $div_karyawan)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereBetween('created_at', [$tanggal_dari, $tanggal_sampai])->whereIn('nik_karyawan', $arr_nik_karyawan)->orderBy('id', 'desc')->get();
+            if(Gate::allows('hc_nkp')){
+                // $trx = TrxReimburseMaster::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->orderBy('id', 'desc')->get();
+                $trx = TrxReimburseMaster::whereIn('nik_karyawan', $div_karyawan)->whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereBetween('created_at', [$tanggal_dari, $tanggal_sampai])->whereIn('nik_karyawan', $arr_nik_karyawan)->orderBy('id', 'desc')->get();
             }
             $trxD = TrxReimburseDetail::whereIn('id_layanan', $arr_layanan)->whereIn('id_reimburse', $trx->pluck('id')->toArray())->get();
             $trx = TrxReimburseMaster::whereIn('id', $trxD->pluck('id_reimburse')->toArray())->orderBy('id', 'desc')->get();
             if(auth()->user()->userrole == 'nhc'){
                 $where = ['nik_karyawan' => auth()->user()->nik];
-                $trx = TrxReimburseMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->where($where)->orderBy('id', 'desc')->get();
+                // $trx = TrxReimburseMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('periode', $arr_tahun)->whereIn('nik_karyawan', $arr_nik_karyawan)->where($where)->orderBy('id', 'desc')->get();
+                $trx = TrxReimburseMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereBetween('created_at', [$tanggal_dari, $tanggal_sampai])->whereIn('nik_karyawan', $arr_nik_karyawan)->where($where)->orderBy('id', 'desc')->get();
                 // ambil plafon karyawan tersebut
                 $periode = Carbon::now()->format('Y');
                 $where = ['periode' => $periode, 'nik_karyawan' => auth()->user()->nik];
@@ -147,7 +184,7 @@ class TrxReimburseController extends Controller
             $arr_nik_karyawan = array();
         }
         // end filter
-        return view( 'formulir.reimburse.index', compact( 'trx', 'no', 'isPlafon', 'status_pengajuan', 'tahun', 'nik_karyawan', 'arr_status_pengajuan', 'arr_tahun', 'arr_nik_karyawan', 'karyawan', 'layanan', 'arr_layanan'));
+        return view( 'formulir.reimburse.index', compact( 'trx', 'no', 'isPlafon', 'status_pengajuan', 'tahun', 'nik_karyawan', 'arr_status_pengajuan', 'arr_tahun', 'arr_nik_karyawan', 'karyawan', 'layanan', 'arr_layanan', 'bulan_tahun_dari', 'bulan_tahun_sampai', 'perusahaan', 'divisi', 'arr_perusahaan', 'arr_divisi'));
         // return view('formulir.reimburse.index', compact('trx', 'no', 'isPlafon'));
     }
 

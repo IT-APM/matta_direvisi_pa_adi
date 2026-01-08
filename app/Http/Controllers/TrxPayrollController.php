@@ -223,7 +223,8 @@ class TrxPayrollController extends Controller
         }
         // 
         $bulan_tahun_dari = '';
-        $bulan_tahun_sampai = '';// start filter
+        $bulan_tahun_sampai = '';
+        // start filter
         if($request->filter == true){
             $result = array();
             $bulan_tahun_dari = $request->bulan_tahun_dari;

@@ -88,33 +88,55 @@
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2 mb-2" action="<?php echo e(route('reimburse.index')); ?>" method="get" enctype="multipart/form-data">
                             <div class="row">
-                                <div class="col-sm-4">
-                                    <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_pengajuan(this)" /> Check All
-                                    <label class="d-block" for="status_pengajuan">
-                                        <?php $__currentLoopData = $status_pengajuan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <input class="checkbox_animated" id="status_pengajuan[]" name="status_pengajuan[]" type="checkbox" value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, $arr_status_pengajuan)): ?> checked <?php endif; ?>> <?php echo e($data->status); ?><br/>
+                                <div class="col-sm-3">
+                                    <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox"
+                                        onClick="toggle_perusahaan(this)" /> Check All
+                                    <label class="d-block" for="kode_perusahaan">
+                                        <?php $__currentLoopData = $perusahaan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan()" value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, $arr_perusahaan)): ?> checked <?php endif; ?>>
+                                            <?php echo e($data->nama); ?><br />
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </label>
                                 </div>
-                                <div class="col-sm-4">
-                                    <label class="h6">Tahun</label>&nbsp;<input type="checkbox" onClick="toggle_tahun(this)" /> Check All
-                                    <label class="d-block" for="tahun">
-                                        <?php $__currentLoopData = $tahun; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <input class="checkbox_animated" id="tahun[]" name="tahun[]" type="checkbox" value="<?php echo e($data); ?>" <?php if(in_array($data, $arr_tahun)): ?> checked <?php endif; ?>> <?php echo e($data); ?><br/>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <div class="col-sm-3">
+                                    <label class="h6">Direktorat</label>&nbsp;<input type="checkbox"
+                                        onClick="toggle_divisi(this)" /> Check All
+                                    <label class="d-block" for="kode_divisi">
+                                        <div id="div_kode_divisi">
+                                            <?php $__currentLoopData = $divisi; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <input class="checkbox_animated" id="kode_divisi[]" name="kode_divisi[]" type="checkbox" onClick="get_kode_divisi()" value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, $arr_divisi)): ?> checked <?php endif; ?>>
+                                                <?php echo e($data->nama); ?><br />
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </div>
                                     </label>
-                                    <!-- <label class="h6">Nama Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_nik_karyawan(this)" /> Check All
-                                    <label class="d-block" for="nik_karyawan">
-                                        <?php $__currentLoopData = $nik_karyawan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <input class="checkbox_animated" id="nik_karyawan[]" name="nik_karyawan[]" type="checkbox" value="<?php echo e($data->nik); ?>" <?php if(in_array($data->nik, $arr_nik_karyawan)): ?> checked <?php endif; ?>> <?php echo e($data->nama); ?><br/>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </label> -->
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label class="h6" for="nama">Bulan-Tahun</label>
+                                    <div>
+                                        <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="<?php echo e($bulan_tahun_dari); ?>">
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                    sampai
+                                    <div>
+                                        <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="<?php echo e($bulan_tahun_sampai); ?>">
+                                        <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div>
+                                </div>
+                                
+                                    
+                                    
+                                
+                                <div class="col-sm-3">
                                     <label class="h6">Layanan</label>&nbsp;<input type="checkbox" onClick="toggle_layanan(this)" /> Check All
                                     <label class="d-block" for="layanan">
                                         <?php $__currentLoopData = $layanan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <input class="checkbox_animated" id="layanan[]" name="layanan[]" type="checkbox" value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, $arr_layanan)): ?> checked <?php endif; ?>> <?php echo e($data->layanan); ?><br/>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </label>
+                                    <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_pengajuan(this)" /> Check All
+                                    <label class="d-block" for="status_pengajuan">
+                                        <?php $__currentLoopData = $status_pengajuan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <input class="checkbox_animated" id="status_pengajuan[]" name="status_pengajuan[]" type="checkbox" value="<?php echo e($data->id); ?>" <?php if(in_array($data->id, $arr_status_pengajuan)): ?> checked <?php endif; ?>> <?php echo e($data->status); ?><br/>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </label>
                                 </div>
@@ -228,6 +250,51 @@ function toggle_nik_karyawan(source) {
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
+}
+// 
+function get_kode_perusahaan() {
+    getDivisi();
+}
+function toggle_perusahaan(source) {
+    checkboxes = document.getElementsByName('kode_perusahaan[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+    getDivisi();
+}
+// 
+function toggle_divisi(source) {
+    checkboxes = document.getElementsByName('kode_divisi[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function getDivisi() {
+    var _kode_perusahaan = [];
+    $('input[id="kode_perusahaan[]"]:checked').each(function() {
+        _kode_perusahaan.push($(this).val());
+    });
+    $('#div_kode_divisi').empty();
+    // AJAX request 
+    $.ajax({
+        url: "<?php echo e(route('getDivisi')); ?>" + "/" + _kode_perusahaan,
+        type: 'get',
+        dataType: 'json',
+        success: function(response) {
+            var len = 0;
+            if (response != null) {
+                len = response.length;
+            }
+            if (len > 0) {
+                for (var i = 0; i < len; i++) {
+                    var id = response[i]['id'];
+                    var nama = response[i]['nama'];
+                    var option = "<input class='checkbox_animated' id='kode_divisi[]' name='kode_divisi[]' type='checkbox' onClick='get_kode_divisi()' value='" + id + "'> " + nama + "<br/>";
+                    $("#div_kode_divisi").append(option);
+                }
+            }
+        }
+    });
 }
 // 
 $('#_datatable').DataTable({

@@ -181,7 +181,7 @@
                                             <!-- <button type="submit" class="btn btn-xs btn-danger btn-flat show_confirm" data-toggle="tooltip" title='Delete'>Delete</button> -->
                                             <ul class="action">
                                                 <li class="edit"><a href="<?php echo e(route('karyawan.edit', Crypt::encrypt($data->id))); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a></li>
-                                                <li class="delete"><a href="#" data-toggle="tooltip" title='Delete'><i class="icon-trash show_confirm"></i></a></li>
+                                                <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
                                             </ul>
                                         </form>
                                     </td>
@@ -277,7 +277,7 @@ $('#_datatable').DataTable( {
 	],
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
 } );
-$('.show_confirm').click(function(event) {
+$(document).on('click', '#btn-delete', function(event) {
     var form = $(this).closest("form");
     event.preventDefault();
     swal({
