@@ -228,9 +228,9 @@
                                             <input type="text" class="form-control" name="telepon" id="telepon" placeholder="Nomor Telepon" required="">
                                         </div>
                                         <div class="col-12">
-                                            <label for="telepon_emergency" class="form-label">Nomor Darurat<span class="text-danger">*</span></label>
+                                            <label for="telepon_darurat" class="form-label">Nomor Darurat<span class="text-danger">*</span></label>
                                             <div class="input-group">
-                                                <select class="form-select" name="emergency" id="emergency" required="">
+                                                <select class="form-select" name="id_darurat" id="id_darurat" required="">
                                                     <option selected disabled value="">-Pilih-</option>
                                                     <option value="1">Ayah</option>
                                                     <option value="2">Ibu</option>
@@ -240,9 +240,10 @@
                                                     <option value="6">Lainnya</option>
                                                 </select>
                                                 &nbsp;&nbsp;
-                                                <input type="text" class="form-control" name="emergency_lain" id="emergency_lain" placeholder="Lainnya" required="">
+                                                <input type="text" class="form-control" name="darurat_lain" id="darurat_lain" placeholder="Lainnya" required="">
                                             </div>
-                                            <input type="text" class="form-control mt-2" name="telepon_emergency" id="telepon_emergency" placeholder="Nomor Darurat" required="">
+                                            <input type="hidden" name="nama_darurat" id="nama_darurat">
+                                            <input type="text" class="form-control mt-2" name="telepon_darurat" id="telepon_darurat" placeholder="Nomor Darurat" required="">
                                         </div>
                                         <div class="col-12">
                                             <label for="status_hidup" class="form-label">Status<span class="text-danger">*</span></label>
@@ -1308,16 +1309,18 @@
             }
         });
         // 
-        $("#emergency_lain").hide();
-        $("#emergency_lain").prop('disabled', true);
-        $("#emergency").change(function () {
-            $value = $("#emergency").val();
+        $("#darurat_lain").hide();
+        $("#darurat_lain").prop('disabled', true);
+        $("#id_darurat").change(function () {
+            $value = $("#id_darurat").val();
+            let nama_darurat = $("#id_darurat option:selected").text();
+            $("#nama_darurat").val(nama_darurat);
             if ($value == '6') {
-                $("#emergency_lain").show();
-                $("#emergency_lain").prop('disabled', false);
+                $("#darurat_lain").show();
+                $("#darurat_lain").prop('disabled', false);
             } else {
-                $("#emergency_lain").hide();
-                $("#emergency_lain").prop('disabled', true);
+                $("#darurat_lain").hide();
+                $("#darurat_lain").prop('disabled', true);
             }
         });
         // 
