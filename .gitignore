@@ -10,3 +10,10 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+# archives
+*.zip
+*.rar
+
+# uploads
+public/assets/recruitment/upload/
+public/assets/images/matta/
