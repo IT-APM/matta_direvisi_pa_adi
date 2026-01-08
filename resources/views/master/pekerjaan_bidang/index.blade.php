@@ -71,6 +71,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <a href="{{ route('pekerjaan_master.index') }}" class="btn btn-info" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
                 </div>
             </div>
         </div>
