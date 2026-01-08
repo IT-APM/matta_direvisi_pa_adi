@@ -2788,8 +2788,7 @@ class TrxPayrollController extends Controller
         // }
         $body .= '<p>Slip Gaji bersifat <strong style="color:red">PERSONAL & CONFIDENTIAL</strong>. Mohon untuk tidak diberitahukan kepada rekan kerja ataupun pihak lain dengan alasan apapun.</p>';
         $body .= '<p>Demikian kami sampaikan, terimakasih atas perhatian dan kerjasamanya.</p>';
-        // $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
-        $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
+        $body .= MtrUtility::find(47)->informasi;
         return $body;
     }
 
@@ -2812,8 +2811,7 @@ class TrxPayrollController extends Controller
         $body .= '<p>Surat Pemberitahuan dan Slip Gaji ini adalah bersifat <strong style="color:red">CONFIDENTIAL</strong> dan tidak untuk diberitahukan kepada rekan kerja ataupun Pihak Lain.</p>';
         $body .= '<p>Demikian kami sampaikan, terimakasih atas perhatian dan kerjasamanya.</p>';
         $body .= '<p><i style="color:blue">Notes : password berupa tanggal lahir dengan format DDMMYYYY.</i></p>';
-        // $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
-        $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
+        $body .= MtrUtility::find(47)->informasi;
         return $body;
     }
 
@@ -2932,8 +2930,7 @@ class TrxPayrollController extends Controller
                         // $body .= '<p><a href="'.$link.'">Download File</a>';
                         $body .= '<p>Demikian kami sampaikan, terimakasih atas perhatian dan kerjasamanya.</p>';
                         $body .= '<p><i style="color:blue">Notes : password berupa tanggal lahir dengan format DDMMYYYY.</i></p>';
-                        // $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
-                        $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
+                        $body .= MtrUtility::find(47)->informasi;
                         // 
                         $trx->email = json_encode(['nik'=>$nik_property['nik'], 'subject'=>$email['subject'], 'body'=>$body, 'to'=>$email['to'], 'cc'=>$email['cc']]);
                         $trx->update();
