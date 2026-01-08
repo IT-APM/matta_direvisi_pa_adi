@@ -82,6 +82,20 @@
                         <td>:</td>
                         <td>{{ $trx->telepon }}</td>
                     </tr>
+                    @if(!empty($trx->telepon_darurat))
+                    @php
+                        $telepon_darurat = array_map('trim', explode(',', $trx->telepon_darurat));
+                        $str_telepon_darurat = $telepon_darurat[1].', '.$telepon_darurat[2];
+                        if(count($telepon_darurat) > 3){
+                            $str_telepon_darurat = $telepon_darurat[2].', '.$telepon_darurat[3];
+                        }
+                    @endphp
+                    <tr>
+                        <td>Nomor Telepon Darurat</td>
+                        <td>:</td>
+                        <td>{{ $str_telepon_darurat }}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <td>Email</td>
                         <td>:</td>
