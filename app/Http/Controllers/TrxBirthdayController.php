@@ -14,7 +14,8 @@ use Carbon\Carbon;
 
 class TrxBirthdayController extends Controller
 {
-
+    // http://localhost/matta/birthday/scheduler/0
+    // https://matta-reborn.alita.id/matta/birthday/scheduler/0
     public function scheduler($id){
         // dd($id);
         $this->getBirthday();
@@ -99,8 +100,7 @@ class TrxBirthdayController extends Controller
         // img-responsive
         $body .= '<img class="img-responsive" src="'.$images.'" alt="Happy Birthday">';
         $body .= '<br/><br/><br/>';
-        // $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p>';
-        $body .= '<p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>T.R.U.S.T</strong><br/><strong>T</strong>ruthful.<strong>R</strong>esilience.<strong>U</strong>nwavering.<strong>S</strong>ound.<strong>T</strong>eamwork</p>';
+        $body .= MtrUtility::find(47)->informasi;
         $body .= '</div>';
         return $body;
     }
