@@ -51,6 +51,77 @@ class MtrDataBpdProjectAdminController extends Controller
      */
     public function index()
     {
+        // // start
+        // // get data mtr_tbl_bpd_project_ref2026
+        // $data = DB::table('mtr_tbl_bpd_project_ref2026')->select('id', 'project_id', 'name', 'customer', 'group', 'admin')->get();
+        // $arr = array();
+        // $arr_id1 = array();
+        // $arr_id2 = array();
+        // // check existing
+        // foreach($data as $_data){
+        //     $id2 = $_data->id;
+        //     $project_id = $_data->project_id;
+        //     $name = $_data->name;
+        //     $customer = $_data->customer;
+        //     $group = $_data->group;
+        //     $admin = $_data->admin;
+        //     $where = ['project_id'=>$project_id, 'name'=>$name, 'customer'=>$customer, 'group'=>$group];
+        //     $query = BpdProyek::where($where);
+        //     $id1 = $query->value('id');
+        //     if($query->exists()){
+        //         array_push($arr, array_merge($where, ['id'=>$id1]));
+        //         array_push($arr_id1, $id1);
+        //         array_push($arr_id2, $id2);
+        //         $arr_admin = array();
+        //         $admin1 = array_map('trim', explode(',', $admin));
+        //         foreach($admin1 as $admin2){
+        //             $admin3 = array_map('trim', explode('/', $admin2))[1];
+        //             array_push($arr_admin, $admin3);
+        //             // jika admin baru tidak ada di admin lama maka insert admin baru
+        //             if(!BpdProyekAdmin::where(['id_proyek'=>$id1, 'admin'=>$admin3])->exists()){
+        //                 $trx = new BpdProyekAdmin();
+        //                 $trx->id_proyek = $id1;
+        //                 $trx->admin = $admin3;
+        //                 $trx->save();
+        //             }
+        //         }
+        //         $trx = BpdProyekAdmin::where(['id_proyek'=>$id1])->get();
+        //         foreach($trx as $_trx){
+        //             // jika admin lama tidak ada di admin baru maka di-delete
+        //             if(!in_array($_trx->admin, $arr_admin)){
+        //                 BpdProyekAdmin::find($_trx->id)->delete();
+        //             }
+        //         }
+        //     }
+        // }
+        // // non aktif kan
+        // BpdProyek::whereNotIn('id', $arr_id1)->update(['is_active' => 0]);
+        // // insert new data
+        // $data = DB::table('mtr_tbl_bpd_project_ref2026')->select('id', 'project_id', 'name', 'customer', 'group', 'admin')->whereNotIn('id', $arr_id2)->get();
+        // foreach($data as $_data){
+        //     $project_id = $_data->project_id;
+        //     $name = $_data->name;
+        //     $customer = $_data->customer;
+        //     $group = $_data->group;
+        //     $admin = $_data->admin;
+        //     $id = BpdProyek::insertGetId([
+        //         'project_id' => $project_id,
+        //         'name'       => $name,
+        //         'customer'   => $customer,
+        //         'group'      => $group,
+        //         'is_active'  => 1,
+        //     ]);
+        //     $admin1 = array_map('trim', explode(',', $admin));
+        //     foreach($admin1 as $admin2){
+        //         $admin3 = array_map('trim', explode('/', $admin2))[1];
+        //         $trx = new BpdProyekAdmin();
+        //         $trx->id_proyek = $id;
+        //         $trx->admin = $admin3;
+        //         $trx->save();
+        //     }
+        // }
+        // dd($arr, $arr_id1, $arr_id2);
+        // // end
         if(Gate::allows('hc_nkp')){
             return redirect()->route('error-403');
         }
