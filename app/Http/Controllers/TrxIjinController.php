@@ -310,7 +310,8 @@ class TrxIjinController extends Controller
         $where = [ 'nik' => $karyawan, 'is_aktif' => 1, 'wg_id' => 1 ];
         $isreguler = Karyawan::where($where)->exists();
         // $check = Carbon::parse($request->tanggal)->isMonday() || Carbon::parse($request->tanggal)->isFriday();
-        $isPast = Carbon::createFromFormat('Y-m-d', $request->tanggal)->isPast();
+        // $isPast = Carbon::createFromFormat('Y-m-d', $request->tanggal)->isPast();
+        $isPast = Carbon::parse($request->tanggal)->startOfDay()->lt(now()->startOfDay());
         // dd($isPast, $request->tanggal);
         $where = [ 'tanggal' => $request->tanggal ];
         $isholiday = Holiday::where($where)->exists();
