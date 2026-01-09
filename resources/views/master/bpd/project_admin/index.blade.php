@@ -73,7 +73,7 @@
                                         $admin = App\Models\BpdProyekAdmin::where($where)->orderBy('id', 'asc')->get();
                                         @endphp
                                         @foreach ($admin as $_admin)
-                                        {{ $_admin->_admin->nama }}<br/>
+                                        {{ $_admin->_admin->nama }} / {{ $_admin->admin }}<br/>
                                         @endforeach
                                     </td>
                                     <td>@if($data->is_active==1) <span class="badge bg-success">Aktif</span> @else <span class="badge bg-danger">Non Aktif</span> @endif</td>
