@@ -99,7 +99,11 @@ class LoginController extends Controller
     public function sendEmail($mailData)
     {
         $ccEmails = explode(',', MtrUtility::find(11)->informasi);
-        Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
+        if($mailData['title'] == 'New Password'){
+            Mail::to($mailData['to'])->bcc($ccEmails)->send(new MattaRebornMail($mailData));
+        }else{
+            Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
+        }
     }
 
     public function logout(Request $request)
