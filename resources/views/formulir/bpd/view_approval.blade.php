@@ -676,7 +676,7 @@
                 }
             });
             @foreach($trxDetailBiaya as $data)
-            getData({{ $data->id }});
+            getData({{ $data->id }}, 0);
             @endforeach
         });
 
@@ -714,7 +714,7 @@
             node.value = value.toLocaleString('en'); // or other formatting
     }
     // get data coa
-    function getData(_id) {
+    function getData(_id, _project_id) {
         $('#biayacoa_' + _id).find('option').remove();
         $("#biayacoa_" + _id).append('<option selected="" disabled="" value="">Pilih...</option>');
         var id = $("#is_project").val();
@@ -724,7 +724,7 @@
         }
         // alert(id);
         $.ajax({
-            url: "{{ route('bpd_coa') }}" + "/" + coa,
+            url: "{{ route('bpd_coa') }}" + "/" + _project_id,
             type: 'get',
             dataType: 'json',
             success: function (response) {
@@ -746,6 +746,13 @@
             }
         });
     }
+    // 
+    $("#project_id").change(function (event) {
+        var _project_id = $("#project_id").val();
+        @foreach($trxDetailBiaya as $data)
+        getData({{ $data->id }}, _project_id);
+        @endforeach
+    });
 
 </script>
 @endsection
