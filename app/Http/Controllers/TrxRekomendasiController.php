@@ -41,6 +41,11 @@ class TrxRekomendasiController extends Controller
      */
     public function index(Request $request)
     {
+        // start refer to cm 464
+        if(auth()->user()->nik == '01032509884'){
+            return redirect()->route('error-403');
+        }
+        // end
         $no = 0;
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
