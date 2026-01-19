@@ -52,7 +52,9 @@ class AuthServiceProvider extends ServiceProvider
         });
         
         Gate::define('asm', function(User $user) {
-            return $user->_nik->kode_level >= 4 || $user->userrole == 'hc';
+            // return $user->_nik->kode_level >= 4 || $user->userrole == 'hc';
+            // pengecualian 01032509884 ref cm 464
+            return $user->_nik->kode_level >= 4 || $user->userrole == 'hc' || $user->nik == '01032509884';
         });
         
         Gate::define('iphone', function(User $user) {
