@@ -3333,8 +3333,21 @@ class TrxBpdController extends Controller
             $data->id_trx = $bpd['id'];
             $data->jenis = $bpd['jenis'];
             $id_coa = $bpd['biaya'][$x];
+            // start fungsi ambil coa_prefix uang saku mengikuti project_id
+            // ambil project_id dari TrxBpdMaster
+            $project_id = TrxBpdMaster::find($bpd['id'])->project_id;
+            $coa_prefix = BpdProyek::find($project_id)->coa_prefix;
+            if(in_array($id_coa, [1, 2])){
+                if($coa_prefix == 5){
+                    // 76 = 514004
+                    $id_coa = 76;
+                }elseif($coa_prefix == 6){
+                    // 89 = 622002
+                    $id_coa = 89;
+                }
+            }
+            // end
             $_coa = BpdCoa::find($id_coa);
-            // 
             if(!empty($_coa)){
                 $data->id_coa = $id_coa;
                 $data->kode_coa = $_coa->account.'-'.$_coa->name;
@@ -3535,14 +3548,17 @@ class TrxBpdController extends Controller
         // 2 = 500240 = BIAYA UANG SAKU = Support
         // ambil account dan name
         // $account = BpdCoa::whereIn('divisi', ['0'])->whereNotIn('id', [1,2])->orderBy('account', 'asc')->get();
-        $account = BpdCoa::whereIn('divisi', ['0'])->orderBy('account', 'asc')->get();
-        if($id==1){
-            // $account = BpdCoa::whereIn('divisi', ['Project'])->whereNotIn('id', [1])->orderBy('account', 'asc')->get();
-            $account = BpdCoa::whereIn('divisi', ['Project'])->orderBy('account', 'asc')->get();
-        }else if($id==0){
-            // $account = BpdCoa::whereIn('divisi', ['Support'])->whereNotIn('id', [2])->orderBy('account', 'asc')->get();
-            $account = BpdCoa::whereIn('divisi', ['Support'])->orderBy('account', 'asc')->get();
-        }
+        // sudah tidak digunakan lagi
+        // $account = BpdCoa::whereIn('divisi', ['0'])->where(['is_active'=>1])->orderBy('account', 'asc')->get();
+        // if($id==1){
+        //     // $account = BpdCoa::whereIn('divisi', ['Project'])->whereNotIn('id', [1])->orderBy('account', 'asc')->get();
+        //     $account = BpdCoa::whereIn('divisi', ['Project'])->where(['is_active'=>1])->orderBy('account', 'asc')->get();
+        // }else if($id==0){
+        //     // $account = BpdCoa::whereIn('divisi', ['Support'])->whereNotIn('id', [2])->orderBy('account', 'asc')->get();
+        //     $account = BpdCoa::whereIn('divisi', ['Support'])->where(['is_active'=>1])->orderBy('account', 'asc')->get();
+        // }
+        // merujuk ke "C:\alita\matta\data_master\2026_PROJECT ID vs ADMIN_Rev1.xlsx" sheet DAFTAR PROJECT ID
+        $account = BpdCoa::where('account', 'like', BpdProyek::find($id)->coa_prefix.'%')->where(['is_active'=>1])->orderBy('account', 'asc')->get();
         return response()->json(['account' => $account]);
     }
 }
