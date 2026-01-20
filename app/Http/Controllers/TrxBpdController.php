@@ -3336,14 +3336,16 @@ class TrxBpdController extends Controller
             // start fungsi ambil coa_prefix uang saku mengikuti project_id
             // ambil project_id dari TrxBpdMaster
             $project_id = TrxBpdMaster::find($bpd['id'])->project_id;
-            $coa_prefix = BpdProyek::find($project_id)->coa_prefix;
-            if(in_array($id_coa, [1, 2])){
-                if($coa_prefix == 5){
-                    // 76 = 514004
-                    $id_coa = 76;
-                }elseif($coa_prefix == 6){
-                    // 89 = 622002
-                    $id_coa = 89;
+            if(!empty($project_id)){
+                $coa_prefix = BpdProyek::find($project_id)->coa_prefix;
+                if(in_array($id_coa, [1, 2])){
+                    if($coa_prefix == 5){
+                        // 76 = 514004
+                        $id_coa = 76;
+                    }elseif($coa_prefix == 6){
+                        // 89 = 622002
+                        $id_coa = 89;
+                    }
                 }
             }
             // end
