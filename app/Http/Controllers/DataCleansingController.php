@@ -226,8 +226,12 @@ class DataCleansingController extends Controller
             $_data = DB::select(DB::raw("SELECT * FROM trx_tbl_penilaian WHERE nik_karyawan='".$value->nik."' AND DATE(created_at) BETWEEN '".$value->tanggal_awal."' AND '".$value->tanggal_berakhir."'"));
             if(count($_data)==0){
                 $where = ['nik_karyawan' => $value->nik];
-                $check = TrxPenilaianAuto::where($where)->exists();
+                $check = TrxPenilaianAuto::where($where)->whereNull('id_trx')->exists();
                 if(!$check){
+                    array_push($result, $value);
+                    $this->StorePenilaianAuto($value);
+                }else{
+                    TrxPenilaianAuto::where($where)->whereNull('id_trx')->delete();
                     array_push($result, $value);
                     $this->StorePenilaianAuto($value);
                 }
@@ -248,8 +252,12 @@ class DataCleansingController extends Controller
             $_data = DB::select(DB::raw("SELECT * FROM trx_tbl_penilaian WHERE nik_karyawan='".$value->nik."' AND DATE(created_at) BETWEEN '".$value->tanggal_awal."' AND '".$value->tanggal_berakhir."'"));
             if(count($_data)==0){
                 $where = ['nik_karyawan' => $value->nik];
-                $check = TrxPenilaianAuto::where($where)->exists();
+                $check = TrxPenilaianAuto::where($where)->whereNull('id_trx')->exists();
                 if(!$check){
+                    array_push($result, $value);
+                    $this->StorePenilaianAutoOutsourcing($value);
+                }else{
+                    TrxPenilaianAuto::where($where)->whereNull('id_trx')->delete();
                     array_push($result, $value);
                     $this->StorePenilaianAutoOutsourcing($value);
                 }
