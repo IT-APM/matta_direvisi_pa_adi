@@ -51,7 +51,7 @@
                                 </tr>
                                 <tr>
                                     <td>Dari</td>
-                                    <td>: {{ $spu['jabatan'] }}</td>
+                                    <td>: {{ $spu['departemen'] }}</td>
                                     <td>&nbsp;</td>
                                 </tr>
                                 <tr>
