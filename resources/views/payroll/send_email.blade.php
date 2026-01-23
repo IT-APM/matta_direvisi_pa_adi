@@ -86,14 +86,17 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <th>Bulan</th>
                                             <th>Nama</th>
                                             <th>NIP</th>
-                                            <th>Subject</th>
-                                            <th>Email</th>
+                                            {{-- <th>Subject</th>
+                                            <th>Email</th> --}}
+                                            <th>Link</th>
+                                            <th>PDF</th>
                                             <th>Created_at</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @php
                                             $no=0;
+                                            $nik_reviewer = explode(',', App\Models\MtrUtility::find(45)->informasi)[0];
                                         @endphp
                                         @foreach ($trx_current as $data)
                                         <tr>
@@ -117,8 +120,14 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <td>{{ $bulan[$data->bulan - 1] }}</td>
                                             <td>{{ $nik_property['nama'] }}</td>
                                             <td>{{ $data->nik }}</td>
-                                            <td>{{ $email['subject'] }}</td>
-                                            <td>{!! $email['body'] !!}</td>
+                                            {{-- <td>{{ $email['subject'] }}</td>
+                                            <td>{!! $email['body'] !!}</td> --}}
+                                            <td>
+                                                <a href="{{ route('payroll.review', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'pic' => (new App\Http\Controllers\OpenDataController)->encryptWithKey($nik_reviewer), 'id_status' => 1 ]) }}</td>" target="_blank"><i class="fa fa-link"></i>
+                                            </a>
+                                            <td>
+                                                <a href="{{ asset('assets/penyesuaian_upah').'/'.$data->filename }}" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                            </td>
                                             <td>{{ $data->created_at }}</td>
                                         </tr>
                                         @endforeach
