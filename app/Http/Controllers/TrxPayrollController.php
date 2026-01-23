@@ -134,7 +134,10 @@ class TrxPayrollController extends Controller
     public function sendEmail($mailData)
     {
         $ccEmails = explode(',', $mailData['cc']);
-        Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
+        // tidak digunakan cc
+        // Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
+        // menjadi bcc
+        Mail::to($mailData['to'])->bcc($ccEmails)->send(new MattaRebornMail($mailData));
     }
     
     public function send_email_exe(Request $request)
@@ -435,6 +438,7 @@ class TrxPayrollController extends Controller
     
     public function slip_detail(Request $request, $id)
     {
+        set_time_limit(600);
         // $pdf = new TCPDF;
         // $pdf::AddPage('P', 'A4');
         // // $pdf::setPrintHeader(false);
@@ -517,17 +521,43 @@ class TrxPayrollController extends Controller
                 $grade_present = '';
                 $level_past = '';
                 $grade_past = '';
-                $where = ['tahun'=>$payroll->tahun, 'gapok'=>$payroll->gapok, 't_makan'=>$tunjangan_present[0]->angka, 't_transport'=>$tunjangan_present[1]->angka, 't_jabatan'=>$tunjangan_present[2]->angka, 't_telekomunikasi'=>$tunjangan_present[3]->angka];
+                // $where = ['tahun'=>$payroll->tahun, 'gapok'=>$payroll->gapok, 't_makan'=>$tunjangan_present[0]->angka, 't_transport'=>$tunjangan_present[1]->angka, 't_jabatan'=>$tunjangan_present[2]->angka, 't_telekomunikasi'=>$tunjangan_present[3]->angka];
+                $where = ['gapok'=>$payroll->gapok];
                 $str_present = MtrStrukturGaji::where($where)->orderBy('id', 'asc')->first();
                 if(!empty($str_present)){
                     $level_present = $str_present->_grade->level;
                     $grade_present = $str_present->_grade->grade;
+                    // level = NON STAFF
+                    // grade = I
+                    if(in_array($payroll->nik, ['01020707028','01031604597','01030908046','01021007065','01021109082','01020703027'])){
+                        $level_present = 'NON STAFF';
+                        $grade_present = 'I';
+                    }
+                    // level = STAFF
+                    // grade = II
+                    elseif(in_array($payroll->nik, ['01032505879','01031806718','01031002054','01031809745','01032307866','01032506880','01032308867'])){
+                        $level_present = 'STAFF';
+                        $grade_present = 'II';
+                    }
                 }
-                $where = ['tahun'=>$payroll_past->tahun, 'gapok'=>$payroll_past->gapok, 't_makan'=>$tunjangan_past[0]->angka, 't_transport'=>$tunjangan_past[1]->angka, 't_jabatan'=>$tunjangan_past[2]->angka, 't_telekomunikasi'=>$tunjangan_past[3]->angka];
+                // $where = ['tahun'=>$payroll_past->tahun, 'gapok'=>$payroll_past->gapok, 't_makan'=>$tunjangan_past[0]->angka, 't_transport'=>$tunjangan_past[1]->angka, 't_jabatan'=>$tunjangan_past[2]->angka, 't_telekomunikasi'=>$tunjangan_past[3]->angka];
+                $where = ['gapok'=>$payroll_past->gapok];
                 $str_past = MtrStrukturGaji::where($where)->orderBy('id', 'asc')->first();
                 if(!empty($str_past)){
                     $level_past = $str_past->_grade->level;
                     $grade_past = $str_past->_grade->grade;
+                    // level = NON STAFF
+                    // grade = I
+                    if(in_array($payroll->nik, ['01020707028','01031604597','01030908046','01021007065','01021109082','01020703027'])){
+                        $level_past = 'NON STAFF';
+                        $grade_past = 'I';
+                    }
+                    // level = STAFF
+                    // grade = II
+                    elseif(in_array($payroll->nik, ['01032505879','01031806718','01031002054','01031809745','01032307866','01032506880','01032308867'])){
+                        $level_past = 'STAFF';
+                        $grade_past = 'II';
+                    }
                 }
                 // 
                 $y = 25;
@@ -557,9 +587,9 @@ class TrxPayrollController extends Controller
                 $str_html['nama'] = $karyawan['nama'];
                 $text = '<span style="text-align:justify; '.$font_size_family.'">Dari</span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y+=5, $text, 0, 1, 0, true, '', true);
-                $text = '<span style="text-align:justify; '.$font_size_family.'">: '.$payroll->jabatan.'</span>';
+                $text = '<span style="text-align:justify; '.$font_size_family.'">: '.$payroll->subdepartemen.'</span>';
                 $pdf::writeHTMLCell(0, 0, 35, $y, $text, 0, 1, 0, true, '', true);
-                $str_html['jabatan'] = $payroll->jabatan;
+                $str_html['departemen'] = $payroll->subdepartemen;
                 $text = '<span style="text-align:justify; '.$font_size_family.'">Perihal</span>';
                 $pdf::writeHTMLCell(0, 0, 10, $y+=5, $text, 0, 1, 0, true, '', true);
                 $text = '<span style="text-align:justify; '.$font_size_family.'">: Penyesuaian Upah</span>';
@@ -2897,9 +2927,10 @@ class TrxPayrollController extends Controller
                         $trx->filename = $filename;
                         // nomor surat
                         // contoh: 009-LTR/SPU/ADM-APM/HCO/I/2025
+                        // revisi 009-LTR/SPU/ADM-APM/PC/I/2025
                         $romawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
                         $hitung = TrxPayrollEmailLog::where(['tahun'=>$tahun, 'id_addsub'=>'0'])->count();
-                        $no_surat = str_pad($hitung + (++$i), 3, '0', STR_PAD_LEFT).'-LTR/SPU/ADM-APM/HCO/'.$romawi[$bulan-1].'/'.$tahun;
+                        $no_surat = str_pad($hitung + (++$i), 3, '0', STR_PAD_LEFT).'-LTR/SPU/ADM-APM/PC/'.$romawi[$bulan-1].'/'.$tahun;
                         $trx->no_surat = $no_surat;
                         // 
                         $nik_property = json_decode($trx->nik_property, true);
