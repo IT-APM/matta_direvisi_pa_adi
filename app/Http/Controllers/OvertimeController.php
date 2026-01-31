@@ -259,9 +259,37 @@ class OvertimeController extends Controller
     
     public function reporting(Request $request)
     {
-        $this->authorize('spv');
-        //
+        // $trx = Overtime::whereDate('ot_start_at', '>=', '2026-01-01')->orderBy('ot_start_at', 'ASC')->get();
+        // // dd($trx);
         // $no = 0;
+        // foreach($trx as $_trx){
+        //     // update gapok pada nik property
+        //     $data = Overtime::find($_trx->id);
+        //     $data->ot_maker_property = $this->getNikProperty($_trx->ot_maker_by);
+        //     $data->update();
+        //     if(!empty($_trx->ot_length_rev)){
+        //         // update ot salary
+        //         $waktu = explode(':', $_trx->ot_length_rev);
+        //         $ot_length_adj = ($waktu[0] * 3600) + ($waktu[1] * 60) + $waktu[2];
+        //         $id = $_trx->id;
+        //         $ot = Overtime::find($id);
+        //         // jika di history belum ada maka insert before
+        //         if(OvertimeHistory::where('id_ot', $id)->doesntExist()){
+        //             $this->save_ot_history($ot);
+        //         }
+        //         $arr = json_decode($ot->ot_maker_property, true);
+        //         $ot->ot_length_adj = $ot_length_adj;
+        //         $ot_length_rp_adj = $this->getOTSalary($ot->ot_start_at, $ot->ot_maker_by, $arr['is_reguler'], $arr['wg_id'], $arr['gaji_pokok'], $ot_length_adj, $arr['status_karyawan'], $ot->ot_freelance_property);
+        //         $ot->ot_length_rp_adj = $ot_length_rp_adj;
+        //         $ot->update();
+        //         $ot = Overtime::find($id);
+        //         // insert after
+        //         $this->save_ot_history($ot);
+        //         $no++;
+        //     }
+        // }
+        // // dd($no);
+        $this->authorize('spv');
         $tahun = Carbon::parse(now())->format('Y');
         $bulan = Carbon::parse(now())->format('m');
         $where = ['ot_approver_status' => 'Approve'];
@@ -371,7 +399,7 @@ class OvertimeController extends Controller
     {
         $this->authorize('spv');
         $data = Overtime::find($id);
-        if(auth()->user()->nik <> $data->ot_approver_by){
+        if(!(auth()->user()->nik == $data->ot_approver_by || auth()->user()->userrole == 'hc')){
             return redirect()->route('error-403');
         }
         $init = $data->ot_length_adj;
