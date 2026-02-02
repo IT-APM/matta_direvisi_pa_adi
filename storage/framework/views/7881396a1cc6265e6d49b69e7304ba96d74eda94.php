@@ -73,7 +73,7 @@
                                         $admin = App\Models\BpdProyekAdmin::where($where)->orderBy('id', 'asc')->get();
                                         ?>
                                         <?php $__currentLoopData = $admin; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_admin): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php echo e($_admin->_admin->nama); ?><br/>
+                                        <?php echo e($_admin->_admin->nama); ?> / <?php echo e($_admin->admin); ?><br/>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </td>
                                     <td><?php if($data->is_active==1): ?> <span class="badge bg-success">Aktif</span> <?php else: ?> <span class="badge bg-danger">Non Aktif</span> <?php endif; ?></td>

@@ -15,6 +15,7 @@ use App\Models\WorkingDay;
 use App\Models\ToDoList;
 use App\Models\Overtime;
 use App\Models\TrxCuti;
+use App\Models\TrxSakit;
 // 
 use DB;
 use Carbon\Carbon;
@@ -440,13 +441,20 @@ class MattaApi extends Controller
 
     // cek apakah hari ini adalah hari cutinya
     public function isCuti($nik, $date) {
+        // 4=Disetujui oleh Layer 1
+        // 6=Selesai
 		$where = [ 'nik_karyawan' => $nik ];
-        $cek = TrxCuti::where($where)->whereIn('status_cuti', [4,6])->whereDate('tanggal_mulai','<=', $date)->whereDate('tanggal_akhir','>=', $date)->count();
-        if($cek > 0){
-            return true;
-        }else{
-            return false;
-        }
+        $exists = TrxCuti::where($where)->whereIn('status_cuti', [4,6])->whereDate('tanggal_mulai','<=', $date)->whereDate('tanggal_akhir','>=', $date)->exists();
+        return $exists;
+    }
+
+    // cek apakah hari ini adalah hari sakitnya
+    public function isSakit($nik, $date) {
+        // 4=Disetujui oleh Layer 1
+        // 6=Selesai
+		$where = [ 'nik_karyawan' => $nik ];
+        $exists = TrxSakit::where($where)->whereIn('status_sakit', [4,6])->whereDate('tanggal_mulai','<=', $date)->whereDate('tanggal_akhir','>=', $date)->exists();
+        return $exists;
     }
 
     // profile karyawan is_reguler = 0 -> non reguler (ex. security, noc, cls)
@@ -506,7 +514,12 @@ class MattaApi extends Controller
         else if($isClock["isClock"] && $nGetClock["n_clockout"]==0 && $nGetClock["n_clockin"]>0){
             $isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>true);
         }
+        // jika cuti tidak cico
 		if($this->isCuti($nik, $tgl)){
+			$isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
+		}
+        // jika sakit tidak cico
+		if($this->isSakit($nik, $tgl)){
 			$isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
 		}
         return $isClockinout;
@@ -579,7 +592,12 @@ class MattaApi extends Controller
         // else{
         //     $isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>true);
         // }
+        // jika cuti tidak cico
 		if($this->isCuti($nik, $tgl)){
+			$isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
+		}
+        // jika sakit tidak cico
+		if($this->isSakit($nik, $tgl)){
 			$isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
 		}
         array_push($data, $isClock);

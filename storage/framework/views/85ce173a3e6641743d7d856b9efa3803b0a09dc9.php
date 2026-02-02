@@ -632,7 +632,7 @@
                 }
             });
             <?php $__currentLoopData = $trxDetailBiaya; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            getData(<?php echo e($data->id); ?>);
+            getData(<?php echo e($data->id); ?>, 0);
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         });
 
@@ -670,7 +670,7 @@
             node.value = value.toLocaleString('en'); // or other formatting
     }
     // get data coa
-    function getData(_id) {
+    function getData(_id, _project_id) {
         $('#biayacoa_' + _id).find('option').remove();
         $("#biayacoa_" + _id).append('<option selected="" disabled="" value="">Pilih...</option>');
         var id = $("#is_project").val();
@@ -680,7 +680,7 @@
         }
         // alert(id);
         $.ajax({
-            url: "<?php echo e(route('bpd_coa')); ?>" + "/" + coa,
+            url: "<?php echo e(route('bpd_coa')); ?>" + "/" + _project_id,
             type: 'get',
             dataType: 'json',
             success: function (response) {
@@ -702,6 +702,13 @@
             }
         });
     }
+    // 
+    $("#project_id").change(function (event) {
+        var _project_id = $("#project_id").val();
+        <?php $__currentLoopData = $trxDetailBiaya; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        getData(<?php echo e($data->id); ?>, _project_id);
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    });
 
 </script>
 <?php $__env->stopSection(); ?>

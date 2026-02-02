@@ -1,9 +1,10 @@
 <div class="sidebar-wrapper" sidebar-layout="stroke-svg">
     <div>
-        <div class="logo-wrapper">
+        <div class="logo-wrapper text-start">
             <a href="<?php echo e(route('todolist.index')); ?>">
-                <img class="img-fluid for-light" src="<?php echo e(asset('assets/images/logo/logo.png')); ?>" alt="">
-                <img class="img-fluid for-dark" src="<?php echo e(asset('assets/images/logo/logo_dark.png')); ?>" alt="">
+                
+                
+                <img height="60" src="<?php echo e(asset('assets/images/logo/logo_2.jpg')); ?>" alt="image">
             </a>
             <div class="back-btn"><i class="fa fa-angle-left"></i></div>
             <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
@@ -26,7 +27,7 @@
                             <h6>Home Page</h6>
                         </div>
                     </li>
-                    <li class="sidebar-list">
+                    <li class="sidebar-list mt-3">
                         <!-- <label class="badge badge-light-primary">5</label> -->
                         <a class="sidebar-link sidebar-title" href="#">
                             <svg class="stroke-icon">

@@ -10,6 +10,7 @@ use App\Models\KaryawanPelatihan;
 use App\Models\KaryawanPendidikan;
 use App\Models\KaryawanSertifikasi;
 use App\Models\User;
+use App\Models\UsersPwd;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
@@ -119,6 +120,11 @@ class KaryawanCopyController extends Controller
         $user->nik = $nik_karyawan_baru;
         $user->email = $_karyawan->email;
         $user->userrole = 'nhc';
+        $user->password = $_karyawan->password;
+        $user->save();
+        // 
+        $user = New UsersPwd;
+        $user->nik = $nik_karyawan_baru;
         $user->password = $_karyawan->password;
         $user->save();
         // 

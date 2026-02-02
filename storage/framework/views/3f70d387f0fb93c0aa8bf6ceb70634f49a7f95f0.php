@@ -86,14 +86,16 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <th>Bulan</th>
                                             <th>Nama</th>
                                             <th>NIP</th>
-                                            <th>Subject</th>
-                                            <th>Email</th>
+                                            
+                                            <th>Link</th>
+                                            <th>PDF</th>
                                             <th>Created_at</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
                                             $no=0;
+                                            $nik_reviewer = explode(',', App\Models\MtrUtility::find(45)->informasi)[0];
                                         ?>
                                         <?php $__currentLoopData = $trx_current; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
@@ -117,8 +119,13 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <td><?php echo e($bulan[$data->bulan - 1]); ?></td>
                                             <td><?php echo e($nik_property['nama']); ?></td>
                                             <td><?php echo e($data->nik); ?></td>
-                                            <td><?php echo e($email['subject']); ?></td>
-                                            <td><?php echo $email['body']; ?></td>
+                                            
+                                            <td>
+                                                <a href="<?php echo e(route('payroll.review', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'pic' => (new App\Http\Controllers\OpenDataController)->encryptWithKey($nik_reviewer), 'id_status' => 1 ])); ?></td>" target="_blank"><i class="fa fa-link"></i>
+                                            </a>
+                                            <td>
+                                                <a href="<?php echo e(asset('assets/penyesuaian_upah').'/'.$data->filename); ?>" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                            </td>
                                             <td><?php echo e($data->created_at); ?></td>
                                         </tr>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

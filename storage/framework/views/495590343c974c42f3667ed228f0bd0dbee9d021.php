@@ -34,7 +34,8 @@
 
                             </label>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            <button class="btn btn-primary" id="filter" name="filter" type="button">Filter</button> | <button class="btn btn-success" id="reset" name="reset" type="button">Reset</button>
+                            <a href="<?php echo e(route('pekerjaan_bidang.index')); ?>" class="btn btn-primary mb-2" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a>
+                            <br/><button class="btn btn-warning" id="filter" name="filter" type="button"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
                             <!-- <label class="form-label" for="bidang[]">Bidang</label>
                             <div class="col-sm-12 pb-2">
                                 <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple"
@@ -53,8 +54,8 @@
                                 <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                             <?php endif; ?>
-                            <a href="<?php echo e(route('pekerjaan_master.create')); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a><br /><br />
-                            <div class="table-responsive">
+                            <a href="<?php echo e(route('pekerjaan_master.create')); ?>" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add new</a>
+                            <div class="table-responsive mt-2">
                                 <!-- id="basic-1" -->
                                 <table class="display" id="_table_">
                                     <thead>
@@ -68,14 +69,7 @@
                                     <tbody>
                                         <!--  -->
                                     </tbody>
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Bidang</th>
-                                            <th>Pekerjaan</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
+                                    
                                 </table>
                             </div>
                             

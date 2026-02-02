@@ -63,6 +63,59 @@ class TrxKebutuhanController extends Controller
      */
     public function index(Request $request)
     {
+        // start dashboard only
+        // $tahun = 2021;
+        // $trx = DB::select("SELECT * FROM `trx_tbl_kebutuhan_master` WHERE YEAR(`created_at`)={$tahun}");
+        // $orang = DB::select("SELECT SUM(jumlah) AS jumlah FROM `trx_tbl_kebutuhan_master` WHERE YEAR(`created_at`)={$tahun}");
+        // $status = DB::select("SELECT COUNT(*) AS jumlah,`status_pengajuan` FROM `trx_tbl_kebutuhan_master` WHERE YEAR(`created_at`)={$tahun} GROUP BY `status_pengajuan`");
+        // $arr_status = [];
+        // // 10=Done by HC
+        // $arr_terpenuhi = [10];
+        // $kebutuhan_terpenuhi = 0;
+        // $orang_terpenuhi = 0;
+        // // 1=Requested by Requestor
+        // // 2=Approved by L1
+        // // 9=Approved by L2 to HC
+        // $arr_outstanding = [1,2,9];
+        // $kebutuhan_outstanding = 0;
+        // $orang_outstanding = 0;
+        // $arr_inner = array_merge($arr_terpenuhi, $arr_outstanding);
+        // $kebutuhan_cancel = 0;
+        // $orang_cancel = 0;
+        // foreach($status as $data){
+        //     // $str_status = KebutuhanStatus::find($data->status_pengajuan)->status_pengajuan;
+        //     $_orang = DB::select("SELECT SUM(jumlah) AS jumlah FROM `trx_tbl_kebutuhan_master` WHERE status_pengajuan={$data->status_pengajuan} AND YEAR(`created_at`)={$tahun}");
+        //     if(in_array($data->status_pengajuan, $arr_terpenuhi)){
+        //         $kebutuhan_terpenuhi += $data->jumlah;
+        //         $orang_terpenuhi += $_orang[0]->jumlah;
+
+        //     }
+        //     if(!in_array($data->status_pengajuan, $arr_inner)){
+        //         $kebutuhan_cancel += $data->jumlah;
+        //         $orang_cancel += $_orang[0]->jumlah;
+
+        //     }
+        //     if(in_array($data->status_pengajuan, $arr_outstanding)){
+        //         $kebutuhan_outstanding += $data->jumlah;
+        //         $orang_outstanding += $_orang[0]->jumlah;
+
+        //     }
+        //     // array_push($arr_status, ['kebutuhan'=>$data->jumlah, 'id_status'=>$data->status_pengajuan, 'status'=>$str_status, 'orang'=>$_orang[0]->jumlah]);
+        // }
+        // return response()->json([
+        //     'status' => 'success',
+        //     'tahun' => $tahun,
+        //     'kebutuhan' => count($trx),
+        //     'orang' => $orang[0]->jumlah,
+        //     // 'data' => $arr_status,
+        //     'kebutuhan_terpenuhi' => $kebutuhan_terpenuhi,
+        //     'orang_terpenuhi' => $orang_terpenuhi,
+        //     'kebutuhan_cancel' => $kebutuhan_cancel,
+        //     'orang_cancel' => $orang_cancel,
+        //     'kebutuhan_outstanding' => $kebutuhan_outstanding,
+        //     'orang_outstanding' => $orang_outstanding,
+        // ]);
+        // end
         $no = 0;
         $karyawan = Karyawan::select('nik', 'nama')->where(['is_aktif' => 1])->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $arr_nik_nkp = new Karyawan();

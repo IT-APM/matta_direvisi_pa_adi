@@ -45,7 +45,7 @@
         <div class="page-body">
           <div class="container-fluid">        
             <div class="page-title">
-              <div class="row">
+              <div class="row mt-4">
                 <div class="col-6">
                   @yield('breadcrumb-title')
                 </div>

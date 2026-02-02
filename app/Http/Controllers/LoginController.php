@@ -7,12 +7,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Karyawan;
 use App\Models\User;
+use App\Models\UsersPwd;
 // 
 use App\Models\McuPesertaSendemail;
 // 
 use App\Models\MtrUtility;
 use App\Mail\MattaRebornMail;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 class LoginController extends Controller
 {
@@ -26,16 +28,23 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $where = ['nik' => $request->nik, 'is_aktif' => 1];
             if(Karyawan::where($where)->exists()){
+                $check = UsersPwd::where(['nik'=>$request->nik])->orderBy('id', 'desc')->first();
+                if(Hash::check($request->password, $check->password) && $check->created_at->copy()->addMonths(3)->isPast()){
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+                    return redirect()->to('authentication/login-one-reset')->with('msg_error', 'For personal data and information security, MATTA may require you to change the password regularly.');
+                }else{
                 $request->session()->regenerate();
                 // return redirect()->intended('dashboard/index');
                 return redirect()->intended('todolist');
+                }
             }else{
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
-                return back()->with('msg_error', 'Your account is Non Active. Please check again!');
+                return back()->with('msg_error', 'Your account is Non Active.<br/>Please check again!');
             }
         }
-        return back()->with('msg_error', 'Your NIP and/or Password is wrong. Please check again!');
+        return back()->with('msg_error', 'Your NIP and/or Password is wrong.<br/>Please check again!');
     }
 
     public function resetpwd(Request $request)
@@ -55,7 +64,7 @@ class LoginController extends Controller
             return back()->with('msg_success', 'Please check email you have selected!');
             // finish
         }else{
-            return back()->with('msg_error', 'Your NIP is wrong or may Non Active. Please check again!');
+            return back()->with('msg_error', 'Your NIP is wrong or may Non Active.<br/>Please check again!');
         }
     }
 
@@ -73,37 +82,50 @@ class LoginController extends Controller
 
     public function resetaction(Request $request)
     {
-        // return response()->json( [ 'data' => $request->all() ] );
-        $where = ['nik' => $request->nik, 'password' => $request->pwd];
-        $karyawan = Karyawan::where($where)->first();
-        // 
-        $new_password = Hash::make($request->password);
-        $karyawan->password = $new_password;
-        $karyawan->update();
-        $where = ['nik' => $request->nik, 'password' => $request->pwd];
-        $user = User::where($where)->first();
-        $user->password = $new_password;
-        $user->update();
-        // start
-        $mailData['title'] = 'New Password';
-        $mailData['filename'] = 'emails.reset1';
-        $mailData['data'] = ['nama' => $karyawan->nama, 'nik' => $karyawan->nik, 'jabatan' => $karyawan->_jabatan->jabatan, 'unit_kerja' => $karyawan->_divisi->nama . '/' . $karyawan->_departemen->nama . '/' . $karyawan->_subdepartemen->nama, 'new_password' => $request->password];
-        $mailData['to'] = $request->email;
-        $this->sendEmail($mailData);
-        // finish
-        // 
-        return back()->with('msg_success', 'Your password has been changed. Please check email to see your new password.');
-        // return view('authentication.login-one')->with('msg_success', ['Your password has been changed. Please check email to see your new password.']);
+        // dd($request->all());
+        $check = UsersPwd::where(['nik'=>$request->nik])->orderBy('id', 'desc')->first();
+        if(Hash::check($request->password, $check->password) && $check->created_at->copy()->addMonths(3)->isPast()){
+            return back()->with('msg_error', 'For personal data and information security, MATTA may require you to change the password regularly.');
+        }else{
+            $where = ['nik' => $request->nik, 'password' => $request->pwd];
+            $karyawan = Karyawan::where($where)->first();
+            // 
+            $new_password = Hash::make($request->password);
+            $karyawan->password = $new_password;
+            $karyawan->update();
+            // 
+            $where = ['nik' => $request->nik, 'password' => $request->pwd];
+            $user = User::where($where)->first();
+            $user->password = $new_password;
+            $user->update();
+            // 
+            $user = new UsersPwd;
+            $user->nik = $request->nik;
+            $user->password = $new_password;
+            $user->save();
+            // start
+            $mailData['title'] = 'New Password';
+            $mailData['filename'] = 'emails.reset1';
+            $mailData['data'] = ['nama' => $karyawan->nama, 'nik' => $karyawan->nik, 'jabatan' => $karyawan->_jabatan->jabatan, 'unit_kerja' => $karyawan->_divisi->nama . '/' . $karyawan->_departemen->nama . '/' . $karyawan->_subdepartemen->nama, 'new_password' => $request->password];
+            $mailData['to'] = $request->email;
+            $this->sendEmail($mailData);
+            // finish
+            // 
+            return back()->with('msg_success', 'Your password has been changed.<br/>Please check email to see your new password.');
+            // return view('authentication.login-one')->with('msg_success', ['Your password has been changed. Please check email to see your new password.']);
+        }
     }
 
     public function sendEmail($mailData)
     {
         $ccEmails = explode(',', MtrUtility::find(11)->informasi);
-        if($mailData['title'] == 'New Password'){
-            Mail::to($mailData['to'])->bcc($ccEmails)->send(new MattaRebornMail($mailData));
-        }else{
-            Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
-        }
+        // Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
+        Mail::to($mailData['to'])->bcc($ccEmails)->send(new MattaRebornMail($mailData));
+        // if($mailData['title'] == 'New Password'){
+        //     Mail::to($mailData['to'])->bcc($ccEmails)->send(new MattaRebornMail($mailData));
+        // }else{
+        //     Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
+        // }
     }
 
     public function logout(Request $request)

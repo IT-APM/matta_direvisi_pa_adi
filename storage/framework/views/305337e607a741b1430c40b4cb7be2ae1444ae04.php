@@ -56,61 +56,64 @@ input {
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="container-fluid">
+<div class="container d-flex align-items-center" style="min-height: 100vh;">
     <div class="row">
-        <div class="col-xl-5 p-0">
-            <div class="login-card">
-                <div>
-                    <?php if(Session::has('msg_success')): ?>
-                    <div class="alert alert-success dark alert-dismissible fade show" role="alert">
-                        <strong><?php echo e(session('msg_success')); ?></strong>
-                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <?php endif; ?>
-                    <?php if(Session::has('msg_error')): ?>
-                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
-                        <strong><?php echo e(session('msg_error')); ?></strong>
-                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <?php endif; ?>
-                    <div class="login-main border">
-                        <!-- <form class="theme-form"> -->
-                        <form class="theme-form" action="<?php echo e(route('resetaction')); ?>" onSubmit="return checkPassword(this)" method="post" enctype="multipart/form-data">
-                        <?php echo csrf_field(); ?>
-                        <input type="hidden" id="nik" name="nik" value="<?php echo e($nik); ?>">
-                        <input type="hidden" id="pwd" name="pwd" value="<?php echo e($pwd); ?>">
-                        <input type="hidden" id="email" name="email" value="<?php echo e($email); ?>">
-                            <h4>New Password</h4>
-                            <div class="form-group">
-                                <label class="col-form-label" for="nik">Enter New Password</label>
-                                <input class="form-control" type="password" name="password" id="password" required="" autofocus pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Harus terdiri dari Satu huruf kecil, Satu huruf besar, Satu angka dan Minimum 6 karakter.">
-                                <input type="checkbox" onclick="show_pwd()"> Show Password
-                            </div>
-                            <div class="form-group">
-                                <label class="col-form-label" for="nik">Confirm New Password</label>
-                                <input class="form-control" type="password" name="confirmPassword" id="confirmPassword" required="">
-                                <input type="checkbox" onclick="show_confirm()"> Show Confirm Password
-                            </div>
-                            <div class="form-group mt-0">
-                                <button class="btn btn-primary btn-block" type="submit">Submit</button>
-                            </div>
-                            <div id="message">
-                                <b>Password harus terdiri dari:</b><br/>
-                                <div id="letter" class="invalid"><b>Satu huruf kecil</b></div>
-                                <div id="capital" class="invalid"><b>Satu huruf besar</b></div>
-                                <div id="number" class="invalid"><b>Satu angka</b></div>
-                                <div id="length" class="invalid"><b>Minimum 6 karakter</b></div>
-                            </div>
-                        </form>
+        <div class="col-xl-5 d-flex align-items-center justify-content-center">
+            <div class="w-100">
+                
+                <div class="card">
+                    <div class="card-body">
+                        <?php if(Session::has('msg_success')): ?>
+                        <div class="alert alert-success dark alert-dismissible fade show" role="alert" style="text-align: justify;">
+                            <strong><?php echo session('msg_success'); ?></strong>
+                            <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <?php endif; ?>
+                        <?php if(Session::has('msg_error')): ?>
+                        <div class="alert alert-danger dark alert-dismissible fade show" role="alert" style="text-align: justify;">
+                            <strong><?php echo session('msg_error'); ?></strong>
+                            <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <?php endif; ?>
+                        <div class="login-main">
+                            <form class="theme-form" action="<?php echo e(route('resetaction')); ?>" onSubmit="return checkPassword(this)" method="post" enctype="multipart/form-data">
+                            <?php echo csrf_field(); ?>
+                            <input type="hidden" id="nik" name="nik" value="<?php echo e($nik); ?>">
+                            <input type="hidden" id="pwd" name="pwd" value="<?php echo e($pwd); ?>">
+                            <input type="hidden" id="email" name="email" value="<?php echo e($email); ?>">
+                                <h4>New Password</h4>
+                                <div class="form-group">
+                                    <label class="col-form-label" for="nik">Enter New Password</label>
+                                    <input class="form-control" type="password" name="password" id="password" required="" autofocus pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Harus terdiri dari Satu huruf kecil, Satu huruf besar, Satu angka dan Minimum 6 karakter.">
+                                    <input type="checkbox" onclick="show_pwd()"> Show Password
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label" for="nik">Confirm New Password</label>
+                                    <input class="form-control" type="password" name="confirmPassword" id="confirmPassword" required="">
+                                    <input type="checkbox" onclick="show_confirm()"> Show Confirm Password
+                                </div>
+                                <div class="form-group mt-0">
+                                    <button class="btn btn-primary btn-block" type="submit">Submit</button>
+                                </div>
+                                <div id="message">
+                                    <b>Password harus terdiri dari:</b><br/>
+                                    <div id="letter" class="invalid"><b>Satu huruf kecil</b></div>
+                                    <div id="capital" class="invalid"><b>Satu huruf besar</b></div>
+                                    <div id="number" class="invalid"><b>Satu angka</b></div>
+                                    <div id="length" class="invalid"><b>Minimum 6 karakter</b></div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-xl-7 d-flex align-items-center justify-content-center">
-            <img style="width:80%;float:none;" src="<?php echo e(asset('assets/images/login/logo_matta.png')); ?>" alt="looginpage">
+            <img style="width:90%;float:none;" src="<?php echo e(asset('assets/images/login/logo_matta.png')); ?>" alt="looginpage">
         </div>
     </div>
 </div>
+
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('script'); ?>

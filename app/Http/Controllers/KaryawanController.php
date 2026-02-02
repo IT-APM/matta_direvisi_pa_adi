@@ -22,6 +22,7 @@ use App\Models\WorkingGroup;
 use App\Models\Level;
 use App\Models\Jabatan;
 use App\Models\User;
+use App\Models\UsersPwd;
 use App\Models\MtrFindimProject;
 use App\Models\MtrFindimDivisi;
 use App\Models\MtrFindimDepartemen;
@@ -467,6 +468,11 @@ class KaryawanController extends Controller
         $user->nik = $karyawan->nik;
         $user->email = $karyawan->email;
         $user->userrole = 'nhc';
+        $user->password = $password;
+        $user->save();
+        // 
+        $user = New UsersPwd;
+        $user->nik = $karyawan->nik;
         $user->password = $password;
         $user->save();
         // 

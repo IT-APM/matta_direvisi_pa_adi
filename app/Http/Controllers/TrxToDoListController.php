@@ -14,9 +14,56 @@ use App\Models\TrxPdp;
 use App\Models\MtrUtility;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
+use App\Models\TrxSurveyPora;
 
 class TrxToDoListController extends Controller
 {
+    public function survey_result($id)
+    {
+        // http://localhost/matta/survey_pora/result/0
+        $trx = TrxSurveyPora::all();
+        $n_futsal = 0;
+        $n_voli = 0;
+        $n_basket = 0;
+        $n_badminton = 0;
+        $n_tenis = 0;
+        $n_renang = 0;
+        $n_ml = 0;
+        $n_fifa = 0;
+        foreach($trx as $data){
+            $opsi1 = json_decode($data['opsi1'], true) ?? [];
+            $opsi2 = json_decode($data['opsi2'], true) ?? [];
+            $opsi3 = json_decode($data['opsi3'], true) ?? [];
+            $n_futsal += count(array_filter($opsi1, fn($item) => $item === 'futsal'));
+            $n_voli += count(array_filter($opsi1, fn($item) => $item === 'voli'));
+            $n_basket += count(array_filter($opsi1, fn($item) => $item === 'basket'));
+            $n_badminton += count(array_filter($opsi2, fn($item) => $item === 'badminton'));
+            $n_tenis += count(array_filter($opsi2, fn($item) => $item === 'tenis'));
+            $n_renang += count(array_filter($opsi2, fn($item) => $item === 'renang'));
+            $n_ml += count(array_filter($opsi3, fn($item) => $item === 'ml'));
+            $n_fifa += count(array_filter($opsi3, fn($item) => $item === 'fifa'));
+        }
+        return response()->json([
+            'success'=>true,
+            'Cabor GROUP'=>['n_futsal'=>$n_futsal,'n_voli'=>$n_voli,'n_basket'=>$n_basket],
+            'Cabor INDIVIDU / DUO'=>['n_badminton'=>$n_badminton,'n_tenis'=>$n_tenis,'n_renang'=>$n_renang],
+            'Cabor E-SPORT'=>['n_ml'=>$n_ml,'n_fifa'=>$n_fifa],
+        ]);
+    }
+    
+    public function survey_pora(Request $request)
+    {
+        // dd($request->all());
+        $nik = auth()->user()->nik;
+        $trx = new TrxSurveyPora;
+        $trx->nik = $nik;
+        $trx->nik_property = $this->getNikProperty($nik);
+        $trx->opsi1 = json_encode($request->input('opsi1'));;
+        $trx->opsi2 = json_encode($request->input('opsi2'));;
+        $trx->opsi3 = json_encode($request->input('opsi3'));;
+        $trx->save();
+        return redirect()->to($request->back_url)->with('msg', 'Data is saved successfully.');
+    }
 
     public function detail(Request $request)
     {
@@ -105,6 +152,7 @@ class TrxToDoListController extends Controller
         }
         // 40=PDP di dalam
         $is_pdp = ['is_pdp'=>!$check_is_pdp, 'is_aktif'=> (MtrUtility::find(40)->informasi==1)];
+        $is_survey_pora = TrxSurveyPora::where(['nik'=>auth()->user()->nik])->exists();
         // dd($is_pdp);
         // $arr = [];
         // $trx = DB::select("SELECT COUNT(kode_sub_departemen) AS jumlah,kode_sub_departemen FROM mtr_tbl_karyawan WHERE is_aktif=1 AND wg_id=1 AND nik NOT IN ('Hco.all', 'IT.BM') GROUP BY kode_sub_departemen ORDER BY jumlah");
@@ -160,7 +208,7 @@ class TrxToDoListController extends Controller
         $where = ['nik' => auth()->user()->nik, 'filename' => 'emails.penyesuaian_upah0'];
         $notif_letter = ToDoList::where($where)->orderBy('id', 'desc')->get();
         // 
-        return view('todolist.index', compact('trxKebutuhan','trxCuti','trxIzin','trxNonAktif','trxPelatihan','trxPenilaian','trxReimburse','trxRekomendasi','trxOvertime','trxBpd','trxSakit','recruitment','is_pdp','notif_letter'));
+        return view('todolist.index', compact('trxKebutuhan','trxCuti','trxIzin','trxNonAktif','trxPelatihan','trxPenilaian','trxReimburse','trxRekomendasi','trxOvertime','trxBpd','trxSakit','recruitment','is_pdp','notif_letter','is_survey_pora'));
     }
 
     /**
@@ -310,5 +358,19 @@ class TrxToDoListController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getNikProperty($nik)
+    {
+        $where = ['nik' => $nik, 'is_aktif' => 1];
+        $data = Karyawan::select('mtr_tbl_karyawan.nik', 'mtr_tbl_karyawan.nama', 'mtr_tbl_karyawan.email', 'mtr_tbl_karyawan.telepon1', 'mtr_tbl_perusahaan.nama as perusahaan', 'mtr_tbl_divisi.nama as divisi', 'mtr_tbl_departemen.nama as dep', 'mtr_tbl_sub_departemen.nama as sub_dep', 'mtr_tbl_level.level as level', 'mtr_tbl_jabatan.jabatan as jabatan', 'mtr_tbl_level.id as id_level', 'mtr_tbl_sub_departemen.id as id_sub_departemen')
+            ->leftJoin('mtr_tbl_perusahaan', 'mtr_tbl_perusahaan.id', '=', 'mtr_tbl_karyawan.kode_perusahaan')
+            ->leftJoin('mtr_tbl_divisi', 'mtr_tbl_divisi.id', '=', 'mtr_tbl_karyawan.kode_divisi')
+            ->leftJoin('mtr_tbl_departemen', 'mtr_tbl_departemen.id', '=', 'mtr_tbl_karyawan.kode_departemen')
+            ->leftJoin('mtr_tbl_sub_departemen', 'mtr_tbl_sub_departemen.id', '=', 'mtr_tbl_karyawan.kode_sub_departemen')
+            ->leftJoin('mtr_tbl_level', 'mtr_tbl_level.id', '=', 'mtr_tbl_karyawan.kode_level')
+            ->leftJoin('mtr_tbl_jabatan', 'mtr_tbl_jabatan.id', '=', 'mtr_tbl_karyawan.kode_jabatan')
+            ->where($where)->first();
+        return json_encode($data);
     }
 }
