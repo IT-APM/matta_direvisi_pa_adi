@@ -61,7 +61,11 @@
                             <label class="form-label">Group</label>
                             <input class="form-control" value="<?php echo e($project->group); ?>">
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-2">
+                            <label class="form-label">COA Prefix</label><br/>
+                            <input class="form-control" value="<?php echo e($project->coa_prefix); ?>">
+                        </div>
+                        <div class="col-sm-2">
                             <label class="form-label">Status</label><br/>
                             <?php if($project->is_active==1): ?> <span class="badge bg-success" style="font-size:18px">Aktif</span> <?php else: ?> <span class="badge bg-danger" style="font-size:18px">Non Aktif</span> <?php endif; ?>
                         </div>

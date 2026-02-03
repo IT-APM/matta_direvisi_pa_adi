@@ -64,7 +64,16 @@
                                 </select>
                                 <div class="invalid-feedback txt-danger">Field is required.</div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-2">
+                                <label class="form-label" for="coa_prefix">COA Prefix</label>
+                                <select class="form-select js-example-basic-single col-sm-12" id="coa_prefix" name="coa_prefix" required="">
+                                    <option selected="" value="">Pilih...</option>
+                                    <option value="5" @if ($status=='edit' ) @if('5' == $trx->coa_prefix) selected @endif @endif >5</option>
+                                    <option value="6" @if ($status=='edit' ) @if('6' == $trx->coa_prefix) selected @endif @endif >6</option>
+                                </select>
+                                <div class="invalid-feedback txt-danger">Field is required.</div>
+                            </div>
+                            <div class="col-md-2">
 								<label class="form-label" for="is_active">Aktif</label>
                                 <div class="media-body text-start icon-state switch-outline">
                                     <label class="switch">

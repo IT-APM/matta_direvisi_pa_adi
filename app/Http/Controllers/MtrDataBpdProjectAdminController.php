@@ -159,6 +159,7 @@ class MtrDataBpdProjectAdminController extends Controller
         $trx->divisi = $request->divisi;
         $trx->customer = $request->customer;
         $trx->group = $request->group;
+        $trx->coa_prefix = $request->coa_prefix;
         if($request->is_active == 'on'){
             $trx->is_active = 1;
         }else{
@@ -222,6 +223,7 @@ class MtrDataBpdProjectAdminController extends Controller
         $trx->divisi = $request->divisi;
         $trx->customer = $request->customer;
         $trx->group = $request->group;
+        $trx->coa_prefix = $request->coa_prefix;
         if($request->is_active == 'on'){
             $trx->is_active = 1;
         }else{
