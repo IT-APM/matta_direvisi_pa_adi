@@ -15,40 +15,75 @@ use App\Models\MtrUtility;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use App\Models\TrxSurveyPora;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class TrxToDoListController extends Controller
 {
+    public function survey_mobile_post(Request $request)
+    {
+        // dd($request->all());
+        // Your NIP has already been used for a pora survey
+        $nik = $request->nik;
+        $password = $request->password;
+        $check = Karyawan::where(['nik'=>$nik])->orderBy('id', 'desc')->first();
+        if(Hash::check($password, $check->password)){
+            if(TrxSurveyPora::where(['nik'=>$nik])->exists()){
+                return back()->with('msg_error', 'NIP anda sudah pernah digunakan untuk input survey pora')->withInput();
+            }else{
+                $trx = new TrxSurveyPora;
+                $trx->nik = $nik;
+                $trx->nik_property = $this->getNikProperty($nik);
+                $trx->opsi1 = json_encode($request->input('opsi1'));;
+                $trx->opsi2 = json_encode($request->input('opsi2'));;
+                $trx->opsi3 = json_encode($request->input('opsi3'));;
+                $trx->save();
+                return back()->with('msg_success', 'Data berhasil disimpan.');
+            }
+            
+        }else{
+            return back()->with('msg_error', 'NIP dan atau password anda salah.<br/>Agar dapat dicek kembali!')->withInput();
+        }
+        // $no = 0;
+        // return view( 'todolist.survey_pora_mobile', compact('id'));
+    }
+
+    public function survey_mobile(Request $request, $id)
+    {
+        return view( 'todolist.survey_pora_mobile', compact('id'));
+    }
+
     public function survey_result($id)
     {
         // http://localhost/matta/survey_pora/result/0
-        $trx = TrxSurveyPora::all();
-        $n_futsal = 0;
-        $n_voli = 0;
-        $n_basket = 0;
-        $n_badminton = 0;
-        $n_tenis = 0;
-        $n_renang = 0;
-        $n_ml = 0;
-        $n_fifa = 0;
-        foreach($trx as $data){
-            $opsi1 = json_decode($data['opsi1'], true) ?? [];
-            $opsi2 = json_decode($data['opsi2'], true) ?? [];
-            $opsi3 = json_decode($data['opsi3'], true) ?? [];
-            $n_futsal += count(array_filter($opsi1, fn($item) => $item === 'futsal'));
-            $n_voli += count(array_filter($opsi1, fn($item) => $item === 'voli'));
-            $n_basket += count(array_filter($opsi1, fn($item) => $item === 'basket'));
-            $n_badminton += count(array_filter($opsi2, fn($item) => $item === 'badminton'));
-            $n_tenis += count(array_filter($opsi2, fn($item) => $item === 'tenis'));
-            $n_renang += count(array_filter($opsi2, fn($item) => $item === 'renang'));
-            $n_ml += count(array_filter($opsi3, fn($item) => $item === 'ml'));
-            $n_fifa += count(array_filter($opsi3, fn($item) => $item === 'fifa'));
-        }
-        return response()->json([
-            'success'=>true,
-            'Cabor GROUP'=>['n_futsal'=>$n_futsal,'n_voli'=>$n_voli,'n_basket'=>$n_basket],
-            'Cabor INDIVIDU / DUO'=>['n_badminton'=>$n_badminton,'n_tenis'=>$n_tenis,'n_renang'=>$n_renang],
-            'Cabor E-SPORT'=>['n_ml'=>$n_ml,'n_fifa'=>$n_fifa],
-        ]);
+        // $trx = TrxSurveyPora::all();
+        // $n_futsal = 0;
+        // $n_voli = 0;
+        // $n_basket = 0;
+        // $n_badminton = 0;
+        // $n_tenis = 0;
+        // $n_renang = 0;
+        // $n_ml = 0;
+        // $n_fifa = 0;
+        // foreach($trx as $data){
+        //     $opsi1 = json_decode($data['opsi1'], true) ?? [];
+        //     $opsi2 = json_decode($data['opsi2'], true) ?? [];
+        //     $opsi3 = json_decode($data['opsi3'], true) ?? [];
+        //     $n_futsal += count(array_filter($opsi1, fn($item) => $item === 'futsal'));
+        //     $n_voli += count(array_filter($opsi1, fn($item) => $item === 'voli'));
+        //     $n_basket += count(array_filter($opsi1, fn($item) => $item === 'basket'));
+        //     $n_badminton += count(array_filter($opsi2, fn($item) => $item === 'badminton'));
+        //     $n_tenis += count(array_filter($opsi2, fn($item) => $item === 'tenis'));
+        //     $n_renang += count(array_filter($opsi2, fn($item) => $item === 'renang'));
+        //     $n_ml += count(array_filter($opsi3, fn($item) => $item === 'ml'));
+        //     $n_fifa += count(array_filter($opsi3, fn($item) => $item === 'fifa'));
+        // }
+        // return response()->json([
+        //     'success'=>true,
+        //     'Cabor GROUP'=>['n_futsal'=>$n_futsal,'n_voli'=>$n_voli,'n_basket'=>$n_basket],
+        //     'Cabor INDIVIDU / DUO'=>['n_badminton'=>$n_badminton,'n_tenis'=>$n_tenis,'n_renang'=>$n_renang],
+        //     'Cabor E-SPORT'=>['n_ml'=>$n_ml,'n_fifa'=>$n_fifa],
+        // ]);
     }
     
     public function survey_pora(Request $request)
