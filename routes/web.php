@@ -197,7 +197,9 @@ Route::resource('todolist', TrxToDoListController::class)->middleware('auth');
 Route::get('todolist/recap/{id}', [TrxToDoListController::class, 'recap'])->name('todolist.recap')->middleware('can:hc');
 Route::get('todolist/recap/detail/{id}', [TrxToDoListController::class, 'detail'])->name('todolist.recap.detail')->middleware('can:hc');
 Route::post('survey_pora', [ TrxToDoListController::class, 'survey_pora' ])->name('survey_pora')->middleware('auth');
-Route::get('survey_pora/result/{id}', [ TrxToDoListController::class, 'survey_result' ])->name('survey_pora.result')->middleware('auth');
+// Route::get('survey_pora/result/{id}', [ TrxToDoListController::class, 'survey_result' ])->name('survey_pora.result')->middleware('auth');
+Route::get('survey_pora/mobile/{id}', [TrxToDoListController::class, 'survey_mobile'])->name('survey_pora.mobile');
+Route::post('survey_mobile_post', [ TrxToDoListController::class, 'survey_mobile_post' ])->name('survey_mobile_post');
 // 
 Route::resource('karyawan', KaryawanController::class);
 Route::resource('karyawanpendidikan', KaryawanPendidikanController::class)->middleware('auth');
