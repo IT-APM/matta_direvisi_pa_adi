@@ -427,6 +427,7 @@ Route::get('lang/{locale}', function ($locale) {
 Route::resource('dashboard', DashboardController::class)->middleware('can:hc_dashboard');
 Route::get('dashboard/biaya/{id}', [DashboardController::class, 'biaya'])->name('dashboard.biaya')->middleware('can:hc_dashboard');
 Route::get('dashboard/biaya_lain/{id}', [DashboardController::class, 'biaya_lain'])->name('dashboard.biaya_lain')->middleware('can:hc_dashboard');
+Route::get('dashboard/survey_pora/{id}', [DashboardController::class, 'survey_pora'])->name('dashboard.survey_pora')->middleware('can:hc_dashboard');
 // 
 Route::get('lang/{locale}', [LocalizationController::class , 'lang']);
 // 

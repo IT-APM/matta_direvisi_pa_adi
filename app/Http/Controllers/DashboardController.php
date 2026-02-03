@@ -15,9 +15,55 @@ use App\Models\TrxPayrollLog;
 use App\Models\TrxPayrollBpjstkLog;
 use App\Models\TrxPayrollBpjskesLog;
 use App\Models\KaryawanStatus;
+use App\Models\TrxSurveyPora;
 
 class DashboardController extends Controller
 {
+    public function survey_pora(Request $request, $id)
+    {
+        // dd($request->all(), $id);
+        // http://localhost/matta/survey_pora/result/0
+        $trx = TrxSurveyPora::all();
+        $n_futsal = 0;
+        $n_voli = 0;
+        $n_basket = 0;
+        $n_badminton = 0;
+        $n_tenis = 0;
+        $n_renang = 0;
+        $n_ml = 0;
+        $n_fifa = 0;
+        foreach($trx as $data){
+            $opsi1 = json_decode($data['opsi1'], true) ?? [];
+            $opsi2 = json_decode($data['opsi2'], true) ?? [];
+            $opsi3 = json_decode($data['opsi3'], true) ?? [];
+            $n_futsal += count(array_filter($opsi1, fn($item) => $item === 'futsal'));
+            $n_voli += count(array_filter($opsi1, fn($item) => $item === 'voli'));
+            $n_basket += count(array_filter($opsi1, fn($item) => $item === 'basket'));
+            $n_badminton += count(array_filter($opsi2, fn($item) => $item === 'badminton'));
+            $n_tenis += count(array_filter($opsi2, fn($item) => $item === 'tenis'));
+            $n_renang += count(array_filter($opsi2, fn($item) => $item === 'renang'));
+            $n_ml += count(array_filter($opsi3, fn($item) => $item === 'ml'));
+            $n_fifa += count(array_filter($opsi3, fn($item) => $item === 'fifa'));
+        }
+        $y_max = max([$n_futsal, $n_voli, $n_basket, $n_badminton, $n_tenis, $n_renang, $n_ml, $n_fifa]) + 5;
+        $result = [
+            'success'=>true,
+            ['name'=>'Cabor GROUP', 'opsi'=> [['name'=>'Futsal', 'n'=>$n_futsal], ['name'=>'Voli', 'n'=>$n_voli], ['name'=>'Basket', 'n'=>$n_basket]]],
+            ['name'=>'Cabor INDIVIDU / DUO', 'opsi'=> [['name'=>'Badminton', 'n'=>$n_badminton], ['name'=>'Tenis Meja', 'n'=>$n_tenis], ['name'=>'Renang', 'n'=>$n_renang]]],
+            ['name'=>'Cabor E-SPORT', 'opsi'=> [['name'=>'Mobile Legend', 'n'=>$n_ml], ['name'=>'FIFA 26', 'n'=>$n_fifa]]],
+        ];
+        // return response()->json([
+        //     'success'=>true,
+        //     ['name'=>'Cabor GROUP', 'opsi'=> [['name'=>'Futsal', 'n'=>$n_futsal], ['name'=>'Voli', 'n'=>$n_voli], ['name'=>'Basket', 'n'=>$n_basket]]],
+        //     ['name'=>'Cabor INDIVIDU / DUO', 'opsi'=> [['name'=>'Badminton', 'n'=>$n_badminton], ['name'=>'Tenis Meja', 'n'=>$n_tenis], ['name'=>'Renang', 'n'=>$n_renang]]],
+        //     ['name'=>'Cabor E-SPORT', 'opsi'=> [['name'=>'Mobile Legend', 'n'=>$n_ml], ['name'=>'FIFA 26', 'n'=>$n_fifa]]],
+        //     // 'Cabor GROUP'=>['n_futsal'=>$n_futsal,'n_voli'=>$n_voli,'n_basket'=>$n_basket],
+        //     // 'Cabor INDIVIDU / DUO'=>['n_badminton'=>$n_badminton,'n_tenis'=>$n_tenis,'n_renang'=>$n_renang],
+        //     // 'Cabor E-SPORT'=>['n_ml'=>$n_ml,'n_fifa'=>$n_fifa],
+        // ]);
+        return view( 'dashboard.survey_pora', compact('result', 'y_max'));
+    }
+
     public function get_divisi(Request $request, $id){
         $perusahaan = explode(',', $request->perusahaan);
         $arr_perusahaan = [];

@@ -42,6 +42,7 @@
                                 <ul class="nav-sub-childmenu submenu-content">
                                     <li><a href="<?php echo e(route('dashboard.biaya', 0)); ?>">Biaya Gaji</a></li>
                                     <li><a href="<?php echo e(route('dashboard.biaya_lain', 0)); ?>">Biaya Lain</a></li>
+                                    <li><a href="<?php echo e(route('dashboard.survey_pora', 0)); ?>">Hasil Survey PORA</a></li>
                                     
                                 </ul>
                             </li>
