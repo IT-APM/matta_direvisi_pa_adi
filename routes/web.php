@@ -293,7 +293,7 @@ Route::get('recruitment/get_offering/download/{id}', [TrxRecruitmentController::
 Route::post('recruitment/pedoman_post', [ TrxRecruitmentController::class, 'pedoman_post'])->name('recruitment.pedoman_post');
 Route::resource('noattendance', NoAttendanceController::class)->middleware('can:hc');
 Route::resource('overtime', OvertimeController::class)->middleware('auth');
-Route::resource('working', WorkingDayController::class)->middleware('auth');
+Route::resource('working', WorkingDayController::class)->middleware('can:hc');
 Route::resource('wg', WorkingGroupController::class)->middleware('auth');
 // 
 Route::resource('cico_att', TrxCiCoAttendanceController::class)->middleware('can:iphone');

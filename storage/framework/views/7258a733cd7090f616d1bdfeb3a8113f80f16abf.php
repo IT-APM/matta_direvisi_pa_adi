@@ -396,6 +396,7 @@
                                 <li><a href="<?php echo e(route('jadwalqatsmember.index')); ?>">QA Technical Support<br />Member</a></li>
                                 <li><a href="<?php echo e(route('jadwalservicedesk.index')); ?>">QA Technical Support<br />Service Desk</a></li>
                                 <li><a href="<?php echo e(route('jadwalrandom.index')); ?>">Random</a></li>
+                                <li><a href="<?php echo e(route('working.show', [21, 'req'=>'view'])); ?>">Reguler Freelance</a></li>
                                 <li><a href="<?php echo e(route('jadwalsec.index')); ?>">Security</a></li>
                             </ul>
                         </li>

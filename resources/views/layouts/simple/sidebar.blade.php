@@ -397,6 +397,7 @@
                                 <li><a href="{{ route('jadwalqatsmember.index') }}">QA Technical Support<br />Member</a></li>
                                 <li><a href="{{ route('jadwalservicedesk.index') }}">QA Technical Support<br />Service Desk</a></li>
                                 <li><a href="{{ route('jadwalrandom.index') }}">Random</a></li>
+                                <li><a href="{{ route('working.show', [21, 'req'=>'view']) }}">Reguler Freelance</a></li>
                                 <li><a href="{{ route('jadwalsec.index') }}">Security</a></li>
                             </ul>
                         </li>

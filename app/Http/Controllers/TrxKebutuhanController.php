@@ -116,6 +116,53 @@ class TrxKebutuhanController extends Controller
         //     'orang_outstanding' => $orang_outstanding,
         // ]);
         // end
+        // start versi lain
+        $tahun = 2025;
+        // 10=Done by HC
+        $sts_terpenuhi = [10];
+        // 1=Requested by Requestor
+        // 2=Approved by L1
+        // 9=Approved by L2 to HC
+        $sts_outstanding = [1,2,9];
+        $sts_cancel = array_merge($sts_terpenuhi, $sts_outstanding);
+        // 
+        $query = TrxKebutuhanMaster::whereYear('created_at', $tahun);
+        $all = $query->get();
+        $n_all = $query->sum('jumlah');
+        // 
+        $terpenuhi = $query->whereIn('status_pengajuan', $sts_terpenuhi)->get();
+        $n_terpenuhi = $terpenuhi->sum('jumlah');
+        // 
+        $outstanding = $query->whereIn('status_pengajuan', $sts_outstanding)->get();
+        $n_outstanding = $outstanding->sum('jumlah');
+        return response()->json([
+            'status' => 'success',
+            'tahun' => $tahun,
+            'all' => ['l_trx' => 'Kebutuhan Recruitment',
+                    'l_orang' => 'Jumlah Orang Yang Dibutuhkan',
+                    'n_trx' => count($all),
+                    'n_orang' => $n_all],
+            'terpenuhi' => ['l_trx' => 'Kebutuhan Terpenuhi',
+                    'l_orang' => 'Kebutuhan Terpenuhi',
+                    'n_trx' => count($terpenuhi),
+                    'n_orang' => $n_terpenuhi],
+            'cancel' => ['l_trx' => 'Cancel',
+                    'l_orang' => 'Cancel',
+                    'n_trx' => count($all),
+                    'n_orang' => $n_all],
+            'outstanding' => ['l_trx' => 'Outstanding',
+                    'l_orang' => 'Outstanding',
+                    'n_trx' => count($outstanding),
+                    'n_orang' => $n_outstanding],
+            // // 'data' => $arr_status,
+            // 'kebutuhan_terpenuhi' => $kebutuhan_terpenuhi,
+            // 'orang_terpenuhi' => $orang_terpenuhi,
+            // 'kebutuhan_cancel' => $kebutuhan_cancel,
+            // 'orang_cancel' => $orang_cancel,
+            // 'kebutuhan_outstanding' => $kebutuhan_outstanding,
+            // 'orang_outstanding' => $orang_outstanding,
+        ]);
+        // end versi lain
         $no = 0;
         $karyawan = Karyawan::select('nik', 'nama')->where(['is_aktif' => 1])->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $arr_nik_nkp = new Karyawan();
