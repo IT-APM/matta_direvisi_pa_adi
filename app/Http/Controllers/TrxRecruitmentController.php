@@ -2020,7 +2020,7 @@ class TrxRecruitmentController extends Controller
                 // email ke kandidat dinyatakan tidak diterima
                 // kirim email
                 $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
-                <p>Sehubungan dengan proses seleksi yang telah Bapak/Ibu/Saudara/i '.$_trx->nama.' ikuti untuk Posisi '.$posisi.', dengan ini kami sampaikan bahwa Bapak/Ibu/Saudara/i, dengan berat hari kami sampaikan bahwa Bapak/Ibu/Saudara/i belum dapat bergabung di PT. Alita Praya Mitra dikarenakan belum memenuhi kualifikasi yang dibutuhkan untuk posisi tersebut.</p>
+                <p>Sehubungan dengan proses seleksi yang telah Bapak/Ibu/Saudara/i '.$_trx->nama.' ikuti untuk Posisi '.$posisi.', dengan ini kami sampaikan bahwa Bapak/Ibu/Saudara/i, dengan berat hati kami sampaikan bahwa Bapak/Ibu/Saudara/i belum dapat bergabung di PT. Alita Praya Mitra dikarenakan belum memenuhi kualifikasi yang dibutuhkan untuk posisi tersebut.</p>
                 <p>Terimakasih atas kesediaannya mengikuti proses seleksi di PT. Alita Praya Mitra.<br/>Kami harap Bapak/Ibu/Saudara/i dapat bekerjasama dengan kami di lain kesempatan.</p>
                 <p>Terima kasih atas perhatiannya.<br/>Salam sehat dan sukses selalu.</p>'.MtrUtility::find(47)->informasi;
                 // parameter yang dipassing ke sendemail
