@@ -72,17 +72,15 @@ class WorkingDayController extends Controller
             if(count($nik) == 0){
                 return redirect()->route('working.show', [$id, 'req'=>'view'])->with('error', 'No data is saved successfully.');
             }
-            $start = Carbon::parse($request->tanggal_awal);
-            $end = Carbon::parse($request->tanggal_akhir);
             foreach($nik as $_nik){
+                $start = Carbon::parse($request->tanggal_awal);
+                $end = Carbon::parse($request->tanggal_akhir);
                 $this->deleteData($_nik, $start, $end);
                 while ($start->lte($end)) {
                     $tgl = $start->format('Y-m-d');
                     $this->insertData($wg->id, 1, $tgl, $_nik, $tgl.' '.$wg->clockin, $tgl.' '.$wg->clockout, $tgl.' '.$wg->end_clockout, $tgl.' '.$wg->start_clockin);
                     $start->addDay();
                 }
-                $start = Carbon::parse($request->start);
-                $end = Carbon::parse($request->end);
             }
             return redirect()->route('working.show', [$id, 'req'=>'view'])->with('msg', 'Data is saved successfully.');
         }
