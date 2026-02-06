@@ -24,6 +24,7 @@ use App\Models\BpdProyek;
 use App\Models\BpdProyekAdmin;
 use App\Models\BpdProyekUangSaku;
 use App\Models\BpdProyekUangSakuKelompok;
+use App\Models\BpdProyekUangSakuInstalasi;
 use App\Models\BpdStatus;
 // 
 use App\Models\TrxBpdDetailBiaya;
@@ -3230,6 +3231,11 @@ class TrxBpdController extends Controller
                             // 5 = Kelompok V
                             else if($kelompok_id == 5){
                                 $_uang_saku = $uang_saku->uangsaku_5;
+                            }
+                            // Kecuali BpdProyekUangSakuInstalasi
+                            $install = BpdProyekUangSakuInstalasi::where(['nik'=>TrxBpdMaster::find($data->id_trx)->pengaju])->first();
+                            if(!empty($install)){
+                                $_uang_saku = $install->uangsaku;
                             }
                             // 1 = 500240 = BIAYA UANG SAKU = Project
                             // 2 = 500240 = BIAYA UANG SAKU = Support
