@@ -157,7 +157,7 @@ class ReminderSpController extends Controller
         // $trx = TrxReminderSp::find(3);
         // $teguran_ke = 'Pertama';
         // $history_email = '';
-        // $mailData['title'] = 'Surat Teguran '.$teguran_ke;
+        // $mailData['title'] = 'Surat Pemberitahuan '.$teguran_ke;
         // $mailData['filename'] = 'emails.reminder1';
         // // $mailData['filename'] = 'emails.warning1';
         // $mailData['to'] = 'riznaky.roosmanita@alita.id';
@@ -253,7 +253,7 @@ class ReminderSpController extends Controller
                             }
                             // start
                             // parameter yang dipassing ke sendemail
-                            $mailData['title'] = 'Surat Teguran '.$teguran_ke;
+                            $mailData['title'] = 'Surat Pemberitahuan '.$teguran_ke;
                             $mailData['filename'] = 'emails.reminder1';
                             if($type == 'warning'){
                                 $mailData['title'] = 'Surat Peringatan '.$teguran_ke;
