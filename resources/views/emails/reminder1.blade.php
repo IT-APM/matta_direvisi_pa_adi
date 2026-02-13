@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Surat Teguran</title>
+    <title>Surat Pemberitahuan</title>
     <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,7 +14,7 @@
         <img src="https://matta-reborn.alita.id/matta/assets/images/matta/sudah_absen_hari_ini.png" alt="Sudahkah anda absen hari ini" width="720" height="479">
     </div>
     <div style="text-align:center;background-color:red;color:white;">
-        <p style="padding:5px;">Surat Teguran {{ $data['teguran_ke'] }}</p>
+        <p style="padding:5px;">Surat Pemberitahuan {{ $data['teguran_ke'] }}</p>
     </div>
     <div>
         <div>
@@ -31,9 +31,9 @@
                     @endif
                 </div>
                 @if($data['teguran_ke'] == 'Kelima')
-                <p>Informasi ini juga sebagai Surat Teguran {{ $data['teguran_ke'] }} dan menjadi Surat Teguran terakhir untuk Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }}. Jika bulan selanjutnya belum menunjukan peningkatan absensi kehadiran, maka akan kami terbitkan Surat Peringatan Pertama. Kami harap kedisplinan absensi kehadiran dapat menunjukan peningkatan.</p>
+                <p>Informasi ini juga sebagai Surat Pemberitahuan {{ $data['teguran_ke'] }} dan menjadi Surat Pemberitahuan terakhir untuk Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }}. Jika bulan selanjutnya belum menunjukan peningkatan absensi kehadiran, maka akan kami terbitkan Surat Peringatan Pertama. Kami harap kedisplinan absensi kehadiran dapat menunjukan peningkatan.</p>
                 @else
-                <p>Informasi ini juga sebagai Surat Teguran {{ $data['teguran_ke'] }} untuk Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }}. Kami harap dapat melakukan Absensi Kehadiran setiap hari ke depannya.</p>
+                <p>Informasi ini juga sebagai Surat Pemberitahuan {{ $data['teguran_ke'] }} untuk Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }}. Kami harap dapat melakukan Absensi Kehadiran setiap hari ke depannya.</p>
                 @endif
                 <p>Terima kasih atas perhatiannya.</p>
                 {{-- <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p> --}}
