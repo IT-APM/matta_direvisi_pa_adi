@@ -407,7 +407,7 @@ document.getElementById('survey_pora').addEventListener('submit', function(e){
         e.target.submit();
     }
 });
-<?php if(!$is_survey_pora && Carbon\Carbon::today()->between('2026-02-02', '2026-02-05')): ?>
+<?php if(!$is_survey_pora && now()->lessThanOrEqualTo(Carbon\Carbon::createFromFormat('Y-m-d H:i:s', '2026-02-05 19:00:00'))): ?>
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnShowSurvey').click();
 });

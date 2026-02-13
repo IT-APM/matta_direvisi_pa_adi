@@ -47,8 +47,34 @@ $koordinator_property = json_decode($trxMaster->koordinator_property, true);
 				<hr/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr>
-						<td width="30%">Nama Karyawan<br/>NIP<br/>Jabatan<br/>Level<br/>Direktorat / Divisi / Departemen<br/>Nama Atasan Langsung</td>
-						<td width="70%">: <?php echo e($pengaju_property['nama']); ?><br/>: <?php echo e($pengaju_property['nik']); ?><br/>: <?php echo e($pengaju_property['jabatan']); ?><br/>: <?php echo e($pengaju_property['level']); ?><br/>: <?php echo e($pengaju_property['divisi']); ?> / <?php echo e($pengaju_property['dep']); ?> / <?php echo e($pengaju_property['sub_dep']); ?><br/>: <?php echo e($atasan_property['nama']); ?> / <?php echo e($atasan_property['nik']); ?></td>
+						<td width="30%">Nama Karyawan</td>
+						<td width="2%">:</td>
+						<td width="68%"><?php echo e($pengaju_property['nama']); ?></td>
+					</tr>
+					<tr>
+						<td>NIP</td>
+						<td>:</td>
+						<td><?php echo e($pengaju_property['nik']); ?></td>
+					</tr>
+					<tr>
+						<td>Jabatan</td>
+						<td>:</td>
+						<td><?php echo e($pengaju_property['jabatan']); ?></td>
+					</tr>
+					<tr>
+						<td>Level</td>
+						<td>:</td>
+						<td><?php echo e($pengaju_property['level']); ?></td>
+					</tr>
+					<tr>
+						<td>Direktorat / Divisi / Departemen</td>
+						<td>:</td>
+						<td><?php echo e($pengaju_property['divisi']); ?> / <?php echo e($pengaju_property['dep']); ?> / <?php echo e($pengaju_property['sub_dep']); ?></td>
+					</tr>
+					<tr>
+						<td>Nama Atasan Langsung</td>
+						<td>:</td>
+						<td><?php echo e($atasan_property['nama']); ?> / <?php echo e($atasan_property['nik']); ?></td>
 					</tr>
 				</table>
 				<hr/>
@@ -61,8 +87,24 @@ $koordinator_property = json_decode($trxMaster->koordinator_property, true);
 				<hr/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
 					<tr>
-						<td width="30%">Tahun Pengajuan<br/>Golongan<br/>Kelompok Perjalanan Dinas<br/>Uraian Tugas Perjalanan Dinas</td>
-						<td width="70%">: <?php echo e($trxMaster->periode); ?><br/>: <?php if($trxMaster->is_leader==1): ?> Leader <?php elseif($trxMaster->is_leader==2): ?> Member <?php elseif($trxMaster->is_leader==3): ?> Management <?php endif; ?><br/>: Project: <?php echo e($kelompok['project']); ?> / Corporate: <?php echo e($kelompok['nonproject']); ?><br/>: <?php echo nl2br(str_replace('<', ' ', $trxMaster->uraian)); ?></td>
+						<td width="30%">Tahun Pengajuan</td>
+						<td width="2%">:</td>
+						<td width="68%"><?php echo e($trxMaster->periode); ?></td>
+					</tr>
+					<tr>
+						<td>Golongan</td>
+						<td>:</td>
+						<td><?php if($trxMaster->is_leader==1): ?> Leader <?php elseif($trxMaster->is_leader==2): ?> Member <?php elseif($trxMaster->is_leader==3): ?> Management <?php endif; ?></td>
+					</tr>
+					<tr>
+						<td>Kelompok Perjalanan Dinas</td>
+						<td>:</td>
+						<td>Project: <?php echo e($kelompok['project']); ?> / Corporate: <?php echo e($kelompok['nonproject']); ?></td>
+					</tr>
+					<tr>
+						<td>Uraian Tugas Perjalanan Dinas</td>
+						<td>:</td>
+						<td><?php echo nl2br(str_replace('<', ' ', $trxMaster->uraian)); ?></td>
 					</tr>
 				</table>
 				<table width="100%" border="1" cellspacing="0" cellpadding="2">

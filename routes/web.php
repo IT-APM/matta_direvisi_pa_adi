@@ -339,6 +339,7 @@ Route::get('izin/recap/detail/{id}', [TrxIjinController::class, 'detail'])->name
 // 
 Route::resource('kebutuhan', TrxKebutuhanController::class);
 Route::resource('kebutuhan_detail', TrxKebutuhanDetailController::class)->middleware('can:hc');
+Route::get('kebutuhan/dashboard/{id}', [TrxKebutuhanController::class, 'dashboard'])->name('kebutuhan.dashboard')->middleware('can:hc');
 // 
 Route::resource('pekerjaan_bidang', PekerjaanBidangController::class)->middleware('auth');
 Route::resource('pekerjaan_kategori', PekerjaanKategoriController::class)->middleware('auth');

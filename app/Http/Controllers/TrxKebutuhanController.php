@@ -56,68 +56,17 @@ class TrxKebutuhanController extends Controller
     {
         $this->middleware('can:asm', ['except' => ['show','update','kota']]);
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
+
+    public function dashboard(Request $request)
     {
-        // start dashboard only
-        // $tahun = 2021;
-        // $trx = DB::select("SELECT * FROM `trx_tbl_kebutuhan_master` WHERE YEAR(`created_at`)={$tahun}");
-        // $orang = DB::select("SELECT SUM(jumlah) AS jumlah FROM `trx_tbl_kebutuhan_master` WHERE YEAR(`created_at`)={$tahun}");
-        // $status = DB::select("SELECT COUNT(*) AS jumlah,`status_pengajuan` FROM `trx_tbl_kebutuhan_master` WHERE YEAR(`created_at`)={$tahun} GROUP BY `status_pengajuan`");
-        // $arr_status = [];
-        // // 10=Done by HC
-        // $arr_terpenuhi = [10];
-        // $kebutuhan_terpenuhi = 0;
-        // $orang_terpenuhi = 0;
-        // // 1=Requested by Requestor
-        // // 2=Approved by L1
-        // // 9=Approved by L2 to HC
-        // $arr_outstanding = [1,2,9];
-        // $kebutuhan_outstanding = 0;
-        // $orang_outstanding = 0;
-        // $arr_inner = array_merge($arr_terpenuhi, $arr_outstanding);
-        // $kebutuhan_cancel = 0;
-        // $orang_cancel = 0;
-        // foreach($status as $data){
-        //     // $str_status = KebutuhanStatus::find($data->status_pengajuan)->status_pengajuan;
-        //     $_orang = DB::select("SELECT SUM(jumlah) AS jumlah FROM `trx_tbl_kebutuhan_master` WHERE status_pengajuan={$data->status_pengajuan} AND YEAR(`created_at`)={$tahun}");
-        //     if(in_array($data->status_pengajuan, $arr_terpenuhi)){
-        //         $kebutuhan_terpenuhi += $data->jumlah;
-        //         $orang_terpenuhi += $_orang[0]->jumlah;
-
-        //     }
-        //     if(!in_array($data->status_pengajuan, $arr_inner)){
-        //         $kebutuhan_cancel += $data->jumlah;
-        //         $orang_cancel += $_orang[0]->jumlah;
-
-        //     }
-        //     if(in_array($data->status_pengajuan, $arr_outstanding)){
-        //         $kebutuhan_outstanding += $data->jumlah;
-        //         $orang_outstanding += $_orang[0]->jumlah;
-
-        //     }
-        //     // array_push($arr_status, ['kebutuhan'=>$data->jumlah, 'id_status'=>$data->status_pengajuan, 'status'=>$str_status, 'orang'=>$_orang[0]->jumlah]);
-        // }
-        // return response()->json([
-        //     'status' => 'success',
-        //     'tahun' => $tahun,
-        //     'kebutuhan' => count($trx),
-        //     'orang' => $orang[0]->jumlah,
-        //     // 'data' => $arr_status,
-        //     'kebutuhan_terpenuhi' => $kebutuhan_terpenuhi,
-        //     'orang_terpenuhi' => $orang_terpenuhi,
-        //     'kebutuhan_cancel' => $kebutuhan_cancel,
-        //     'orang_cancel' => $orang_cancel,
-        //     'kebutuhan_outstanding' => $kebutuhan_outstanding,
-        //     'orang_outstanding' => $orang_outstanding,
-        // ]);
-        // end
-        // start versi lain
-        $tahun = 2025;
+        // dd($request->all());
+        // start dashboard
+        $lable_data = ['Kebutuhan Recruitment','Jumlah Orang Yang Dibutuhkan','Kebutuhan Terpenuhi','Kebutuhan Terpenuhi','Cancel','Cancel','Outstanding','Outstanding'];
+        $tahun = [];
+        $_direktorat = [];
+        $_divisi = [];
+        $_status_kerja = [];
+        $_area = [];
         // 10=Done by HC
         $sts_terpenuhi = [10];
         // 1=Requested by Requestor
@@ -125,44 +74,281 @@ class TrxKebutuhanController extends Controller
         // 9=Approved by L2 to HC
         $sts_outstanding = [1,2,9];
         $sts_cancel = array_merge($sts_terpenuhi, $sts_outstanding);
-        // 
-        $query = TrxKebutuhanMaster::whereYear('created_at', $tahun);
-        $all = $query->get();
-        $n_all = $query->sum('jumlah');
-        // 
-        $terpenuhi = $query->whereIn('status_pengajuan', $sts_terpenuhi)->get();
-        $n_terpenuhi = $terpenuhi->sum('jumlah');
-        // 
-        $outstanding = $query->whereIn('status_pengajuan', $sts_outstanding)->get();
-        $n_outstanding = $outstanding->sum('jumlah');
-        return response()->json([
-            'status' => 'success',
-            'tahun' => $tahun,
-            'all' => ['l_trx' => 'Kebutuhan Recruitment',
-                    'l_orang' => 'Jumlah Orang Yang Dibutuhkan',
+        // start filter
+        $select_tahun = TrxKebutuhanMaster::select(DB::raw('YEAR(created_at) as tahun'))->distinct()->orderBy('tahun', 'asc')->pluck('tahun');
+        $all = TrxKebutuhanMaster::all();
+        $arr_direktorat = [];
+        $arr_divisi = [];
+        $arr_status_kerja = [];
+        $arr_area = [];
+        foreach($all as $data){
+            $pengaju_property = json_decode($data->pengaju_property);
+            array_push($arr_direktorat, $pengaju_property->divisi);
+            array_push($arr_divisi, $pengaju_property->dep);
+            array_push($arr_status_kerja, StatusKerja::find($data->id_status_kerja)->status_kerja);
+            array_push($arr_area, Propinsi::find($data->id_area)->propinsi);
+        }
+        $arr_select_tahun = [];
+        $select_direktorat = array_values(array_unique($arr_direktorat));
+        sort($select_direktorat);
+        $arr_select_direktorat = [];
+        $select_divisi = array_values(array_unique($arr_divisi));
+        sort($select_divisi);
+        $arr_select_divisi = [];
+        $select_status_kerja = array_values(array_unique($arr_status_kerja));
+        sort($select_status_kerja);
+        $arr_select_status_kerja = [];
+        $select_area = array_values(array_unique($arr_area));
+        sort($select_area);
+        $arr_select_area = [];
+        if ($request->filter == true) {
+            $tahun = $request->input('tahun', []);
+            $_direktorat = $request->input('direktorat', []);
+            $_divisi = $request->input('divisi', []);
+            $_status_kerja = $request->input('status_kerja', []);
+            $_area = $request->input('area', []);
+            if (count($tahun) > 0) {
+                $arr_select_tahun = $tahun;
+            }
+            if (count($_direktorat) > 0) {
+                $arr_select_direktorat = $_direktorat;
+            }
+            if (count($_divisi) > 0) {
+                $arr_select_divisi = $_divisi;
+            }
+            if (count($_status_kerja) > 0) {
+                $arr_select_status_kerja = $_status_kerja;
+            }
+            if (count($_area) > 0) {
+                $arr_select_area = $_area;
+            }
+            // all
+            $query = TrxKebutuhanMaster::whereIn(DB::raw('YEAR(created_at)'), $tahun);
+            $all = $query->get();
+            $n_all = $query->sum('jumlah');
+            $arr_direktorat = [];
+            $arr_divisi = [];
+            $arr_status_kerja = [];
+            $arr_area = [];
+            $arr_direktorat_year = [];
+            $arr_direktorat_month_year = [];
+            $arr_posisi = [];
+            foreach($all as $data){
+                $pengaju_property = json_decode($data->pengaju_property);
+                if(in_array($pengaju_property->divisi, $_direktorat)){
+                    array_push($arr_direktorat, $pengaju_property->divisi);
+                    array_push($arr_direktorat_year, ['tahun'=>Carbon::createFromFormat('d-m-Y H:i:s', $data->created_at)->year, 'direktorat'=>$pengaju_property->divisi]);
+                    array_push($arr_direktorat_month_year, ['bulan_tahun'=>Carbon::createFromFormat('d-m-Y H:i:s', $data->created_at)->format('M Y'), 'direktorat'=>$pengaju_property->divisi]);
+                    array_push($arr_posisi, ['posisi'=>PekerjaanSub::find($data->id_pekerjaan)->pekerjaan, 'direktorat'=>$pengaju_property->divisi]);
+                    
+                }
+                if(in_array($pengaju_property->dep, $_divisi)){
+                    array_push($arr_divisi, $pengaju_property->dep);
+                }
+                if(in_array(StatusKerja::find($data->id_status_kerja)->status_kerja, $_status_kerja)){
+                    array_push($arr_status_kerja, StatusKerja::find($data->id_status_kerja)->status_kerja);
+                }
+                if(in_array(Propinsi::find($data->id_area)->propinsi, $_area)){
+                    array_push($arr_area, Propinsi::find($data->id_area)->propinsi);
+                }
+            }
+            $per_direktorat_all = array_count_values($arr_direktorat);
+            ksort($per_direktorat_all);
+            $per_divisi_all = array_count_values($arr_divisi);
+            ksort($per_divisi_all);
+            $per_status_kerja_all = array_count_values($arr_status_kerja);
+            ksort($per_status_kerja_all);
+            $per_area_all = array_count_values($arr_area);
+            ksort($per_area_all);
+            // tahun
+            $result = collect($arr_direktorat_year);
+            $_arr_direktorat_year = $result->groupBy(['tahun', 'direktorat'])
+                ->map(function ($groupBy) {
+                    return $groupBy->map(function ($items) {
+                        return $items->count();
+                    });
+                });
+            // bulan_tahun
+            $result = collect($arr_direktorat_month_year);
+            $_arr_direktorat_month_year = $result->groupBy(['bulan_tahun', 'direktorat'])
+                ->map(function ($groupBy) {
+                    return $groupBy->map(function ($items) {
+                        return $items->count();
+                    });
+                });
+            // posisi
+            $result = collect($arr_posisi);
+            $_arr_direktorat_posisi = $result->groupBy(['posisi', 'direktorat'])
+                ->map(function ($groupBy) {
+                    return $groupBy->map(function ($items) {
+                        return $items->count();
+                    });
+                });
+            // terpenuhi
+            $query = TrxKebutuhanMaster::whereIn(DB::raw('YEAR(created_at)'), $tahun);
+            $terpenuhi = $query->whereIn('status_pengajuan', $sts_terpenuhi)->get();
+            $n_terpenuhi = $terpenuhi->sum('jumlah');
+            $arr_direktorat = [];
+            $arr_divisi = [];
+            $arr_status_kerja = [];
+            $arr_area = [];
+            foreach($terpenuhi as $data){
+                $pengaju_property = json_decode($data->pengaju_property);
+                if(in_array($pengaju_property->divisi, $_direktorat)){
+                    array_push($arr_direktorat, $pengaju_property->divisi);
+                }
+                if(in_array($pengaju_property->dep, $_divisi)){
+                    array_push($arr_divisi, $pengaju_property->dep);
+                }
+                if(in_array(StatusKerja::find($data->id_status_kerja)->status_kerja, $_status_kerja)){
+                    array_push($arr_status_kerja, StatusKerja::find($data->id_status_kerja)->status_kerja);
+                }
+                if(in_array(Propinsi::find($data->id_area)->propinsi, $_area)){
+                    array_push($arr_area, Propinsi::find($data->id_area)->propinsi);
+                }
+            }
+            $per_direktorat_terpenuhi = array_count_values($arr_direktorat);
+            ksort($per_direktorat_terpenuhi);
+            $per_divisi_terpenuhi = array_count_values($arr_divisi);
+            ksort($per_divisi_terpenuhi);
+            $per_status_kerja_terpenuhi = array_count_values($arr_status_kerja);
+            ksort($per_status_kerja_terpenuhi);
+            $per_area_terpenuhi = array_count_values($arr_area);
+            ksort($per_area_terpenuhi);
+            // cancel
+            $query = TrxKebutuhanMaster::whereIn(DB::raw('YEAR(created_at)'), $tahun);
+            $cancel = $query->whereNotIn('status_pengajuan', $sts_cancel)->get();
+            $n_cancel = $cancel->sum('jumlah');
+            $arr_direktorat = [];
+            $arr_divisi = [];
+            $arr_status_kerja = [];
+            $arr_area = [];
+            foreach($cancel as $data){
+                $pengaju_property = json_decode($data->pengaju_property);
+                if(in_array($pengaju_property->divisi, $_direktorat)){
+                    array_push($arr_direktorat, $pengaju_property->divisi);
+                }
+                if(in_array($pengaju_property->dep, $_divisi)){
+                    array_push($arr_divisi, $pengaju_property->dep);
+                }
+                if(in_array(StatusKerja::find($data->id_status_kerja)->status_kerja, $_status_kerja)){
+                    array_push($arr_status_kerja, StatusKerja::find($data->id_status_kerja)->status_kerja);
+                }
+                if(in_array(Propinsi::find($data->id_area)->propinsi, $_area)){
+                    array_push($arr_area, Propinsi::find($data->id_area)->propinsi);
+                }
+            }
+            $per_direktorat_cancel = array_count_values($arr_direktorat);
+            ksort($per_direktorat_cancel);
+            $per_divisi_cancel = array_count_values($arr_divisi);
+            ksort($per_divisi_cancel);
+            $per_status_kerja_cancel = array_count_values($arr_status_kerja);
+            ksort($per_status_kerja_cancel);
+            $per_area_cancel = array_count_values($arr_area);
+            ksort($per_area_cancel);
+            // outstanding
+            $query = TrxKebutuhanMaster::whereIn(DB::raw('YEAR(created_at)'), $tahun);
+            $outstanding = $query->whereIn('status_pengajuan', $sts_outstanding)->get();
+            $n_outstanding = $outstanding->sum('jumlah');
+            $arr_direktorat = [];
+            $arr_divisi = [];
+            $arr_status_kerja = [];
+            $arr_area = [];
+            foreach($outstanding as $data){
+                $pengaju_property = json_decode($data->pengaju_property);
+                if(in_array($pengaju_property->divisi, $_direktorat)){
+                    array_push($arr_direktorat, $pengaju_property->divisi);
+                }
+                if(in_array($pengaju_property->dep, $_divisi)){
+                    array_push($arr_divisi, $pengaju_property->dep);
+                }
+                if(in_array(StatusKerja::find($data->id_status_kerja)->status_kerja, $_status_kerja)){
+                    array_push($arr_status_kerja, StatusKerja::find($data->id_status_kerja)->status_kerja);
+                }
+                if(in_array(Propinsi::find($data->id_area)->propinsi, $_area)){
+                    array_push($arr_area, Propinsi::find($data->id_area)->propinsi);
+                }
+            }
+            $per_direktorat_outstanding = array_count_values($arr_direktorat);
+            ksort($per_direktorat_outstanding);
+            $per_divisi_outstanding = array_count_values($arr_divisi);
+            ksort($per_divisi_outstanding);
+            $per_status_kerja_outstanding = array_count_values($arr_status_kerja);
+            ksort($per_status_kerja_outstanding);
+            $per_area_outstanding = array_count_values($arr_area);
+            ksort($per_area_outstanding);
+            // return response()->json(
+            $data = [
+                'status' => 'success',
+                'tahun' => $tahun,
+                'all' => [
+                    'l_trx' => $lable_data[0],
+                    'l_orang' => $lable_data[1],
                     'n_trx' => count($all),
-                    'n_orang' => $n_all],
-            'terpenuhi' => ['l_trx' => 'Kebutuhan Terpenuhi',
-                    'l_orang' => 'Kebutuhan Terpenuhi',
+                    'n_orang' => (int)$n_all,
+                ],
+                'terpenuhi' => [
+                    'l_trx' => $lable_data[2],
+                    'l_orang' => $lable_data[3],
                     'n_trx' => count($terpenuhi),
-                    'n_orang' => $n_terpenuhi],
-            'cancel' => ['l_trx' => 'Cancel',
-                    'l_orang' => 'Cancel',
-                    'n_trx' => count($all),
-                    'n_orang' => $n_all],
-            'outstanding' => ['l_trx' => 'Outstanding',
-                    'l_orang' => 'Outstanding',
+                    'n_orang' => (int)$n_terpenuhi,
+                ],
+                'cancel' => [
+                    'l_trx' => $lable_data[4],
+                    'l_orang' => $lable_data[5],
+                    'n_trx' => count($cancel),
+                    'n_orang' => (int)$n_cancel,
+                ],
+                'outstanding' => [
+                    'l_trx' => $lable_data[6],
+                    'l_orang' => $lable_data[7],
                     'n_trx' => count($outstanding),
-                    'n_orang' => $n_outstanding],
-            // // 'data' => $arr_status,
-            // 'kebutuhan_terpenuhi' => $kebutuhan_terpenuhi,
-            // 'orang_terpenuhi' => $orang_terpenuhi,
-            // 'kebutuhan_cancel' => $kebutuhan_cancel,
-            // 'orang_cancel' => $orang_cancel,
-            // 'kebutuhan_outstanding' => $kebutuhan_outstanding,
-            // 'orang_outstanding' => $orang_outstanding,
-        ]);
-        // end versi lain
+                    'n_orang' => (int)$n_outstanding,
+                ],
+                'per_direktorat' => [
+                    'Terpenuhi'=>$per_direktorat_terpenuhi,
+                    'Cancel'=>$per_direktorat_cancel,
+                    'Outstanding'=>$per_direktorat_outstanding,
+                ],
+                'per_divisi' => [
+                    'Terpenuhi'=>$per_divisi_terpenuhi,
+                    'Cancel'=>$per_divisi_cancel,
+                    'Outstanding'=>$per_divisi_outstanding,
+                ],
+                'per_status_kerja' => [
+                    'Terpenuhi'=>$per_status_kerja_terpenuhi,
+                    'Cancel'=>$per_status_kerja_cancel,
+                    'Outstanding'=>$per_status_kerja_outstanding,
+                ],
+                'per_area' => [
+                    'Terpenuhi'=>$per_area_terpenuhi,
+                    'Cancel'=>$per_area_cancel,
+                    'Outstanding'=>$per_area_outstanding,
+                ],
+                'chart_type' => [
+                    'type_direktorat'=>is_null($request->type_direktorat) ? 'bar' : $request->type_direktorat,
+                    'type_divisi'=>is_null($request->type_divisi) ? 'bar' : $request->type_divisi,
+                    'type_status_kerja'=>is_null($request->type_status_kerja) ? 'bar' : $request->type_status_kerja,
+                    'type_area'=>is_null($request->type_area) ? 'bar' : $request->type_area,
+                ],
+                'arr_direktorat_year' => $_arr_direktorat_year,
+                'arr_direktorat_month_year' => $_arr_direktorat_month_year,
+                'arr_direktorat_posisi' => $_arr_direktorat_posisi,
+            ];
+        }
+        // end filter
+        // dd(gettype($data), $data);
+        // return $data;
+        // end dashboard
+        return view('formulir.kebutuhan.dashboard', compact('data','lable_data','select_tahun','select_direktorat','select_divisi','select_status_kerja','select_area','tahun','_direktorat','_divisi','_status_kerja','_area','arr_select_tahun','arr_select_direktorat','arr_select_divisi','arr_select_status_kerja','arr_select_area'));
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
         $no = 0;
         $karyawan = Karyawan::select('nik', 'nama')->where(['is_aktif' => 1])->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $arr_nik_nkp = new Karyawan();

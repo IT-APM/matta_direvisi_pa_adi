@@ -23,20 +23,20 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <?php if(Session::has('error')): ?>
+                    <?php if(count($errors) > 0): ?>
                     <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
-                        <!-- <img class="img-50" src="<?php echo e(asset('assets/images/other-images/sad.png')); ?>" alt="error"> -->
-                        <h4>ERROR:</h4>
-                        <?php if(session('error')[0]['status']): ?> <h5>
-                            <?php echo e(session('error')[0]['message']); ?> - OK</h5>
-                        <?php else: ?> <h5><?php echo e(session('error')[0]['message']); ?> - NOK</h5> <?php endif; ?>
-                        <?php if(session('error')[1]['status']): ?> <h5>
-                            <?php echo e(session('error')[1]['message']); ?> - OK</h5>
-                        <?php else: ?> <h5><?php echo e(session('error')[1]['message']); ?> - NOK</h5> <?php endif; ?>
-                        
+                        <h6>Upload image is ERROR</h6>
+                        <ul>
+                            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li><?php echo e($error); ?></li>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </ul>
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <?php endif; ?>
+                    
+                        
+                        
                     <div class="row g-3 mb-2">
                         <div class="col-md-6">
                             <label class="form-label" for="pengaju">Pengaju</label>

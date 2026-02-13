@@ -171,6 +171,14 @@
                             <h6>Recruitment</h6>
                         </div>
                     </li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('kebutuhan.dashboard', 0) }}?filter=true">
+                        <svg class="stroke-icon">
+                            <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-charts') }}"></use>
+                        </svg>
+                        <svg class="fill-icon">
+                            <use href="{{ asset('assets/svg/icon-sprite.svg#fill-charts') }}"> </use>
+                        </svg>
+                        <span>Dashboard</span></a></li>
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('recruitment.applicant_list', 0) }}">
                         <svg class="stroke-icon">
                             <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>

@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    
+    <?php if(now()->lessThanOrEqualTo(Carbon\Carbon::createFromFormat('Y-m-d H:i:s', '2026-02-05 19:00:00'))): ?>
     <div class="row m-1">
         <h4 class="text-center">SURVEY CABANG OLAHRAGA PORA 2026</h4>
         <hr />
@@ -136,8 +136,7 @@
             </div>
         </div>
     </div>
-    
-
+    <?php endif; ?>
 </body>
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

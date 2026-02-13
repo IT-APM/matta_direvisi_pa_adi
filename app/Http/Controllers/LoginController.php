@@ -98,6 +98,9 @@ class LoginController extends Controller
             $user = User::where($where)->first();
             $user->password = $new_password;
             $user->update();
+            // auto login setelah reset
+            $request->session()->regenerate();
+            Auth::login($user);
             // 
             $user = new UsersPwd;
             $user->nik = $request->nik;
@@ -110,8 +113,10 @@ class LoginController extends Controller
             $mailData['to'] = $request->email;
             $this->sendEmail($mailData);
             // finish
-            // 
-            return back()->with('msg_success', 'Your password has been changed.<br/>Please check email to see your new password.');
+            // tidak digunakan
+            // return back()->with('msg_success', 'Your password has been changed.<br/>Please check email to see your new password.');
+            // auto login setelah reset
+            return redirect()->intended('todolist');
             // return view('authentication.login-one')->with('msg_success', ['Your password has been changed. Please check email to see your new password.']);
         }
     }
