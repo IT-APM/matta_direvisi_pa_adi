@@ -24,7 +24,18 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    @if(Session::has('error'))
+                    @if (count($errors) > 0)
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h6>Upload image is ERROR</h6>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+                    {{-- @if(Session::has('error'))
                     <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
                         <!-- <img class="img-50" src="{{asset('assets/images/other-images/sad.png')}}" alt="error"> -->
                         <h4>ERROR:</h4>
@@ -33,7 +44,7 @@
                         @else <h5>{{ session('error')[0]['message'] }} - NOK</h5> @endif
                         @if (session('error')[1]['status']) <h5>
                             {{ session('error')[1]['message'] }} - OK</h5>
-                        @else <h5>{{ session('error')[1]['message'] }} - NOK</h5> @endif
+                        @else <h5>{{ session('error')[1]['message'] }} - NOK</h5> @endif --}}
                         {{-- @if (session('error')[2]['status']) <h5>
                             {{ session('error')[2]['message'] }} - OK</h5>
                         @else <h5>{{ session('error')[2]['message'] }} - NOK</h5> @endif
@@ -46,9 +57,9 @@
                         @if (session('error')[5]['status']) <h5>
                             {{ session('error')[5]['message'] }} - OK</h5>
                         @else <h5>{{ session('error')[5]['message'] }} - NOK</h5> @endif --}}
-                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                        {{-- <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                    @endif
+                    @endif --}}
                     <div class="row g-3 mb-2">
                         <div class="col-md-6">
                             <label class="form-label" for="pengaju">Pengaju</label>
