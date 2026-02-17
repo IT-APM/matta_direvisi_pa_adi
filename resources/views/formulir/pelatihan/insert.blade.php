@@ -51,6 +51,17 @@
                 @endif
                 @csrf
                     <div class="row">
+                        @if (count($errors) > 0)
+                        <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                            <h6>Upload image is ERROR</h6>
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
                         <!-- start -->
                         <div class="col-md-6">
                             <div class="card-body">
@@ -250,6 +261,14 @@
                                 <div class="col-md-12 pb-2">
                                     <label class="form-label" for="keterangan">Keterangan</label>
                                     <textarea class="form-control" id="keterangan" name="keterangan" rows="4" >@if($status=='edit') {{ $trx->keterangan }} @endif</textarea>
+                                </div>
+                                <div class="col-md-12 pb-2">
+                                    <label class="form-label" for="lampiran">Lampiran<br/>*Maksimal 2MB dengan format pdf atau gambar(jpg, jpeg dan png)</label>
+                                    <input name="lampiran" id="lampiran" class="form-control" type="file">
+                                </div>
+                                <div class="col-md-12 pb-2">
+                                    <label class="form-label" for="catatan">Catatan</label>
+                                    <textarea class="form-control" id="catatan" name="catatan" rows="4" >@if($status=='edit') {{ $trx->catatan }} @endif</textarea>
                                 </div>
                             </div>
                         </div>

@@ -342,7 +342,43 @@ class TrxPelatihanController extends Controller
      */
     public function create()
     {
-        //
+        // start
+        // $trx = TrxPelatihan::orderBy('id', 'desc')->get();
+        // foreach($trx as $_trx){
+        //     $id = $_trx->id;
+        //     $check = TrxPelatihanPeserta::where(['id_trx'=>$id])->exists();
+        //     if(!$check){
+        //         $peserta = explode(';', $_trx->peserta);
+        //         foreach($peserta as $_peserta){
+        //             $_data = new TrxPelatihanPeserta;
+        //             $_data->id_trx = $id;
+        //             $_data->nik = $_peserta;
+        //             $items = array_filter(array_map('trim', explode(';', $_trx->peserta_property)));
+        //             $_items = [];
+        //             foreach ($items as $item) {
+        //                 $_items[] = json_decode($item, true);
+        //             }
+        //             $_data->nik_property = json_encode(collect($_items)->firstWhere('nik', $_peserta));
+        //             $_data->save();
+        //             // 
+        //             $materi = MtrPelatihanPenilaian::orderBy('id', 'asc')->get();
+        //             foreach($materi as $_materi){
+        //                 $data = new TrxPelatihanPenilaian;
+        //                 $data->id_trx = $id;
+        //                 $data->id_peserta = $_data->id;
+        //                 $data->nik = $_peserta;
+        //                 $data->urutan = $_materi->id;
+        //                 $data->label = $_materi->label;
+        //                 $data->nomor = $_materi->nomor;
+        //                 $data->materi1 = $_materi->materi1;
+        //                 $data->materi2 = $_materi->materi2;
+        //                 $data->tipe = $_materi->tipe;
+        //                 $data->save();
+        //             }
+        //         }
+        //     }
+        // }
+        // end
         $status = 'create';
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
@@ -432,6 +468,17 @@ class TrxPelatihanController extends Controller
         $trx->anggaran = $request->anggaran;
         $trx->keterangan = $request->keterangan;
         $trx->status_pengajuan = $status_pengajuan;
+        $trx->catatan = $request->catatan;
+        if($request->has('lampiran')){
+            $lampiran = $request->file('lampiran');
+            $request->validate([
+                'lampiran' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            ]);
+            $extension = $lampiran->getClientOriginalExtension();
+            $namafile = $pengaju.'_'.now()->getTimestampMs().'.'.$extension;
+            $lampiran->move('public/assets/pelatihan/', $namafile);
+            $trx->lampiran = $namafile;
+        }
         $trx->save();
         $this->insertLog($trx->id, $status_pengajuan, $pengaju, $request->keterangan);
         // 
@@ -1621,6 +1668,17 @@ class TrxPelatihanController extends Controller
         $trx->benefit = implode(';', $request->benefit);
         $trx->tempat = $request->tempat;
         $trx->keterangan = $request->keterangan;
+        $trx->catatan = $request->catatan;
+        if($request->has('lampiran')){
+            $lampiran = $request->file('lampiran');
+            $request->validate([
+                'lampiran' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            ]);
+            $extension = $lampiran->getClientOriginalExtension();
+            $namafile = $trx->pengaju.'_'.now()->getTimestampMs().'.'.$extension;
+            $lampiran->move('public/assets/pelatihan/', $namafile);
+            $trx->lampiran = $namafile;
+        }
         $trx->update();
         return redirect()->to($back_url)->with( 'msg', 'Data is saved successfully.' );
     }

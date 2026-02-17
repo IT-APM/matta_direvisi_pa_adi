@@ -218,6 +218,21 @@
                                         <td>Keterangan</td>
                                         <td><?php echo $trx->keterangan; ?></td>
                                     </tr>
+                                    <?php $filePath = public_path('assets/pelatihan/' . $trx->lampiran); ?>
+                                    <tr>
+                                        <td>Lampiran</td>
+                                        <td>
+                                            <?php if(!empty($trx->lampiran) && file_exists($filePath)): ?>
+                                                <a href="<?php echo e(asset('assets/pelatihan/' . $trx->lampiran)); ?>" target="_blank">Lihat Lampiran</a>
+                                            <?php else: ?>
+                                                Tidak ada lampiran
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Catatan</td>
+                                        <td><?php echo $trx->catatan; ?></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

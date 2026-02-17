@@ -184,6 +184,21 @@
                                     <td>Keterangan</td>
                                     <td>{{ $trx->keterangan }}</td>
                                 </tr>
+                                @php $filePath = public_path('assets/pelatihan/' . $trx->lampiran); @endphp
+                                <tr>
+                                    <td>Lampiran</td>
+                                    <td>
+                                        @if(!empty($trx->lampiran) && file_exists($filePath))
+                                            <a href="{{ asset('assets/pelatihan/' . $trx->lampiran) }}" target="_blank">Lihat Lampiran</a>
+                                        @else
+                                            Tidak ada lampiran
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Catatan</td>
+                                    <td>{!! $trx->catatan !!}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

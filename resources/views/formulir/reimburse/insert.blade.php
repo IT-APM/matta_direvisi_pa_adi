@@ -28,49 +28,66 @@
                 <div class="card-header">
                     <h5>Pengaju: {{ $pengaju }}</h5>
                 </div>
-                <div class="card-header">
-                    Penggantian Biaya Kesehatan (Medical Reimbursement) dengan ketentuan sebagai berikut:<br/>
-                    <table>
-                        <tr valign="top">
-                            <td width="2%">1.</td>
-                            <td width="98%">Melampirkan copy resep, bukti pembelian/kuitansi dan bukti pembayaran, termasuk print out EDC (jika pembayaran melalui EDC), disertai diagnosa dokter.</td>
-                        </tr>
-                        <tr valign="top">
-                            <td>2.</td>
-                            <td>Bukti pembelian/kuitansi Dokter/Klinik/Rumah Sakit/Apotek asli dengan cap/stample baik Rawat Jalan maupun Rawat Inap dan dilengkapi meterai untuk kuitansi dengan nilai minimum Rp5.000.000,- (Lima Juta Rupiah).</td>
-                        </tr>
-                        <tr valign="top">
-                            <td>3.</td>
-                            <td>Biaya administrasi, ongkos kirim dan kantong belanja dapat diberikan jika tertera dalam satu transaksi pembelian yang sama dengan obat-obatan.</td>
-                        </tr>
-                        <tr valign="top">
-                            <td>4.</td>
-                            <td>Masa berlaku kuitansi Dokter/Klinik/Rumah Sakit/Apotek adalah maksimal 3(tiga) bulan dari tanggal yang tertera dalam kuitansi.</td>
-                        </tr>
-                        <tr valign="top">
-                            <td>5.</td>
-                            <td>Tidak termasuk penggantian General Check-Up, perawatan estetika, pemeriksaan hormonal/kesuburan, obat-obatan ringan yang dijual bebas, pengobatan/obat-obatan herbal.</td>
-                        </tr>
-                        <tr valign="top">
-                            <td>6.</td>
-                            <td>Tidak termasuk program kehamilan, pemeriksaan kehamilan dan kelahiran.</td>
-                        </tr>
-                        <tr valign="top">
-                            <td>7.</td>
-                            <td>Tidak termasuk pembelian vitamin dan obat-obat herbal untuk program kehamilan, pemeriksaan kehamilan dan kelahiran.</td>
-                        </tr>
-                        <tr valign="top">
-                            <td>8.</td>
-                            <td>Tertanggung adalah termasuk keluarga inti bagi yang sudah menikah, antara lain:
-                                <br/>- istri dan anak bagi karyawan
-                                <br/>- anak (tidak termasuk suami) bagi karyawati</td>
-                        </tr>
-                        <tr valign="top">
-                            <td>9.</td>
-                            <td>Penggantian maksimum sebesar 1 (satu) bulan Upah per Tahun dan berlaku proporsional sesuai masa perjanjian kerja.</td>
-                        </tr>
-                    </table>
+                {{-- start modal --}}
+                <div class="modal fade" id="medicalModal" tabindex="-1">
+                    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    Penggantian Biaya Kesehatan (Medical Reimbursement) dengan ketentuan sebagai berikut:
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table>
+                                    <tr valign="top">
+                                        <td width="2%">1.</td>
+                                        <td width="98%">Melampirkan copy resep, bukti pembelian/kuitansi dan bukti pembayaran, termasuk print out EDC (jika pembayaran melalui EDC), disertai diagnosa dokter.</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td>2.</td>
+                                        <td>Bukti pembelian/kuitansi Dokter/Klinik/Rumah Sakit/Apotek asli dengan cap/stample baik Rawat Jalan maupun Rawat Inap dan dilengkapi meterai untuk kuitansi dengan nilai minimum Rp5.000.000,- (Lima Juta Rupiah).</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td>3.</td>
+                                        <td>Biaya administrasi klinik/rumah sakit/aplikasi berobat online, ongkos kirim dan kantong belanja dapat diberikan jika tertera dalam satu transaksi/kuitansi pembelian yang sama dengan obat-obatan.</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td>4.</td>
+                                        <td>Masa berlaku kuitansi Dokter/Klinik/Rumah Sakit/Apotek adalah maksimal 3(tiga) bulan dari tanggal yang tertera dalam kuitansi.</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td>5.</td>
+                                        <td>Pemeriksaan Laboratorium, USG, MRI dan sejenisnya harus disertai dengan surat pengantar dari dokter dan keterangan diagnosa dari dokter.</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td>6.</td>
+                                        <td>Tidak termasuk penggantian General Check-Up, perawatan estetika, pemeriksaan hormonal/kesuburan, obat-obatan ringan yang dijual bebas, pengobatan/obat-obatan herbal.</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td>7.</td>
+                                        <td>Tidak termasuk program kehamilan, pemeriksaan kehamilan dan kelahiran.</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td>8.</td>
+                                        <td>Tidak termasuk pembelian susu, obat-obatan herbal untuk program kehamilan, pemeriksaan kehamilan dan kelahiran.</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td>9.</td>
+                                        <td>Tertanggung adalah termasuk keluarga inti bagi yang sudah menikah, antara lain:
+                                            <br/>- istri dan anak bagi karyawan
+                                            <br/>- anak (tidak termasuk suami) bagi karyawati</td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td>10.</td>
+                                        <td>Penggantian maksimum sebesar 1 (satu) bulan Upah per Tahun dan berlaku proporsional sesuai masa perjanjian kerja.</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                {{-- end modal --}}
                 <div class="card-header">
                     <h5>Plafon</h5>
                 </div>
@@ -284,6 +301,10 @@
 <!--  -->
 <!-- source: https://blog.quickadminpanel.com/master-detail-form-in-laravel-jquery-create-order-with-products/ -->
 <script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function () {
+    var myModal = new bootstrap.Modal(document.getElementById('medicalModal'));
+    myModal.show();
+});
 function use_number(node) {
   var empty_val = false;
   const value = node.value;

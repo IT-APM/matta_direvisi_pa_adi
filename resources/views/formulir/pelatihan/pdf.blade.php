@@ -140,6 +140,11 @@
                         <td>:</td>
                         <td>{!! $trx->keterangan !!}</td>
                     </tr>
+                    <tr>
+                        <td>Catatan</td>
+                        <td>:</td>
+                        <td>{!! $trx->catatan !!}</td>
+                    </tr>
                 </table>
                 <hr/>
                 @php

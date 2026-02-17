@@ -138,6 +138,11 @@
                         <td>:</td>
                         <td><?php echo $trx->keterangan; ?></td>
                     </tr>
+                    <tr>
+                        <td>Catatan</td>
+                        <td>:</td>
+                        <td><?php echo $trx->catatan; ?></td>
+                    </tr>
                 </table>
                 <hr/>
                 <?php

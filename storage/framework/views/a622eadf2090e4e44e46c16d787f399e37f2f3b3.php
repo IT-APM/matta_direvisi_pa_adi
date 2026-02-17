@@ -50,6 +50,17 @@
                 <?php endif; ?>
                 <?php echo csrf_field(); ?>
                     <div class="row">
+                        <?php if(count($errors) > 0): ?>
+                        <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                            <h6>Upload image is ERROR</h6>
+                            <ul>
+                                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <li><?php echo e($error); ?></li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </ul>
+                            <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <?php endif; ?>
                         <!-- start -->
                         <div class="col-md-6">
                             <div class="card-body">
@@ -202,6 +213,14 @@
                                 <div class="col-md-12 pb-2">
                                     <label class="form-label" for="keterangan">Keterangan</label>
                                     <textarea class="form-control" id="keterangan" name="keterangan" rows="4" ><?php if($status=='edit'): ?> <?php echo e($trx->keterangan); ?> <?php endif; ?></textarea>
+                                </div>
+                                <div class="col-md-12 pb-2">
+                                    <label class="form-label" for="lampiran">Lampiran<br/>*Maksimal 2MB dengan format pdf atau gambar(jpg, jpeg dan png)</label>
+                                    <input name="lampiran" id="lampiran" class="form-control" type="file">
+                                </div>
+                                <div class="col-md-12 pb-2">
+                                    <label class="form-label" for="catatan">Catatan</label>
+                                    <textarea class="form-control" id="catatan" name="catatan" rows="4" ><?php if($status=='edit'): ?> <?php echo e($trx->catatan); ?> <?php endif; ?></textarea>
                                 </div>
                             </div>
                         </div>
