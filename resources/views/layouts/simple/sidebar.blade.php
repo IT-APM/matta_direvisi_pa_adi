@@ -254,6 +254,15 @@
                             <h6>Attendance</h6>
                         </div>
                     </li>
+                    @can('hc')
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('attendance_download.index') }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
+                            </svg><span>Attendance Download</span></a></li>
+                    @endcan
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('attendance.index') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
@@ -269,27 +278,27 @@
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
                             </svg><span>Attendance Recap</span></a></li>
                     @can('hc')
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('health.index') }}">
-                                <svg class="stroke-icon">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
-                                </svg><span>Health Reporting</span></a></li>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('noattendance.index') }}">
-                                <svg class="stroke-icon">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
-                                </svg><span>No Attendance</span></a></li>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('reminder_sp.index') }}">
-                                <svg class="stroke-icon">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
-                                </svg><span>Reminder Warning Letter</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('health.index') }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
+                            </svg><span>Health Reporting</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('noattendance.index') }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
+                            </svg><span>No Attendance</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('reminder_sp.index') }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
+                            </svg><span>Reminder Warning Letter</span></a></li>
                     @endcan
                     <li class="sidebar-main-title">
                         <div>

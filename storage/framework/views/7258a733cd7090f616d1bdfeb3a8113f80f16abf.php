@@ -253,6 +253,15 @@
                             <h6>Attendance</h6>
                         </div>
                     </li>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('attendance_download.index')); ?>">
+                            <svg class="stroke-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
+                            </svg><span>Attendance Download</span></a></li>
+                    <?php endif; ?>
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('attendance.index')); ?>">
                             <svg class="stroke-icon">
                                 <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
@@ -268,27 +277,27 @@
                                 <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
                             </svg><span>Attendance Recap</span></a></li>
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('health.index')); ?>">
-                                <svg class="stroke-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-form')); ?>"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-form')); ?>"></use>
-                                </svg><span>Health Reporting</span></a></li>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('noattendance.index')); ?>">
-                                <svg class="stroke-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
-                                </svg><span>No Attendance</span></a></li>
-                        <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('reminder_sp.index')); ?>">
-                                <svg class="stroke-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
-                                </svg>
-                                <svg class="fill-icon">
-                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
-                                </svg><span>Reminder Warning Letter</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('health.index')); ?>">
+                            <svg class="stroke-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-form')); ?>"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-form')); ?>"></use>
+                            </svg><span>Health Reporting</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('noattendance.index')); ?>">
+                            <svg class="stroke-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
+                            </svg><span>No Attendance</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('reminder_sp.index')); ?>">
+                            <svg class="stroke-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-table')); ?>"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
+                            </svg><span>Reminder Warning Letter</span></a></li>
                     <?php endif; ?>
                     <li class="sidebar-main-title">
                         <div>
