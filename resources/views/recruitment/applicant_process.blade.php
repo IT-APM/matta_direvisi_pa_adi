@@ -914,8 +914,11 @@
                                         <label class="form-label" for="file_dokumen_ttd">Pedoman Perilaku Alita</label>
                                         <select class="form-select col-sm-12" id="file_dokumen_ttd" name="file_dokumen_ttd" required="">
                                             <option selected="" disabled="" value="">Pilih...</option>
+                                            <option value="generik.pdf">Pedoman Perilaku Alita (2026)</option>
+                                            {{-- tidak digunakan ref to 488 --}}
+                                            {{-- <option selected="" disabled="" value="">Pilih...</option>
                                             <option value="leader.pdf">Pedoman Perilaku Alita (Leader)</option>
-                                            <option value="general.pdf">Pedoman Perilaku Alita (General)</option>
+                                            <option value="general.pdf">Pedoman Perilaku Alita (General)</option> --}}
                                         </select>
                                     </div>
                                 </div>
