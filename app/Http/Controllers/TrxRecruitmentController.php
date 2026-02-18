@@ -856,21 +856,31 @@ class TrxRecruitmentController extends Controller
             $trx->id_status = $id_status;
             $trx->update();
             // insert to TrxRecruitmentPedoman
-            $general = ['general_page-0001','general_page-0002','general_page-0003','general_page-0004','general_page-0005','general_page-0006'];
-            $leader = ['leader_page-0001','leader_page-0002','leader_page-0003','leader_page-0004','leader_page-0005','leader_page-0006'];
-            for($x = 0; $x < 6; $x++){
+            $generik = ['matta_page-0001','matta_page-0002','matta_page-0003','matta_page-0004'];
+            for($x = 0; $x < 4; $x++){
                 $pedoman = new TrxRecruitmentPedoman;
                 $pedoman->id_identitas = $id_identitas;
-                $pedoman->jenis = 'general';
+                $pedoman->jenis = 'generik';
                 $pedoman->nomor = $x+1;
-                $pedoman->filename = md5($general[$x]);
-                if($request->file_dokumen_ttd == 'leader.pdf'){
-                    $pedoman->jenis = 'leader';
-                    $pedoman->nomor = $x+1;
-                    $pedoman->filename = md5($leader[$x]);
-                }
+                $pedoman->filename = md5($generik[$x]);
                 $pedoman->save();
             }
+            // tidak digunakan ref to 488
+            // $general = ['general_page-0001','general_page-0002','general_page-0003','general_page-0004','general_page-0005','general_page-0006'];
+            // $leader = ['leader_page-0001','leader_page-0002','leader_page-0003','leader_page-0004','leader_page-0005','leader_page-0006'];
+            // for($x = 0; $x < 6; $x++){
+            //     $pedoman = new TrxRecruitmentPedoman;
+            //     $pedoman->id_identitas = $id_identitas;
+            //     $pedoman->jenis = 'general';
+            //     $pedoman->nomor = $x+1;
+            //     $pedoman->filename = md5($general[$x]);
+            //     if($request->file_dokumen_ttd == 'leader.pdf'){
+            //         $pedoman->jenis = 'leader';
+            //         $pedoman->nomor = $x+1;
+            //         $pedoman->filename = md5($leader[$x]);
+            //     }
+            //     $pedoman->save();
+            // }
             // start
             // id_identitas,id_status,pic,pic_property,aktifitas,catatan
             // $arr = [$id_identitas,$id_status,$nama.'/'.$nik,'','negosiasi',''];
