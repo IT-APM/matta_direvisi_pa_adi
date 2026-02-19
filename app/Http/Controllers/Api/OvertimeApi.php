@@ -651,10 +651,12 @@ class OvertimeApi extends Controller
         // start
         // khusus jam kerja karyawan reguler Bulan Ramadhan 08-16
         // tetapi jam overtime tetap dimulai dari jam 19 jadi ditambah 1+2 jam
-        // if($data['is_reguler']==1){
+        if($data['is_reguler']==1){
             // $waktuClockoutFrom = $waktuClockoutFrom->addHour(2);
             // $waktuClockoutTo = $waktuClockoutTo->addHour(2);
-        // }
+            $clockoutFrom = $clockoutFrom->addHour(2);
+            $clockoutTo = $clockoutTo->addHour(2);
+        }
         // end
         // from
         $isClockFrom = false;
