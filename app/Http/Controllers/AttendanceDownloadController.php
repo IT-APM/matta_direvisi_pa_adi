@@ -5,9 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\AttendanceDownload;
+use App\Models\MtrUtility;
+use App\Mail\MattaRebornMail;
+use Illuminate\Support\Facades\Mail;
 
 class AttendanceDownloadController extends Controller
 {
+
+    public function sendEmail($mailData)
+    {
+        $address = explode(',', MtrUtility::find(48)->informasi);
+        Mail::to($mailData['to'])->cc($address[1])->send(new MattaRebornMail($mailData));
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -43,6 +53,14 @@ class AttendanceDownloadController extends Controller
         $trx->tanggal_mulai = $request->tanggal_mulai;
         $trx->tanggal_akhir = $request->tanggal_akhir;
         $trx->save();
+        // start
+        $mailData['title'] = get_class(request()->route()->getController());
+        $mailData['filename'] = 'emails.attendance_download';
+        $mailData['data'] = ['title' => $request->tanggal_mulai.' sd '.$request->tanggal_akhir, 'tanggal' => $mailData['title']];
+        $address = explode(',', MtrUtility::find(48)->informasi);
+        $mailData['to'] = $address[0];
+        $this->sendEmail($mailData);
+        // end
         return redirect('attendance_download')->with('msg', 'Data is saved successfully.');
     }
 

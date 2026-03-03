@@ -1415,6 +1415,34 @@ class TrxRecruitmentController extends Controller
     public function upload_dokumen_get($id)
     {
         $id = Crypt::decrypt($id);
+        // 
+        // // start generate pdf then save to public_path
+        // $id = $id[0];
+        // $_trx = TrxRecruitmentIdentitas::find($id);
+        // $where = ['id_identitas' => $id];
+        // $pedoman = TrxRecruitmentPedoman::where($where)->orderBy('nomor', 'asc')->get();
+        // $filename = $id.'_'.now()->getTimestampMs().'.pdf';
+        // $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        // $pdf::SetTitle('Pedoman Perilaku');
+        // $pdf::SetFont('times', '', 10, '', true);
+        // foreach($pedoman as $data){
+        //     $pdf::AddPage();
+        //     $pdf::SetAutoPageBreak(false, 0);
+        //     $bg = public_path('assets/recruitment/upload/'.$data->jenis.'/'.$data->filename.'.jpg');
+        //     $pdf::Image($bg, 0, 0, 210, 297, '', '', '', false, 300, '', false, false, 0);
+        //     // $pdf::Image($bg, 10, 1, 210, 297, '', '', '', false, 0, '', false, false, 0);
+        //     if($data->nomor == 4){
+        //         $bg = public_path('assets/images/matta/approved_new.png');
+        //         $x = 90;
+        //         $y = 120;
+        //         $pdf::Image($bg, $x, $y, 30, 6, '', '', '', false, 0, '', false, false, 0);
+        //         $pdf::Text($x, $y+6, $_trx->nama);
+        //         $pdf::Text($x, $y+10, Carbon::parse($data->check_out)->format('d-m-Y H:i:s'));
+        //     }
+        // }
+        // $pdf::Output(public_path('assets/recruitment/upload/'.$filename), 'F');
+        // // $pdf::Output($filename, 'I');
+        // // end
         // dd($id);
         $_id = $id[0];
         // ada 2 kondisi yang bisa didapat pada array index-1

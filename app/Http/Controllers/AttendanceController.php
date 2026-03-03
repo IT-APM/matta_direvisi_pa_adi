@@ -1,10 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Holiday;
+use App\Models\TrxCuti;
+use App\Models\TrxSakit;
 use App\Models\Attendance;
 use App\Models\Karyawan;
 use App\Models\Perusahaan;
 use App\Models\WorkingGroup;
+use App\Models\WorkingDay;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
@@ -115,7 +120,8 @@ class AttendanceController extends Controller
         $date_from = '';
         $date_to = '';
         // start filter
-        if($request->filter == true || $request->download == true){
+        // if($request->filter == true || $request->download == true){
+        if($request->filter == true){
             $arr_nik_nkp = new Karyawan();
             $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
             // $this->into_debug(['nomor'=>1, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
@@ -248,11 +254,6 @@ class AttendanceController extends Controller
                 // end hitung durasi
             }
             // dd($att);
-            if($request->download == true){
-                // dd($request->all());
-                return Excel::download(new AttendanceMultiSheetExport($att, $duration), 'Raw Data dan Duration '.Carbon::parse($date_from)->format('d-m-Y').' sd '.Carbon::parse($date_to)->format('d-m-Y').'.xlsx', \Maatwebsite\Excel\Excel::XLSX);
-                // return response()->json( [ 'att' => $att ], 200 );
-            }
         }else{
             $arr_att_type = array();
             $arr_att_status = array();
@@ -260,6 +261,112 @@ class AttendanceController extends Controller
             $arr_perusahaan = array();
             $arr_wg_id = array();
         }
+        // start
+        if($request->download == true){
+            $date_from = $request->date_from;
+            $date_to = $request->date_to;
+            $att = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','att_property','wg_id')->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+            // start hitung durasi
+            $duration = array();
+            $_att_data_src = 'Regular';
+            $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','att_property','wg_id')->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            foreach($raw as $_raw){
+                $result = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','att_property','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                // jika non reguler
+                $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
+                if(!Karyawan::where($where)->exists()){
+                    $result = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','att_property','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                }
+                // 
+                if(!empty($result)){
+                    array_push($duration, ['att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp, 'att_property' => $result->att_property]);
+                }
+            }
+            $_att_data_src = 'Overtime';
+            $raw = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','att_property','wg_id')->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            foreach($raw as $_raw){
+                $result = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','att_property','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                // jika non reguler
+                $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
+                if(!Karyawan::where($where)->exists()){
+                    $result = Attendance::select('att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','att_property','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                }
+                // 
+                if(!empty($result)){
+                    array_push($duration, ['att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp, 'att_property' => $result->att_property]);
+                }
+            }
+            // end hitung durasi
+            // start recap
+            $trx = [];
+            $arr_date = $this->dateRange($date_from, $date_to);
+            // pengecualian karena pada tanggal ini terjadi suspend domain alita.id
+            $arr_date = array_values(array_diff($arr_date, ['2024-09-23']));
+            $karyawan = Karyawan::whereNotIn('nik', ['Hco.all', 'IT.BM'])->get();
+            foreach ($karyawan as $_karyawan) {
+                $nik = $_karyawan->nik;
+                $arr_base = [];
+                $arr_clock = [];
+                $tanggal_bergabung = $_karyawan->tanggal_bergabung;
+                // cek apakah karyawan berjenis kerja reguler
+                if ($_karyawan->_wg->is_reguler == 1) {
+                    foreach ($arr_date as $data) {
+                        if (!$this->isWeekend($data)) {
+                            if (!$this->isHoliday($data)) {
+                                if (!$this->isCuti($nik, $data)) {
+                                    array_push($arr_base, $data);
+                                }
+                                if ($this->isSakit($nik, $data)) {
+                                    if (($key = array_search($data, $arr_base)) !== false) {
+                                        unset($arr_base[$key]);
+                                    }
+                                }
+                                if ($tanggal_bergabung > $data) {
+                                    if (($key = array_search($data, $arr_base)) !== false) {
+                                        unset($arr_base[$key]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // karyawan non reguler dengan jadwal kerja sesuai working group nya
+                else {
+                    $where = ['nik' => $nik];
+                    $data = WorkingDay::where($where)->whereIn('working_date', $arr_date)->get();
+                    foreach ($data as $_data) {
+                        if (!$this->isCuti($nik, $_data->working_date)) {
+                            array_push($arr_base, $_data->working_date);
+                        }
+                        if ($this->isSakit($nik, $_data->working_date)) {
+                            if (($key = array_search($_data->working_date, $arr_base)) !== false) {
+                                unset($arr_base[$key]);
+                            }
+                        }
+                        if ($tanggal_bergabung > $data) {
+                            if (($key = array_search($data, $arr_base)) !== false) {
+                                unset($arr_base[$key]);
+                            }
+                        }
+                    }
+                }
+                foreach ($arr_base as $data) {
+                    if ($this->isClockin($nik, $data)) {
+                        array_push($arr_clock, $data);
+                    }
+                }
+                $persentase = 0;
+                if (count($arr_base) > 0) {
+                    $persentase = count($arr_clock) / count($arr_base);
+                    array_push($trx, ['tanggal' => [$date_from, $date_to], 'att_nik' => $nik, 'arr_base' => count($arr_base), 'arr_clock' => count($arr_clock), 'persentase' => $persentase * 100]);
+                }
+            }
+            // end recap
+            // return response()->json( [ 'duration' => $duration ], 200 );
+            return Excel::download(new AttendanceMultiSheetExport($att, $duration, $trx), 'Raw Data dan Duration dan Recap '.Carbon::parse($date_from)->format('d-m-Y').' sd '.Carbon::parse($date_to)->format('d-m-Y').'.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+            // return response()->json( [ 'att' => $att ], 200 );
+        }
+        // end
         // return response()->json( [ 'att' => $att ], 200 );
         // $this->into_debug(['nomor'=>7, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
         // dd($att);
@@ -341,5 +448,61 @@ class AttendanceController extends Controller
         $data->modul = $arr['modul'];
         $data->url = $arr['url'];
         $data->save();
+    }
+
+    // get tanggal tanggal
+    public function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d')
+    {
+        $dates = [];
+        $current = strtotime($first);
+        $last = strtotime($last);
+        while ($current <= $last) {
+            $dates[] = date($format, $current);
+            $current = strtotime($step, $current);
+        }
+        return $dates;
+    }
+
+    // cek apakah hari ini sabtu minggu
+    public function isWeekend($date)
+    {
+        $weekDay = date('w', strtotime($date));
+        return $weekDay == 0 || $weekDay == 6;
+    }
+
+    // cek apakah hari ini adalah hari libur nasional
+    public function isHoliday($date)
+    {
+        $where = ['tanggal' => $date];
+        return Holiday::where($where)->exists();
+    }
+
+    // cek apakah hari ini adalah hari cutinya
+    public function isCuti($nik, $date)
+    {
+        $where = ['nik_karyawan' => $nik];
+        return TrxCuti::where($where)
+            ->whereIn('status_cuti', [4, 6])
+            ->whereDate('tanggal_mulai', '<=', $date)
+            ->whereDate('tanggal_akhir', '>=', $date)
+            ->exists();
+    }
+
+    // cek apakah hari ini adalah hari izin sakitnya
+    public function isSakit($nik, $date)
+    {
+        $where = ['nik_karyawan' => $nik];
+        return TrxSakit::where($where)
+            ->whereIn('status_sakit', [4, 6])
+            ->whereDate('tanggal_mulai', '<=', $date)
+            ->whereDate('tanggal_akhir', '>=', $date)
+            ->exists();
+    }
+
+    // cek apakah hari ini Clock-in
+    public function isClockin($nik, $date)
+    {
+        $where = ['att_nik' => $nik, 'att_date' => $date, 'att_type' => 'Clock-in', 'att_data_src' => 'Regular'];
+        return Attendance::where($where)->exists();
     }
 }

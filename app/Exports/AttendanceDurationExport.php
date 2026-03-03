@@ -26,9 +26,8 @@ class AttendanceDurationExport implements FromCollection, WithHeadings, WithTitl
         $arr = [];
         $no = 1;
         foreach($duration as $data){
-            $where = ['nik' => $data['att_nik']];
-            $karyawan = Karyawan::where($where)->first();
-            array_push($arr, ['No'=>$no, 'Tanggal'=>Carbon::parse($data['att_date'])->format('d-m-Y'), 'Clock-in'=>Carbon::parse($data['Clock-in'])->format('d-m-Y H:i:s'), 'Clock-out'=>Carbon::parse($data['Clock-out'])->format('d-m-Y H:i:s'), 'Durasi'=>Carbon::parse(strtotime($data['Clock-out'])-strtotime($data['Clock-in']))->format('H:i:s'), 'Nama'=>$karyawan->nama, 'NIP'=>$data['att_nik'], 'Perusahaan'=>$karyawan->_perusahaan->nama, 'Direktorat'=>$karyawan->_divisi->nama, 'Divisi'=>$karyawan->_departemen->nama, 'Departemen'=>$karyawan->_subdepartemen->nama, 'Working Group'=>$karyawan->_wg->wg_name, 'Type'=>$data['att_data_src']]);
+            $att_property = json_decode($data['att_property'], true);
+            array_push($arr, ['No'=>$no, 'Tanggal'=>Carbon::parse($data['att_date'])->format('d-m-Y'), 'Clock-in'=>Carbon::parse($data['Clock-in'])->format('d-m-Y H:i:s'), 'Clock-out'=>Carbon::parse($data['Clock-out'])->format('d-m-Y H:i:s'), 'Durasi'=>Carbon::parse(strtotime($data['Clock-out'])-strtotime($data['Clock-in']))->format('H:i:s'), 'Nama'=>$att_property['nama'], 'NIP'=>$data['att_nik'], 'Perusahaan'=>$att_property['perusahaan'], 'Direktorat'=>$att_property['divisi'], 'Divisi'=>$att_property['dep'], 'Departemen'=>$att_property['sub_dep'], 'Working Group'=>$att_property['wg_name'], 'Type'=>$data['att_data_src']]);
             $no++;
         }
         return new Collection($arr);

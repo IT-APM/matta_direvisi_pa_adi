@@ -117,9 +117,18 @@
                                     </label>
                                 </div>
                             </div>
+                            <?php
+                            ?>
                             <div class="row mt-2">
                                 <div class="col-sm-12">
-                                    <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="<?php echo e(route('kebutuhan.dashboard', 0)); ?>?filter=true" class="btn btn-info" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
+                                    <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | 
+                                    <a href="<?php echo e(route('kebutuhan.dashboard', [
+                                    'id'=>0, 'filter'=>'true', 'tahun'=>[now()->year],
+                                    'type_direktorat'=>'bar', 'direktorat'=>$select_direktorat,
+                                    'type_divisi'=>'bar', 'divisi'=>$select_divisi,
+                                    'type_status_kerja'=>'bar', 'status_kerja'=>$select_status_kerja,
+                                    'type_area'=>'bar', 'area'=>$select_area,
+                                    ])); ?>" class="btn btn-info" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
                                 </div>
                             </div>
                         </form>

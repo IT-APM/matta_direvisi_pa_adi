@@ -83,7 +83,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="<?php echo e(route('attendance.index')); ?>" class="btn btn-info"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a> | <button class="btn btn-success" id="download" name="download" value="true" type="submit"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Download</button>
+                                        <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="<?php echo e(route('attendance.index')); ?>" class="btn btn-info"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
+                                         
                                         
                                     </div>
                                 </div>

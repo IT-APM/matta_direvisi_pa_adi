@@ -29,7 +29,8 @@ class AttendanceRawDataExport implements FromCollection, WithHeadings, WithTitle
             if(!empty($data->att_long) && !empty($data->att_lat)){
                 $map = 'https://www.google.com/maps/place/'.$data->att_lat.','.$data->att_long;
             }
-            array_push($arr, ['No'=>$no, 'Tanggal'=>Carbon::parse($data->att_date)->format('d-m-Y'), 'Timestamp'=>Carbon::parse($data->att_timestamp)->format('d-m-Y H:i:s'), 'Nama'=>$data->_att_nik->nama, 'NIP'=>$data->att_nik, 'Perusahaan'=>$data->_att_nik->_perusahaan->nama, 'Direktorat'=>$data->_att_nik->_divisi->nama, 'Divisi'=>$data->_att_nik->_departemen->nama, 'Departemen'=>$data->_att_nik->_subdepartemen->nama, 'Working Group'=>$data->_att_nik->_wg->wg_name, 'Action'=>$data->att_type, 'Longitude'=>$data->att_long, 'Latitude'=>$data->att_lat, 'Address'=>$data->att_address, 'Map'=>$map, 'Status'=>$data->att_status, 'Type'=>$data->att_data_src]);
+            $att_property = json_decode($data->att_property, true);
+            array_push($arr, ['No'=>$no, 'Tanggal'=>Carbon::parse($data->att_date)->format('d-m-Y'), 'Timestamp'=>Carbon::parse($data->att_timestamp)->format('d-m-Y H:i:s'), 'Nama'=>$att_property['nama'], 'NIP'=>$data->att_nik, 'Perusahaan'=>$att_property['perusahaan'], 'Direktorat'=>$att_property['divisi'], 'Divisi'=>$att_property['dep'], 'Departemen'=>$att_property['sub_dep'], 'Working Group'=>$att_property['wg_name'], 'Action'=>$data->att_type, 'Longitude'=>$data->att_long, 'Latitude'=>$data->att_lat, 'Address'=>$data->att_address, 'Map'=>$map, 'Status'=>$data->att_status, 'Type'=>$data->att_data_src]);
             $no++;
         }
         return new Collection($arr);

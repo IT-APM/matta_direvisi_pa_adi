@@ -170,7 +170,40 @@
                             <h6>Recruitment</h6>
                         </div>
                     </li>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('kebutuhan.dashboard', 0)); ?>?filter=true">
+                    <?php
+                    $all = App\Models\TrxKebutuhanMaster::all();
+                    $arr_direktorat = [];
+                    $arr_divisi = [];
+                    $arr_status_kerja = [];
+                    $arr_area = [];
+                    foreach($all as $data){
+                        $pengaju_property = json_decode($data->pengaju_property);
+                        array_push($arr_direktorat, $pengaju_property->divisi);
+                        array_push($arr_divisi, $pengaju_property->dep);
+                        array_push($arr_status_kerja, App\Models\StatusKerja::find($data->id_status_kerja)->status_kerja);
+                        array_push($arr_area, App\Models\Propinsi::find($data->id_area)->propinsi);
+                    }
+                    $arr_select_tahun = [];
+                    $select_direktorat = array_values(array_unique($arr_direktorat));
+                    sort($select_direktorat);
+                    $arr_select_direktorat = [];
+                    $select_divisi = array_values(array_unique($arr_divisi));
+                    sort($select_divisi);
+                    $arr_select_divisi = [];
+                    $select_status_kerja = array_values(array_unique($arr_status_kerja));
+                    sort($select_status_kerja);
+                    $arr_select_status_kerja = [];
+                    $select_area = array_values(array_unique($arr_area));
+                    sort($select_area);
+                    ?>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" 
+                        href="<?php echo e(route('kebutuhan.dashboard', [
+                                    'id'=>0, 'filter'=>'true', 'tahun'=>[now()->year],
+                                    'type_direktorat'=>'bar', 'direktorat'=>$select_direktorat,
+                                    'type_divisi'=>'bar', 'divisi'=>$select_divisi,
+                                    'type_status_kerja'=>'bar', 'status_kerja'=>$select_status_kerja,
+                                    'type_area'=>'bar', 'area'=>$select_area,
+                                    ])); ?>">
                         <svg class="stroke-icon">
                             <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-charts')); ?>"></use>
                         </svg>
