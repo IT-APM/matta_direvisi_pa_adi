@@ -814,6 +814,15 @@ class TrxPelatihanController extends Controller
                 }
                 $trx = TrxPelatihanPeserta::where(['id_trx'=>$id])->orderBy('id', 'asc')->get();
                 $no = 0;
+                // backdoor id_rtx = 10101
+                // $arr_nik = ['01031112191','01031609480','01031710668','01029903006','01021504105','01021206084','01020701025','01031611512','01031709654','01021405096','01032509884','01032603891'];
+                // foreach($arr_nik as $_peserta){
+                //     $_data = new TrxPelatihanPeserta;
+                //     $_data->id_trx = $id;
+                //     $_data->nik = $_peserta;
+                //     $_data->nik_property = $this->getNikProperty($_peserta);
+                //     $_data->save();
+                // }
                 return view('formulir.pelatihan.peserta_index', compact('trx', 'no', 'arrJenis', 'back_url', 'int_ext'));
                 break;
             case 'sertifikat':

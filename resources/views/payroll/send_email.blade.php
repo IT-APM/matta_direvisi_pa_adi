@@ -86,8 +86,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <th>Bulan</th>
                                             <th>Nama</th>
                                             <th>NIP</th>
-                                            {{-- <th>Subject</th>
-                                            <th>Email</th> --}}
+                                            <th>Subject</th>
+                                            {{-- <th>Email</th> --}}
                                             <th>Link</th>
                                             <th>PDF</th>
                                             <th>Created_at</th>
@@ -120,8 +120,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <td>{{ $bulan[$data->bulan - 1] }}</td>
                                             <td>{{ $nik_property['nama'] }}</td>
                                             <td>{{ $data->nik }}</td>
-                                            {{-- <td>{{ $email['subject'] }}</td>
-                                            <td>{!! $email['body'] !!}</td> --}}
+                                            <td>{{ $email['subject'] }}</td>
+                                            {{-- <td>{!! $email['body'] !!}</td> --}}
                                             <td>
                                                 <a href="{{ route('payroll.review', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'pic' => (new App\Http\Controllers\OpenDataController)->encryptWithKey($nik_reviewer), 'id_status' => 1 ]) }}</td>" target="_blank"><i class="fa fa-link"></i>
                                             </a>
@@ -155,7 +155,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <th>Nama</th>
                                             <th>NIP</th>
                                             <th>Subject</th>
-                                            <th>Email</th>
+                                            {{-- <th>Email</th> --}}
                                             <th>Created_at</th>
                                         </tr>
                                     </thead>
@@ -176,7 +176,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <td>{{ $nik_property['nama'] }}</td>
                                             <td>{{ $data->nik }}</td>
                                             <td>{{ $email['subject'] }}</td>
-                                            <td>{!! $email['body'] !!}</td>
+                                            {{-- <td>{!! $email['body'] !!}</td> --}}
                                             <td>{{ $data->created_at }}</td>
                                         </tr>
                                         @endforeach

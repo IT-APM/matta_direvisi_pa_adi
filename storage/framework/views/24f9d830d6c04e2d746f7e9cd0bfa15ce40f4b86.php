@@ -21,7 +21,7 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('breadcrumb-items'); ?>
-<li class="breadcrumb-item">Pengajuan Pelatihan</li>
+<li class="breadcrumb-item">Pelatihan</li>
 <li class="breadcrumb-item active">Daftar Sertifikat</li>
 <?php $__env->stopSection(); ?>
 
@@ -43,10 +43,11 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>#ID</th>
+                                    <th>Action</th>
                                     <th>Nama</th>
                                     <th>NIP</th>
                                     <th>Jenis Pelatihan</th>
+                                    <th>Mode Pelatihan</th>
                                     <th>Penerbit</th>
                                     <th>Kartu Tanda Anggota</th>
                                     <th>Judul Pelatihan</th>
@@ -69,6 +70,7 @@
                                         <?php if(!empty($data->id_trx)): ?>
                                         <a href="<?php echo e(route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')])); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         <?php else: ?>
+                                            <a href="<?php echo e(route('pelatihan_sertifikat.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)])); ?>" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
                                             
                                             <?php if(!empty($data->formulir_link)): ?>
                                             <a href="<?php echo e($data->formulir_link); ?>" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
@@ -78,6 +80,7 @@
                                     <td><?php echo e($data->nama); ?></td>
                                     <td><?php echo e($data->nik); ?></td>
                                     <td><?php echo e($data->jenis); ?></td>
+                                    <td><?php echo e($data->int_ext); ?></td>
                                     <td><?php echo e($data->penerbit); ?></td>
                                     <td><?php echo e($data->kta); ?></td>
                                     <td><?php echo e($data->judul); ?><?php if(!empty($data->int_ext)): ?><br/> (<?php echo e($data->int_ext); ?>) <?php endif; ?></td>

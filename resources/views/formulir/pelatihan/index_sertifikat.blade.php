@@ -23,7 +23,7 @@
 @endsection
 
 @section('breadcrumb-items')
-<li class="breadcrumb-item">Pengajuan Pelatihan</li>
+<li class="breadcrumb-item">Pelatihan</li>
 <li class="breadcrumb-item active">Daftar Sertifikat</li>
 @endsection
 
@@ -65,10 +65,11 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>#ID</th>
+                                    <th>Action</th>
                                     <th>Nama</th>
                                     <th>NIP</th>
                                     <th>Jenis Pelatihan</th>
+                                    <th>Mode Pelatihan</th>
                                     <th>Penerbit</th>
                                     <th>Kartu Tanda Anggota</th>
                                     <th>Judul Pelatihan</th>
@@ -91,6 +92,7 @@
                                         @if(!empty($data->id_trx))
                                         <a href="{{ route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         @else
+                                            <a href="{{ route('pelatihan_sertifikat.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
                                             {{-- jika tidak ada id pelatihan maka gunakan link dari gdrive --}}
                                             @if(!empty($data->formulir_link))
                                             <a href="{{ $data->formulir_link }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
@@ -100,6 +102,7 @@
                                     <td>{{ $data->nama }}</td>
                                     <td>{{ $data->nik }}</td>
                                     <td>{{ $data->jenis }}</td>
+                                    <td>{{ $data->int_ext }}</td>
                                     <td>{{ $data->penerbit }}</td>
                                     <td>{{ $data->kta }}</td>
                                     <td>{{ $data->judul }}@if(!empty($data->int_ext))<br/> ({{ $data->int_ext }}) @endif</td>
