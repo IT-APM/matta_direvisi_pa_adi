@@ -37,11 +37,43 @@
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="{{ route('kebutuhan.dashboard', 0) }}" method="get" enctype="multipart/form-data">
                             <div class="row mt-2">
-                                <div class="col-sm-2">
+                                <div class="col-sm-4">
                                     <label class="h6">Tahun</label>&nbsp;<input type="checkbox" onClick="toggle_tahun(this)" /> Check All
                                     <label class="d-block" for="tahun">
                                         @foreach ($select_tahun as $_data)
                                             <input class="checkbox_animated" id="tahun[]" name="tahun[]" type="checkbox" value="{{ $_data }}" @if (in_array($_data, $arr_select_tahun)) checked @endif>
+                                            {{ $_data }}<br/>
+                                        @endforeach
+                                    </label>
+                                    @php $type_status_kerja = request()->get('type_status_kerja'); @endphp
+                                    <label class="h6">Status Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_status_kerja(this)" /> Check All<br/>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="type_status_kerja" id="type_status_kerja" value="bar" {{ is_null($type_status_kerja) || $type_status_kerja === 'bar' ? 'checked' : '' }}>
+                                        <label class="form-check-label">Bar</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="type_status_kerja" id="type_status_kerja" value="line" {{ $type_status_kerja === 'line' ? 'checked' : '' }}>
+                                        <label class="form-check-label">Line</label>
+                                    </div>
+                                    <label class="d-block" for="status_kerja">
+                                        @foreach ($select_status_kerja as $_data)
+                                            <input class="checkbox_animated" id="status_kerja[]" name="status_kerja[]" type="checkbox" value="{{ $_data }}" @if (in_array($_data, $arr_select_status_kerja)) checked @endif>
+                                            {{ $_data }}<br/>
+                                        @endforeach
+                                    </label>
+                                    @php $type_area = request()->get('type_area'); @endphp
+                                    <label class="h6">Area Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_area(this)" /> Check All<br/>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="type_area" id="type_area" value="bar" {{ is_null($type_area) || $type_area === 'bar' ? 'checked' : '' }}>
+                                        <label class="form-check-label">Bar</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="type_area" id="type_area" value="line" {{ $type_area === 'line' ? 'checked' : '' }}>
+                                        <label class="form-check-label">Line</label>
+                                    </div>
+                                    <label class="d-block" for="area">
+                                        @foreach ($select_area as $_data)
+                                            <input class="checkbox_animated" id="area[]" name="area[]" type="checkbox" value="{{ $_data }}" @if (in_array($_data, $arr_select_area)) checked @endif>
                                             {{ $_data }}<br/>
                                         @endforeach
                                     </label>
@@ -80,38 +112,20 @@
                                         @endforeach
                                     </label>
                                 </div>
-                                <div class="col-sm-3">
-                                    @php $type_status_kerja = request()->get('type_status_kerja'); @endphp
-                                    <label class="h6">Status Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_status_kerja(this)" /> Check All<br/>
+                                <div class="col-sm-4">
+                                    @php $type_departemen = request()->get('type_departemen'); @endphp
+                                    <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_departemen(this)" /> Check All<br/>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_status_kerja" id="type_status_kerja" value="bar" {{ is_null($type_status_kerja) || $type_status_kerja === 'bar' ? 'checked' : '' }}>
+                                        <input class="form-check-input" type="radio" name="type_departemen" id="type_departemen" value="bar" {{ is_null($type_departemen) || $type_departemen === 'bar' ? 'checked' : '' }}>
                                         <label class="form-check-label">Bar</label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_status_kerja" id="type_status_kerja" value="line" {{ $type_status_kerja === 'line' ? 'checked' : '' }}>
+                                        <input class="form-check-input" type="radio" name="type_departemen" id="type_departemen" value="line" {{ $type_departemen === 'line' ? 'checked' : '' }}>
                                         <label class="form-check-label">Line</label>
                                     </div>
-                                    <label class="d-block" for="status_kerja">
-                                        @foreach ($select_status_kerja as $_data)
-                                            <input class="checkbox_animated" id="status_kerja[]" name="status_kerja[]" type="checkbox" value="{{ $_data }}" @if (in_array($_data, $arr_select_status_kerja)) checked @endif>
-                                            {{ $_data }}<br/>
-                                        @endforeach
-                                    </label>
-                                </div>
-                                <div class="col-sm-3">
-                                    @php $type_area = request()->get('type_area'); @endphp
-                                    <label class="h6">Area Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_area(this)" /> Check All<br/>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_area" id="type_area" value="bar" {{ is_null($type_area) || $type_area === 'bar' ? 'checked' : '' }}>
-                                        <label class="form-check-label">Bar</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_area" id="type_area" value="line" {{ $type_area === 'line' ? 'checked' : '' }}>
-                                        <label class="form-check-label">Line</label>
-                                    </div>
-                                    <label class="d-block" for="area">
-                                        @foreach ($select_area as $_data)
-                                            <input class="checkbox_animated" id="area[]" name="area[]" type="checkbox" value="{{ $_data }}" @if (in_array($_data, $arr_select_area)) checked @endif>
+                                    <label class="d-block" for="departemen">
+                                        @foreach ($select_departemen as $_data)
+                                            <input class="checkbox_animated" id="departemen[]" name="departemen[]" type="checkbox" value="{{ $_data }}" @if (in_array($_data, $arr_select_departemen)) checked @endif>
                                             {{ $_data }}<br/>
                                         @endforeach
                                     </label>
@@ -126,6 +140,7 @@
                                     'id'=>0, 'filter'=>'true', 'tahun'=>[now()->year],
                                     'type_direktorat'=>'bar', 'direktorat'=>$select_direktorat,
                                     'type_divisi'=>'bar', 'divisi'=>$select_divisi,
+                                    'type_departemen'=>'bar', 'departemen'=>$select_departemen,
                                     'type_status_kerja'=>'bar', 'status_kerja'=>$select_status_kerja,
                                     'type_area'=>'bar', 'area'=>$select_area,
                                     ]) }}" class="btn btn-info" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
@@ -222,12 +237,24 @@
                             <div id="chart_direktorat_tahun"></div>
                         </div>
                         <div class="col-xl-12 col-sm-12">
-                            <h5 class="text-center">Kebutuhan Per Direktorat</h5>
+                            <h5 class="text-center">Kebutuhan Per Direktorat Per Bulan</h5>
                             <div id="chart_direktorat_bulan_tahun"></div>
                         </div>
                         <div class="col-xl-12 col-sm-12">
                             <h5 class="text-center">Kebutuhan Posisi Per Direktorat </h5>
                             <div id="chart_direktorat_posisi"></div>
+                        </div>
+                        <div class="col-xl-12 col-sm-12">
+                            <h5 class="text-center">SLA Per Direktorat</h5>
+                            <div id="chart_direktorat_sla"></div>
+                        </div>
+                        <div class="col-xl-12 col-sm-12">
+                            <h5 class="text-center">SLA Per Divisi</h5>
+                            <div id="chart_divisi_sla"></div>
+                        </div>
+                        <div class="col-xl-12 col-sm-12">
+                            <h5 class="text-center">SLA Per Departemen</h5>
+                            <div id="chart_departemen_sla"></div>
                         </div>
                     </div>
                 </div>
@@ -261,6 +288,12 @@ function toggle_direktorat(source) {
 }
 function toggle_divisi(source) {
     checkboxes = document.getElementsByName('divisi[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_departemen(source) {
+    checkboxes = document.getElementsByName('departemen[]');
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         checkboxes[i].checked = source.checked;
     }
@@ -397,6 +430,66 @@ $(document).ready(function() {
     render_chart_v1(@json($data['per_divisi']), 'chart_divisi', @json($data['chart_type']['type_divisi']));
     render_chart_v1(@json($data['per_status_kerja']), 'chart_status_kerja', @json($data['chart_type']['type_status_kerja']));
     render_chart_v1(@json($data['per_area']), 'chart_area', @json($data['chart_type']['type_area']));
+    // 
+    function render_chart_v3(dataObj, containerId, chartType) {
+        const categorySet = new Set();
+        Object.values(dataObj).forEach(statusObj => {
+            Object.keys(statusObj).forEach(c => categorySet.add(c));
+        });
+        const categories = Array.from(categorySet);
+        const series = Object.keys(dataObj).map(status => {
+            return {
+                name: status,
+                data: categories.map(c => dataObj[status][c] ?? 0)
+            }
+        });
+        const allValues = [];
+        series.forEach(s => s.data.forEach(v => allValues.push(v)));
+        const maxValue = Math.max(...allValues) + 5;
+        const options = {
+            chart: {
+                type: chartType,
+                height: 300,
+                zoom: { enabled: false },
+            },
+            series: series,
+            colors: [
+                '#198754',
+                '#0d6efd',
+                '#dc3545',
+                '#ffc107',
+            ],
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '90%',
+                    borderRadius: 3
+                }
+            },
+            xaxis: {
+                categories: categories,
+                tickPlacement: chartType === 'line' ? 'between' : 'on',
+            },
+            yaxis: {
+                max: maxValue,
+                title: { text: 'Jumlah' }
+            },
+            legend: { position: 'top' },
+            fill: { opacity: 0.8 },
+        };
+        if (chartType === 'line') {
+            options.stroke = {
+                curve: 'smooth',
+                width: 3
+            };
+            // options.markers = { size: 5 };
+        }
+        const chart = new ApexCharts(document.querySelector(`#${containerId}`), options);
+        chart.render();
+    }
+    render_chart_v3(@json($data['per_direktorat_sla']), 'chart_direktorat_sla', @json($data['chart_type']['type_direktorat']));
+    render_chart_v3(@json($data['per_divisi_sla']), 'chart_divisi_sla', @json($data['chart_type']['type_divisi']));
+    render_chart_v3(@json($data['per_departemen_sla']), 'chart_departemen_sla', @json($data['chart_type']['type_departemen']));
 });
 </script>
 <script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script>

@@ -35,19 +35,14 @@
                             </svg>
                             <svg class="fill-icon">
                                 <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-home')); ?>"></use>
-                            </svg><span>Home</span></a>
+                            </svg>
+                            <span>Home</span></a>
                         <ul class="sidebar-submenu">
-                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc_dashboard')): ?>
-                            <li><a class="submenu-title" href="#">Dashboard<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
-                                <ul class="nav-sub-childmenu submenu-content">
-                                    <li><a href="<?php echo e(route('dashboard.biaya', 0)); ?>">Biaya Gaji</a></li>
-                                    <li><a href="<?php echo e(route('dashboard.biaya_lain', 0)); ?>">Biaya Lain</a></li>
-                                    <li><a href="<?php echo e(route('dashboard.survey_pora', 0)); ?>">Hasil Survey PORA</a></li>
-                                    
-                                </ul>
-                            </li>
                             
-                            <?php endif; ?>
+                                    
+                                
+                            
+                            
                             <li><a href="<?php echo e(route('todolist.index')); ?>">To Do List</a></li>
                             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
                             <li><a href="<?php echo e(route('todolist.recap', 0)); ?>">To Do List Recap</a></li>
@@ -164,22 +159,24 @@
                                     <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-table')); ?>"></use>
                                 </svg><span>Overtime</span></a></li>
                     <?php endif; ?>
-                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc_dashboard')): ?>
                     <li class="sidebar-main-title">
                         <div>
-                            <h6>Recruitment</h6>
+                            <h6>Dashboard</h6>
                         </div>
                     </li>
                     <?php
                     $all = App\Models\TrxKebutuhanMaster::all();
                     $arr_direktorat = [];
                     $arr_divisi = [];
+                    $arr_departemen = [];
                     $arr_status_kerja = [];
                     $arr_area = [];
                     foreach($all as $data){
                         $pengaju_property = json_decode($data->pengaju_property);
                         array_push($arr_direktorat, $pengaju_property->divisi);
                         array_push($arr_divisi, $pengaju_property->dep);
+                        array_push($arr_departemen, $pengaju_property->sub_dep);
                         array_push($arr_status_kerja, App\Models\StatusKerja::find($data->id_status_kerja)->status_kerja);
                         array_push($arr_area, App\Models\Propinsi::find($data->id_area)->propinsi);
                     }
@@ -190,17 +187,46 @@
                     $select_divisi = array_values(array_unique($arr_divisi));
                     sort($select_divisi);
                     $arr_select_divisi = [];
+                    $select_departemen = array_values(array_unique($arr_departemen));
+                    sort($select_departemen);
+                    $arr_select_departemen = [];
                     $select_status_kerja = array_values(array_unique($arr_status_kerja));
                     sort($select_status_kerja);
                     $arr_select_status_kerja = [];
                     $select_area = array_values(array_unique($arr_area));
                     sort($select_area);
                     ?>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('dashboard.biaya', 0)); ?>">
+                        <svg class="stroke-icon">
+                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-charts')); ?>"></use>
+                        </svg>
+                        <svg class="fill-icon">
+                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
+                        </svg>
+                        <span>Biaya Gaji</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('dashboard.biaya_lain', 0)); ?>">
+                        <svg class="stroke-icon">
+                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-charts')); ?>"></use>
+                        </svg>
+                        <svg class="fill-icon">
+                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
+                        </svg>
+                        <span>Biaya Lain</span></a></li>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('dashboard.survey_pora', 0)); ?>">
+                        <svg class="stroke-icon">
+                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-charts')); ?>"></use>
+                        </svg>
+                        <svg class="fill-icon">
+                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
+                        </svg>
+                        <span>Hasil Survey PORA</span></a></li>
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" 
                         href="<?php echo e(route('kebutuhan.dashboard', [
                                     'id'=>0, 'filter'=>'true', 'tahun'=>[now()->year],
                                     'type_direktorat'=>'bar', 'direktorat'=>$select_direktorat,
                                     'type_divisi'=>'bar', 'divisi'=>$select_divisi,
+                                    'type_departemen'=>'bar', 'departemen'=>$select_departemen,
                                     'type_status_kerja'=>'bar', 'status_kerja'=>$select_status_kerja,
                                     'type_area'=>'bar', 'area'=>$select_area,
                                     ])); ?>">
@@ -210,7 +236,16 @@
                         <svg class="fill-icon">
                             <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
                         </svg>
-                        <span>Dashboard</span></a></li>
+                        <span>Recruitment</span></a></li>
+					<?php endif; ?>
+					<?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Recruitment</h6>
+                        </div>
+                    </li>
+                    
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('recruitment.applicant_list', 0)); ?>">
                         <svg class="stroke-icon">
                             <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-form')); ?>"></use>
@@ -224,7 +259,7 @@
                         </svg>
                         <svg class="fill-icon">
                             <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-form')); ?>"> </use>
-                        </svg><span>List of Recuitment</span></a></li>
+                        </svg><span>List of Recruitment</span></a></li>
                     <?php endif; ?>
                     <li class="sidebar-main-title">
                         <div>

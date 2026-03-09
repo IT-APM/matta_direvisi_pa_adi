@@ -37,6 +37,10 @@ use App\Models\TrxKebutuhanMaster;
 use App\Models\TrxKebutuhanMasterEdit;
 use App\Models\TrxKebutuhanDetail;
 use App\Models\TrxKebutuhanLog;
+use App\Models\TrxRecruitment;
+use App\Models\TrxRecruitmentIdentitas;
+use App\Models\TrxRecruitmentLog;
+use App\Models\Holiday;
 // 
 use App\Models\ToDoList;
 use App\Models\ToDoListLog;
@@ -45,6 +49,7 @@ use App\Mail\MattaRebornMail;
 use Illuminate\Support\Facades\Mail;
 // 
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use DB;
 use Elibyy\TCPDF\Facades\TCPDF;
 use Illuminate\Support\Facades\Crypt;
@@ -65,6 +70,7 @@ class TrxKebutuhanController extends Controller
         $tahun = [];
         $_direktorat = [];
         $_divisi = [];
+        $_departemen = [];
         $_status_kerja = [];
         $_area = [];
         // 10=Done by HC
@@ -79,12 +85,14 @@ class TrxKebutuhanController extends Controller
         $all = TrxKebutuhanMaster::all();
         $arr_direktorat = [];
         $arr_divisi = [];
+        $arr_departemen = [];
         $arr_status_kerja = [];
         $arr_area = [];
         foreach($all as $data){
             $pengaju_property = json_decode($data->pengaju_property);
             array_push($arr_direktorat, $pengaju_property->divisi);
             array_push($arr_divisi, $pengaju_property->dep);
+            array_push($arr_departemen, $pengaju_property->sub_dep);
             array_push($arr_status_kerja, StatusKerja::find($data->id_status_kerja)->status_kerja);
             array_push($arr_area, Propinsi::find($data->id_area)->propinsi);
         }
@@ -95,6 +103,9 @@ class TrxKebutuhanController extends Controller
         $select_divisi = array_values(array_unique($arr_divisi));
         sort($select_divisi);
         $arr_select_divisi = [];
+        $select_departemen = array_values(array_unique($arr_departemen));
+        sort($select_departemen);
+        $arr_select_departemen = [];
         $select_status_kerja = array_values(array_unique($arr_status_kerja));
         sort($select_status_kerja);
         $arr_select_status_kerja = [];
@@ -105,6 +116,7 @@ class TrxKebutuhanController extends Controller
             $tahun = $request->input('tahun', []);
             $_direktorat = $request->input('direktorat', []);
             $_divisi = $request->input('divisi', []);
+            $_departemen = $request->input('departemen', []);
             $_status_kerja = $request->input('status_kerja', []);
             $_area = $request->input('area', []);
             if (count($tahun) > 0) {
@@ -115,6 +127,9 @@ class TrxKebutuhanController extends Controller
             }
             if (count($_divisi) > 0) {
                 $arr_select_divisi = $_divisi;
+            }
+            if (count($_departemen) > 0) {
+                $arr_select_departemen = $_departemen;
             }
             if (count($_status_kerja) > 0) {
                 $arr_select_status_kerja = $_status_kerja;
@@ -128,6 +143,7 @@ class TrxKebutuhanController extends Controller
             $n_all = $query->sum('jumlah');
             $arr_direktorat = [];
             $arr_divisi = [];
+            $arr_departemen = [];
             $arr_status_kerja = [];
             $arr_area = [];
             $arr_direktorat_year = [];
@@ -145,6 +161,9 @@ class TrxKebutuhanController extends Controller
                 if(in_array($pengaju_property->dep, $_divisi)){
                     array_push($arr_divisi, $pengaju_property->dep);
                 }
+                if(in_array($pengaju_property->sub_dep, $_departemen)){
+                    array_push($arr_departemen, $pengaju_property->sub_dep);
+                }
                 if(in_array(StatusKerja::find($data->id_status_kerja)->status_kerja, $_status_kerja)){
                     array_push($arr_status_kerja, StatusKerja::find($data->id_status_kerja)->status_kerja);
                 }
@@ -156,6 +175,8 @@ class TrxKebutuhanController extends Controller
             ksort($per_direktorat_all);
             $per_divisi_all = array_count_values($arr_divisi);
             ksort($per_divisi_all);
+            $per_departemen_all = array_count_values($arr_departemen);
+            ksort($per_departemen_all);
             $per_status_kerja_all = array_count_values($arr_status_kerja);
             ksort($per_status_kerja_all);
             $per_area_all = array_count_values($arr_area);
@@ -189,7 +210,14 @@ class TrxKebutuhanController extends Controller
             $terpenuhi = $query->whereIn('status_pengajuan', $sts_terpenuhi)->get();
             $n_terpenuhi = $terpenuhi->sum('jumlah');
             $arr_direktorat = [];
+            $arr_direktorat_ontime = [];
+            $arr_direktorat_over = [];
             $arr_divisi = [];
+            $arr_divisi_ontime = [];
+            $arr_divisi_over = [];
+            $arr_departemen = [];
+            $arr_departemen_ontime = [];
+            $arr_departemen_over = [];
             $arr_status_kerja = [];
             $arr_area = [];
             foreach($terpenuhi as $data){
@@ -200,17 +228,106 @@ class TrxKebutuhanController extends Controller
                 if(in_array($pengaju_property->dep, $_divisi)){
                     array_push($arr_divisi, $pengaju_property->dep);
                 }
+                if(in_array($pengaju_property->sub_dep, $_departemen)){
+                    array_push($arr_departemen, $pengaju_property->sub_dep);
+                }
                 if(in_array(StatusKerja::find($data->id_status_kerja)->status_kerja, $_status_kerja)){
                     array_push($arr_status_kerja, StatusKerja::find($data->id_status_kerja)->status_kerja);
                 }
                 if(in_array(Propinsi::find($data->id_area)->propinsi, $_area)){
                     array_push($arr_area, Propinsi::find($data->id_area)->propinsi);
                 }
+                // start sla
+                $sla = TrxRecruitment::where(['id_kebutuhan'=>$data->id, 'id_status'=>2])->first();
+                $kandidat = TrxRecruitmentIdentitas::where(['id_kebutuhan'=>$data->id])->get();
+                $id_identitas = [];
+                foreach($kandidat as $_kandidat){
+                    array_push($id_identitas, $_kandidat->id);
+                }
+                // 24=Join
+                $log = TrxRecruitmentLog::whereIn('id_identitas',$id_identitas)->where(['id_status'=>24])->orderBy('created_at', 'desc')->get();
+                $sla_start = '';
+                $sla_end = '';
+                if(!empty($sla->created_at)){
+                    $sla_start = Carbon::parse($sla->created_at)->format('Y-m-d');
+                }
+                if($log->count() >= $data->jumlah){
+                    $sla_end = Carbon::parse($log[0]->created_at)->format('Y-m-d');
+                }
+                if(!empty($sla_start) && !empty($sla_end)){
+                    $period = CarbonPeriod::create($sla_start, $sla_end);
+                    $workingDays = 0;
+                    $holidays = Holiday::whereBetween('tanggal', [$sla_start, $sla_end])->pluck('tanggal')->toArray();
+                    foreach ($period as $date) {
+                        // Cek jika hari Sabtu (6) atau Minggu (0)
+                        if ($date->isWeekend()) {
+                            continue;
+                        }
+                        // Cek jika tanggal ada di daftar hari libur
+                        if (in_array($date->format('Y-m-d'), $holidays)) {
+                            continue;
+                        }
+                        $workingDays++;
+                    }
+                    // direktorat
+                    if(in_array($pengaju_property->divisi, $_direktorat)){
+                        // ontime
+                        if($workingDays <= 14){
+                            array_push($arr_direktorat_ontime, $pengaju_property->divisi);
+                        }
+                        // overdue
+                        else{
+                            array_push($arr_direktorat_over, $pengaju_property->divisi);
+                        }
+                    }
+                    // divisi
+                    if(in_array($pengaju_property->dep, $_divisi)){
+                        // ontime
+                        if($workingDays <= 14){
+                            array_push($arr_divisi_ontime, $pengaju_property->dep);
+                        }
+                        // overdue
+                        else{
+                            array_push($arr_divisi_over, $pengaju_property->dep);
+                        }
+                    }
+                    // departemen
+                    if(in_array($pengaju_property->sub_dep, $_departemen)){
+                        // ontime
+                        if($workingDays <= 14){
+                            array_push($arr_departemen_ontime, $pengaju_property->sub_dep);
+                        }
+                        // overdue
+                        else{
+                            array_push($arr_departemen_over, $pengaju_property->sub_dep);
+                        }
+                    }
+                }
+                // end sla
             }
             $per_direktorat_terpenuhi = array_count_values($arr_direktorat);
             ksort($per_direktorat_terpenuhi);
+            // start sla
+            // direktorat
+            $per_direktorat_terpenuhi_ontime = array_count_values($arr_direktorat_ontime);
+            ksort($per_direktorat_terpenuhi_ontime);
+            $per_direktorat_terpenuhi_over = array_count_values($arr_direktorat_over);
+            ksort($per_direktorat_terpenuhi_over);
+            // divisi
+            $per_divisi_terpenuhi_ontime = array_count_values($arr_divisi_ontime);
+            ksort($per_divisi_terpenuhi_ontime);
+            $per_divisi_terpenuhi_over = array_count_values($arr_divisi_over);
+            ksort($per_divisi_terpenuhi_over);
+            // departemen
+            $per_departemen_terpenuhi_ontime = array_count_values($arr_departemen_ontime);
+            ksort($per_departemen_terpenuhi_ontime);
+            $per_departemen_terpenuhi_over = array_count_values($arr_departemen_over);
+            ksort($per_departemen_terpenuhi_over);
+            // end sla
             $per_divisi_terpenuhi = array_count_values($arr_divisi);
             ksort($per_divisi_terpenuhi);
+            $per_departemen_terpenuhi = array_count_values($arr_departemen);
+            ksort($per_departemen_terpenuhi);
             $per_status_kerja_terpenuhi = array_count_values($arr_status_kerja);
             ksort($per_status_kerja_terpenuhi);
             $per_area_terpenuhi = array_count_values($arr_area);
@@ -221,6 +338,7 @@ class TrxKebutuhanController extends Controller
             $n_cancel = $cancel->sum('jumlah');
             $arr_direktorat = [];
             $arr_divisi = [];
+            $arr_departemen = [];
             $arr_status_kerja = [];
             $arr_area = [];
             foreach($cancel as $data){
@@ -230,6 +348,9 @@ class TrxKebutuhanController extends Controller
                 }
                 if(in_array($pengaju_property->dep, $_divisi)){
                     array_push($arr_divisi, $pengaju_property->dep);
+                }
+                if(in_array($pengaju_property->sub_dep, $_departemen)){
+                    array_push($arr_departemen, $pengaju_property->sub_dep);
                 }
                 if(in_array(StatusKerja::find($data->id_status_kerja)->status_kerja, $_status_kerja)){
                     array_push($arr_status_kerja, StatusKerja::find($data->id_status_kerja)->status_kerja);
@@ -242,6 +363,8 @@ class TrxKebutuhanController extends Controller
             ksort($per_direktorat_cancel);
             $per_divisi_cancel = array_count_values($arr_divisi);
             ksort($per_divisi_cancel);
+            $per_departemen_cancel = array_count_values($arr_departemen);
+            ksort($per_departemen_cancel);
             $per_status_kerja_cancel = array_count_values($arr_status_kerja);
             ksort($per_status_kerja_cancel);
             $per_area_cancel = array_count_values($arr_area);
@@ -252,6 +375,7 @@ class TrxKebutuhanController extends Controller
             $n_outstanding = $outstanding->sum('jumlah');
             $arr_direktorat = [];
             $arr_divisi = [];
+            $arr_departemen = [];
             $arr_status_kerja = [];
             $arr_area = [];
             foreach($outstanding as $data){
@@ -261,6 +385,9 @@ class TrxKebutuhanController extends Controller
                 }
                 if(in_array($pengaju_property->dep, $_divisi)){
                     array_push($arr_divisi, $pengaju_property->dep);
+                }
+                if(in_array($pengaju_property->sub_dep, $_departemen)){
+                    array_push($arr_departemen, $pengaju_property->sub_dep);
                 }
                 if(in_array(StatusKerja::find($data->id_status_kerja)->status_kerja, $_status_kerja)){
                     array_push($arr_status_kerja, StatusKerja::find($data->id_status_kerja)->status_kerja);
@@ -273,6 +400,8 @@ class TrxKebutuhanController extends Controller
             ksort($per_direktorat_outstanding);
             $per_divisi_outstanding = array_count_values($arr_divisi);
             ksort($per_divisi_outstanding);
+            $per_departemen_outstanding = array_count_values($arr_departemen);
+            ksort($per_departemen_outstanding);
             $per_status_kerja_outstanding = array_count_values($arr_status_kerja);
             ksort($per_status_kerja_outstanding);
             $per_area_outstanding = array_count_values($arr_area);
@@ -310,10 +439,33 @@ class TrxKebutuhanController extends Controller
                     'Cancel'=>$per_direktorat_cancel,
                     'Outstanding'=>$per_direktorat_outstanding,
                 ],
+                'per_direktorat_sla' => [
+                    'Ontime'=>$per_direktorat_terpenuhi_ontime,
+                    'Overdue'=>$per_direktorat_terpenuhi_over,
+                    'Cancel'=>$per_direktorat_cancel,
+                    'Ongoing'=>$per_direktorat_outstanding,
+                ],
                 'per_divisi' => [
                     'Terpenuhi'=>$per_divisi_terpenuhi,
                     'Cancel'=>$per_divisi_cancel,
                     'Outstanding'=>$per_divisi_outstanding,
+                ],
+                'per_divisi_sla' => [
+                    'Ontime'=>$per_divisi_terpenuhi_ontime,
+                    'Overdue'=>$per_divisi_terpenuhi_over,
+                    'Cancel'=>$per_divisi_cancel,
+                    'Ongoing'=>$per_divisi_outstanding,
+                ],
+                'per_departemen' => [
+                    'Terpenuhi'=>$per_departemen_terpenuhi,
+                    'Cancel'=>$per_departemen_cancel,
+                    'Outstanding'=>$per_departemen_outstanding,
+                ],
+                'per_departemen_sla' => [
+                    'Ontime'=>$per_departemen_terpenuhi_ontime,
+                    'Overdue'=>$per_departemen_terpenuhi_over,
+                    'Cancel'=>$per_departemen_cancel,
+                    'Ongoing'=>$per_departemen_outstanding,
                 ],
                 'per_status_kerja' => [
                     'Terpenuhi'=>$per_status_kerja_terpenuhi,
@@ -328,6 +480,7 @@ class TrxKebutuhanController extends Controller
                 'chart_type' => [
                     'type_direktorat'=>is_null($request->type_direktorat) ? 'bar' : $request->type_direktorat,
                     'type_divisi'=>is_null($request->type_divisi) ? 'bar' : $request->type_divisi,
+                    'type_departemen'=>is_null($request->type_departemen) ? 'bar' : $request->type_departemen,
                     'type_status_kerja'=>is_null($request->type_status_kerja) ? 'bar' : $request->type_status_kerja,
                     'type_area'=>is_null($request->type_area) ? 'bar' : $request->type_area,
                 ],
@@ -340,7 +493,7 @@ class TrxKebutuhanController extends Controller
         // dd(gettype($data), $data);
         // return $data;
         // end dashboard
-        return view('formulir.kebutuhan.dashboard', compact('data','lable_data','select_tahun','select_direktorat','select_divisi','select_status_kerja','select_area','tahun','_direktorat','_divisi','_status_kerja','_area','arr_select_tahun','arr_select_direktorat','arr_select_divisi','arr_select_status_kerja','arr_select_area'));
+        return view('formulir.kebutuhan.dashboard', compact('data','lable_data','select_tahun','select_direktorat','select_divisi','select_departemen','select_status_kerja','select_area','tahun','_direktorat','_divisi','_departemen','_status_kerja','_area','arr_select_tahun','arr_select_direktorat','arr_select_divisi','arr_select_departemen','arr_select_status_kerja','arr_select_area'));
     }
     /**
      * Display a listing of the resource.
@@ -940,7 +1093,7 @@ class TrxKebutuhanController extends Controller
             }
         }
         // data TrxKebutuhanDetail berkurang
-        elseif($sebelum > $sesudah){
+        else if($sebelum > $sesudah){
             // check apakah jumlah pengurangan tersedia
             if($count >= $selisih){
                 $check = true;

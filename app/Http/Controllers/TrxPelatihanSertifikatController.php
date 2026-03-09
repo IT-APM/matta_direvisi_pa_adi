@@ -3,19 +3,192 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+
 use App\Models\TrxPelatihanSertifikat;
 use App\Models\PelatihanJenis;
+use App\Models\Karyawan;
+
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class TrxPelatihanSertifikatController extends Controller
 {
+
+    public function upload_file(Request $request)
+    {
+        if($request->hasFile('template')){
+            $request->validate([
+                'template'=>'required|file|mimes:xls,xlsx|max:2048',
+            ]);
+            $path = $request->file('template')->getPathname();
+            $data = Excel::toArray([], $path);
+            $data0 = $data[0];
+            // Formulir (url)
+            $_1 = array_search(1, $data0[0]);
+            // Nama
+            $_2 = array_search(2, $data0[0]);
+            // NIP
+            $_3 = array_search(3, $data0[0]);
+            // Jenis Pelatihan
+            // Pelatihan
+            // Sertifikasi Keahlian
+            // Seminar
+            $_4 = array_search(4, $data0[0]);
+            // Mode Pelatihan
+            // Eksternal
+            // Internal
+            $_5 = array_search(5, $data0[0]);
+            // Penerbit
+            // LEMBAGA
+            // KEMENAKER
+            // BNSP
+            // LEMBAGA & BNSP
+            // LAINNYA
+            $_6 = array_search(6, $data0[0]);
+            // Kartu Tanda Anggota
+            // Ada
+            // Tidak Ada
+            $_7 = array_search(7, $data0[0]);
+            // Judul Pelatihan
+            $_8 = array_search(8, $data0[0]);
+            // Lembaga
+            $_9 = array_search(9, $data0[0]);
+            // Biaya (double)
+            $_10 = array_search(10, $data0[0]);
+            // Tanggal Mulai (dd-mm-yyyy)
+            $_11 = array_search(11, $data0[0]);
+            // Tanggal Akhir (dd-mm-yyyy)
+            $_12 = array_search(12, $data0[0]);
+            // No Sertifikat
+            $_13 = array_search(13, $data0[0]);
+            // Tanggal Sertifikat (dd-mm-yyyy)
+            $_14 = array_search(14, $data0[0]);
+            // Tanggal Kedaluwarsa (dd-mm-yyyy)
+            $_15 = array_search(15, $data0[0]);
+            // Sertifikat (url)
+            $_16 = array_search(16, $data0[0]);
+            for ($x = 2; $x < count($data0); $x++) {
+                $nik = $data0[$x][$_3];
+                $trx = New TrxPelatihanSertifikat;
+                $trx->formulir_link = $data0[$x][$_1];
+                $trx->nama = $data0[$x][$_2];
+                $trx->nik = $nik;
+                if(!empty($nik) && Karyawan::where(['nik'=>$nik])->exists()){
+                    $trx->nik_property = $this->getNikProperty($nik);
+                }
+                $trx->jenis = $data0[$x][$_4];
+                $trx->int_ext = $data0[$x][$_5];
+                $trx->penerbit = $data0[$x][$_6];
+                $trx->kta = $data0[$x][$_7];
+                $trx->judul = $data0[$x][$_8];
+                $trx->lembaga = $data0[$x][$_9];
+                $trx->biaya = $data0[$x][$_10];
+                $trx->tanggal_mulai = Carbon::createFromFormat('d-m-Y', $data0[$x][$_11])->format('Y-m-d');
+                $trx->tanggal_akhir = Carbon::createFromFormat('d-m-Y', $data0[$x][$_12])->format('Y-m-d');
+                $trx->nomor_sertifikat = $data0[$x][$_13];
+                $trx->tanggal_sertifikat = Carbon::createFromFormat('d-m-Y', $data0[$x][$_14])->format('Y-m-d');
+                $trx->tanggal_kadaluarsa = Carbon::createFromFormat('d-m-Y', $data0[$x][$_15])->format('Y-m-d');
+                $trx->sertifikat_link = $data0[$x][$_16];
+                $trx->save();
+            }
+            return redirect('pelatihan_sertifikat')->with('msg', 'Data is saved successfully.');
+        }
+        // dd($request->all());
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
+    public function index(Request $request)
+    {   
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
+        if (!auth()->check()) {
+            session(['url.intended' => url()->full()]);
+            return redirect()->route('login-one');
+        }
+        $no = 0;
+        $trx = TrxPelatihanSertifikat::orderBy('nama', 'asc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxPelatihanSertifikat::whereIn('nik',$arr_nik_nkp)->orderBy('nama', 'asc')->get();
+        }
+        $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
+        $aktif_non = collect([
+            '1' => 'Aktif',
+            '0' => 'Non Aktif',
+        ]);
+        $int_ext = collect([
+            'Eksternal' => 'Eksternal',
+            'Internal' => 'Internal',
+        ]);
+        $kta = collect([
+            'Ada' => 'Ada',
+            'Tidak Ada' => 'Tidak Ada',
+        ]);
+        $arr_jenis = [];
+        $arr_aktif_non = [];
+        $arr_int_ext = [];
+        $arr_kta = [];
+        // start filter
+        if($request->filter == true){
+            $_aktif_non = $request->input('aktif_non', []);
+            $_jenis = $request->input('jenis', []);
+            $_int_ext = $request->input('int_ext', []);
+            $_kta = $request->input('kta', []);
+            // dd($_kta);
+            if(count($_aktif_non) > 0){
+                $arr_aktif_non = $_aktif_non;
+            }
+            // else{
+            //     $arr_aktif_non = array();
+            // }
+            if(count($_jenis) > 0){
+                $arr_jenis = $_jenis;
+            }
+            // else{
+            //     $arr_jenis = array();
+            // }
+            if(count($_int_ext) > 0){
+                $arr_int_ext = $_int_ext;
+            }
+            // else{
+            //     $arr_int_ext = array();
+            // }
+            if(count($_kta) > 0){
+                $arr_kta = $_kta;
+            }
+            // else{
+            //     $arr_kta = array();
+            // }
+            $arr_nik = Karyawan::where(['is_aktif'=>1])->pluck('nik')->toArray();
+            $trx = TrxPelatihanSertifikat::whereIn('nik', [])->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+            if(in_array(1, $_aktif_non) && in_array(0, $_aktif_non)){
+                $trx = TrxPelatihanSertifikat::whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+            }else if(in_array(1, $_aktif_non)){
+                $trx = TrxPelatihanSertifikat::whereIn('nik', $arr_nik)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+            }else if(in_array(0, $_aktif_non)){
+                $trx = TrxPelatihanSertifikat::whereNotIn('nik', $arr_nik)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+            }
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxPelatihanSertifikat::whereIn('nik', [])->whereIn('nik',$arr_nik_nkp)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+                if(in_array(1, $_aktif_non) && in_array(0, $_aktif_non)){
+                    $trx = TrxPelatihanSertifikat::whereIn('nik',$arr_nik_nkp)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+                }else if(in_array(1, $_aktif_non)){
+                    $trx = TrxPelatihanSertifikat::whereIn('nik', $arr_nik)->whereIn('nik',$arr_nik_nkp)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+                }else if(in_array(0, $_aktif_non)){
+                    $trx = TrxPelatihanSertifikat::whereNotIn('nik', $arr_nik)->whereIn('nik',$arr_nik_nkp)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+                }
+            }
+        }else{
+            $arr_aktif_non = array();
+            $arr_int_ext = array();
+            $arr_jenis = array();
+            $arr_kta = array();
+        }
+        // end filter
+        return view('formulir.pelatihan.index_sertifikat', compact('trx', 'no', 'jenis', 'aktif_non', 'int_ext', 'kta', 'arr_jenis', 'arr_aktif_non', 'arr_int_ext', 'arr_kta'));
     }
 
     /**
@@ -24,8 +197,18 @@ class TrxPelatihanSertifikatController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        //
+    {   
+        $status = 'create';
+        $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
+        $int_ext = collect([
+            'Eksternal' => 'Eksternal',
+            'Internal' => 'Internal',
+        ]);
+        $kta = collect([
+            'Ada' => 'Ada',
+            'Tidak Ada' => 'Tidak Ada',
+        ]);
+        return view('formulir.pelatihan.upsert_sertifikat', compact('status', 'jenis', 'int_ext', 'kta'));
     }
 
     /**
@@ -35,8 +218,30 @@ class TrxPelatihanSertifikatController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
+    {   
+        $nik = $request->nik;
+        $trx = New TrxPelatihanSertifikat;
+        $trx->formulir_link = $request->formulir_link;
+        $trx->sertifikat_link = $request->sertifikat_link;
+        $trx->nama = $request->nama;
+        $trx->nik = $nik;
+        if(!empty($nik) && Karyawan::where(['nik'=>$nik])->exists()){
+            $trx->nik_property = $this->getNikProperty($nik);
+        }
+        $trx->jenis = $request->jenis;
+        $trx->int_ext = $request->int_ext;
+        $trx->penerbit = $request->penerbit;
+        $trx->kta = $request->kta;
+        $trx->judul = $request->judul;
+        $trx->lembaga = $request->lembaga;
+        $trx->biaya = str_replace(',', '', $request->biaya);
+        $trx->tanggal_mulai = $request->tanggal_mulai;
+        $trx->tanggal_akhir = $request->tanggal_akhir;
+        $trx->nomor_sertifikat = $request->nomor_sertifikat;
+        $trx->tanggal_sertifikat = $request->tanggal_sertifikat;
+        $trx->tanggal_kadaluarsa = $request->tanggal_kadaluarsa;
+        $trx->save();
+        return redirect('pelatihan_sertifikat')->with('msg', 'Data is saved successfully.');
     }
 
     /**
@@ -63,8 +268,8 @@ class TrxPelatihanSertifikatController extends Controller
         $trx = TrxPelatihanSertifikat::find($id);
         $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
         $int_ext = collect([
-            'Internal' => 'Internal',
             'Eksternal' => 'Eksternal',
+            'Internal' => 'Internal',
         ]);
         $kta = collect([
             'Ada' => 'Ada',
@@ -85,7 +290,7 @@ class TrxPelatihanSertifikatController extends Controller
         // dd($request->all(), $id);
         $trx = TrxPelatihanSertifikat::find($id);
         $trx->nama = $request->nama;
-        $trx->nik = $request->nik;
+        // $trx->nik = $request->nik;
         $trx->jenis = $request->jenis;
         $trx->int_ext = $request->int_ext;
         $trx->penerbit = $request->penerbit;
@@ -93,16 +298,15 @@ class TrxPelatihanSertifikatController extends Controller
         $trx->judul = $request->judul;
         $trx->lembaga = $request->lembaga;
         $trx->nomor_sertifikat = $request->nomor_sertifikat;
-        $trx->biaya = $request->biaya;
+        $trx->biaya = str_replace(',', '', $request->biaya);
         $trx->tanggal_mulai = $request->tanggal_mulai;
         $trx->tanggal_akhir = $request->tanggal_akhir;
         $trx->tanggal_sertifikat = $request->tanggal_sertifikat;
         $trx->tanggal_kadaluarsa = $request->tanggal_kadaluarsa;
         $trx->sertifikat_link = $request->sertifikat_link;
+        $trx->formulir_link = $request->formulir_link;
         $trx->update();
-        // return redirect('trx')->with('msg', 'Data is saved successfully.');
-        // return redirect()->to($request->back_url)->with( 'msg', 'Data is saved successfully.' );
-        return redirect()->route('pelatihan.show', [(new OpenDataController)->encryptWithKey(4),'view' => (new OpenDataController)->encryptWithKey('list_certificate')])->with('msg', 'Data is saved successfully.');
+        return redirect('pelatihan_sertifikat')->with('msg', 'Data is saved successfully.');
     }
 
     /**
@@ -111,8 +315,25 @@ class TrxPelatihanSertifikatController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        // dd($id);
+        $trx = TrxPelatihanSertifikat::find($id);
+        $trx->delete();
+        return redirect('pelatihan_sertifikat')->with('msg', 'Data is deleted successfully.');
+    }
+
+    public function getNikProperty($nik)
+    {
+        $where = ['nik' => $nik];
+        $data = Karyawan::select('mtr_tbl_karyawan.nik', 'mtr_tbl_karyawan.nama', 'mtr_tbl_karyawan.email', 'mtr_tbl_karyawan.telepon1', 'mtr_tbl_perusahaan.nama as perusahaan', 'mtr_tbl_divisi.nama as divisi', 'mtr_tbl_departemen.nama as dep', 'mtr_tbl_sub_departemen.nama as sub_dep', 'mtr_tbl_level.level as level', 'mtr_tbl_jabatan.jabatan as jabatan', 'mtr_tbl_level.id as id_level', 'mtr_tbl_sub_departemen.id as id_sub_departemen')
+            ->leftJoin('mtr_tbl_perusahaan', 'mtr_tbl_perusahaan.id', '=', 'mtr_tbl_karyawan.kode_perusahaan')
+            ->leftJoin('mtr_tbl_divisi', 'mtr_tbl_divisi.id', '=', 'mtr_tbl_karyawan.kode_divisi')
+            ->leftJoin('mtr_tbl_departemen', 'mtr_tbl_departemen.id', '=', 'mtr_tbl_karyawan.kode_departemen')
+            ->leftJoin('mtr_tbl_sub_departemen', 'mtr_tbl_sub_departemen.id', '=', 'mtr_tbl_karyawan.kode_sub_departemen')
+            ->leftJoin('mtr_tbl_level', 'mtr_tbl_level.id', '=', 'mtr_tbl_karyawan.kode_level')
+            ->leftJoin('mtr_tbl_jabatan', 'mtr_tbl_jabatan.id', '=', 'mtr_tbl_karyawan.kode_jabatan')
+            ->where($where)->first();
+        return json_encode($data);
     }
 }

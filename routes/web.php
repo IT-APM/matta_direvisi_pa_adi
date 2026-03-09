@@ -332,6 +332,7 @@ Route::resource('rekomendasi', TrxRekomendasiController::class);
 Route::resource('pelatihan', TrxPelatihanController::class);
 Route::post('pelatihan/save_update/{id}', [TrxPelatihanController::class, 'save_update'])->name('pelatihan.save_update')->middleware('can:hc');
 Route::resource('pelatihan_sertifikat', TrxPelatihanSertifikatController::class)->middleware('can:hc');
+Route::post('pelatihan_sertifikat/upload_file/{id}', [TrxPelatihanSertifikatController::class, 'upload_file'])->name('pelatihan_sertifikat.upload_file')->middleware('can:hc');
 // 
 Route::resource('nonaktif', TrxNonaktifController::class);
 Route::post('nonaktif/save_edit/{id}', [TrxNonaktifController::class, 'save_edit'])->name('nonaktif.save_edit')->middleware('auth');

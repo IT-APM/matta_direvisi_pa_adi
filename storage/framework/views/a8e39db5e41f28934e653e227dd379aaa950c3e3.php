@@ -61,7 +61,6 @@
                     <form action="<?php echo e(route('pelatihan_sertifikat.store')); ?>" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                     <?php endif; ?>
                     <?php echo csrf_field(); ?>
-                    <input type="hidden" id="back_url" name="back_url" value="<?php echo e(url()->full()); ?>">
                     <div class="row">
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="nama">Nama</label>
@@ -70,7 +69,7 @@
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="nik">NIP</label>
-                            <input name="nik" id="nik" class="form-control" type="text" <?php if($status=='edit'): ?> value="<?php echo e($trx->nik); ?>" <?php endif; ?>>
+                            <input name="nik" id="nik" class="form-control" type="text" <?php if($status=='edit'): ?> value="<?php echo e($trx->nik); ?>" readonly <?php endif; ?>>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-6 mb-2">
@@ -149,14 +148,19 @@
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-12 mb-2">
-                            <label class="form-label" for="sertifikat_link">Sertifikat</label>
+                            <label class="form-label" for="formulir_link">Link Formulir</label>
+                            <input name="formulir_link" id="formulir_link" class="form-control" type="text" required="" <?php if($status=='edit'): ?> value="<?php echo e($trx->formulir_link); ?>" <?php endif; ?>>
+                            <div class="invalid-feedback txt-danger">Field is required.</div>
+                        </div>
+                        <div class="col-md-12 mb-2">
+                            <label class="form-label" for="sertifikat_link">Link Sertifikat</label>
                             <input name="sertifikat_link" id="sertifikat_link" class="form-control" type="text" required="" <?php if($status=='edit'): ?> value="<?php echo e($trx->sertifikat_link); ?>" <?php endif; ?>>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-12">
-                            <button class="btn btn-success" type="submit">Submit</button> | <a href="<?php echo e(route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey(4), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('list_certificate')])); ?>" class="btn btn-warning" type="button">Back</a>
+                            <button class="btn btn-success" type="submit">Submit</button> | <a href="<?php echo e(route('pelatihan_sertifikat.index')); ?>" class="btn btn-warning" type="button">Back</a>
                         </div>
                     </div>
                     </form>

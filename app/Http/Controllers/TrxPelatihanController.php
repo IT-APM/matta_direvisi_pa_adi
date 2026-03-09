@@ -384,8 +384,8 @@ class TrxPelatihanController extends Controller
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
         $int_ext = collect([
-            'int' => 'Internal',
             'ext' => 'Eksternal',
+            'int' => 'Internal',
         ]);
         $anggaran = PelatihanAnggaran::orderBy('anggaran', 'asc')->get();
         // tidak digunakan
@@ -692,8 +692,8 @@ class TrxPelatihanController extends Controller
         }
         // 
         $int_ext = collect([
-            'int' => 'Internal',
             'ext' => 'Eksternal',
+            'int' => 'Internal',
         ]);
         // 
         $reviewer1 = '';
@@ -825,200 +825,256 @@ class TrxPelatihanController extends Controller
                 // }
                 return view('formulir.pelatihan.peserta_index', compact('trx', 'no', 'arrJenis', 'back_url', 'int_ext'));
                 break;
-            case 'sertifikat':
-                if (!auth()->check()) {
-                    session(['url.intended' => url()->full()]);
-                    return redirect()->route('login-one');
-                }
-                $id_peserta = (new OpenDataController)->decryptWithKey($request->id_peserta);
-                $trx = TrxPelatihanPeserta::find($id_peserta);
-                $_trx = TrxPelatihanDokumen::where(['id_peserta'=>$id_peserta])->orderBy('id', 'asc')->get();
-                $no = 0;
-                return view('formulir.pelatihan.doc_index', compact('trx', '_trx', 'no', 'arrJenis', 'back_url', 'int_ext'));
-                break;
-            case 'list_certificate':
-                $arr_nik_nkp = new Karyawan();
-                $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
-                if (!auth()->check()) {
-                    session(['url.intended' => url()->full()]);
-                    return redirect()->route('login-one');
-                }
-                $no = 0;
-                $trx = TrxPelatihanSertifikat::orderBy('nama', 'asc')->get();
-                if(Gate::allows('hc_nkp')){
-                    $trx = TrxPelatihanSertifikat::whereIn('nik',$arr_nik_nkp)->orderBy('nama', 'asc')->get();
-                }
-                // start cleansing data
-                // $return_data = [];
-                // $bulan_en = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                // $bulan_id = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                // $bulan_en3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                // // tanggal_mulai => 954
-                // $trx = TrxPelatihanSertifikat::where('tanggal_mulai', '!=', '')->orderBy('id', 'asc')->get();
-                // foreach($trx as $data){
-                //     $tanggal_mulai = $data->tanggal_mulai;
-                //     $parts = explode('-', $tanggal_mulai);
-                //     if (count($parts) == 3) {
-                //         list($d, $m, $y) = explode('-', $tanggal_mulai);
-                //         $isValid = false;
-                //         try {
-                //             $isValid = true;
-                //             if(in_array($m, $bulan_en)){
-                //                 $index = array_search($m, $bulan_en);
-                //             }
-                //             elseif(in_array($m, $bulan_id)){
-                //                 $index = array_search($m, $bulan_id);
-                //             }
-                //             elseif(in_array($m, $bulan_en3)){
-                //                 $index = array_search($m, $bulan_en3);
-                //             }
-                //             $eng = $index + 1;
-                //             if(strlen($y) == 2){
-                //                 $y = "20$y";
-                //             }
-                //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
-                //             if($isValid){
-                //                 $hasil = $parsed->format('Y-m-d');
-                //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
-                //                 $_trx->tanggal_mulai = $hasil;
-                //                 $_trx->update();
-                //                 $return_data[] = ['id'=>$data->id, 'tanggal_mulai_before'=>$tanggal_mulai, 'tanggal_mulai_after'=>$hasil];
-                //             }
-                //         } catch (\Exception $e) {
-                //             $isValid = false;
-                //         }
-                //     }
-// manual => 4
-// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2022-08-02,2022-08-04' WHERE `id`=593;
-// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2022-08-06,2022-08-13' WHERE `id`=594;
-// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2025-11-04,2025-11-05,2025-11-06,2025-11-07' WHERE `id`=1205;
-// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2022-08-30,2022-08-31,2022-09-01,2022-09-02,2022-09-06,2022-09-07,2022-09-08,2022-09-09' WHERE `id`=602;
-                // }
-                // // tanggal_akhir => 1050
-                // $trx = TrxPelatihanSertifikat::where('tanggal_akhir', '!=', '')->orderBy('id', 'asc')->get();
-                // foreach($trx as $data){
-                //     $tanggal_akhir = $data->tanggal_akhir;
-                //     $parts = explode('-', $tanggal_akhir);
-                //     if (count($parts) == 3) {
-                //         list($d, $m, $y) = explode('-', $tanggal_akhir);
-                //         $isValid = false;
-                //         try {
-                //             $isValid = true;
-                //             if(in_array($m, $bulan_en)){
-                //                 $index = array_search($m, $bulan_en);
-                //             }
-                //             elseif(in_array($m, $bulan_id)){
-                //                 $index = array_search($m, $bulan_id);
-                //             }
-                //             elseif(in_array($m, $bulan_en3)){
-                //                 $index = array_search($m, $bulan_en3);
-                //             }
-                //             $eng = $index + 1;
-                //             if(strlen($y) == 2){
-                //                 $y = "20$y";
-                //             }
-                //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
-                //             if($isValid){
-                //                 $hasil = $parsed->format('Y-m-d');
-                //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
-                //                 $_trx->tanggal_akhir = $hasil;
-                //                 $_trx->update();
-                //                 $return_data[] = ['id'=>$data->id, 'tanggal_akhir_before'=>$tanggal_akhir, 'tanggal_akhir_after'=>$hasil];
-                //             }
-                //         } catch (\Exception $e) {
-                //             $isValid = false;
-                //         }
-                //     }
-// manual => 4
-// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2022-08-09,2022-08-11' WHERE `id`=593;
-// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2022-08-06,2022-08-13' WHERE `id`=594;
-// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2022-09-13,2022-09-14,2022-09-15' WHERE `id`=602;
-// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2025-11-10,2025-11-11,2025-11-12' WHERE `id`=1205;
-                // }
-                // // tanggal_sertifikat => 780
-                // $trx = TrxPelatihanSertifikat::where('tanggal_sertifikat', '!=', '')->orderBy('id', 'asc')->get();
-                // foreach($trx as $data){
-                //     $tanggal_sertifikat = $data->tanggal_sertifikat;
-                //     $parts = explode('-', $tanggal_sertifikat);
-                //     if (count($parts) == 3) {
-                //         list($d, $m, $y) = explode('-', $tanggal_sertifikat);
-                //         $isValid = false;
-                //         try {
-                //             $isValid = true;
-                //             if(in_array($m, $bulan_en)){
-                //                 $index = array_search($m, $bulan_en);
-                //             }
-                //             elseif(in_array($m, $bulan_id)){
-                //                 $index = array_search($m, $bulan_id);
-                //             }
-                //             elseif(in_array($m, $bulan_en3)){
-                //                 $index = array_search($m, $bulan_en3);
-                //             }
-                //             $eng = $index + 1;
-                //             if(strlen($y) == 2){
-                //                 $y = "20$y";
-                //             }
-                //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
-                //             if($isValid){
-                //                 $hasil = $parsed->format('Y-m-d');
-                //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
-                //                 $_trx->tanggal_sertifikat = $hasil;
-                //                 $_trx->update();
-                //                 $return_data[] = ['id'=>$data->id, 'tanggal_sertifikat_before'=>$tanggal_sertifikat, 'tanggal_sertifikat_after'=>$hasil];
-                //             }
-                //         } catch (\Exception $e) {
-                //             $isValid = false;
-                //         }
-                //     }
-// manual => 1
-// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_sertifikat`='2018-07-01' WHERE `id`=188;
-                // }
-                // // tanggal_kadaluarsa => 196 '-' + 14 ' '
-                // $trx = TrxPelatihanSertifikat::where('tanggal_kadaluarsa', '!=', '')->orderBy('id', 'asc')->get();
-                // foreach($trx as $data){
-                //     $tanggal_kadaluarsa = $data->tanggal_kadaluarsa;
-                //     $parts = explode('-', $tanggal_kadaluarsa);
-                //     if (count($parts) == 3) {
-                //         list($d, $m, $y) = explode('-', $tanggal_kadaluarsa);
-                //         $isValid = false;
-                //         try {
-                //             $isValid = true;
-                //             if(in_array($m, $bulan_en)){
-                //                 $index = array_search($m, $bulan_en);
-                //             }
-                //             elseif(in_array($m, $bulan_id)){
-                //                 $index = array_search($m, $bulan_id);
-                //             }
-                //             elseif(in_array($m, $bulan_en3)){
-                //                 $index = array_search($m, $bulan_en3);
-                //             }
-                //             $eng = $index + 1;
-                //             if(strlen($y) == 2){
-                //                 $y = "20$y";
-                //             }
-                //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
-                //             if($isValid){
-                //                 $hasil = $parsed->format('Y-m-d');
-                //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
-                //                 $_trx->tanggal_kadaluarsa = $hasil;
-                //                 $_trx->update();
-                //                 $return_data[] = ['id'=>$data->id, 'tanggal_kadaluarsa_before'=>$tanggal_kadaluarsa, 'tanggal_kadaluarsa_after'=>$hasil];
-                //             }
-                //         } catch (\Exception $e) {
-                //             $isValid = false;
-                //         }
-                //     }
-// manual => 29
-// UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_kadaluarsa`='2027-07-31' WHERE `tanggal_kadaluarsa`='Juli 2027';
-                // }
-                // $json = json_encode($return_data, JSON_PRETTY_PRINT);
-                // $timestamp = now()->format('YmdHis');
-                // $filePath = storage_path("app/{$timestamp}.json");
-                // file_put_contents($filePath, $json);
-                // return $json;
-                // end cleansing data
-                return view('formulir.pelatihan.index_sertifikat', compact('trx', 'no'));
-                break;
+//             case 'sertifikat':
+//                 if (!auth()->check()) {
+//                     session(['url.intended' => url()->full()]);
+//                     return redirect()->route('login-one');
+//                 }
+//                 $id_peserta = (new OpenDataController)->decryptWithKey($request->id_peserta);
+//                 $trx = TrxPelatihanPeserta::find($id_peserta);
+//                 $_trx = TrxPelatihanDokumen::where(['id_peserta'=>$id_peserta])->orderBy('id', 'asc')->get();
+//                 $no = 0;
+//                 return view('formulir.pelatihan.doc_index', compact('trx', '_trx', 'no', 'arrJenis', 'back_url', 'int_ext'));
+//                 break;
+//             case 'list_certificate':
+//                 $arr_nik_nkp = new Karyawan();
+//                 $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
+//                 if (!auth()->check()) {
+//                     session(['url.intended' => url()->full()]);
+//                     return redirect()->route('login-one');
+//                 }
+//                 $no = 0;
+//                 $trx = TrxPelatihanSertifikat::orderBy('nama', 'asc')->get();
+//                 if(Gate::allows('hc_nkp')){
+//                     $trx = TrxPelatihanSertifikat::whereIn('nik',$arr_nik_nkp)->orderBy('nama', 'asc')->get();
+//                 }
+//                 // start cleansing data
+//                 // $return_data = [];
+//                 // $bulan_en = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+//                 // $bulan_id = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+//                 // $bulan_en3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+//                 // // tanggal_mulai => 954
+//                 // $trx = TrxPelatihanSertifikat::where('tanggal_mulai', '!=', '')->orderBy('id', 'asc')->get();
+//                 // foreach($trx as $data){
+//                 //     $tanggal_mulai = $data->tanggal_mulai;
+//                 //     $parts = explode('-', $tanggal_mulai);
+//                 //     if (count($parts) == 3) {
+//                 //         list($d, $m, $y) = explode('-', $tanggal_mulai);
+//                 //         $isValid = false;
+//                 //         try {
+//                 //             $isValid = true;
+//                 //             if(in_array($m, $bulan_en)){
+//                 //                 $index = array_search($m, $bulan_en);
+//                 //             }
+//                 //             else if(in_array($m, $bulan_id)){
+//                 //                 $index = array_search($m, $bulan_id);
+//                 //             }
+//                 //             else if(in_array($m, $bulan_en3)){
+//                 //                 $index = array_search($m, $bulan_en3);
+//                 //             }
+//                 //             $eng = $index + 1;
+//                 //             if(strlen($y) == 2){
+//                 //                 $y = "20$y";
+//                 //             }
+//                 //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
+//                 //             if($isValid){
+//                 //                 $hasil = $parsed->format('Y-m-d');
+//                 //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
+//                 //                 $_trx->tanggal_mulai = $hasil;
+//                 //                 $_trx->update();
+//                 //                 $return_data[] = ['id'=>$data->id, 'tanggal_mulai_before'=>$tanggal_mulai, 'tanggal_mulai_after'=>$hasil];
+//                 //             }
+//                 //         } catch (\Exception $e) {
+//                 //             $isValid = false;
+//                 //         }
+//                 //     }
+// // manual => 4
+// // UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2022-08-02,2022-08-04' WHERE `id`=593;
+// // UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2022-08-06,2022-08-13' WHERE `id`=594;
+// // UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2025-11-04,2025-11-05,2025-11-06,2025-11-07' WHERE `id`=1205;
+// // UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_mulai`='2022-08-30,2022-08-31,2022-09-01,2022-09-02,2022-09-06,2022-09-07,2022-09-08,2022-09-09' WHERE `id`=602;
+//                 // }
+//                 // // tanggal_akhir => 1050
+//                 // $trx = TrxPelatihanSertifikat::where('tanggal_akhir', '!=', '')->orderBy('id', 'asc')->get();
+//                 // foreach($trx as $data){
+//                 //     $tanggal_akhir = $data->tanggal_akhir;
+//                 //     $parts = explode('-', $tanggal_akhir);
+//                 //     if (count($parts) == 3) {
+//                 //         list($d, $m, $y) = explode('-', $tanggal_akhir);
+//                 //         $isValid = false;
+//                 //         try {
+//                 //             $isValid = true;
+//                 //             if(in_array($m, $bulan_en)){
+//                 //                 $index = array_search($m, $bulan_en);
+//                 //             }
+//                 //             else if(in_array($m, $bulan_id)){
+//                 //                 $index = array_search($m, $bulan_id);
+//                 //             }
+//                 //             else if(in_array($m, $bulan_en3)){
+//                 //                 $index = array_search($m, $bulan_en3);
+//                 //             }
+//                 //             $eng = $index + 1;
+//                 //             if(strlen($y) == 2){
+//                 //                 $y = "20$y";
+//                 //             }
+//                 //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
+//                 //             if($isValid){
+//                 //                 $hasil = $parsed->format('Y-m-d');
+//                 //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
+//                 //                 $_trx->tanggal_akhir = $hasil;
+//                 //                 $_trx->update();
+//                 //                 $return_data[] = ['id'=>$data->id, 'tanggal_akhir_before'=>$tanggal_akhir, 'tanggal_akhir_after'=>$hasil];
+//                 //             }
+//                 //         } catch (\Exception $e) {
+//                 //             $isValid = false;
+//                 //         }
+//                 //     }
+// // manual => 4
+// // UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2022-08-09,2022-08-11' WHERE `id`=593;
+// // UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2022-08-06,2022-08-13' WHERE `id`=594;
+// // UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2022-09-13,2022-09-14,2022-09-15' WHERE `id`=602;
+// // UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_akhir`='2025-11-10,2025-11-11,2025-11-12' WHERE `id`=1205;
+//                 // }
+//                 // // tanggal_sertifikat => 780
+//                 // $trx = TrxPelatihanSertifikat::where('tanggal_sertifikat', '!=', '')->orderBy('id', 'asc')->get();
+//                 // foreach($trx as $data){
+//                 //     $tanggal_sertifikat = $data->tanggal_sertifikat;
+//                 //     $parts = explode('-', $tanggal_sertifikat);
+//                 //     if (count($parts) == 3) {
+//                 //         list($d, $m, $y) = explode('-', $tanggal_sertifikat);
+//                 //         $isValid = false;
+//                 //         try {
+//                 //             $isValid = true;
+//                 //             if(in_array($m, $bulan_en)){
+//                 //                 $index = array_search($m, $bulan_en);
+//                 //             }
+//                 //             else if(in_array($m, $bulan_id)){
+//                 //                 $index = array_search($m, $bulan_id);
+//                 //             }
+//                 //             else if(in_array($m, $bulan_en3)){
+//                 //                 $index = array_search($m, $bulan_en3);
+//                 //             }
+//                 //             $eng = $index + 1;
+//                 //             if(strlen($y) == 2){
+//                 //                 $y = "20$y";
+//                 //             }
+//                 //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
+//                 //             if($isValid){
+//                 //                 $hasil = $parsed->format('Y-m-d');
+//                 //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
+//                 //                 $_trx->tanggal_sertifikat = $hasil;
+//                 //                 $_trx->update();
+//                 //                 $return_data[] = ['id'=>$data->id, 'tanggal_sertifikat_before'=>$tanggal_sertifikat, 'tanggal_sertifikat_after'=>$hasil];
+//                 //             }
+//                 //         } catch (\Exception $e) {
+//                 //             $isValid = false;
+//                 //         }
+//                 //     }
+// // manual => 1
+// // UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_sertifikat`='2018-07-01' WHERE `id`=188;
+//                 // }
+//                 // // tanggal_kadaluarsa => 196 '-' + 14 ' '
+//                 // $trx = TrxPelatihanSertifikat::where('tanggal_kadaluarsa', '!=', '')->orderBy('id', 'asc')->get();
+//                 // foreach($trx as $data){
+//                 //     $tanggal_kadaluarsa = $data->tanggal_kadaluarsa;
+//                 //     $parts = explode('-', $tanggal_kadaluarsa);
+//                 //     if (count($parts) == 3) {
+//                 //         list($d, $m, $y) = explode('-', $tanggal_kadaluarsa);
+//                 //         $isValid = false;
+//                 //         try {
+//                 //             $isValid = true;
+//                 //             if(in_array($m, $bulan_en)){
+//                 //                 $index = array_search($m, $bulan_en);
+//                 //             }
+//                 //             else if(in_array($m, $bulan_id)){
+//                 //                 $index = array_search($m, $bulan_id);
+//                 //             }
+//                 //             else if(in_array($m, $bulan_en3)){
+//                 //                 $index = array_search($m, $bulan_en3);
+//                 //             }
+//                 //             $eng = $index + 1;
+//                 //             if(strlen($y) == 2){
+//                 //                 $y = "20$y";
+//                 //             }
+//                 //             $parsed = Carbon::createFromFormat('d-m-Y', "$d-$eng-$y");
+//                 //             if($isValid){
+//                 //                 $hasil = $parsed->format('Y-m-d');
+//                 //                 $_trx = TrxPelatihanSertifikat::findOrFail($data->id);
+//                 //                 $_trx->tanggal_kadaluarsa = $hasil;
+//                 //                 $_trx->update();
+//                 //                 $return_data[] = ['id'=>$data->id, 'tanggal_kadaluarsa_before'=>$tanggal_kadaluarsa, 'tanggal_kadaluarsa_after'=>$hasil];
+//                 //             }
+//                 //         } catch (\Exception $e) {
+//                 //             $isValid = false;
+//                 //         }
+//                 //     }
+// // manual => 29
+// // UPDATE `trx_tbl_pelatihan_sertifikat` SET `tanggal_kadaluarsa`='2027-07-31' WHERE `tanggal_kadaluarsa`='Juli 2027';
+//                 // }
+//                 // $json = json_encode($return_data, JSON_PRETTY_PRINT);
+//                 // $timestamp = now()->format('YmdHis');
+//                 // $filePath = storage_path("app/{$timestamp}.json");
+//                 // file_put_contents($filePath, $json);
+//                 // return $json;
+//                 // end cleansing data
+//                 $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
+//                 $aktif_non = collect([
+//                     '1' => 'Aktif',
+//                     '0' => 'Non Aktif',
+//                 ]);
+//                 $int_ext = collect([
+//                     'Eksternal' => 'Eksternal',
+//                     'Internal' => 'Internal',
+//                 ]);
+//                 $kta = collect([
+//                     'Ada' => 'Ada',
+//                     'Tidak Ada' => 'Tidak Ada',
+//                 ]);
+//                 $arr_jenis = [];
+//                 $arr_aktif_non = [];
+//                 $arr_int_ext = [];
+//                 $arr_kta = [];
+//                 // start filter
+//                 if($request->filter == true){
+//                     $_aktif_non = $request->input('aktif_non', []);
+//                     $_jenis = $request->input('jenis', []);
+//                     $_int_ext = $request->input('int_ext', []);
+//                     $_kta = $request->input('kta', []);
+//                     // dd($_kta);
+//                     if(count($_aktif_non) > 0){
+//                         $arr_aktif_non = $_aktif_non;
+//                     }
+//                     // else{
+//                     //     $arr_aktif_non = array();
+//                     // }
+//                     if(count($_jenis) > 0){
+//                         $arr_jenis = $_jenis;
+//                     }
+//                     // else{
+//                     //     $arr_jenis = array();
+//                     // }
+//                     if(count($_int_ext) > 0){
+//                         $arr_int_ext = $_int_ext;
+//                     }
+//                     // else{
+//                     //     $arr_int_ext = array();
+//                     // }
+//                     if(count($_kta) > 0){
+//                         $arr_kta = $_kta;
+//                     }
+//                     // else{
+//                     //     $arr_kta = array();
+//                     // }
+//                 }else{
+//                     $arr_aktif_non = array();
+//                     $arr_int_ext = array();
+//                     $arr_jenis = array();
+//                     $arr_kta = array();
+//                 }
+//                 // end filter
+//                 $back_url = route('pelatihan.show', [(new OpenDataController)->encryptWithKey(4), 'view' => (new OpenDataController)->encryptWithKey('list_certificate')]);
+//                 return view('formulir.pelatihan.index_sertifikat', compact('trx', 'no', 'back_url', 'jenis', 'aktif_non', 'int_ext', 'kta', 'arr_jenis', 'arr_aktif_non', 'arr_int_ext', 'arr_kta'));
+//                 break;
             case 'evaluasi':
                 $id_peserta = (new OpenDataController)->decryptWithKey($request->id_peserta);
                 $_trx = TrxPelatihanPeserta::find($id_peserta);
@@ -1340,7 +1396,7 @@ class TrxPelatihanController extends Controller
             $data->save();
             return redirect()->to($request->back_url)->with( 'msg', 'Data is saved successfully.' );
         }
-        elseif($request->type == 'doc_update'){
+        else if($request->type == 'doc_update'){
             $id = (new OpenDataController)->decryptWithKey($id);
             $data = TrxPelatihanDokumen::find($id);
             $tanggal_ujian = $request->input('tanggal_ujian', []);
@@ -1392,7 +1448,7 @@ class TrxPelatihanController extends Controller
             $data->update();
             return redirect()->to($request->back_url)->with( 'msg', 'Data is saved successfully.' );
         }
-        elseif($request->type == 'evaluasi'){
+        else if($request->type == 'evaluasi'){
             $id = (new OpenDataController)->decryptWithKey($id);
             $jawaban = collect($request->all())->filter(fn($value, $key) => str_starts_with($key, 'jawaban'));
             foreach($jawaban as $key => $value){

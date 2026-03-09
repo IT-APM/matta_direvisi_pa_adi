@@ -39,33 +39,84 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    {{-- <a href="{{ route('pelatihan.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="{{ route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey(4), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('list_certificate')]) }}" class="btn btn-primary" type="button"><i class="fa fa-file-text-o" aria-hidden="true"></i> List of Certificate</a>
+                    @if (count($errors) > 0)
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h6>Upload File is ERROR</h6>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+                    <a href="{{ route('pelatihan_sertifikat.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                     <div class="collapse" id="collapse_filter">
-                        <form class="mt-2" action="{{ route('pelatihan.index') }}" method="get" enctype="multipart/form-data">
+                        <form class="mt-2" action="{{ route('pelatihan_sertifikat.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-sm-3">
-                                    <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_pengajuan(this)" /> Check All
-                                    <label class="d-block" for="status_pengajuan">
-                                        @foreach($status_pengajuan as $data)
-                                        <input class="checkbox_animated" id="status_pengajuan[]" name="status_pengajuan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_status_pengajuan)) checked @endif> {{ $data->status_pengajuan }}<br/>
+                                    <label class="h6">Status</label>&nbsp;<input type="checkbox" onClick="toggle_aktif_non(this)" /> Check All
+                                    <label class="d-block" for="aktif_non">
+                                        @foreach($aktif_non as $key => $value)
+                                        <input class="checkbox_animated" id="aktif_non[]" name="aktif_non[]" type="checkbox" value="{{ $key }}" @if(in_array($key, $arr_aktif_non)) checked @endif> {{ $value }}<br/>
+                                        @endforeach
+                                    </label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="h6">Jenis Pelatihan</label>&nbsp;<input type="checkbox" onClick="toggle_jenis(this)" /> Check All
+                                    <label class="d-block" for="jenis">
+                                        @foreach($jenis as $data)
+                                        <input class="checkbox_animated" id="jenis[]" name="jenis[]" type="checkbox" value="{{ $data->jenis }}" @if(in_array($data->jenis, $arr_jenis)) checked @endif> {{ $data->jenis }}<br/>
+                                        @endforeach
+                                    </label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="h6">Mode Pelatihan</label>&nbsp;<input type="checkbox" onClick="toggle_int_ext(this)" /> Check All
+                                    <label class="d-block" for="int_ext">
+                                        @foreach($int_ext as $key => $value)
+                                        <input class="checkbox_animated" id="int_ext[]" name="int_ext[]" type="checkbox" value="{{ $key }}" @if(in_array($key, $arr_int_ext)) checked @endif> {{ $value }}<br/>
+                                        @endforeach
+                                    </label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="h6">KTA</label>&nbsp;<input type="checkbox" onClick="toggle_kta(this)" /> Check All
+                                    <label class="d-block" for="kta">
+                                        @foreach($kta as $key => $value)
+                                        <input class="checkbox_animated" id="kta[]" name="kta[]" type="checkbox" value="{{ $key }}" @if(in_array($key, $arr_kta)) checked @endif> {{ $value }}<br/>
                                         @endforeach
                                     </label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
+                                    <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="{{ route('pelatihan_sertifikat.index') }}" class="btn btn-info" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
                                 </div>
                             </div>
                         </form>
                     </div>
-                    <br/><br/> --}}
+                    <div class="col-sm-6 mt-2">
+                        <h6>Upload Sertifikat</h6>
+                        <form action="{{ route('pelatihan_sertifikat.upload_file', 0) }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
+                        @csrf
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <input name="template" id="template" class="form-control" type="file" required="">
+                                <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
+                                <br/><a href="{{ asset('assets/template/template_import_sertifikat_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download Template</a>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
                     <div class="table-responsive">
                         <table class="display" id="_datatable">
                             <thead>
                                 <tr>
                                     <th>No</th>
                                     <th>Action</th>
+                                    <th>Status</th>
                                     <th>Nama</th>
                                     <th>NIP</th>
                                     <th>Jenis Pelatihan</th>
@@ -88,17 +139,28 @@
                                 <tr>
                                     <td>{{ ++$no }}</td>
                                     <td>
-                                        {{-- jika ada id pelatihan --}}
-                                        @if(!empty($data->id_trx))
-                                        <a href="{{ route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
-                                        @else
-                                            <a href="{{ route('pelatihan_sertifikat.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
-                                            {{-- jika tidak ada id pelatihan maka gunakan link dari gdrive --}}
-                                            @if(!empty($data->formulir_link))
-                                            <a href="{{ $data->formulir_link }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        <div class="d-flex align-items-center gap-1">
+                                            {{-- jika ada id pelatihan --}}
+                                            @if(!empty($data->id_trx))
+                                            <a href="{{ route('pelatihan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id_trx), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('pdf')]) }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                            @else
+                                                <a href="{{ route('pelatihan_sertifikat.edit', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt"></i></a>
+                                                {{-- jika tidak ada id pelatihan maka gunakan link dari gdrive --}}
+                                                @if(!empty($data->formulir_link))
+                                                <a href="{{ $data->formulir_link }}" data-toggle="tooltip" title="PDF" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                                @endif
                                             @endif
-                                        @endif
+                                            <form action="{{ route('pelatihan_sertifikat.destroy', $data->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <ul class="action">
+                                                <li class="delete"><a href="#" id="btn-delete" name="btn-delete" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></a></li>
+                                            </ul>
+                                            </form>
+                                        </div>
                                     </td>
+                                    @php $is_status = App\Models\Karyawan::where(['nik'=>$data->nik, 'is_aktif'=>1])->exists(); @endphp
+                                    <td>@if ($is_status) <span class="badge badge-success">Aktif</span> @else <span class="badge badge-danger">Non Aktif</span> @endif</td>
                                     <td>{{ $data->nama }}</td>
                                     <td>{{ $data->nik }}</td>
                                     <td>{{ $data->jenis }}</td>
@@ -107,7 +169,7 @@
                                     <td>{{ $data->kta }}</td>
                                     <td>{{ $data->judul }}@if(!empty($data->int_ext))<br/> ({{ $data->int_ext }}) @endif</td>
                                     <td>{{ $data->lembaga }}</td>
-                                    <td>{{ $data->biaya }}</td>
+                                    <td>Rp.{{ number_format($data->biaya, 0) }}</td>
                                     <td>
                                         @if(!empty($data->tanggal_mulai) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $data->tanggal_mulai))
                                         {{ Carbon\Carbon::createFromFormat('Y-m-d', $data->tanggal_mulai)->format('d-m-Y') }}
@@ -152,25 +214,32 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/vfs_fonts.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
+<script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
 <script type="text/javascript">
-// function toggle_status_pengajuan(source) {
-//     checkboxes = document.getElementsByName('status_pengajuan[]');
-//     for(var i=0, n=checkboxes.length;i<n;i++) {
-//         checkboxes[i].checked = source.checked;
-//     }
-// }
-// function toggle_pengaju(source) {
-//     checkboxes = document.getElementsByName('pengaju[]');
-//     for(var i=0, n=checkboxes.length;i<n;i++) {
-//         checkboxes[i].checked = source.checked;
-//     }
-// }
-// function toggle_atasan_pengaju(source) {
-//     checkboxes = document.getElementsByName('atasan_pengaju[]');
-//     for(var i=0, n=checkboxes.length;i<n;i++) {
-//         checkboxes[i].checked = source.checked;
-//     }
-// }
+function toggle_aktif_non(source) {
+    checkboxes = document.getElementsByName('aktif_non[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_jenis(source) {
+    checkboxes = document.getElementsByName('jenis[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_int_ext(source) {
+    checkboxes = document.getElementsByName('int_ext[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_kta(source) {
+    checkboxes = document.getElementsByName('kta[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
 // 
 $('#_datatable').DataTable( {
 	// dom: 'lBfrtip',
@@ -182,5 +251,21 @@ $('#_datatable').DataTable( {
 	],
     "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
 } );
+$(document).on('click', '#btn-delete', function(event) {
+    var form = $(this).closest("form");
+    event.preventDefault();
+    swal({
+            title: "Are you sure to delete this?",
+            text: "If you delete this, it will be gone forever.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                form.submit();
+            }
+        });
+});
 </script>
 @endsection
