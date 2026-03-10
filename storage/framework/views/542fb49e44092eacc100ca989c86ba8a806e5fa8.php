@@ -64,7 +64,7 @@
                         </form>
                         <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                         <div class="collapse" id="collapse_filter">
-                            <form class="m-4" action="<?php echo e(route('working.show', 21)); ?>" method="get" enctype="multipart/form-data">
+                            <form class="mt-2" action="<?php echo e(route('working.show', 21)); ?>" method="get" enctype="multipart/form-data">
                                 <input type="hidden" id="req" name="req" value="view">
                                 <div class="row">
                                     <div class="col-sm-4">

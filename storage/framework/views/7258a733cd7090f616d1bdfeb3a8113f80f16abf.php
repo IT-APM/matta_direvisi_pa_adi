@@ -473,6 +473,7 @@
                                 <li><a href="<?php echo e(route('jadwalcls.index')); ?>">CLS Project</a></li>
                                 <li><a href="<?php echo e(route('jadwalcls2.index')); ?>">CLS Project 2</a></li>
                                 <li><a href="<?php echo e(route('jadwalcls3.index')); ?>">CLS Project 3</a></li>
+                                <li><a href="<?php echo e(route('working.show', [22, 'req'=>'view'])); ?>">NOC 3 Group</a></li>
                                 <li><a href="<?php echo e(route('jadwalnoc.index')); ?>">NOC Alita Fiber Hub</a></li>
                                 <li><a href="<?php echo e(route('jadwalnoc2.index')); ?>">NOC Alita Fiber Hub 2</a></li>
                                 <li><a href="<?php echo e(route('jadwalqats.index')); ?>">QA Technical Support</a></li>

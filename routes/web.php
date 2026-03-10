@@ -297,6 +297,7 @@ Route::post('recruitment/pedoman_post', [ TrxRecruitmentController::class, 'pedo
 Route::resource('noattendance', NoAttendanceController::class)->middleware('can:hc');
 Route::resource('overtime', OvertimeController::class)->middleware('auth');
 Route::resource('working', WorkingDayController::class)->middleware('can:hc');
+Route::post('working/upload_jadwal/{id}', [WorkingDayController::class, 'upload_jadwal'])->name('working.upload_jadwal')->middleware('can:hc');
 Route::resource('wg', WorkingGroupController::class)->middleware('auth');
 // 
 Route::resource('cico_att', TrxCiCoAttendanceController::class)->middleware('can:iphone');
