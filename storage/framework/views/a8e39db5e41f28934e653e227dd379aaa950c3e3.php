@@ -94,8 +94,14 @@
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="penerbit">Penerbit</label>
-                            <input name="penerbit" id="penerbit" class="form-control" type="text" required="" <?php if($status=='edit'): ?> value="<?php echo e($trx->penerbit); ?>" <?php endif; ?>>
+                            <select class="form-select col-sm-12" id="penerbit" name="penerbit" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                <?php $__currentLoopData = $penerbit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($data->penerbit); ?>" <?php if($status=='edit' ): ?> <?php if($data->penerbit == $trx->penerbit): ?> selected <?php endif; ?> <?php endif; ?> ><?php echo e($data->penerbit); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
+                            
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="kta">Kartu Tanda Anggota</label>
@@ -119,7 +125,7 @@
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="nomor_sertifikat">No Sertifikat</label>
-                            <input name="nomor_sertifikat" id="nomor_sertifikat" class="form-control" type="text" required="" <?php if($status=='edit'): ?> value="<?php echo e($trx->nomor_sertifikat); ?>" <?php endif; ?>>
+                            <input name="nomor_sertifikat" id="nomor_sertifikat" class="form-control" type="text" <?php if($status=='edit'): ?> value="<?php echo e($trx->nomor_sertifikat); ?>" <?php endif; ?>>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-6 mb-2">
@@ -129,27 +135,27 @@
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="tanggal_mulai">Tanggal Mulai</label>
-                            <input class="form-control" type="date" name="tanggal_mulai" id="tanggal_mulai" placeholder="Tanggal Mulai" required="" <?php if($status=='edit'): ?> value="<?php echo e($trx->tanggal_mulai); ?>" <?php endif; ?>>
+                            <input class="form-control" type="date" name="tanggal_mulai" id="tanggal_mulai" placeholder="Tanggal Mulai" <?php if($status=='edit'): ?> value="<?php echo e($trx->tanggal_mulai); ?>" <?php endif; ?>>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="tanggal_akhir">Tanggal Akhir</label>
-                            <input class="form-control" type="date" name="tanggal_akhir" id="tanggal_akhir" placeholder="Tanggal Akhir" required="" <?php if($status=='edit'): ?> value="<?php echo e($trx->tanggal_akhir); ?>" <?php endif; ?>>
+                            <input class="form-control" type="date" name="tanggal_akhir" id="tanggal_akhir" placeholder="Tanggal Akhir" <?php if($status=='edit'): ?> value="<?php echo e($trx->tanggal_akhir); ?>" <?php endif; ?>>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="tanggal_sertifikat">Tanggal Sertifikat</label>
-                            <input class="form-control" type="date" name="tanggal_sertifikat" id="tanggal_sertifikat" placeholder="Tanggal Sertifikat" required="" <?php if($status=='edit'): ?> value="<?php echo e($trx->tanggal_sertifikat); ?>" <?php endif; ?>>
+                            <input class="form-control" type="date" name="tanggal_sertifikat" id="tanggal_sertifikat" placeholder="Tanggal Sertifikat" <?php if($status=='edit'): ?> value="<?php echo e($trx->tanggal_sertifikat); ?>" <?php endif; ?>>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="tanggal_kadaluarsa">Tanggal Kedaluwarsa</label>
-                            <input class="form-control" type="date" name="tanggal_kadaluarsa" id="tanggal_kadaluarsa" placeholder="Tanggal Kedaluwarsa" required="" <?php if($status=='edit'): ?> value="<?php echo e($trx->tanggal_kadaluarsa); ?>" <?php endif; ?>>
+                            <input class="form-control" type="date" name="tanggal_kadaluarsa" id="tanggal_kadaluarsa" placeholder="Tanggal Kedaluwarsa" <?php if($status=='edit'): ?> value="<?php echo e($trx->tanggal_kadaluarsa); ?>" <?php endif; ?>>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-12 mb-2">
                             <label class="form-label" for="formulir_link">Link Formulir</label>
-                            <input name="formulir_link" id="formulir_link" class="form-control" type="text" required="" <?php if($status=='edit'): ?> value="<?php echo e($trx->formulir_link); ?>" <?php endif; ?>>
+                            <input name="formulir_link" id="formulir_link" class="form-control" type="text" <?php if($status=='edit'): ?> value="<?php echo e($trx->formulir_link); ?>" <?php endif; ?>>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-12 mb-2">

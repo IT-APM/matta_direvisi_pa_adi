@@ -56,30 +56,30 @@
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <label class="form-label" for="kesehatan">Plafon kesehatan</label>
-                                    <input type="number" min="0" name="kesehatan" id="kesehatan" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->kesehatan}}" @endif >
+                                    <input type="number" min="0" name="kesehatan" id="kesehatan" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->kesehatan}}" @endif oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label" for="lensa">Plafon lensa</label>
-                                    <input type="number" min="0" name="lensa" id="lensa" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->lensa}}" @endif >
+                                    <input type="number" min="0" name="lensa" id="lensa" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->lensa}}" @endif oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label" for="frame">Plafon frame</label>
-                                    <input type="number" min="0" name="frame" id="frame" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->frame}}" @endif >
+                                    <input type="number" min="0" name="frame" id="frame" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->frame}}" @endif oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)">
                                 </div>
                             </div>
                             <br />
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <label class="form-label" for="kehamilan">Plafon kehamilan</label>
-                                    <input type="number" min="0" name="kehamilan" id="kehamilan" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->kehamilan}}" @endif >
+                                    <input type="number" min="0" name="kehamilan" id="kehamilan" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->kehamilan}}" @endif oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label" for="persalinan_normal">Plafon persalinan normal</label>
-                                    <input type="number" min="0" name="persalinan_normal" id="persalinan_normal" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->persalinan_normal}}" @endif >
+                                    <input type="number" min="0" name="persalinan_normal" id="persalinan_normal" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->persalinan_normal}}" @endif oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label" for="persalinan_caesar">Plafon persalinan caesar</label>
-                                    <input type="number" min="0" name="persalinan_caesar" id="persalinan_caesar" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->persalinan_caesar}}" @endif >
+                                    <input type="number" min="0" name="persalinan_caesar" id="persalinan_caesar" class="form-control numbers" required="" @if ($status=='edit' ) value="{{$plafon->persalinan_caesar}}" @endif oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)">
                                 </div>
                             </div>
                             <br />
@@ -99,4 +99,28 @@
 <script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
 <script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 
+<script type="text/javascript">
+function use_number(node) {
+  var empty_val = false;
+  const value = node.value;
+//   if(value==0){
+//     alert('Jumlah tidak boleh 0!');
+//   }
+  if (node.value == '')
+    empty_val = true;
+  node.type = 'number';
+  if (!empty_val)
+    node.value = Number(value.replace(/,/g, '')); // or equivalent per locale
+}
+// 
+function use_text(node) {
+  var empty_val = false;
+  const value = Number(node.value);
+  if (node.value == '')
+    empty_val = true;
+  node.type = 'text';
+  if (!empty_val)
+    node.value = value.toLocaleString('en');  // or other formatting
+}
+</script>
 @endsection

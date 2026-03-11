@@ -208,7 +208,8 @@ class TrxPelatihanSertifikatController extends Controller
             'Ada' => 'Ada',
             'Tidak Ada' => 'Tidak Ada',
         ]);
-        return view('formulir.pelatihan.upsert_sertifikat', compact('status', 'jenis', 'int_ext', 'kta'));
+        $penerbit = TrxPelatihanSertifikat::select('penerbit')->distinct()->orderBy('penerbit', 'asc')->get();
+        return view('formulir.pelatihan.upsert_sertifikat', compact('status', 'jenis', 'int_ext', 'kta', 'penerbit'));
     }
 
     /**
@@ -275,7 +276,8 @@ class TrxPelatihanSertifikatController extends Controller
             'Ada' => 'Ada',
             'Tidak Ada' => 'Tidak Ada',
         ]);
-        return view('formulir.pelatihan.upsert_sertifikat', compact('trx', 'status', 'jenis', 'int_ext', 'kta'));
+        $penerbit = TrxPelatihanSertifikat::select('penerbit')->distinct()->orderBy('penerbit', 'asc')->get();
+        return view('formulir.pelatihan.upsert_sertifikat', compact('trx', 'status', 'jenis', 'int_ext', 'kta', 'penerbit'));
     }
 
     /**

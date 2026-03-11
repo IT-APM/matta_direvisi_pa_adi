@@ -95,8 +95,15 @@
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="penerbit">Penerbit</label>
-                            <input name="penerbit" id="penerbit" class="form-control" type="text" required="" @if($status=='edit') value="{{ $trx->penerbit }}" @endif>
+                            <select class="form-select col-sm-12" id="penerbit" name="penerbit" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($penerbit as $data)
+                                <option value="{{ $data->penerbit }}" @if ($status=='edit' ) @if($data->penerbit == $trx->penerbit) selected @endif @endif >{{ $data->penerbit }}</option>
+                                @endforeach
+                            </select>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
+                            {{-- <input name="penerbit" id="penerbit" class="form-control" type="text" required="" @if($status=='edit') value="{{ $trx->penerbit }}" @endif>
+                            <div class="invalid-feedback txt-danger">Field is required.</div> --}}
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="kta">Kartu Tanda Anggota</label>
@@ -120,7 +127,7 @@
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="nomor_sertifikat">No Sertifikat</label>
-                            <input name="nomor_sertifikat" id="nomor_sertifikat" class="form-control" type="text" required="" @if($status=='edit') value="{{ $trx->nomor_sertifikat }}" @endif>
+                            <input name="nomor_sertifikat" id="nomor_sertifikat" class="form-control" type="text" @if($status=='edit') value="{{ $trx->nomor_sertifikat }}" @endif>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-6 mb-2">
@@ -130,27 +137,27 @@
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="tanggal_mulai">Tanggal Mulai</label>
-                            <input class="form-control" type="date" name="tanggal_mulai" id="tanggal_mulai" placeholder="Tanggal Mulai" required="" @if($status=='edit') value="{{ $trx->tanggal_mulai }}" @endif>
+                            <input class="form-control" type="date" name="tanggal_mulai" id="tanggal_mulai" placeholder="Tanggal Mulai" @if($status=='edit') value="{{ $trx->tanggal_mulai }}" @endif>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="tanggal_akhir">Tanggal Akhir</label>
-                            <input class="form-control" type="date" name="tanggal_akhir" id="tanggal_akhir" placeholder="Tanggal Akhir" required="" @if($status=='edit') value="{{ $trx->tanggal_akhir }}" @endif>
+                            <input class="form-control" type="date" name="tanggal_akhir" id="tanggal_akhir" placeholder="Tanggal Akhir" @if($status=='edit') value="{{ $trx->tanggal_akhir }}" @endif>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="tanggal_sertifikat">Tanggal Sertifikat</label>
-                            <input class="form-control" type="date" name="tanggal_sertifikat" id="tanggal_sertifikat" placeholder="Tanggal Sertifikat" required="" @if($status=='edit') value="{{ $trx->tanggal_sertifikat }}" @endif>
+                            <input class="form-control" type="date" name="tanggal_sertifikat" id="tanggal_sertifikat" placeholder="Tanggal Sertifikat" @if($status=='edit') value="{{ $trx->tanggal_sertifikat }}" @endif>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="tanggal_kadaluarsa">Tanggal Kedaluwarsa</label>
-                            <input class="form-control" type="date" name="tanggal_kadaluarsa" id="tanggal_kadaluarsa" placeholder="Tanggal Kedaluwarsa" required="" @if($status=='edit') value="{{ $trx->tanggal_kadaluarsa }}" @endif>
+                            <input class="form-control" type="date" name="tanggal_kadaluarsa" id="tanggal_kadaluarsa" placeholder="Tanggal Kedaluwarsa" @if($status=='edit') value="{{ $trx->tanggal_kadaluarsa }}" @endif>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-12 mb-2">
                             <label class="form-label" for="formulir_link">Link Formulir</label>
-                            <input name="formulir_link" id="formulir_link" class="form-control" type="text" required="" @if($status=='edit') value="{{ $trx->formulir_link }}" @endif>
+                            <input name="formulir_link" id="formulir_link" class="form-control" type="text" @if($status=='edit') value="{{ $trx->formulir_link }}" @endif>
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-12 mb-2">

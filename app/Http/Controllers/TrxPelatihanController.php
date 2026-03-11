@@ -825,17 +825,17 @@ class TrxPelatihanController extends Controller
                 // }
                 return view('formulir.pelatihan.peserta_index', compact('trx', 'no', 'arrJenis', 'back_url', 'int_ext'));
                 break;
-//             case 'sertifikat':
-//                 if (!auth()->check()) {
-//                     session(['url.intended' => url()->full()]);
-//                     return redirect()->route('login-one');
-//                 }
-//                 $id_peserta = (new OpenDataController)->decryptWithKey($request->id_peserta);
-//                 $trx = TrxPelatihanPeserta::find($id_peserta);
-//                 $_trx = TrxPelatihanDokumen::where(['id_peserta'=>$id_peserta])->orderBy('id', 'asc')->get();
-//                 $no = 0;
-//                 return view('formulir.pelatihan.doc_index', compact('trx', '_trx', 'no', 'arrJenis', 'back_url', 'int_ext'));
-//                 break;
+            case 'sertifikat':
+                if (!auth()->check()) {
+                    session(['url.intended' => url()->full()]);
+                    return redirect()->route('login-one');
+                }
+                $id_peserta = (new OpenDataController)->decryptWithKey($request->id_peserta);
+                $trx = TrxPelatihanPeserta::find($id_peserta);
+                $_trx = TrxPelatihanDokumen::where(['id_peserta'=>$id_peserta])->orderBy('id', 'asc')->get();
+                $no = 0;
+                return view('formulir.pelatihan.doc_index', compact('trx', '_trx', 'no', 'arrJenis', 'back_url', 'int_ext'));
+                break;
 //             case 'list_certificate':
 //                 $arr_nik_nkp = new Karyawan();
 //                 $arr_nik_nkp = $arr_nik_nkp->getNikNkp();

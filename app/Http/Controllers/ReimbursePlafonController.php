@@ -115,12 +115,12 @@ class ReimbursePlafonController extends Controller
         // return response()->json( [ 'data' => $request->all() ], 200 );
         $nik_karyawan = $request->nik_karyawan;
         $periode = $request->periode;
-        $kesehatan = $request->kesehatan;
-        $lensa = $request->lensa;
-        $frame = $request->frame;
-        $kehamilan = $request->kehamilan;
-        $persalinan_normal = $request->persalinan_normal;
-        $persalinan_caesar = $request->persalinan_caesar;
+        $kesehatan = str_replace(',', '', $request->kesehatan);
+        $lensa = str_replace(',', '', $request->lensa);
+        $frame = str_replace(',', '', $request->frame);
+        $kehamilan = str_replace(',', '', $request->kehamilan);
+        $persalinan_normal = str_replace(',', '', $request->persalinan_normal);
+        $persalinan_caesar = str_replace(',', '', $request->persalinan_caesar);
         $where = ['nik_karyawan'=>$nik_karyawan, 'periode'=>$periode];
         $check = ReimbursePlafon::where($where)->exists();
         if($check){
@@ -181,12 +181,12 @@ class ReimbursePlafonController extends Controller
     {
         //
         $trx = ReimbursePlafon::find( $id );
-        $trx->kesehatan = $request->kesehatan;
-        $trx->lensa = $request->lensa;
-        $trx->frame = $request->frame;
-        $trx->kehamilan = $request->kehamilan;
-        $trx->persalinan_normal = $request->persalinan_normal;
-        $trx->persalinan_caesar = $request->persalinan_caesar;
+        $trx->kesehatan = str_replace(',', '', $request->kesehatan);
+        $trx->lensa = str_replace(',', '', $request->lensa);
+        $trx->frame = str_replace(',', '', $request->frame);
+        $trx->kehamilan = str_replace(',', '', $request->kehamilan);
+        $trx->persalinan_normal = str_replace(',', '', $request->persalinan_normal);
+        $trx->persalinan_caesar = str_replace(',', '', $request->persalinan_caesar);
         $trx->update();
         return redirect('plafon')->with('msg', 'Data is saved successfully.');
     }
