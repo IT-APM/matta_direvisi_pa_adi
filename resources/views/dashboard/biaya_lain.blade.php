@@ -23,8 +23,8 @@
 @endsection
 
 @section('breadcrumb-items')
-    <li class="breadcrumb-item">Home</li>
-    <li class="breadcrumb-item active">Dashboard</li>
+    <li class="breadcrumb-item">Dashboard</li>
+    <li class="breadcrumb-item active">Biaya Lain</li>
 @endsection
 
 @section('content')

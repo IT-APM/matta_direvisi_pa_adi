@@ -30,6 +30,206 @@ use Elibyy\TCPDF\Facades\TCPDF;
 // 
 class TrxPenilaianController extends Controller
 {
+    public function kontrak(Request $request, $id)
+    {
+        // dd($request->all(), $id);$pdf::AddPage('P', 'A4');
+        $waktu = date('YmdHis');
+        $filename = 'Kontrak PKWT '.$waktu.'.pdf';
+        $pdf = new TCPDF;
+        $pdf::SetTitle('Kontrak PKWT');
+        $pdf::SetFont('times', '', 10, '', true);
+        $pdf::AddPage();
+        $pdf::SetAutoPageBreak(true, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header.png');
+        $x = 7;
+        $y = 23;
+        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        $html = '<div style="text-align:center;"><b><u>PERJANJIAN KERJA WAKTU TERTENTU</u></b><br/>
+        No.041-PKWT/ADM-APM/PC/III/2026<br/>
+        ANTARA<br/>
+        <b><u>PT. ALITA PRAYA MITRA</u></b><br/>
+        DENGAN<br/>
+        <b><u>ANDREA WULANDARI IRAWAN</u></b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=0, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;">Pada hari ini Senin Dua Maret Dua Ribu Dua Puluh Enam di Kantor PT. ALITA PRAYA MITRA Jl. Muara Dalam No.108 Kelurahan Tanjung Barat Kecamatan Jagakarsa, Jakarta Selatan, telah tercapai kesepakatan antara pihak-pihak :</div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=30, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">I.</td>
+            <td width="96%"><b>PT. ALITA PRAYA MITRA</b> berkedudukan di Jl. Muara Dalam No.108 Kelurahan Tanjung Barat Kecamatan Jagakarsa, Jakarta 12530, yang dalam perbuatan hukum ini diwakili secara sah oleh <b>Khatrin Rismasany</b> dalam kapasitasnya mewakili Direksi sebagai People & Culture Manager, dan untuk selanjutnya disebut sebagai <b>Pihak Pertama</b></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>II.</td>
+            <td><table>
+                    <tr>
+                        <td width="20%">Nama</td>
+                        <td width="2%">:</td>
+                        <td width="78%">Andrea Wulandari Irawan</td>
+                    </tr>
+                    <tr>
+                        <td>Tempat & tgl lahir</td>
+                        <td>:</td>
+                        <td>Jakarta / 7 Agustus 1995</td>
+                    </tr>
+                    <tr>
+                        <td>NIK/KTP</td>
+                        <td>:</td>
+                        <td>3273184708950005</td>
+                    </tr>
+                    <tr>
+                        <td>Jenis Kelamin</td>
+                        <td>:</td>
+                        <td>Perempuan</td>
+                    </tr>
+                    <tr>
+                        <td>Agama</td>
+                        <td>:</td>
+                        <td>Islam</td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>:</td>
+                        <td>Belum Menikah</td>
+                    </tr>
+                    <tr>
+                        <td>Pendidikan terakhir</td>
+                        <td>:</td>
+                        <td>S2 (Magister Manajemen Internasional)</td>
+                    </tr>
+                    <tr>
+                        <td>Alamat</td>
+                        <td>:</td>
+                        <td>Jl. Bona Indah A VI/7, RT 006 RW 006, Lebak Bulus, Cilandak, Jakarta Selatan, DKI Jakarta</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>Untuk selanjutnya disebut <b>Pihak Kedua</b></td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;">Dan secara bersamaan dalam Perjanjian Kerja Waktu Tertentu (<b>“Perjanjian”</b>) ini disebut sebagai <b>Para Pihak</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=65, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:center;"><b>PASAL 1<br/>HUBUNGAN KERJA DAN MASA KERJA</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=10, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1)</td>
+            <td width="96%">Bahwa Pihak Pertama dengan ini sepakat untuk mempekerjakan Pihak Kedua secara tidak tetap dan Pihak Kedua dengan ini sepakat untuk bekerja bagi dan untuk kepentingan Pihak Pertama secara tidak tetap dengan hubungan kerja berdasarkan Perjanjian Kerja Waktu Tertentu (PKWT) sebagaimana ditentukan dalam Perjanjian ini</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2)</td>
+            <td>Yang dimaksud dengan Waktu Tertentu adalah bahwa Pihak Pertama mempekerjakan Pihak Kedua di bawah Divisi <b>Corporate Secretary</b> selama 10 (sepuluh) bulan terhitung mulai tanggal 2 Maret 2026 sampai dengan 31 Desember 2026 dan dapat diperpanjang dan/atau diperbaharui atas persetujuan kedua belah pihak</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>3)</td>
+            <td>Perjanjian ini adalah berbasis proyek dan bisa diakhiri jika proyek berakhir sebelum masa kontrak yang tercantum dalam Pasal 1 ayat (2)</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>4)</td>
+            <td>Dengan berakhirnya Perjanjian sebagaimana yang dimaksud pada ayat (2) di atas, maka Karyawan berhak mendapatkan uang kompensasi sebagaimana diatur pada PP No. 35 tahun 2021 atau Peraturan Perundang-undangan yang berlaku, maka Pihak Kedua berhak atas uang kompensasi. Pemberian uang kompensasi diberikan oleh Pihak Pertama pada saat bersamaan dengan tanggal pembayaran upah bulanan</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // page 2
+        $pdf::AddPage();
+        $pdf::SetAutoPageBreak(true, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
+        $x = 7;
+        $y = 23;
+        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        $html = '<div style="text-align:center;"><b>PASAL 2<br/>PEKERJAAN DAN PENEMPATAN</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1)</td>
+            <td width="96%">Pekerjaan sebagaimana dimaksud dalam Perjanjian ini adalah sebagai berikut:<br/>
+                <table>
+                        <tr>
+                            <td width="2%">a.</td>
+                            <td width="20%">Posisi / Jabatan</td>
+                            <td width="2%">:</td>
+                            <td width="76%">Corporate Secretary Officer</td>
+                        </tr>
+                        <tr>
+                            <td>b.</td>
+                            <td>Level</td>
+                            <td>:</td>
+                            <td>Supervisor</td>
+                        </tr>
+                        <tr>
+                            <td>c.</td>
+                            <td>Unit Kerja</td>
+                            <td>:</td>
+                            <td>Corporate Secretary</td>
+                        </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2)</td>
+            <td>Selain melakukan pekerjaan sebagaimana dimaksud dalam ayat (1) Pasal ini, Pihak Kedua sepakat untuk melakukan pekerjaan tambahan diluar ruang lingkup Pekerjaan tersebut yang ditugaskan oleh Pihak Pertama sepanjang untuk kepentingan ruang lingkup pekerjaan tersebut</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>3)</td>
+            <td>Pihak Kedua bertempat kerja di Kantor Pihak Pertama, Jl. Muara Dalam No.108 Kelurahan Tanjung Barat Kecamatan Jagakarsa, Jakarta Selatan dan/atau di tempat yang telah ditunjuk oleh Pihak Pertama</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>4)</td>
+            <td>Bahwa yang bersangkutan bersedia untuk ditugaskan dan/atau ditempatkan di Perusahaan lain dalam lingkungan Pihak Pertama dan/atau anak perusahaannya</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>5)</td>
+            <td>Pihak Kedua dapat melakukan perjalanan dinas selama diperintahkan oleh Atasan Langsung pada Divisi terkait dan/atau Direktorat lainnya. Untuk itu Pihak Kedua mendapatkan Biaya Perjalanan Dinas sesuai dengan ketentuan yang berlaku (<b>“Biaya Perjalanan Dinas”</b>)</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        $pdf::Output(public_path($filename), 'I');
+        return response()->download(public_path($filename));
+        
+    }
     /**
      * Display a listing of the resource.
      *

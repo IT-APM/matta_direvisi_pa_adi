@@ -761,7 +761,7 @@ class TrxPayrollController extends Controller
                     // $pdf::Image($qrcode, 50, 245, 10, 10, '', '', '', false, 300, '', false, false, 0);
                     // reviewer2
                     $qrcode = public_path('assets/penyesuaian_upah/'.$reviewer2->qrcode);
-                    $pdf::Image($qrcode, 11.4, 225, 30, 30, '', '', '', false, 300, '', false, false, 0);;
+                    $pdf::Image($qrcode, 11.4, 225, 30, 30, '', '', '', false, 300, '', false, false, 0);
                 }
                 // 
                 TrxPayrollEmail::where('id', $request->email_id)->update(['spu' => json_encode($str_html)]);

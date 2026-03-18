@@ -210,6 +210,7 @@ Route::resource('karyawansertifikasi', KaryawanSertifikasiController::class)->mi
 Route::resource('karyawananak', KaryawanAnakController::class)->middleware('auth');
 Route::resource('karyawancopy', KaryawanCopyController::class)->middleware('can:hc');
 Route::post('karyawan/update_profile/{id}', [ KaryawanController::class, 'update_profile' ])->name('karyawan.update_profile');
+Route::get('karyawan/dashboard/{id}', [KaryawanController::class, 'dashboard'])->name('karyawan.dashboard')->middleware('can:hc');
 // 
 Route::get('karyawan/get_divisi/{id}', [KaryawanController::class, 'get_divisi'])->name('karyawan.get_divisi');
 Route::get('karyawan/get_divisi', [KaryawanController::class, 'get_divisi'])->name('get_divisi');
@@ -311,6 +312,7 @@ Route::resource('mtrpenilaiantipe', MtrPenilaianTipeController::class)->middlewa
 Route::resource('penilaian', TrxPenilaianController::class)->middleware('auth');
 Route::get('revisi_penilaian/{id}', [ TrxPenilaianController::class, 'revisi'])->name('revisi_penilaian')->middleware('auth');
 Route::post('revisi_penilaian_save', [ TrxPenilaianController::class, 'revisi_save'])->name('revisi_penilaian_save')->middleware('can:hc');
+Route::get('penilaian/kontrak/{id}', [ TrxPenilaianController::class, 'kontrak'])->name('penilaian.kontrak')->middleware('auth');
 Route::resource('penilaian_auto', TrxPenilaianAutoController::class)->middleware('can:hc');
 Route::resource('penilaian_reminder', TrxPenilaianReminderController::class)->middleware('can:hc');
 Route::resource('penilaianlog', TrxPenilaianLogController::class)->middleware('auth');

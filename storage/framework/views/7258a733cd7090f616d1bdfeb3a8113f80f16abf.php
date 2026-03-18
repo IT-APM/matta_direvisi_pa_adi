@@ -221,6 +221,14 @@
                             <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
                         </svg>
                         <span>Hasil Survey PORA</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('karyawan.dashboard', 0)); ?>">
+                        <svg class="stroke-icon">
+                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-charts')); ?>"></use>
+                        </svg>
+                        <svg class="fill-icon">
+                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
+                        </svg>
+                        <span>Infografis</span></a></li>
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" 
                         href="<?php echo e(route('kebutuhan.dashboard', [
                                     'id'=>0, 'filter'=>'true', 'tahun'=>[now()->year],

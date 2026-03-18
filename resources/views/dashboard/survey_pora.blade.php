@@ -23,7 +23,7 @@
 @endsection
 
 @section('breadcrumb-items')
-    <li class="breadcrumb-item">Hasil</li>
+    <li class="breadcrumb-item">Dashboard</li>
     <li class="breadcrumb-item active">Survey PORA</li>
 @endsection
 

@@ -23,8 +23,8 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('breadcrumb-items'); ?>
-    <li class="breadcrumb-item">Recruitment</li>
-    <li class="breadcrumb-item active">Dashboard</li>
+    <li class="breadcrumb-item">Dashboard</li>
+    <li class="breadcrumb-item active">Recruitment</li>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
@@ -342,8 +342,9 @@ $(document).ready(function() {
             plotOptions: {
                 bar: {
                     horizontal: false,
-                    columnWidth: '90%',
-                    borderRadius: 3
+                    columnWidth: '95%',
+                    borderRadius: 3,
+                    borderRadiusApplication: 'end',
                 }
             },
             xaxis: {
@@ -394,15 +395,16 @@ $(document).ready(function() {
             },
             series: series,
             colors: [
-                '#198754',
-                '#dc3545',
-                '#ffc107',
+                '#00E396',
+                '#FF4560',
+                '#FEB019',
             ],
             plotOptions: {
                 bar: {
                     horizontal: false,
-                    columnWidth: '90%',
-                    borderRadius: 3
+                    columnWidth: '95%',
+                    borderRadius: 3,
+                    borderRadiusApplication: 'end',
                 }
             },
             xaxis: {
@@ -454,16 +456,17 @@ $(document).ready(function() {
             },
             series: series,
             colors: [
-                '#198754',
-                '#0d6efd',
-                '#dc3545',
-                '#ffc107',
+                '#00E396',
+                '#008FFB',
+                '#FF4560',
+                '#FEB019',
             ],
             plotOptions: {
                 bar: {
                     horizontal: false,
-                    columnWidth: '90%',
-                    borderRadius: 3
+                    columnWidth: '95%',
+                    borderRadius: 3,
+                    borderRadiusApplication: 'end',
                 }
             },
             xaxis: {

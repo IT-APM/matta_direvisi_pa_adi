@@ -21,7 +21,7 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('breadcrumb-items'); ?>
-    <li class="breadcrumb-item">Hasil</li>
+    <li class="breadcrumb-item">Dashboard</li>
     <li class="breadcrumb-item active">Survey PORA</li>
 <?php $__env->stopSection(); ?>
 
