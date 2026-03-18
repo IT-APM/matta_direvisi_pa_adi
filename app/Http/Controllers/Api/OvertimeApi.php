@@ -506,7 +506,7 @@ class OvertimeApi extends Controller
                 // refer to cm 511
                 // start jika OT after office hour
                 $clockout = DB::table('mtr_tbl_working_group')->where('id', 1)->value('clockout');
-                if(Carbon::parse($dataOT['ot_start_at']) > Carbon::parse($att_date.' '.$clockout)){
+                if(Carbon::parse($dataOT['ot_start_at'])->gt(Carbon::parse($att_date.' '.$clockout))){
                     if(!Attendance::where([ 'att_nik'=>$nik, 'att_type'=>'Clock-out', 'att_data_src'=>'Regular', 'att_date'=>$att_date ])->exists()){
                         $isClockinout =array("isClockin"=>false, "isClockout"=>false);
                     }
