@@ -13,6 +13,7 @@ use App\Models\OvertimeLog;
 use App\Models\OvertimeType;
 use App\Models\WorkingDay;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 // 
 use App\Models\ToDoList;
 use App\Models\ToDoListLog;
@@ -499,9 +500,18 @@ class OvertimeApi extends Controller
         if(Karyawan::where([ 'nik'=>$nik, 'wg_id'=>1 ])->exists()){
             $att_date = Carbon::createFromFormat('Y-m-d H:i:s', $dataOT['ot_start_at'])->format('Y-m-d');
             if(!($this->isWeekend($att_date) || $this->isHoliday($att_date))){
-                if(!Attendance::where([ 'att_nik'=>$nik, 'att_type'=>'Clock-out', 'att_data_src'=>'Regular', 'att_date'=>$att_date ])->exists()){
-                    $isClockinout =array("isClockin"=>false, "isClockout"=>false);
+                // if(!Attendance::where([ 'att_nik'=>$nik, 'att_type'=>'Clock-out', 'att_data_src'=>'Regular', 'att_date'=>$att_date ])->exists()){
+                //     $isClockinout =array("isClockin"=>false, "isClockout"=>false);
+                // }
+                // refer to cm 511
+                // start jika OT after office hour
+                $clockout = DB::table('mtr_tbl_working_group')->where('id', 1)->value('clockout');
+                if(Carbon::parse($dataOT['ot_start_at']) > Carbon::parse($att_date.' '.$clockout)){
+                    if(!Attendance::where([ 'att_nik'=>$nik, 'att_type'=>'Clock-out', 'att_data_src'=>'Regular', 'att_date'=>$att_date ])->exists()){
+                        $isClockinout =array("isClockin"=>false, "isClockout"=>false);
+                    }
                 }
+                // end
             }
         }
         // 
