@@ -157,7 +157,7 @@ class TrxPayrollController extends Controller
                     $mailData['filename'] = 'emails.payroll0';
                     $mailData['to'] = $email['to'];
                     $mailData['cc'] = $email['cc'];
-                    if($_trx->id_addsub == '0'){
+                    if($_trx->id_addsub == '0' && !empty($_trx->filename)){
                         // menambahkan parameter
                         $request->merge(['view' => 'pdf', 'perihal' => 'pemberitahuan_upah', 'redaksi' => $_trx->param1, 'no_surat' => $_trx->no_surat, 'filename' => $_trx->filename, 'email_id' => $_id, 'password' => true]);
                         $this->slip_detail($request, (new OpenDataController)->encryptWithKey(TrxPayroll::where(['tahun'=>$_trx->tahun, 'bulan'=>$_trx->bulan, 'nik'=>$_trx->nik])->first()->id));
