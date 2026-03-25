@@ -106,13 +106,15 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 $exists = App\Models\TrxPayrollPenyesuaianUpahLog::where(['no_surat'=>$data->no_surat, 'nik'=>$data->nik, 'id_status'=>2, 'bulan'=>$data->bulan, 'tahun'=>$data->tahun])->exists();
                                             @endphp
                                             <td>
-                                                @if($data->id_addsub != '0')
+                                                {{-- tidak digunakan --}}
+                                                {{-- @if($data->id_addsub != '0')
                                                     <input id="id_current[]" name="id_current[]" type="checkbox" value="{{ $data->id }}">
                                                 @elseif($data->id_addsub == '0' && !empty($data->param1))
                                                     @if($exists)
                                                         <input id="id_current[]" name="id_current[]" type="checkbox" value="{{ $data->id }}">
                                                     @endif
-                                                @endif
+                                                @endif --}}
+                                                <input id="id_current[]" name="id_current[]" type="checkbox" value="{{ $data->id }}">
                                             </td>
                                             <td>{{ ++$no }}</td>
                                             <td>{{ $data->id }}</td>
