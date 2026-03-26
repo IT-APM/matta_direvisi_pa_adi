@@ -550,10 +550,11 @@ class TrxRecruitmentController extends Controller
         }
         // kode_level=3=Supervisor (SPV)
         // dd($id_status);
+        // kode_sub_departemen=363 adalah hco
         $where = ['is_aktif' => 1];
-        $karyawan = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->whereNotIn('kode_sub_departemen', [263])->orderBy('nama', 'asc')->get();
+        $karyawan = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->whereNotIn('kode_sub_departemen', [363])->orderBy('nama', 'asc')->get();
         $karyawan_user_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
-        $where = ['is_aktif' => 1, 'kode_sub_departemen' => 263];
+        $where = ['is_aktif' => 1, 'kode_sub_departemen' => 363];
         $karyawan_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
         return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume', 'status_join', 'status_not_join', 'process', 'interview'));
         
