@@ -107,6 +107,7 @@ class MattaApi extends Controller
             if($isHoliday){
                 // cuti bersama dinyatakan sebagai OT Weekday
                 if($is_cuti == 1){
+                    // CM 390, Menambahkan Perhitungan OT untuk anak Magang (Perhitungan sama dengan perhitungan OT Freelance)
                     // Weekday
                     if($status_karyawan == 'Freelance' || $status_karyawan == 'Magang'){
                         return $arr[0]['informasi']*$ot_length/3600;
