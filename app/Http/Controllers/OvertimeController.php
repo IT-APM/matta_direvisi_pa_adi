@@ -419,7 +419,7 @@ class OvertimeController extends Controller
             $isHoliday = static::isHoliday($tanggal)['isHoliday'];
             if($isHoliday){
                 // Weekend
-                if($status_karyawan == 'Freelance'){
+                if($status_karyawan == 'Freelance' || $status_karyawan == 'Magang'){
                     return $arr[1]['informasi']*$ot_length/3600;
                 }else{
                     return static::getOTSalaryWeekend($gaji_pokok,$ot_length);
@@ -428,14 +428,14 @@ class OvertimeController extends Controller
                 $isWeekend = static::isWeekend($tanggal)['isWeekend'];
                 if($isWeekend){
                     // Weekend
-                    if($status_karyawan == 'Freelance'){
+                    if($status_karyawan == 'Freelance' || $status_karyawan == 'Magang'){
                         return $arr[1]['informasi']*$ot_length/3600;
                     }else{
                         return static::getOTSalaryWeekend($gaji_pokok,$ot_length);
                     }
                 }else{
                     // Weekday
-                    if($status_karyawan == 'Freelance'){
+                    if($status_karyawan == 'Freelance' || $status_karyawan == 'Magang'){
                         return $arr[0]['informasi']*$ot_length/3600;
                     }else{
                         return static::getOTSalaryWeekday($gaji_pokok,$ot_length);
