@@ -180,7 +180,7 @@ class KaryawanController extends Controller
         //         // DB::table('mtr_tbl_karyawan_nonaktif')->where('id', $data->id)->update(['tanggal' => DateTime::createFromFormat('d F Y', $data->tanggal)->format('Y-m-d')]);
         //     }
         // }
-        $lable = ['Total Karyawan Aktif', 'Pria', 'Wanita', 'Karyawan Aktif (Jenis Kelamin)', 'Karyawan Aktif (Status)', 'Karyawan Aktif (Pendidikan)', 'Karyawan Aktif (Kelahiran)', 'Karyawan Aktif (Perusahaan)', 'Karyawan Aktif (Level)', 'Karyawan (Aktif/Non Aktif)', 'Karyawan Aktif (Jenis Kelamin)', 'Karyawan Aktif (Perusahaan)', 'Karyawan Aktif (Direktorat)', 'Karyawan Aktif (Divisi)', 'Karyawan Aktif (Departemen)', 'Karyawan Aktif (Status)', 'Karyawan Aktif (Level)'];
+        $lable = ['Total Karyawan Aktif', 'Pria', 'Wanita', 'Karyawan Aktif (Jenis Kelamin)', 'Karyawan Aktif (Status)', 'Karyawan Aktif (Pendidikan)', 'Karyawan Aktif (Kelahiran)', 'Karyawan Aktif (Perusahaan)', 'Karyawan Aktif (Level)', 'Karyawan (Aktif/Join/Non Aktif)', 'Karyawan Aktif (Jenis Kelamin)', 'Karyawan Aktif (Perusahaan)', 'Karyawan Aktif (Direktorat)', 'Karyawan Aktif (Divisi)', 'Karyawan Aktif (Departemen)', 'Karyawan Aktif (Status)', 'Karyawan Aktif (Level)'];
         // all
         $trx = DB::select("SELECT COUNT(*) as jumlah, DATE(`created_at`) as tanggal FROM `mtr_tbl_karyawan_history` WHERE `nik` NOT IN ('Hco.all','IT Infras','IT.BM') GROUP BY DATE(`created_at`) ORDER BY tanggal ASC");
         $data = collect($trx)->map(function($item){
@@ -191,9 +191,11 @@ class KaryawanController extends Controller
             $awal = $tanggal->copy()->startOfMonth()->format('Y-m-d');
             $akhir = $tanggal->copy()->endOfMonth()->format('Y-m-d');
             $trx = DB::select("SELECT COUNT(*) AS jumlah FROM `mtr_tbl_karyawan` WHERE `tanggal_tidak_aktif` BETWEEN '".$awal."' AND '".$akhir."'");
+            $join = DB::select("SELECT COUNT(*) AS jumlah FROM `mtr_tbl_karyawan` WHERE `tanggal_bergabung` BETWEEN '".$awal."' AND '".$akhir."'");
             return [
                     'Aktif' => (int) ceil($bulanGroup->avg('jumlah')),
                     'Non Aktif' => $trx[0]->jumlah,
+                    'Join' => $join[0]->jumlah,
             ];
         });
         // return response()->json($jumlah_karyawan);
