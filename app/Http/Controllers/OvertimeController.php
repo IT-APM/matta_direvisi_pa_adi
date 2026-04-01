@@ -418,6 +418,7 @@ class OvertimeController extends Controller
         if($is_reguler == 1){
             $isHoliday = static::isHoliday($tanggal)['isHoliday'];
             if($isHoliday){
+                // CM 390, Menambahkan Perhitungan OT untuk anak Magang (Perhitungan sama dengan perhitungan OT Freelance)
                 // Weekend
                 if($status_karyawan == 'Freelance' || $status_karyawan == 'Magang'){
                     return $arr[1]['informasi']*$ot_length/3600;
