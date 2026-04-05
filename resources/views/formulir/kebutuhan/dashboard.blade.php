@@ -457,9 +457,9 @@ $(document).ready(function() {
             series: series,
             colors: [
                 '#00E396',
-                '#008FFB',
                 '#FF4560',
                 '#FEB019',
+                '#008FFB',
             ],
             plotOptions: {
                 bar: {
