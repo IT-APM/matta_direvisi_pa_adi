@@ -237,23 +237,38 @@ class TrxKebutuhanController extends Controller
                 if(in_array(Propinsi::find($data->id_area)->propinsi, $_area)){
                     array_push($arr_area, Propinsi::find($data->id_area)->propinsi);
                 }
-                // start sla
-                $sla = TrxRecruitment::where(['id_kebutuhan'=>$data->id, 'id_status'=>2])->first();
-                $kandidat = TrxRecruitmentIdentitas::where(['id_kebutuhan'=>$data->id])->get();
-                $id_identitas = [];
-                foreach($kandidat as $_kandidat){
-                    array_push($id_identitas, $_kandidat->id);
-                }
-                // 24=Join
-                $log = TrxRecruitmentLog::whereIn('id_identitas',$id_identitas)->where(['id_status'=>24])->orderBy('created_at', 'desc')->get();
                 $sla_start = '';
                 $sla_end = '';
+                // tidak digunakan
+                // start sla
+                // 2=Posting
+                // $sla = TrxRecruitment::where(['id_kebutuhan'=>$data->id, 'id_status'=>2])->first();
+                // $kandidat = TrxRecruitmentIdentitas::where(['id_kebutuhan'=>$data->id])->get();
+                // $id_identitas = [];
+                // foreach($kandidat as $_kandidat){
+                //     array_push($id_identitas, $_kandidat->id);
+                // }
+                // 24=Join
+                // $log = TrxRecruitmentLog::whereIn('id_identitas',$id_identitas)->where(['id_status'=>24])->orderBy('created_at', 'desc')->get();
+                // if(!empty($sla->created_at)){
+                //     $sla_start = Carbon::parse($sla->created_at)->format('Y-m-d');
+                // }
+                // if($log->count() >= $data->jumlah){
+                //     $sla_end = Carbon::parse($log[0]->created_at)->format('Y-m-d');
+                // }
+                // merujuk ke CM 507
+                // Default : SLA Add employee dimulai dari Approval By L2 ke Done By HC agar muncul Status SLA
+                // 9=Approved by L2 to HC
+                $sla = TrxKebutuhanLog::where(['id_trx'=>$data->id, 'id_status'=>9])->get();
                 if(!empty($sla->created_at)){
                     $sla_start = Carbon::parse($sla->created_at)->format('Y-m-d');
                 }
-                if($log->count() >= $data->jumlah){
-                    $sla_end = Carbon::parse($log[0]->created_at)->format('Y-m-d');
+                // 10=Done by HC
+                $sla = TrxKebutuhanLog::where(['id_trx'=>$data->id, 'id_status'=>10])->first();
+                if(!empty($sla->created_at)){
+                    $sla_end = Carbon::parse($sla->created_at)->format('Y-m-d');
                 }
+                // 
                 if(!empty($sla_start) && !empty($sla_end)){
                     $period = CarbonPeriod::create($sla_start, $sla_end);
                     $workingDays = 0;
@@ -443,7 +458,7 @@ class TrxKebutuhanController extends Controller
                     'Ontime'=>$per_direktorat_terpenuhi_ontime,
                     'Overdue'=>$per_direktorat_terpenuhi_over,
                     'Cancel'=>$per_direktorat_cancel,
-                    'Ongoing'=>$per_direktorat_outstanding,
+                    'On Progress'=>$per_direktorat_outstanding,
                 ],
                 'per_divisi' => [
                     'Terpenuhi'=>$per_divisi_terpenuhi,
@@ -454,7 +469,7 @@ class TrxKebutuhanController extends Controller
                     'Ontime'=>$per_divisi_terpenuhi_ontime,
                     'Overdue'=>$per_divisi_terpenuhi_over,
                     'Cancel'=>$per_divisi_cancel,
-                    'Ongoing'=>$per_divisi_outstanding,
+                    'On Progress'=>$per_divisi_outstanding,
                 ],
                 'per_departemen' => [
                     'Terpenuhi'=>$per_departemen_terpenuhi,
@@ -465,7 +480,7 @@ class TrxKebutuhanController extends Controller
                     'Ontime'=>$per_departemen_terpenuhi_ontime,
                     'Overdue'=>$per_departemen_terpenuhi_over,
                     'Cancel'=>$per_departemen_cancel,
-                    'Ongoing'=>$per_departemen_outstanding,
+                    'On Progress'=>$per_departemen_outstanding,
                 ],
                 'per_status_kerja' => [
                     'Terpenuhi'=>$per_status_kerja_terpenuhi,
