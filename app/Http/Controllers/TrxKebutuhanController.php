@@ -65,6 +65,9 @@ class TrxKebutuhanController extends Controller
     public function dashboard(Request $request)
     {
         // dd($request->all());
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         // start dashboard
         $lable_data = ['Pengajuan Recruitment','Kebutuhan Personil','Pengajuan Terpenuhi','Kebutuhan Personil Terpenuhi','Pengajuan Batal','Kebutuhan Personil Batal','Pengajuan Belum Terpenuhi','Kebutuhan Personil Belum Terpenuhi'];
         $tahun = [];
