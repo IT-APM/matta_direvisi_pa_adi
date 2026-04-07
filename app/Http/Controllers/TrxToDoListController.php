@@ -275,8 +275,31 @@ class TrxToDoListController extends Controller
      */
     public function show(Request $request, $id)
     {
-        //
-        // return response()->json(['trx' => $trx]);die;
+        // start
+        // local http://localhost/matta/todolist/nasio
+        // live https://matta-reborn.alita.id/matta/todolist/nasio
+        if($id == 'nasio'){
+            // Estu Wiharto
+            $nik = '03032512019';
+            $karyawan = Karyawan::where(['nik'=>$nik])->first();
+            $trx = DB::select("SELECT * FROM `trx_tbl_todolist` WHERE `pic`='hco' AND `title`='Formulir Penilaian Karyawan - Outsourcing' AND `filename`='emails.penilaian0_outsourcing' AND SUBSTRING_INDEX(`nama`, '/', -1) IN (SELECT `nik` FROM `mtr_tbl_karyawan` WHERE `is_aktif`=1 AND `kode_perusahaan`=5) GROUP BY `nama`");
+            foreach($trx as $_trx){
+                $data = New ToDoList;
+                $data->id_trx = $_trx->id_trx;
+                $data->id_status = $_trx->id_status;
+                $data->nik = $nik;
+                $data->pic = $_trx->pic;
+                $data->title = $_trx->title;
+                $data->nama = $_trx->nama;
+                $data->jabatan = $_trx->jabatan;
+                $data->unit_kerja = $_trx->unit_kerja;
+                $data->link = $_trx->link;
+                $data->filename = $_trx->filename;
+                $data->email = $karyawan->email;
+                $data->save();
+            }
+        }
+        // end
         $no= 0;
         $filename = $request->filename;
         // kebutuhan0
