@@ -21,6 +21,9 @@ class DashboardController extends Controller
 {
     public function survey_pora(Request $request, $id)
     {
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         // dd($request->all(), $id);
         // http://localhost/matta/survey_pora/result/0
         $trx = TrxSurveyPora::all();
