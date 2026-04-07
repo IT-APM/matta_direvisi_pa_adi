@@ -180,6 +180,9 @@ class KaryawanController extends Controller
         //         // DB::table('mtr_tbl_karyawan_nonaktif')->where('id', $data->id)->update(['tanggal' => DateTime::createFromFormat('d F Y', $data->tanggal)->format('Y-m-d')]);
         //     }
         // }
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $lable = ['Total Karyawan Aktif', 'Pria', 'Wanita', 'Karyawan Aktif (Jenis Kelamin)', 'Karyawan Aktif (Status)', 'Karyawan Aktif (Pendidikan)', 'Karyawan Aktif (Kelahiran)', 'Karyawan Aktif (Perusahaan)', 'Karyawan Aktif (Level)', 'Karyawan (Aktif/Join/Non Aktif)', 'Karyawan Aktif (Jenis Kelamin)', 'Karyawan Aktif (Perusahaan)', 'Karyawan Aktif (Direktorat)', 'Karyawan Aktif (Divisi)', 'Karyawan Aktif (Departemen)', 'Karyawan Aktif (Status)', 'Karyawan Aktif (Level)'];
         // all
         $trx = DB::select("SELECT COUNT(*) as jumlah, DATE(`created_at`) as tanggal FROM `mtr_tbl_karyawan_history` WHERE `nik` NOT IN ('Hco.all','IT Infras','IT.BM') GROUP BY DATE(`created_at`) ORDER BY tanggal ASC");
