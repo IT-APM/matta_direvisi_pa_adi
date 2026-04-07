@@ -8,6 +8,7 @@ use App\Models\AttendanceDownload;
 use App\Models\MtrUtility;
 use App\Mail\MattaRebornMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Gate;
 
 class AttendanceDownloadController extends Controller
 {
@@ -25,6 +26,9 @@ class AttendanceDownloadController extends Controller
      */
     public function index()
     {
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
         $no = 0;
         $trx = AttendanceDownload::orderBy('id', 'desc')->get();
         return view('attendance.download.index', compact('trx', 'no'));
