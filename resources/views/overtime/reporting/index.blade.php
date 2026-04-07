@@ -171,8 +171,9 @@
                                             <td>{{ $data->_ot_type_code->ot_type }}</td>
                                             <td>{{ \Carbon\Carbon::parse($data->ot_start_at)->format('d-m-Y H:i:s') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($data->ot_end_at)->format('d-m-Y H:i:s') }}</td>
-                                            <!-- <td>{{ \Carbon\CarbonInterval::seconds($data->ot_length)->cascade()->forHumans() }}</td> -->
-                                            <td>{{ gmdate('H:i:s', $data->ot_length) }}</td>
+                                            {{-- <td>{{ \Carbon\CarbonInterval::seconds($data->ot_length)->cascade()->forHumans() }}</td> --}}
+                                            {{-- <td>{{ gmdate('H:i:s', $data->ot_length) }}</td> --}}
+                                            <td>{{ sprintf('%02d:%02d:%02d', floor($data->ot_length / 3600), floor(($data->ot_length % 3600) / 60), $data->ot_length % 60) }}</td>
                                             <td>@if(!empty($data->ot_start_at_real)) {{ \Carbon\Carbon::parse($data->ot_start_at_real)->format('d-m-Y H:i:s') }} @endif</td>
                                             <td>@if(!empty($data->ot_end_at_real)) {{ \Carbon\Carbon::parse($data->ot_end_at_real)->format('d-m-Y H:i:s') }} @endif</td>
                                             <td>@if(!empty($data->ot_length_real)) {{ $data->ot_length_real }} @endif</td>
@@ -182,8 +183,9 @@
                                             <td class="text-end">@if($_data['status_karyawan']=='Freelance') @if($_isHoliday||$_isWeekend) {{ number_format($_arr[1]['informasi']) }} @else {{ number_format($_arr[0]['informasi']) }} @endif @else {{ number_format($_data['gaji_pokok']) }} @endif</td>
                                             <td class="text-end">{{ number_format($data->ot_length_rp) }}</td>
                                             <td class="text-end">{{ number_format(round($data->ot_length_rp, -3)) }}</td>
-                                            <!-- <td>@if(!empty($data->ot_length_adj)) {{ \Carbon\CarbonInterval::seconds($data->ot_length_adj)->cascade()->forHumans() }} @endif</td> -->
-                                            <td>@if(!empty($data->ot_length_adj)) {{ gmdate('H:i:s', $data->ot_length_adj) }} @endif</td>
+                                            {{-- <td>@if(!empty($data->ot_length_adj)) {{ \Carbon\CarbonInterval::seconds($data->ot_length_adj)->cascade()->forHumans() }} @endif</td> --}}
+                                            {{-- <td>@if(!empty($data->ot_length_adj)) {{ gmdate('H:i:s', $data->ot_length_adj) }} @endif</td> --}}
+                                            <td>@if(!empty($data->ot_length_adj)) {{ sprintf('%02d:%02d:%02d', floor($data->ot_length_adj / 3600), floor(($data->ot_length_adj % 3600) / 60), $data->ot_length_adj % 60) }} @endif</td>
                                             <!-- <td>@if(!empty($data->ot_length_adj)) <a href="{{ route('adj_ot', [$data->id]) }}" data-toggle="tooltip" title='Adjustment'>{{ number_format($data->ot_length_adj) }} <i class="icon-pencil-alt"></i></a> @endif</td> -->
                                             <td class="text-end">{{ number_format($data->ot_length_rp_adj) }}</td>
                                             <td class="text-end">{{ number_format(round($data->ot_length_rp_adj, -3)) }}</td>
