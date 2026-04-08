@@ -548,6 +548,13 @@ class TrxPenilaianSkorController extends Controller
             // jika layer3 tidak ada maka email done to hco
             if(empty($trx->nik_penilai_3)){
                 $pic_hco = explode(',', MtrUtility::find(28)->informasi);
+                // cek apakah karyawan 5=PT NASIO KARYA PRATAMA
+                if(Karyawan::where(['nik'=>$trx->nik_karyawan,'is_aktif'=>1,'kode_perusahaan'=>5])->exists()){
+                    // HCO NKP
+                    foreach(explode(',', MtrUtility::find(49)->informasi) as $nkp){
+                        array_push($pic_hco, $nkp);
+                    }
+                }
                 foreach($pic_hco as $_data){
                     $mailData['to'] = explode('/', $_data)[1];
                     $todolist = ['id_trx' => $trx->id, 'nik' => explode('/', $_data)[0], 'id_status' => $trx->id_status, 'pic' => 'hco'];
@@ -583,6 +590,13 @@ class TrxPenilaianSkorController extends Controller
                 // $id_trx, $id_status, $nik_pic, $keterangan, $is_perpanjang, $bulan
                 $this->insertLog($id, 7, $trx->nik_penilai_3, $request->kes_rek, $request->is_perpanjang, $request->bulan);
                 $pic_hco = explode(',', MtrUtility::find(28)->informasi);
+                // cek apakah karyawan 5=PT NASIO KARYA PRATAMA
+                if(Karyawan::where(['nik'=>$trx->nik_karyawan,'is_aktif'=>1,'kode_perusahaan'=>5])->exists()){
+                    // HCO NKP
+                    foreach(explode(',', MtrUtility::find(49)->informasi) as $nkp){
+                        array_push($pic_hco, $nkp);
+                    }
+                }
                 foreach($pic_hco as $_data){
                     $mailData['to'] = explode('/', $_data)[1];
                     $todolist = ['id_trx' => $trx->id, 'nik' => explode('/', $_data)[0], 'id_status' => $trx->id_status, 'pic' => 'hco'];
