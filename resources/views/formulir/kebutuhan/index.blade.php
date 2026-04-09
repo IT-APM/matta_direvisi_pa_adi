@@ -185,16 +185,16 @@
                                         // tidak digunakan
                                         // 2=Posting
                                         // $sla = App\Models\TrxRecruitment::where(['id_kebutuhan'=>$data->id, 'id_status'=>2])->first();
+                                        $kandidat = App\Models\TrxRecruitmentIdentitas::where(['id_kebutuhan'=>$data->id])->get();
+                                        $id_identitas = [];
+                                        foreach($kandidat as $_kandidat){
+                                            array_push($id_identitas, $_kandidat->id);
+                                        }
                                         // 24=Join
-                                        // $kandidat = App\Models\TrxRecruitmentIdentitas::where(['id_kebutuhan'=>$data->id])->get();
-                                        // $id_identitas = [];
-                                        // foreach($kandidat as $_kandidat){
-                                        //     array_push($id_identitas, $_kandidat->id);
-                                        // }
-                                        // $log = App\Models\TrxRecruitmentLog::whereIn('id_identitas',$id_identitas)->where(['id_status'=>24])->orderBy('created_at', 'desc')->get();
-                                        // if($log->count() >= $data->jumlah){
-                                        //     $sla_end = Carbon\Carbon::parse($log[0]->created_at)->format('Y-m-d');
-                                        // }
+                                        $sla = App\Models\TrxRecruitmentLog::whereIn('id_identitas',$id_identitas)->where(['id_status'=>24])->orderBy('created_at', 'desc')->get();
+                                        if($sla->count() >= $data->jumlah){
+                                            $sla_end = Carbon\Carbon::parse($sla[0]->created_at)->format('Y-m-d');
+                                        }
                                         // merujuk ke CM 507
                                         // Default : SLA Add employee dimulai dari Approval By L2 ke Done By HC agar muncul Status SLA
                                         // 9=Approved by L2 to HC
@@ -203,9 +203,11 @@
                                             $sla_start = Carbon\Carbon::parse($sla->created_at)->format('Y-m-d');
                                         }
                                         // 10=Done by HC
-                                        $sla = App\Models\TrxKebutuhanLog::where(['id_trx'=>$data->id, 'id_status'=>10])->first();
-                                        if(!empty($sla->created_at)){
-                                            $sla_end = Carbon\Carbon::parse($sla->created_at)->format('Y-m-d');
+                                        if(empty($sla_end)){
+                                            $sla = App\Models\TrxKebutuhanLog::where(['id_trx'=>$data->id, 'id_status'=>10])->first();
+                                            if(!empty($sla->created_at)){
+                                                $sla_end = Carbon\Carbon::parse($sla->created_at)->format('Y-m-d');
+                                            }
                                         }
                                         // SELECT `id`,`status_pengajuan` FROM `mtr_tbl_kebutuhan_status` WHERE `id` IN (3,5,7,12,13,17,20,24,26,27,28);
                                         // #Cancel=Orange
