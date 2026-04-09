@@ -246,19 +246,19 @@ class TrxKebutuhanController extends Controller
                 // start sla
                 // 2=Posting
                 // $sla = TrxRecruitment::where(['id_kebutuhan'=>$data->id, 'id_status'=>2])->first();
-                // $kandidat = TrxRecruitmentIdentitas::where(['id_kebutuhan'=>$data->id])->get();
-                // $id_identitas = [];
-                // foreach($kandidat as $_kandidat){
-                //     array_push($id_identitas, $_kandidat->id);
-                // }
+                $kandidat = TrxRecruitmentIdentitas::where(['id_kebutuhan'=>$data->id])->get();
+                $id_identitas = [];
+                foreach($kandidat as $_kandidat){
+                    array_push($id_identitas, $_kandidat->id);
+                }
                 // 24=Join
-                // $log = TrxRecruitmentLog::whereIn('id_identitas',$id_identitas)->where(['id_status'=>24])->orderBy('created_at', 'desc')->get();
+                $sla = TrxRecruitmentLog::whereIn('id_identitas',$id_identitas)->where(['id_status'=>24])->orderBy('created_at', 'desc')->get();
                 // if(!empty($sla->created_at)){
                 //     $sla_start = Carbon::parse($sla->created_at)->format('Y-m-d');
                 // }
-                // if($log->count() >= $data->jumlah){
-                //     $sla_end = Carbon::parse($log[0]->created_at)->format('Y-m-d');
-                // }
+                if($sla->count() >= $data->jumlah){
+                    $sla_end = Carbon::parse($sla[0]->created_at)->format('Y-m-d');
+                }
                 // merujuk ke CM 507
                 // Default : SLA Add employee dimulai dari Approval By L2 ke Done By HC agar muncul Status SLA
                 // 9=Approved by L2 to HC
@@ -267,9 +267,11 @@ class TrxKebutuhanController extends Controller
                     $sla_start = Carbon::parse($sla->created_at)->format('Y-m-d');
                 }
                 // 10=Done by HC
-                $sla = TrxKebutuhanLog::where(['id_trx'=>$data->id, 'id_status'=>10])->first();
-                if(!empty($sla->created_at)){
-                    $sla_end = Carbon::parse($sla->created_at)->format('Y-m-d');
+                if(empty($sla_end)){
+                    $sla = TrxKebutuhanLog::where(['id_trx'=>$data->id, 'id_status'=>10])->first();
+                    if(!empty($sla->created_at)){
+                        $sla_end = Carbon::parse($sla->created_at)->format('Y-m-d');
+                    }
                 }
                 // 
                 if(!empty($sla_start) && !empty($sla_end)){
