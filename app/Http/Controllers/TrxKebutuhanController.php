@@ -82,7 +82,8 @@ class TrxKebutuhanController extends Controller
         // 2=Approved by L1
         // 9=Approved by L2 to HC
         $sts_outstanding = [1,2,9];
-        $sts_cancel = array_merge($sts_terpenuhi, $sts_outstanding);
+        // $sts_cancel = array_merge($sts_terpenuhi, $sts_outstanding);
+        $sts_cancel = [3,5,7,12,13,17,20,24,26,27,28];
         // start filter
         $select_tahun = TrxKebutuhanMaster::select(DB::raw('YEAR(created_at) as tahun'))->distinct()->orderBy('tahun', 'asc')->pluck('tahun');
         $all = TrxKebutuhanMaster::all();
@@ -262,7 +263,7 @@ class TrxKebutuhanController extends Controller
                 // merujuk ke CM 507
                 // Default : SLA Add employee dimulai dari Approval By L2 ke Done By HC agar muncul Status SLA
                 // 9=Approved by L2 to HC
-                $sla = TrxKebutuhanLog::where(['id_trx'=>$data->id, 'id_status'=>9])->get();
+                $sla = TrxKebutuhanLog::where(['id_trx'=>$data->id, 'id_status'=>9])->first();
                 if(!empty($sla->created_at)){
                     $sla_start = Carbon::parse($sla->created_at)->format('Y-m-d');
                 }
@@ -273,7 +274,6 @@ class TrxKebutuhanController extends Controller
                         $sla_end = Carbon::parse($sla->created_at)->format('Y-m-d');
                     }
                 }
-                // 
                 if(!empty($sla_start) && !empty($sla_end)){
                     $period = CarbonPeriod::create($sla_start, $sla_end);
                     $workingDays = 0;
@@ -353,8 +353,10 @@ class TrxKebutuhanController extends Controller
             $per_area_terpenuhi = array_count_values($arr_area);
             ksort($per_area_terpenuhi);
             // cancel
+            $id_trx = TrxKebutuhanLog::select('id_trx')->whereIn('id_status', $sts_cancel)->pluck('id_trx')->toArray();
             $query = TrxKebutuhanMaster::whereIn(DB::raw('YEAR(created_at)'), $tahun);
-            $cancel = $query->whereNotIn('status_pengajuan', $sts_cancel)->get();
+            // $cancel = $query->whereNotIn('status_pengajuan', $sts_cancel)->get();
+            $cancel = $query->whereIn('id', $id_trx)->get();
             $n_cancel = $cancel->sum('jumlah');
             $arr_direktorat = [];
             $arr_divisi = [];
