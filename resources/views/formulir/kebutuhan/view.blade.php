@@ -95,7 +95,7 @@
                                             </td>
                                         </tr>
                                         <!-- layer2 -->
-                                        <tr>
+                                        <tr>@if(!empty($layer2['nik']))
                                             <td><a href="{{ asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg') }}"
                                                     target="_blank"><img class="img-thumbnail"
                                                         src="{{ asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg') }}"
@@ -105,7 +105,7 @@
                                                     class="f-light m-10">{{ $layer2['nama'] }} / {{ $layer2['nik'] }}<br />{{ $layer2['jabatan'] }}
                                                     <br />{{ $layer2['divisi'] }} / {{ $layer2['dep'] }} / {{ $layer2['sub_dep'] }}</span>
                                             </td>
-                                        </tr>
+                                        @endif</tr>
                                         <!--  -->
                                     </tbody>
                                 </table>
