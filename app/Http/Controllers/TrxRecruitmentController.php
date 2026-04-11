@@ -858,6 +858,10 @@ class TrxRecruitmentController extends Controller
             $trx->update();
             // insert to TrxRecruitmentPedoman
             $generik = ['matta_page-0001','matta_page-0002','matta_page-0003','matta_page-0004'];
+            // matta_page-0001 = 5eaeebe46db8e8134009d0e8ece5640f
+            // matta_page-0002 = 84abe3e07dd0708cf2d8a3a9befcbda2
+            // matta_page-0003 = 736ee712f8d25b71dcdbf71ffe54fb0e
+            // matta_page-0004 = 29e863789d082ab31839c101f40a028a
             for($x = 0; $x < 4; $x++){
                 $pedoman = new TrxRecruitmentPedoman;
                 $pedoman->id_identitas = $id_identitas;
@@ -1251,16 +1255,31 @@ class TrxRecruitmentController extends Controller
         $pdf::SetFont('times', '', 10, '', true);
         foreach($pedoman as $data){
             $pdf::AddPage();
+            $pdf::SetAutoPageBreak(false, 0);
             $bg = public_path('assets/recruitment/upload/'.$data->jenis.'/'.$data->filename.'.jpg');
-            $pdf::Image($bg, 10, 1, 210, 297, '', '', '', false, 0, '', false, false, 0);
+            // $pdf::Image($bg, 0, 0, 210, 300, '', '', '', false, 0, '', false, false, 0);
+            $pdf::Image($bg, 0, 0, 210, 0, '', '', '', false, 300, '', false, false, 0);
             $bg = public_path('assets/images/matta/approved_new.png');
-            $x = 138;
-            $y = 262;
-            $pdf::Image($bg, $x, $y, 30, 6, '', '', '', false, 0, '', false, false, 0);
-            $pdf::Text($x, $y+6, $_trx->nama);
-            $pdf::Text($x, $y+10, Carbon::parse($data->check_out)->format('d-m-Y H:i:s'));
+            $html = '<div style="text-align:left;">
+                <table>
+                    <tr>
+                        <td width="5%">&nbsp;</td>
+                        <td width="90%"><img src="'.$bg.'" alt="image" height="15"><br/><span style="font-size: 6px;">'.$_trx->nama.'<br/>'.Carbon::parse($data->check_out)->format('d-m-Y H:i:s').'</span></td>
+                        <td width="5%">&nbsp;</td>
+                    </tr>
+            </table></div>';
+            $x = 5;
+            $y = 250;
+            $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
+            // $pdf::Image($bg, $x, $y, 25, 5, '', '', '', false, 0, '', false, false, 0);
+            // $pdf::Text($x, $y+6, $_trx->nama);
+            // $pdf::Text($x, $y+10, Carbon::parse($data->check_out)->format('d-m-Y H:i:s'));
         }
         $pdf::Output(public_path('assets/recruitment/upload/'.$filename), 'F');
+        // 
+        // $pdf::Output(public_path('assets/recruitment/upload/'.$filename), 'I');
+        // return response()->download(public_path($filename));
+        // 
         $_trx->file_dokumen_ttd = $filename;
         // end
         $_trx->id_status = $id_status;
