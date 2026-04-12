@@ -38,6 +38,30 @@ class TrxPenilaian extends Model
         return $this->belongsTo('App\Models\MtrPenilaianPerpanjang', 'is_perpanjang', 'id');
     }
 
+    public function _perusahaan(){
+        return $this->belongsTo('App\Models\Perusahaan', 'id_perusahaan', 'id');
+    }
+
+    public function _divisi(){
+        return $this->belongsTo('App\Models\Divisi', 'id_divisi', 'id');
+    }
+
+    public function _departemen(){
+        return $this->belongsTo('App\Models\Departemen', 'id_departemen', 'id');
+    }
+
+    public function _sub_departemen(){
+        return $this->belongsTo('App\Models\SubDepartemen', 'id_sub_departemen', 'id');
+    }
+
+    public function _level(){
+        return $this->belongsTo('App\Models\Level', 'id_level', 'id');
+    }
+
+    public function _jabatan(){
+        return $this->belongsTo('App\Models\Jabatan', 'id_jabatan', 'id');
+    }
+
     public function getCreatedAtAttribute()
     {
         return \Carbon\Carbon::parse($this->attributes['created_at']) ->format('d-m-Y H:i:s');
