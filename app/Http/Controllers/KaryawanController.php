@@ -29,6 +29,7 @@ use App\Models\MtrFindimDepartemen;
 use App\Models\MtrFindimSubdepartemen;
 use App\Models\KaryawanGrade;
 use App\Models\TrxPenilaian;
+use App\Models\PendidikanJenjang;
 // 
 use App\Models\MtrUtility;
 use App\Mail\MattaRebornMail;
@@ -167,25 +168,94 @@ class KaryawanController extends Controller
         return redirect('karyawan/upload_data/0')->with('msg', 'Data is saved successfully.');
     }
 
-    public function dashboard(Request $request)
+    public function dashboard(Request $request, $id)
     {
         // dd($request->all());
-        // $trx = DB::table('mtr_tbl_karyawan_nonaktif')->get();
-        // foreach($trx as $data){
-        //     $date = DateTime::createFromFormat('Y-m-d', $data->tanggal);
-        //     if ($date && $date->format('Y-m-d') === $data->tanggal) {
-        //         echo "Valid date: ".$data->tanggal."<br/>";
-        //     } else {
-        //         echo "Invalid date: ".DateTime::createFromFormat('d F Y', $data->tanggal)->format('Y-m-d')."<br/>";
-        //         // DB::table('mtr_tbl_karyawan_nonaktif')->where('id', $data->id)->update(['tanggal' => DateTime::createFromFormat('d F Y', $data->tanggal)->format('Y-m-d')]);
-        //     }
-        // }
         if(Gate::allows('hc_nkp')){
             return redirect()->route('error-403');
         }
-        $lable = ['Total Karyawan Aktif', 'Pria', 'Wanita', 'Karyawan Aktif (Jenis Kelamin)', 'Karyawan Aktif (Status)', 'Karyawan Aktif (Pendidikan)', 'Karyawan Aktif (Kelahiran)', 'Karyawan Aktif (Perusahaan)', 'Karyawan Aktif (Level)', 'Karyawan (Aktif/Join/Non Aktif)', 'Karyawan Aktif (Jenis Kelamin)', 'Karyawan Aktif (Perusahaan)', 'Karyawan Aktif (Direktorat)', 'Karyawan Aktif (Divisi)', 'Karyawan Aktif (Departemen)', 'Karyawan Aktif (Status)', 'Karyawan Aktif (Level)'];
+        $lable = ['Total Karyawan Aktif', 'Pria', 'Wanita', 'Karyawan Aktif (Jenis Kelamin)', 'Karyawan Aktif (Status)', 'Karyawan Aktif (Pendidikan)', 'Karyawan Aktif (Kelahiran)', 'Karyawan Aktif (Perusahaan)', 'Karyawan Aktif (Level)', 'Karyawan (Aktif/Join/Non Aktif)', 'Karyawan Aktif (Jenis Kelamin)', 'Karyawan Aktif (Status)', 'Karyawan Aktif (Level)', 'Karyawan Aktif (Perusahaan)', 'Karyawan Aktif (Direktorat)', 'Karyawan Aktif (Divisi)', 'Karyawan Aktif (Departemen)'];
+        // filter parameter
+        // $id = 1
+        // // tahun-bulan pertama
+        // $bulan_tahun_dari = Carbon::now()->startOfYear()->format('Y-m');
+        // // tahun-bulan saat ini
+        // $bulan_tahun_sampai = Carbon::now()->format('Y-m');
+        $bulan_tahun_dari = '';
+        $bulan_tahun_sampai = '';
+        $arr_select_aktif = array();
+        $select_aktif = [
+            ['id'=>1, 'data'=>'Aktif'],
+            ['id'=>0, 'data'=>'Non Aktif'],
+        ];
+        // $id = 0
+        $arr_select_kelamin = array();
+        $arr_select_status = array();
+        $arr_select_perusahaan = array();
+        $arr_select_level = array();
+        $arr_select_pendidikan = array();
+        $arr_select_generasi = array();
+        $select_kelamin = Kelamin::whereIn('id', [2,3])->orderBy('id', 'asc')->get();
+        $select_status = KaryawanStatus::orderBy('status_karyawan', 'asc')->get();
+        $select_perusahaan = perusahaan::whereNotIn('id', [0,3])->orderBy('nama', 'asc')->get();
+        $select_level = Level::orderBy('id', 'asc')->get();
+        $select_pendidikan = PendidikanJenjang::whereNotIn('id', [11])->orderBy('id', 'asc')->get();
+        $select_generasi = [
+            ['id'=>1, 'min'=>1990, 'max'=>1946, 'data'=>'The Builders (<=1946)'],
+            ['id'=>2, 'min'=>1946, 'max'=>1964, 'data'=>'Baby Boomers (1946< X <=1964)'],
+            ['id'=>3, 'min'=>1964, 'max'=>1979, 'data'=>'Gen X (1964< X <=1979)'],
+            ['id'=>4, 'min'=>1979, 'max'=>1994, 'data'=>'Gen Y (1979< X <=1994)'],
+            ['id'=>5, 'min'=>1994, 'max'=>2009, 'data'=>'Gen Z (1994< X <=2009)'],
+            ['id'=>6, 'min'=>2009, 'max'=>2024, 'data'=>'Gen Alpha (2009< X <=2024)'],
+            ['id'=>7, 'min'=>2024, 'max'=>2050, 'data'=>'Gen Beta (2024< X)'],
+        ];
+        // start filter
+        if($request->filter == true && $id == 1){
+            $bulan_tahun_dari = $request->bulan_tahun_dari;
+            $bulan_tahun_sampai = $request->bulan_tahun_sampai;
+            $_select_kelamin = $request->input('select_kelamin', []);
+            $_select_status = $request->input('select_status', []);
+            $_select_perusahaan = $request->input('select_perusahaan', []);
+            $_select_level = $request->input('select_level', []);
+            if(count($_select_kelamin) > 0){
+                $arr_select_kelamin = $_select_kelamin;
+            }
+            else{
+                $arr_select_kelamin = array();
+            }
+            if(count($_select_status) > 0){
+                $arr_select_status = $_select_status;
+            }
+            else{
+                $arr_select_status = array();
+            }
+            if(count($_select_perusahaan) > 0){
+                $arr_select_perusahaan = $_select_perusahaan;
+            }
+            else{
+                $arr_select_perusahaan = array();
+            }
+            if(count($_select_level) > 0){
+                $arr_select_level = $_select_level;
+            }
+            else{
+                $arr_select_level = array();
+            }
+        }else{
+            // $arr_select_kelamin = array();
+        }
+        // end filter
         // all
         $trx = DB::select("SELECT COUNT(*) as jumlah, DATE(`created_at`) as tanggal FROM `mtr_tbl_karyawan_history` WHERE `nik` NOT IN ('Hco.all','IT Infras','IT.BM') GROUP BY DATE(`created_at`) ORDER BY tanggal ASC");
+        if($request->filter == true && $id == 1){
+            $trx = DB::select("SELECT COUNT(*) as jumlah, DATE(`created_at`) as tanggal FROM `mtr_tbl_karyawan_history` WHERE `nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND DATE(`created_at`) BETWEEN DATE(CONCAT('".$bulan_tahun_dari."', '-01')) AND LAST_DAY(STR_TO_DATE('".$bulan_tahun_sampai."', '%Y-%m')) 
+            AND kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND kode_status IN (".implode(',', $arr_select_status).") 
+            AND kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            AND kode_level IN (".implode(',', $arr_select_level).") 
+            GROUP BY DATE(`created_at`) ORDER BY tanggal ASC");
+        }
         $data = collect($trx)->map(function($item){
             return (array) $item;
         });
@@ -201,19 +271,17 @@ class KaryawanController extends Controller
                     'Join' => $join[0]->jumlah,
             ];
         });
-        // return response()->json($jumlah_karyawan);
-        // $non_aktif = [];
-        // foreach ($jumlah_karyawan as $key => $value) {
-        //     $tanggal = Carbon::createFromFormat('M Y', $key);
-        //     $awal = $tanggal->copy()->startOfMonth()->format('Y-m-d');
-        //     $akhir = $tanggal->copy()->endOfMonth()->format('Y-m-d');
-        //     $trx = DB::select("SELECT COUNT(*) AS jumlah FROM `mtr_tbl_karyawan` WHERE `tanggal_tidak_aktif` BETWEEN '".$awal."' AND '".$akhir."'");
-        //     // return response()->json($trx[0]->jumlah);
-        //     array_push($non_aktif, ['Non Aktif' => $trx[0]->jumlah]);
-        // }
-        // return response()->json($non_aktif);
         // kode_kelamin
         $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(`created_at`) AS tanggal, IFNULL(`kode_kelamin`, 1) AS `kode_kelamin` FROM `mtr_tbl_karyawan_history` WHERE `nik` NOT IN ('Hco.all','IT Infras','IT.BM') GROUP BY DATE(`created_at`),`kode_kelamin` ORDER BY tanggal ASC");
+        if($request->filter == true && $id == 1){
+            $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(`created_at`) AS tanggal, IFNULL(`kode_kelamin`, 1) AS `kode_kelamin` FROM `mtr_tbl_karyawan_history` WHERE `nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND DATE(`created_at`) BETWEEN DATE(CONCAT('".$bulan_tahun_dari."', '-01')) AND LAST_DAY(STR_TO_DATE('".$bulan_tahun_sampai."', '%Y-%m')) 
+            AND kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND kode_status IN (".implode(',', $arr_select_status).") 
+            AND kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            AND kode_level IN (".implode(',', $arr_select_level).") 
+            GROUP BY DATE(`created_at`),`kode_kelamin` ORDER BY tanggal ASC");
+        }
         $data = collect($trx)->map(function($item){
             return (array) $item;
         });
@@ -235,6 +303,15 @@ class KaryawanController extends Controller
         });
         // kode_perusahaan
         $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`nama` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_perusahaan` AS b ON a.`kode_perusahaan`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') GROUP BY DATE(a.`created_at`),a.`kode_perusahaan` ORDER BY tanggal ASC,b.`nama` ASC");
+        if($request->filter == true && $id == 1){
+            $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`nama` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_perusahaan` AS b ON a.`kode_perusahaan`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND DATE(a.`created_at`) BETWEEN DATE(CONCAT('".$bulan_tahun_dari."', '-01')) AND LAST_DAY(STR_TO_DATE('".$bulan_tahun_sampai."', '%Y-%m')) 
+            AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND a.kode_status IN (".implode(',', $arr_select_status).") 
+            AND a.kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            AND a.kode_level IN (".implode(',', $arr_select_level).") 
+            GROUP BY DATE(a.`created_at`),a.`kode_perusahaan` ORDER BY tanggal ASC,b.`nama` ASC");
+        }
         $data = collect($trx)->map(function($item){
             return (array) $item;
         });
@@ -251,6 +328,15 @@ class KaryawanController extends Controller
         });
         // kode_divisi
         $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`nama` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_divisi` AS b ON a.`kode_divisi`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') GROUP BY DATE(a.`created_at`),a.`kode_divisi` ORDER BY tanggal ASC,b.`nama` ASC");
+        if($request->filter == true && $id == 1){
+            $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`nama` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_divisi` AS b ON a.`kode_divisi`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND DATE(a.`created_at`) BETWEEN DATE(CONCAT('".$bulan_tahun_dari."', '-01')) AND LAST_DAY(STR_TO_DATE('".$bulan_tahun_sampai."', '%Y-%m')) 
+            AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND a.kode_status IN (".implode(',', $arr_select_status).") 
+            AND a.kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            AND a.kode_level IN (".implode(',', $arr_select_level).") 
+            GROUP BY DATE(a.`created_at`),a.`kode_divisi` ORDER BY tanggal ASC,b.`nama` ASC");
+        }
         $data = collect($trx)->map(function($item){
             return (array) $item;
         });
@@ -267,6 +353,15 @@ class KaryawanController extends Controller
         });
         // kode_departemen
         $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`nama` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_departemen` AS b ON a.`kode_departemen`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') GROUP BY DATE(a.`created_at`),a.`kode_departemen` ORDER BY tanggal ASC,b.`nama` ASC");
+        if($request->filter == true && $id == 1){
+            $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`nama` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_departemen` AS b ON a.`kode_departemen`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND DATE(a.`created_at`) BETWEEN DATE(CONCAT('".$bulan_tahun_dari."', '-01')) AND LAST_DAY(STR_TO_DATE('".$bulan_tahun_sampai."', '%Y-%m')) 
+            AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND a.kode_status IN (".implode(',', $arr_select_status).") 
+            AND a.kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            AND a.kode_level IN (".implode(',', $arr_select_level).") 
+            GROUP BY DATE(a.`created_at`),a.`kode_departemen` ORDER BY tanggal ASC,b.`nama` ASC");
+        }
         $data = collect($trx)->map(function($item){
             return (array) $item;
         });
@@ -283,6 +378,15 @@ class KaryawanController extends Controller
         });
         // kode_sub_departemen
         $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`nama` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_sub_departemen` AS b ON a.`kode_sub_departemen`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') GROUP BY DATE(a.`created_at`),a.`kode_sub_departemen` ORDER BY tanggal ASC,b.`nama` ASC");
+        if($request->filter == true && $id == 1){
+            $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`nama` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_sub_departemen` AS b ON a.`kode_sub_departemen`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND DATE(a.`created_at`) BETWEEN DATE(CONCAT('".$bulan_tahun_dari."', '-01')) AND LAST_DAY(STR_TO_DATE('".$bulan_tahun_sampai."', '%Y-%m')) 
+            AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND a.kode_status IN (".implode(',', $arr_select_status).") 
+            AND a.kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            AND a.kode_level IN (".implode(',', $arr_select_level).") 
+            GROUP BY DATE(a.`created_at`),a.`kode_sub_departemen` ORDER BY tanggal ASC,b.`nama` ASC");
+        }
         $data = collect($trx)->map(function($item){
             return (array) $item;
         });
@@ -299,6 +403,15 @@ class KaryawanController extends Controller
         });
         // kode_status
         $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`status_karyawan` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_status_karyawan` AS b ON a.`kode_status`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') GROUP BY DATE(a.`created_at`),a.`kode_status` ORDER BY tanggal ASC,b.`status_karyawan` ASC");
+        if($request->filter == true && $id == 1){
+            $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`status_karyawan` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_status_karyawan` AS b ON a.`kode_status`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND DATE(a.`created_at`) BETWEEN DATE(CONCAT('".$bulan_tahun_dari."', '-01')) AND LAST_DAY(STR_TO_DATE('".$bulan_tahun_sampai."', '%Y-%m')) 
+            AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND a.kode_status IN (".implode(',', $arr_select_status).") 
+            AND a.kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            AND a.kode_level IN (".implode(',', $arr_select_level).") 
+            GROUP BY DATE(a.`created_at`),a.`kode_status` ORDER BY tanggal ASC,b.`status_karyawan` ASC");
+        }
         $data = collect($trx)->map(function($item){
             return (array) $item;
         });
@@ -315,6 +428,15 @@ class KaryawanController extends Controller
         });
         // kode_level
         $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`level` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_level` AS b ON a.`kode_level`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') GROUP BY DATE(a.`created_at`),a.`kode_level` ORDER BY tanggal ASC,a.kode_level ASC");
+        if($request->filter == true && $id == 1){
+            $trx = DB::select("SELECT COUNT(*) AS jumlah, DATE(a.`created_at`) AS tanggal, b.`level` FROM `mtr_tbl_karyawan_history` AS a LEFT JOIN `mtr_tbl_level` AS b ON a.`kode_level`=b.`id` WHERE a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND DATE(a.`created_at`) BETWEEN DATE(CONCAT('".$bulan_tahun_dari."', '-01')) AND LAST_DAY(STR_TO_DATE('".$bulan_tahun_sampai."', '%Y-%m')) 
+            AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND a.kode_status IN (".implode(',', $arr_select_status).") 
+            AND a.kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            AND a.kode_level IN (".implode(',', $arr_select_level).") 
+            GROUP BY DATE(a.`created_at`),a.`kode_level` ORDER BY tanggal ASC,a.kode_level ASC");
+        }
         $data = collect($trx)->map(function($item){
             return (array) $item;
         });
@@ -329,6 +451,7 @@ class KaryawanController extends Controller
                 ];
             });
         });
+        // 
         // kode_kelamin now
         $trx = DB::select("SELECT COUNT(*) AS jumlah,IFNULL(`kode_kelamin`, 1) AS `kode_kelamin` FROM `mtr_tbl_karyawan` WHERE `is_aktif`=1 AND `nik` NOT IN ('Hco.all','IT Infras','IT.BM') GROUP BY `kode_kelamin`");
         $data = collect($trx)->map(function($item){
@@ -380,30 +503,6 @@ class KaryawanController extends Controller
             ];
         }
         // id_jenjang now
-        // syntax
-        // SELECT 
-        //     j.`jenjang`,
-        //     COUNT(*) AS jumlah,
-        //     GROUP_CONCAT(p.`nik` ORDER BY p.`nik` SEPARATOR ',') AS daftar_nik
-        // FROM `mtr_tbl_karyawan_pendidikan` p
-        // JOIN (
-        //     SELECT 
-        //         `nik`,
-        //         MAX(`id_jenjang`) AS `id_jenjang`
-        //     FROM `mtr_tbl_karyawan_pendidikan`
-        //     GROUP BY `nik`
-        // ) mp 
-        //     ON mp.`nik` = p.`nik` 
-        //     AND mp.`id_jenjang` = p.`id_jenjang`
-        // JOIN `mtr_tbl_karyawan` k 
-        //     ON k.`nik` = p.`nik`
-        // LEFT JOIN `mtr_tbl_pendidikan_jenjang` j 
-        //     ON j.`id` = p.`id_jenjang`
-        // WHERE k.`is_aktif` = 1
-        // AND k.`nik` NOT IN ('Hco.all','IT Infras','IT.BM')
-        // GROUP BY j.`jenjang`
-        // ORDER BY p.`id_jenjang` ASC;
-        // 
         $trx = DB::select("SELECT j.`jenjang`,COUNT(*) AS jumlah FROM `mtr_tbl_karyawan_pendidikan` p
         JOIN (SELECT  `nik`, MAX(`id_jenjang`) AS `id_jenjang` FROM `mtr_tbl_karyawan_pendidikan` GROUP BY `nik`
         ) mp ON mp.`nik` = p.`nik` AND mp.`id_jenjang` = p.`id_jenjang`
@@ -423,43 +522,23 @@ class KaryawanController extends Controller
             ];
         }
         // kategori_kelahiran now
-        // syntax
-        // SELECT 
-        //     CASE
-        //         WHEN YEAR(`tanggal_lahir`) < 1946 THEN 'The Builders'
-        //         WHEN YEAR(`tanggal_lahir`) > 1946 AND YEAR(`tanggal_lahir`) <= 1964 THEN 'Baby Boomers'
-        //         WHEN YEAR(`tanggal_lahir`) > 1964 AND YEAR(`tanggal_lahir`) <= 1979 THEN 'Gen X'
-        //         WHEN YEAR(`tanggal_lahir`) > 1979 AND YEAR(`tanggal_lahir`) <= 1994 THEN 'Gen Y'
-        //         WHEN YEAR(`tanggal_lahir`) > 1994 AND YEAR(`tanggal_lahir`) <= 2009 THEN 'Gen Z'
-        //         WHEN YEAR(`tanggal_lahir`) > 2009 AND YEAR(`tanggal_lahir`) <= 2024 THEN 'Gen Alpha'
-        //         ELSE 'Gen Beta'
-        //     END AS kategori_kelahiran,
-        //     COUNT(*) AS jumlah,
-        //     GROUP_CONCAT(`nik` ORDER BY `nik` SEPARATOR ',') AS daftar_nik
-        // FROM `mtr_tbl_karyawan`
-        // WHERE `is_aktif` = 1
-        // AND `nik` NOT IN ('Hco.all','IT Infras','IT.BM')
-        // AND `tanggal_lahir` IS NOT NULL
-        // AND YEAR(`tanggal_lahir`) <= YEAR(NOW())
-        // GROUP BY kategori_kelahiran
-        // ORDER BY MIN(YEAR(`tanggal_lahir`)) ASC;
-        // 
         $trx = DB::select("SELECT 
             CASE
-                WHEN YEAR(`tanggal_lahir`) <= 1946 THEN 'The Builders'
+                WHEN YEAR(`tanggal_lahir`) > 1900 AND YEAR(`tanggal_lahir`) <= 1946 THEN 'The Builders'
                 WHEN YEAR(`tanggal_lahir`) > 1946 AND YEAR(`tanggal_lahir`) <= 1964 THEN 'Baby Boomers'
                 WHEN YEAR(`tanggal_lahir`) > 1964 AND YEAR(`tanggal_lahir`) <= 1979 THEN 'Gen X'
                 WHEN YEAR(`tanggal_lahir`) > 1979 AND YEAR(`tanggal_lahir`) <= 1994 THEN 'Gen Y'
                 WHEN YEAR(`tanggal_lahir`) > 1994 AND YEAR(`tanggal_lahir`) <= 2009 THEN 'Gen Z'
                 WHEN YEAR(`tanggal_lahir`) > 2009 AND YEAR(`tanggal_lahir`) <= 2024 THEN 'Gen Alpha'
-                ELSE 'Gen Beta'
+                WHEN YEAR(`tanggal_lahir`) > 2024 AND YEAR(`tanggal_lahir`) <= 2050 THEN 'Gen Beta'
+                -- ELSE 'Gen Beta'
             END AS kategori_kelahiran,
             COUNT(*) AS jumlah
         FROM `mtr_tbl_karyawan`
         WHERE `is_aktif` = 1
         AND `nik` NOT IN ('Hco.all','IT Infras','IT.BM')
         AND `tanggal_lahir` IS NOT NULL
-        AND YEAR(`tanggal_lahir`) <= YEAR(NOW())
+        -- AND YEAR(`tanggal_lahir`) <= YEAR(NOW())
         GROUP BY kategori_kelahiran ORDER BY YEAR(`tanggal_lahir`) ASC");
         $data = collect($trx)->map(function($item){
             return (array) $item;
@@ -470,8 +549,188 @@ class KaryawanController extends Controller
                 "jumlah" => $item['jumlah']
             ];
         }
-        // return response()->json($jumlah_karyawan_perusahaan_now);
-        return view('master.karyawan.dashboard', compact('lable', 'jumlah_karyawan', 'jumlah_karyawan_kelamin', 'jumlah_karyawan_perusahaan', 'jumlah_karyawan_divisi', 'jumlah_karyawan_dep', 'jumlah_karyawan_subdep', 'jumlah_karyawan_status', 'jumlah_karyawan_level', 'jumlah_karyawan_kelamin_now', 'jumlah_karyawan_status_now', 'jumlah_karyawan_level_now', 'jumlah_karyawan_pendidikan_now', 'jumlah_karyawan_kelahiran_now', 'jumlah_karyawan_perusahaan_now'));
+        // start filter
+        if($request->filter == true && $id == 0){
+            $_select_kelamin = $request->input('select_kelamin', []);
+            $_select_status = $request->input('select_status', []);
+            $_select_perusahaan = $request->input('select_perusahaan', []);
+            $_select_level = $request->input('select_level', []);
+            $_select_pendidikan = $request->input('select_pendidikan', []);
+            $_select_generasi = $request->input('select_generasi', []);
+            if(count($_select_kelamin) > 0){
+                $arr_select_kelamin = $_select_kelamin;
+            }
+            else{
+                $arr_select_kelamin = array();
+            }
+            if(count($_select_status) > 0){
+                $arr_select_status = $_select_status;
+            }
+            else{
+                $arr_select_status = array();
+            }
+            if(count($_select_perusahaan) > 0){
+                $arr_select_perusahaan = $_select_perusahaan;
+            }
+            else{
+                $arr_select_perusahaan = array();
+            }
+            if(count($_select_level) > 0){
+                $arr_select_level = $_select_level;
+            }
+            else{
+                $arr_select_level = array();
+            }
+            if(count($_select_pendidikan) > 0){
+                $arr_select_pendidikan = $_select_pendidikan;
+            }
+            else{
+                $arr_select_pendidikan = array();
+            }
+            if(count($_select_generasi) > 0){
+                $arr_select_generasi = $_select_generasi;
+            }
+            else{
+                $arr_select_generasi = array();
+            }
+            // $arr_select_generasi
+            $arr_generasi = array_values(array_filter($select_generasi, function($item) use ($arr_select_generasi) {
+                return in_array($item['id'], $arr_select_generasi);
+            }));
+            // arr_generasi
+            $where = [];
+            foreach ($arr_generasi as $item) {
+                $min = $item['min'];
+                $max = $item['max'];
+                if (!empty($max)) {
+                    $where[] = "(YEAR(tanggal_lahir) > $min AND YEAR(tanggal_lahir) <= $max)";
+                } else {
+                    $where[] = "(YEAR(tanggal_lahir) > $min)";
+                }
+            }
+            $where_sql = implode(" OR ", $where);
+            // kode_kelamin now
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,IFNULL(`kode_kelamin`, 1) AS `kode_kelamin` 
+            FROM `mtr_tbl_karyawan` WHERE `is_aktif`=1 AND `nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND (".$where_sql.") 
+            AND kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND kode_status IN (".implode(',', $arr_select_status).") 
+            AND kode_level IN (".implode(',', $arr_select_level).") 
+            AND kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            GROUP BY `kode_kelamin`");
+            $data = collect($trx)->map(function($item){
+                return (array) $item;
+            });
+            $labels = [
+                "1" => "NA",
+                "2" => "Pria",
+                "3" => "Wanita"
+            ];
+            $jumlah_karyawan_kelamin_now = [];
+            foreach ($data as $item) {
+                $key = $labels[$item['kode_kelamin']];
+                $jumlah_karyawan_kelamin_now[$key] = [
+                    "jumlah" => $item['jumlah']
+                ];
+            }
+            // kode_status now
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`status_karyawan` 
+            FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_status_karyawan` AS b ON a.`kode_status`=b.`id` 
+            WHERE a.`is_aktif`=1 AND a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND (".$where_sql.") AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND a.kode_status IN (".implode(',', $arr_select_status).") 
+            AND a.kode_level IN (".implode(',', $arr_select_level).") 
+            AND a.kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            GROUP BY a.`kode_status` ORDER BY b.`status_karyawan`");
+            $data = collect($trx)->map(function($item){
+                return (array) $item;
+            });
+            $jumlah_karyawan_status_now = [];
+            foreach ($data as $item) {
+                $jumlah_karyawan_status_now[$item['status_karyawan']] = [
+                    "jumlah" => $item['jumlah']
+                ];
+            }
+            // kode_level now
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`level` 
+            FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_level` AS b ON a.`kode_level`=b.`id` 
+            WHERE a.`is_aktif`=1 AND a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND (".$where_sql.") AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND a.kode_status IN (".implode(',', $arr_select_status).") 
+            AND a.kode_level IN (".implode(',', $arr_select_level).") 
+            AND a.kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            GROUP BY a.`kode_level` ORDER BY b.`level`");
+            $data = collect($trx)->map(function($item){
+                return (array) $item;
+            });
+            $jumlah_karyawan_level_now = [];
+            foreach ($data as $item) {
+                $jumlah_karyawan_level_now[$item['level']] = [
+                    "jumlah" => $item['jumlah']
+                ];
+            }
+            // kode_perusahaan now
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`nama` 
+            FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_perusahaan` AS b ON a.`kode_perusahaan`=b.`id` 
+            WHERE a.`is_aktif`=1 AND a.`nik` NOT IN ('Hco.all','IT Infras','IT.BM') 
+            AND (".$where_sql.") AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND a.kode_status IN (".implode(',', $arr_select_status).") 
+            AND a.kode_level IN (".implode(',', $arr_select_level).") 
+            AND a.kode_perusahaan IN (".implode(',', $arr_select_perusahaan).") 
+            GROUP BY a.`kode_perusahaan` ORDER BY b.`nama`");
+            $data = collect($trx)->map(function($item){
+                return (array) $item;
+            });
+            $jumlah_karyawan_perusahaan_now = [];
+            foreach ($data as $item) {
+                $jumlah_karyawan_perusahaan_now[$item['nama']] = [
+                    "jumlah" => $item['jumlah']
+                ];
+            }
+            // kategori_kelahiran now
+            $trx = DB::select("SELECT 
+                CASE
+                    WHEN YEAR(`tanggal_lahir`) > 1900 AND YEAR(`tanggal_lahir`) <= 1946 THEN 'The Builders'
+                    WHEN YEAR(`tanggal_lahir`) > 1946 AND YEAR(`tanggal_lahir`) <= 1964 THEN 'Baby Boomers'
+                    WHEN YEAR(`tanggal_lahir`) > 1964 AND YEAR(`tanggal_lahir`) <= 1979 THEN 'Gen X'
+                    WHEN YEAR(`tanggal_lahir`) > 1979 AND YEAR(`tanggal_lahir`) <= 1994 THEN 'Gen Y'
+                    WHEN YEAR(`tanggal_lahir`) > 1994 AND YEAR(`tanggal_lahir`) <= 2009 THEN 'Gen Z'
+                    WHEN YEAR(`tanggal_lahir`) > 2009 AND YEAR(`tanggal_lahir`) <= 2024 THEN 'Gen Alpha'
+                    WHEN YEAR(`tanggal_lahir`) > 2024 AND YEAR(`tanggal_lahir`) <= 2050 THEN 'Gen Beta'
+                    -- ELSE 'Gen Beta'
+                END AS kategori_kelahiran,
+                COUNT(*) AS jumlah
+            FROM `mtr_tbl_karyawan`
+            WHERE `is_aktif` = 1
+            AND `nik` NOT IN ('Hco.all','IT Infras','IT.BM')
+            AND `tanggal_lahir` IS NOT NULL
+            -- AND YEAR(`tanggal_lahir`) <= YEAR(NOW())
+            AND (".$where_sql.")
+            AND kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
+            AND kode_status IN (".implode(',', $arr_select_status).") 
+            AND kode_level IN (".implode(',', $arr_select_level).") 
+            AND kode_perusahaan IN (".implode(',', $arr_select_perusahaan).")
+            GROUP BY kategori_kelahiran ORDER BY YEAR(`tanggal_lahir`) ASC");
+            $data = collect($trx)->map(function($item){
+                return (array) $item;
+            });
+            $jumlah_karyawan_kelahiran_now = [];
+            foreach ($data as $item) {
+                $jumlah_karyawan_kelahiran_now[$item['kategori_kelahiran']] = [
+                    "jumlah" => $item['jumlah']
+                ];
+            }
+            // 
+        }else{
+            // $arr_select_kelamin = array();
+            // $arr_select_status = array();
+            // $arr_select_perusahaan = array();
+            // $arr_select_level = array();
+            // $arr_select_pendidikan = array();
+            // $arr_select_generasi = array();
+        }
+        // end filter
+        return view('master.karyawan.dashboard', compact('lable', 'jumlah_karyawan', 'jumlah_karyawan_kelamin', 'jumlah_karyawan_perusahaan', 'jumlah_karyawan_divisi', 'jumlah_karyawan_dep', 'jumlah_karyawan_subdep', 'jumlah_karyawan_status', 'jumlah_karyawan_level', 'jumlah_karyawan_kelamin_now', 'jumlah_karyawan_status_now', 'jumlah_karyawan_level_now', 'jumlah_karyawan_pendidikan_now', 'jumlah_karyawan_kelahiran_now', 'jumlah_karyawan_perusahaan_now', 'select_kelamin', 'arr_select_kelamin', 'select_status', 'arr_select_status', 'select_perusahaan', 'arr_select_perusahaan', 'select_level', 'arr_select_level', 'select_pendidikan', 'arr_select_pendidikan', 'select_generasi', 'arr_select_generasi', 'bulan_tahun_dari', 'bulan_tahun_sampai', 'id', 'select_aktif', 'arr_select_aktif'));
     }
 
     /**
