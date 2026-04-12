@@ -5,7 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Perusahaan;
+use App\Models\Divisi;
+use App\Models\Departemen;
+use App\Models\SubDepartemen;
+use App\Models\Level;
+use App\Models\Jabatan;
 use App\Models\Karyawan;
+use App\Models\KaryawanPendidikan;
 use App\Models\TrxPenilaian;
 use App\Models\TrxPenilaianLog;
 use App\Models\TrxPenilaianLogHistory;
@@ -26,39 +32,163 @@ use App\Mail\MattaRebornMail;
 use Illuminate\Support\Facades\Mail;
 // 
 use DB;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Elibyy\TCPDF\Facades\TCPDF;
+// 
+use App\Models\TrxPayroll;
+use App\Models\TrxPayrollLog;
+use App\Models\TrxPayrollAddsub;
+use App\Models\TrxPayrollAddsubLog;
 // 
 class TrxPenilaianController extends Controller
 {
+    public function kontrak_update(Request $request)
+    {
+        // dd($request->all());
+        $trx = TrxPenilaian::find($request->id);
+        $trx->no_kontrak = $request->no_kontrak;
+        $trx->tanggal_kontrak = $request->tanggal_kontrak;
+        $trx->tanggal_terhitung = $request->tanggal_terhitung;
+        $trx->id_perusahaan = $request->id_perusahaan;
+        $trx->id_divisi = $request->id_divisi;
+        $trx->id_departemen = $request->id_departemen;
+        $trx->id_sub_departemen = $request->id_sub_departemen;
+        $trx->id_level = $request->id_level;
+        $trx->id_jabatan = $request->id_jabatan;
+        $trx->gapok = str_replace(',', '', $request->gapok);
+        $trx->t_makan = str_replace(',', '', $request->t_makan);
+        $trx->t_transportasi = str_replace(',', '', $request->t_transportasi);
+        $trx->t_jabatan = str_replace(',', '', $request->t_jabatan);
+        $trx->t_telekomunikasi = str_replace(',', '', $request->t_telekomunikasi);
+        $trx->t_lain = str_replace(',', '', $request->t_lain);
+        $trx->update();
+        return redirect()->to($request->back_url)->with( 'msg', 'Data is saved successfully.' );
+    }
+    // http://localhost/matta/penilaian/kontrak/0
     public function kontrak(Request $request, $id)
     {
-        // dd($request->all(), $id);$pdf::AddPage('P', 'A4');
+        // dd($request->all(), $id);
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
+        Carbon::setLocale('id');
+        $angka_romawi = [
+            1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
+            5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII',
+            9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII'
+        ];
+        $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
+        $id = (new OpenDataController)->decryptWithKey($id);
+        $trx = TrxPenilaian::find($id);
+        $karyawan = Karyawan::where(['nik'=>$trx->nik_karyawan])->first();
+        // 041-PKWT/ADM-APM/PC/III/2026
+        $no_kontrak = $trx->no_kontrak;
+        if(!empty($no_kontrak)){
+            $no_kontrak = str_pad($no_kontrak, 3, '0', STR_PAD_LEFT).'-PKWT/ADM-APM/PC/';
+        }
+        $tanggal_kontrak = $trx->tanggal_kontrak;
+        if(!empty($tanggal_kontrak)){
+            $tanggal_kontrak = $this->tanggalKeTeks($tanggal_kontrak);
+            $tanggal = Carbon::parse($trx->tanggal_kontrak);
+            $no_kontrak .= $angka_romawi[$tanggal->month].'/'.$tanggal->year;
+        }
+        $tanggal_terhitung = $trx->tanggal_terhitung;
+        if(!empty($tanggal_terhitung)){
+            $tanggal_terhitung = $this->tanggalKeTeks($tanggal_terhitung);
+        }
+        $tanggal_lahir = $karyawan->tanggal_lahir;
+        if(!empty($tanggal_lahir)){
+            $tanggal_lahir = Carbon::parse($karyawan->tanggal_lahir)->translatedFormat('j F Y');
+        }
+        // $kelamin = $karyawan->kode_kelamin;
+        // if(!empty($kelamin)){
+        //     $kelamin = $karyawan->_kelamin->kelamin;
+        // }
+        // $agama = $karyawan->kode_agama;
+        // if(!empty($agama)){
+        //     $agama = $karyawan->_agama->agama;
+        // }
+        // $kawin = $karyawan->kode_kawin;
+        // if(!empty($kawin)){
+        //     $kawin = $karyawan->_kawin->status_kawin;
+        // }
+        $pendidikan = '';
+        $jenjang = KaryawanPendidikan::where(['nik'=>$trx->nik_karyawan])->orderBy('id_jenjang', 'desc')->first();
+        if(!empty($jenjang)){
+            $pendidikan .= $jenjang->_jenjang->jenjang;
+            if(!empty($jenjang->jurusan_prodi)){
+                $pendidikan .= ' ('.$jenjang->jurusan_prodi.')';
+            }
+        }
+        $bulan = $trx->bulan;
+        if(!empty($bulan)){
+            $bulan .= ' ('.$formatter->format($bulan).') bulan';
+        }
+        // 2 Maret 2026 sampai dengan 31 Desember 2026
+        $durasi = $trx->tanggal_terhitung;
+        if(!empty($durasi)){
+            $durasi = Carbon::parse($durasi)->translatedFormat('j F Y').' sampai dengan '.Carbon::parse($durasi)->addMonths($trx->bulan)->endOfMonth()->translatedFormat('j F Y');
+        }
+        // payrol
+        $payroll = $trx->gapok;
+        $payroll += $trx->t_makan;
+        $payroll += $trx->t_transportasi;
+        $payroll += $trx->t_jabatan;
+        $payroll += $trx->t_telekomunikasi;
+        $payroll += $trx->t_lain;
+        $nominal = Str::title($formatter->format($payroll));
+        // 
+        // 0=NA
+        // 1=Non Staff
+        // 2=Staff
+        // 3=Supervisor (SPV)
+        // 01031908799=Khatrin Rismasany
+        $pic_hco = explode(',', MtrUtility::find(50)->informasi);
+        $hco = Karyawan::where(['is_aktif' => 1, 'nik'=>$pic_hco[0]])->first();
+        // 4=Assistant Manager
+        // 5=Junior Manager (JM)
+        // 6=Manager
+        // 7=Senior Manager (SM)
+        // 8=Junior General Manager (JGM)
+        // 9=General Manager (GM)
+        // 10=Senior General Manager (SGM / Senior GM)
+        // 11=Executive General Manager (EGM)
+        // 12=Vice President (VP)
+        // 13=Senior Vice President (SVP)
+        // 14=Direktur
+        if(in_array($trx->id_level, range(4, 14))){
+            // 01029803003=Bambang Andjar Prasetyono
+            $hco = Karyawan::where(['is_aktif' => 1, 'nik'=>$pic_hco[1]])->first();
+        }
         $waktu = date('YmdHis');
         $filename = 'Kontrak PKWT '.$waktu.'.pdf';
         $pdf = new TCPDF;
         $pdf::SetTitle('Kontrak PKWT');
         $pdf::SetFont('times', '', 10, '', true);
-        $pdf::AddPage();
         $pdf::SetAutoPageBreak(true, 0);
+        // Page 1
+        $pdf::AddPage();
         $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header.png');
         $x = 7;
         $y = 23;
         $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
         $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
         $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        // No.041-PKWT/ADM-APM/PC/III/2026<br/>
         $html = '<div style="text-align:center;"><b><u>PERJANJIAN KERJA WAKTU TERTENTU</u></b><br/>
-        No.041-PKWT/ADM-APM/PC/III/2026<br/>
+        No.'.$no_kontrak.'<br/>
         ANTARA<br/>
-        <b><u>PT. ALITA PRAYA MITRA</u></b><br/>
+        <b>PT. ALITA PRAYA MITRA</b><br/>
         DENGAN<br/>
-        <b><u>ANDREA WULANDARI IRAWAN</u></b></div>';
-        $pdf::writeHTMLCell(0, 0, $x, $y+=0, $html, 0, 1, 0, true, '', true);
-        $html = '<div style="text-align:justify;">Pada hari ini Senin Dua Maret Dua Ribu Dua Puluh Enam di Kantor PT. ALITA PRAYA MITRA Jl. Muara Dalam No.108 Kelurahan Tanjung Barat Kecamatan Jagakarsa, Jakarta Selatan, telah tercapai kesepakatan antara pihak-pihak :</div>';
-        $pdf::writeHTMLCell(0, 0, $x, $y+=30, $html, 0, 1, 0, true, '', true);
+        <b>'.strtoupper($karyawan->nama).'</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;">Pada hari ini '.$tanggal_kontrak.' di Kantor PT. ALITA PRAYA MITRA Jl. Muara Dalam No.108 Kelurahan Tanjung Barat Kecamatan Jagakarsa, Jakarta Selatan, telah tercapai kesepakatan antara pihak-pihak :</div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=35, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
         <tr>
             <td width="4%">I.</td>
-            <td width="96%"><b>PT. ALITA PRAYA MITRA</b> berkedudukan di Jl. Muara Dalam No.108 Kelurahan Tanjung Barat Kecamatan Jagakarsa, Jakarta 12530, yang dalam perbuatan hukum ini diwakili secara sah oleh <b>Khatrin Rismasany</b> dalam kapasitasnya mewakili Direksi sebagai People & Culture Manager, dan untuk selanjutnya disebut sebagai <b>Pihak Pertama</b></td>
+            <td width="96%"><b>PT. ALITA PRAYA MITRA</b> berkedudukan di Jl. Muara Dalam No.108 Kelurahan Tanjung Barat Kecamatan Jagakarsa, Jakarta 12530, yang dalam perbuatan hukum ini diwakili secara sah oleh <b>'.$hco->nama.'</b> dalam kapasitasnya mewakili Direksi sebagai '.$hco->_jabatan->jabatan.', dan untuk selanjutnya disebut sebagai <b>Pihak Pertama</b></td>
         </tr>
         <tr>
             <td>&nbsp;</td>
@@ -70,42 +200,42 @@ class TrxPenilaianController extends Controller
                     <tr>
                         <td width="20%">Nama</td>
                         <td width="2%">:</td>
-                        <td width="78%">Andrea Wulandari Irawan</td>
+                        <td width="78%">'.$karyawan['nama'].'</td>
                     </tr>
                     <tr>
                         <td>Tempat & tgl lahir</td>
                         <td>:</td>
-                        <td>Jakarta / 7 Agustus 1995</td>
+                        <td>'.ucfirst($karyawan->tempat_lahir).' / '.$tanggal_lahir.'</td>
                     </tr>
                     <tr>
                         <td>NIK/KTP</td>
                         <td>:</td>
-                        <td>3273184708950005</td>
+                        <td>'.$karyawan->no_ktp.'</td>
                     </tr>
                     <tr>
                         <td>Jenis Kelamin</td>
                         <td>:</td>
-                        <td>Perempuan</td>
+                        <td>'.$karyawan->_kelamin->kelamin.'</td>
                     </tr>
                     <tr>
                         <td>Agama</td>
                         <td>:</td>
-                        <td>Islam</td>
+                        <td>'.$karyawan->_agama->agama.'</td>
                     </tr>
                     <tr>
                         <td>Status</td>
                         <td>:</td>
-                        <td>Belum Menikah</td>
+                        <td>'.$karyawan->_kawin->status_kawin.'</td>
                     </tr>
                     <tr>
                         <td>Pendidikan terakhir</td>
                         <td>:</td>
-                        <td>S2 (Magister Manajemen Internasional)</td>
+                        <td>'.$pendidikan.'</td>
                     </tr>
                     <tr>
                         <td>Alamat</td>
                         <td>:</td>
-                        <td>Jl. Bona Indah A VI/7, RT 006 RW 006, Lebak Bulus, Cilandak, Jakarta Selatan, DKI Jakarta</td>
+                        <td>'.$karyawan->alamat_ktp.'</td>
                     </tr>
                 </table>
             </td>
@@ -135,7 +265,7 @@ class TrxPenilaianController extends Controller
         </tr>
         <tr>
             <td>2)</td>
-            <td>Yang dimaksud dengan Waktu Tertentu adalah bahwa Pihak Pertama mempekerjakan Pihak Kedua di bawah Divisi <b>Corporate Secretary</b> selama 10 (sepuluh) bulan terhitung mulai tanggal 2 Maret 2026 sampai dengan 31 Desember 2026 dan dapat diperpanjang dan/atau diperbaharui atas persetujuan kedua belah pihak</td>
+            <td>Yang dimaksud dengan Waktu Tertentu adalah bahwa Pihak Pertama mempekerjakan Pihak Kedua di bawah Divisi <b>'.$trx->_departemen->nama.'</b> selama '.$bulan.' terhitung mulai tanggal '.$durasi.' dan dapat diperpanjang dan/atau diperbaharui atas persetujuan kedua belah pihak</td>
         </tr>
         <tr>
             <td>&nbsp;</td>
@@ -164,6 +294,7 @@ class TrxPenilaianController extends Controller
         $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
         $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
         $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        // 
         $html = '<div style="text-align:center;"><b>PASAL 2<br/>PEKERJAAN DAN PENEMPATAN</b></div>';
         $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
@@ -175,19 +306,19 @@ class TrxPenilaianController extends Controller
                             <td width="2%">a.</td>
                             <td width="20%">Posisi / Jabatan</td>
                             <td width="2%">:</td>
-                            <td width="76%">Corporate Secretary Officer</td>
+                            <td width="76%">'.$trx->_jabatan->jabatan.'</td>
                         </tr>
                         <tr>
                             <td>b.</td>
                             <td>Level</td>
                             <td>:</td>
-                            <td>Supervisor</td>
+                            <td>'.$trx->_level->level.'</td>
                         </tr>
                         <tr>
                             <td>c.</td>
                             <td>Unit Kerja</td>
                             <td>:</td>
-                            <td>Corporate Secretary</td>
+                            <td>'.$trx->_sub_departemen->nama.'</td>
                         </tr>
                 </table>
             </td>
@@ -226,9 +357,489 @@ class TrxPenilaianController extends Controller
         </tr>
         </table></div>';
         $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // 
+        $html = '<div style="text-align:center;"><b>PASAL 3<br/>PENDIDIKAN / TRAINING / SEMINAR</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=85, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1)</td>
+            <td width="96%">Apabila Pihak Pertama menugaskan Pihak Kedua untuk mengikuti Pendidikan / Training / Seminar, maka Pihak Kedua <b>wajib</b> mengaplikasikan ilmunya sampai dengan masa yang diatur dalam Pasal 1 Ayat 2 Perjanjian ini berakhir</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2)</td>
+            <td>Apabila Pihak Kedua memutuskan Hubungan Kerja sebelum masa yang diatur dalam Pasal 1 Ayat 2 Perjanjian ini berakhir dan telah mengikuti Pendidikan / Training / Seminar yang ditugaskan Pihak Pertama, maka Pihak Kedua <b>wajib</b> mengganti seluruh Biaya Pendidikan / Training / Seminar yang telah dikeluarkan oleh Pihak Pertama</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // 
+        $html = '<div style="text-align:center;"><b>PASAL 4<br/>UPAH</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=35, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1)</td>
+            <td width="96%">Besarnya Upah yang diterima Pihak Kedua adalah sebagaimana terlampir</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2)</td>
+            <td>Besarnya Upah tersebut adalah bersifat <b>RAHASIA</b> dan tidak untuk di-informasikan kepada Pihak manapun termasuk kepada Rekan Kerja</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // 
+        $html = '<div style="text-align:center;"><b>PASAL 5<br/>JADWAL KERJA</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=25, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1)</td>
+            <td width="96%">Pihak Kedua berkewajiban untuk memenuhi Jadwal Kerja yang berlaku yaitu Senin – Jumat pukul 09.00 – 18.00</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2)</td>
+            <td>Pihak Kedua berkewajiban untuk melakukan absensi kehadiran melalui aplikasi MATTA</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>3)</td>
+            <td>Apabila dalam jangka waktu 5 (lima) hari berturut-turut Pihak Kedua mangkir dari Pekerjaan, maka Pihak Pertama dapat menjatuhkan sanksi berupa Pemutusan Hubungan Kerja</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>4)</td>
+            <td>Pihak Kedua berkewajiban untuk memberikan keterangan apabila berhalangan untuk bekerja</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // page 3
+        $pdf::AddPage();
+        $pdf::SetAutoPageBreak(true, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
+        $x = 7;
+        $y = 23;
+        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        // 
+        $html = '<div style="text-align:center;"><b>PASAL 6<br/>SANKSI</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1)</td>
+            <td width="96%">Pihak Pertama dapat memutuskan Hubungan Kerja dengan Pihak Kedua sebelum masa yang diatur dalam Pasal 1 Ayat 2 Perjanjian ini berakhir apabila Pihak Kedua tidak memenuhi pasal-pasal yang ditentukan dalam Perjanjian ini</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2)</td>
+            <td>Apabila Pihak Kedua memutuskan hubungan kerja dengan Pihak Pertama sebelum melewati masa kerja seperti yang diatur dalam Pasal 1 ayat 2 Perjanjian ini berakhir, maka Pihak Kedua <b>wajib</b> membayar kompensasi kepada Pihak Pertama sebesar <b>Nilai Gaji x Sisa Masa Kontrak</b> dan/atau sesuai dengan kesepakatan, hal ini berlaku juga sebaliknya</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>3)</td>
+            <td>Pihak Pertama dapat memutuskan Hubungan Kerja dengan Pihak Kedua sebelum masa yang diatur dalam Pasal 1 Ayat 2 Perjanjian ini berakhir apabila Pihak Kedua tidak menunjukkan kinerja yang diharapkan oleh Pihak Pertama dengan disertai hasil Penilaian Kinerja oleh Atasan Langsung dan/atau Kepala Divisi terkait dan telah disepakati Kedua Pihak, TANPA dikenakan kompensasi seperti yang diatur dalam Pasal 6 Ayat 2</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>4)</td>
+            <td>Dalam hal pengakhiran hubungan kerja pada ayat (3) diatas atau dikarenakan Pihak Pertama melakukan PHK dikarenakan Pihak Kedua melakukan pelanggaran mendesak dan melanggar ketentuan Perusahaan, maka Pihak Pertama tidak berkewajiban memberikan kompensasi yang tercantum dalam pasal 1 ayat (4) perjanjian ini, dalam bentuk apapun termasuk ganti rugi kepada pihak lainnya sebesar upah pekerja sampai batas waktu berakhirnya jangka waktu perjanjian kerja</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>5)</td>
+            <td>Pihak Pertama dapat memutuskan Hubungan Kerja dengan Pihak Kedua sebelum masa yang diatur dalam Pasal 1 Ayat 2 Perjanjian ini berakhir apabila Negara dan/atau Perusahaan dalam kondisi <i>Force Majeure</i>, TANPA dikenakan kompensasi seperti yang diatur dalam Pasal 6 Ayat 2</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // 
+        $html = '<div style="text-align:center;"><b>PASAL 7<br/>KERAHASIAAN DATA DAN INFORMASI</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=95, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1)</td>
+            <td width="96%">Kerahasiaan Data dan Informasi yang dimaksud adalah Kerahasiaan Data dan Informasi yang tidak diketahui oleh pihak-pihak diluar kepentingan Pihak Pertama termasuk, namun tidak terbatas pada, aplikasi paten, data dan informasi yang berkaitan dengan inovasi dan penemuan baru, produk, perencanaan, perhitungan, konsep desain sistem, sistem informasi, program komputer, rencana marketing dan bisnis, pembiayaan, penentuan harga atau data dan informasi lain yang berkaitan dengan bisnis atau potensi bisnis Pihak Pertama</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2)</td>
+            <td>Pihak Kedua memahami dan menyetujui bahwa kerahasiaan data dan informasi tersebut merupakan rahasia bisnis dari Pihak Pertama dan selalu berkaitan dengan Perjanjian Kerja Karyawan ini, Pihak Pertama telah melakukan segala upaya untuk menjaga kerahasiaan data dan informasi yang dimaksud</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>3)</td>
+            <td>Semua catatan, memorandum, disk computer dan/atau alat lain yang memiliki fungsi yang sama sebagai penyimpan data dan informasi adalah milik dan atau asset Pihak Pertama. Memindahtangankan, menyimpan untuk keperluan pribadi dan pemanfaatan di luar kepentingan perusahaan merupakan pelanggaran yang dapat dituntut secara hukum</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // 
+        $html = '<div style="text-align:center;"><b>PASAL 8<br/>LARANGAN PENGGUNAAN APLIKASI ILEGAL</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=65, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1)</td>
+            <td width="96%">Aplikasi ilegal adalah perangkat lunak yang digunakan tanpa lisensi resmi atau yang melanggar hak cipta dan peraturan hukum lainnya</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2)</td>
+            <td>Pihak Kedua dilarang keras mengunduh, menginstal, atau menggunakan aplikasi ilegal di perangkat milik perusahaan maupun perangkat pribadi yang digunakan untuk kepentingan pekerjaan. Setiap penggunaan aplikasi ilegal akan dianggap sebagai pelanggaran serius terhadap Peraturan Perusahaan</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // page 4
+        $pdf::AddPage();
+        $pdf::SetAutoPageBreak(true, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
+        $x = 7;
+        $y = 23;
+        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        // 
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">3)</td>
+            <td width="96%">3)	Pihak Kedua bertanggung jawab untuk memastikan semua aplikasi yang digunakan telah memiliki lisensi resmi dan sesuai dengan Peraturan Perusahaan dan harus melaporkan kepada atasan langsung jika mengetahui adanya penggunaan aplikasi ilegal di lingkungan kerja</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>4)</td>
+            <td>Pelanggaran terhadap ketentuan ini dapat mengakibatkan tindakan disiplin, termasuk namun tidak terbatas pada pemutusan kontrak kerja, penghapusan hak atas tunjangan, dan tindakan hukum lainnya sesuai dengan kebijakan perusahaan dan peraturan perundang-undangan yang berlaku</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
+        // 
+        $html = '<div style="text-align:center;"><b>PASAL 9<br/>PERLINDUNGAN DATA PRIBADI</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=40, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1)</td>
+            <td width="96%">Selama jangka waktu Perjanjian ini, Pihak Kedua mengetahui dan menyetujui bahwa akan ada pemrosesan Data Pribadi (“<b>Data Pribadi</b>”) yang telah diberikan kepada Pihak Pertama</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2)</td>
+            <td>Pihak Kedua menjamin keaslian dan kebenaran Data Pribadi yang diberikan kepada Pihak Pertama</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>3)</td>
+            <td>Pihak Pertama berkewajiban untuk melakukan pemrosesan dan/atau penyimpanan data dengan tujuan dan tata cara yang tercantum dalam Undang-undang Nomor 27 Tahun 2022 tentang Perlindungan Data Pribadi (“<b>UU PDP</b>”), maupun peraturan pelaksana lainnya</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>4)</td>
+            <td>Pihak Pertama akan memastikan bahwa hak-hak yang dimiliki oleh Pihak Kedua selaku pemilik Data Pribadi sesuai dengan UU PDP, akan selalu berlaku, kecuali apabila ada sebab-sebab lain yang disepakati oleh Para Pihak</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>5)</td>
+            <td>Pihak Kedua menjamin, melepaskan dan/atau membebaskan Pihak Pertama dari ganti rugi atas segala kerugian, risiko dan/atau konsekuensi akibat kegiatan pemrosesan Data Pribadi secara ilegal oleh pihak ketiga</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // 
+        $html = '<div style="text-align:center;"><b>PASAL 10<br/>PENANDATANGANAN DIGITAL</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=70, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1)</td>
+            <td width="96%">Perjanjian ini dapat dilaksanakan dengan tanda tangan elektronik atau tanda tangan tulisan tangan oleh salah satu Pihak. Dalam hal salah satu Pihak melaksanakan Perjanjian ini dengan tanda tangan elektronik, tanda tangan elektronik tersebut akan dianggap sebagai tanda tangan asli dari Pihak terkait. Para Pihak setuju bahwa tanda tangan elektronik memiliki efek hukum yang sama dengan tanda tangan tulisan tangan</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2)</td>
+            <td>Jika diminta dan disetujui oleh Para Pihak untuk secara fisik menandatangani Perjanjian setelahnya, Para Pihak setuju untuk memberikan tanda tangan pada Perjanjian ini dan Para Pihak selanjutnya setuju bahwa meskipun ada tanda tangan dengan tulisan tangan, Perjanjian ini akan dianggap telah dilaksanakan sejak tanggal Perjanjian ditandatangani dengan tanda tangan elektronik dan berlaku sejak tanggal efektif Perjanjian ini</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>3)</td>
+            <td>Menyimpang dari ketentuan di atas, Perjanjian ini dapat dilakukan dengan menggunakan tanda tangan campuran, sedangkan satu Pihak melaksanakan dengan tanda tangan elektronik dan Pihak lainnya melaksanakan dengan tanda tangan tulisan tangan</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // 
+        $html = '<div style="text-align:center;"><b>PASAL 11<br/>PENYELESAIAN PERSELISIHAN</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=60, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1)</td>
+            <td width="96%">Hal-hal yang belum tercakup di dalam perjanjian ini, Para Pihak sepakat untuk tunduk dan mentaati pada Peraturan Perusahaan PT. ALITA PRAYA MITRA yang telah mendapat pengesahan dari Kepala Dinas Tenaga Kerja, Transmigrasi dan Energi Provinsi DKI Jakarta Nomor 1985/PP/L/XII/SS/2025</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2)</td>
+            <td>Segala perselisihan tanpa ada yang dikecualikan, yang timbul dari Perjanjian ini, dan/atau sebagai akibat dari pelaksanaanya, untuk pertama kalinya akan diselesaikan secara musyawarah</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // page 5
+        $pdf::AddPage();
+        $pdf::SetAutoPageBreak(true, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
+        $x = 7;
+        $y = 23;
+        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        // 
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td>Pihak Pertama dan Pihak Kedua dalam melaksanakan Perjanjian ini terikat oleh Peraturan Perusahaan, Keputusan Perusahaan dan peraturan perundang-undangan yang berlaku. Demikian Perjanjian ini dibuat dalam rangkap 2 (dua) dan bermeterai cukup, Pihak Pertama dan Pihak Kedua masing-masing memperoleh 1 (satu) rangkap asli yang kesemuanya mempunyai kekuatan hukum dan pembuktian yang sama.</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
+        // 
+        $html = '<div style="text-align:center;"><b>PT. ALITA PRAYA MITRA</b><br/>Jakarta, '.Carbon::parse($trx->tanggal_kontrak)->translatedFormat('j F Y').'</div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=40, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:center;"><table>
+        <tr>
+            <td width="50%">Pihak Pertama<br/>a.n Direktur<p>&nbsp;</p><p>&nbsp;</p><b><u>'.strtoupper($hco->nama).'</u></b><br/>'.$hco->_jabatan->jabatan.'</td>
+            <td width="50%">Pihak Kedua<br/><p>&nbsp;</p><p>&nbsp;</p><b><u>'.strtoupper($karyawan->nama).'</u></b></td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // page 6
+        $pdf::AddPage();
+        $pdf::SetAutoPageBreak(true, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
+        $x = 7;
+        $y = 23;
+        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
+        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        // 
+        $html = '<div style="text-align:center;"><b>LAMPIRAN PERJANJIAN KERJA KARYAWAN<br/>No.'.$no_kontrak.'</b></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:justify;"><table>
+        <tr>
+            <td width="4%">1.</td>
+            <td width="96%">Besarnya Upah yang diterima Pihak Kedua adalah sebesar Rp. '.number_format($payroll, 0, ',', '.').' ('.$nominal.' Rupiah) per bulan dengan rincian:</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td><table>
+                <tr>
+                    <td width="25%">Gaji Pokok</td>
+                    <td width="5%">: Rp</td>
+                    <td width="10%" style="text-align:right;">'.number_format($trx->gapok, 0, ',', '.').'</td>
+                </tr>
+                <tr>
+                    <td>Tunjangan Makan</td>
+                    <td>: Rp</td>
+                    <td width="10%" style="text-align:right;">'.number_format($trx->t_makan, 0, ',', '.').'</td>
+                </tr>
+                <tr>
+                    <td>Tunjangan Transport</td>
+                    <td>: Rp</td>
+                    <td width="10%" style="text-align:right;">'.number_format($trx->t_transportasi, 0, ',', '.').'</td>
+                </tr>
+                <tr>
+                    <td>Tunjangan Jabatan</td>
+                    <td>: Rp</td>
+                    <td width="10%" style="text-align:right;">'.number_format($trx->t_jabatan, 0, ',', '.').'</td>
+                </tr>
+                <tr>
+                    <td>Tunjangan Telekomunikasi</td>
+                    <td>: Rp</td>
+                    <td width="10%" style="text-align:right;">'.number_format($trx->t_telekomunikasi, 0, ',', '.').'</td>
+                </tr>
+                <tr>
+                    <td>Tunjangan Lain-lain</td>
+                    <td>: Rp</td>
+                    <td width="10%" style="text-align:right;">'.number_format($trx->t_lain, 0, ',', '.').'</td>
+                </tr>
+            </table></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>2.</td>
+            <td>Upah Lembur diberikan secara khusus untuk Level Non-Staff dan Staff sesuai ketentuan dan prosedur yang berlaku.</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>3.</td>
+            <td>Tunjangan lain yang diberikan Pihak Pertama kepada Pihak Kedua antara lain:</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td><table>
+                <tr>
+                    <td width="3%">a.</td>
+                    <td width="97%">BPJS Kesehatan sesuai dengan Pasal 39 Peraturan Perusahaan PT. ALITA PRAYA MITRA.</td>
+                </tr>
+                <tr>
+                    <td>b.</td>
+                    <td>BPJS Ketenagakerjaan sesuai Pasal 39 Peraturan Perusahaan PT. ALITA PRAYA MITRA. </td>
+                </tr>
+                <tr>
+                    <td>c.</td>
+                    <td>Penggantian Biaya Kesehatan (Medical Reimbursement) dengan ketentuan sebagai berikut:</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><table>
+                        <tr>
+                            <td width="2%">&nbsp;</td>
+                            <td width="3%">1.</td>
+                            <td width="95%">Melampirkan copy resep, bukti pembelian/kuitansi dan bukti pembayaran, termasuk print out EDC (jika pembayaran melalui EDC), disertai diagnosa dokter.</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>2.</td>
+                            <td>Bukti pembelian/kuitansi Dokter/Klinik/Rumah Sakit/Apotek asli dengan cap/stample baik Rawat Jalan maupun Rawat Inap dan dilengkapi meterai untuk kuitansi dengan nilai minimum Rp5.000.000,- (Lima Juta Rupiah).</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>3.</td>
+                            <td>Biaya administrasi klinik/rumah sakit/aplikasi berobat online, ongkos kirim dan kantong belanja dapat diberikan jika tertera dalam satu transaksi/kuitansi pembelian yang sama dengan obat-obatan.</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>4.</td>
+                            <td>Masa berlaku kuitansi Dokter/Klinik/Rumah Sakit/Apotek adalah maksimal 3(tiga) bulan dari tanggal yang tertera dalam kuitansi.</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>5.</td>
+                            <td>Pemeriksaan Laboratorium, USG, MRI dan sejenisnya harus disertai dengan surat pengantar dari dokter dan keterangan diagnosa dari dokter.</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>6.</td>
+                            <td>Tidak termasuk penggantian General Check-Up, perawatan estetika, pemeriksaan hormonal/kesuburan, obat-obatan ringan yang dijual bebas, pengobatan/obat-obatan herbal.</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>7.</td>
+                            <td>Tidak termasuk program kehamilan, pemeriksaan kehamilan dan kelahiran.</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>8.</td>
+                            <td>Tidak termasuk pembelian susu, obat-obatan herbal untuk program kehamilan, pemeriksaan kehamilan dan kelahiran.</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>9.</td>
+                            <td>Tertanggung adalah termasuk keluarga inti bagi yang sudah menikah, antara lain:<br/>- istri dan anak bagi karyawan<br/>- anak (tidak termasuk suami) bagi karyawati</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>10.</td>
+                            <td>Penggantian maksimum sebesar 1 (satu) bulan Upah per Tahun dan berlaku proporsional sesuai masa perjanjian kerja.</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>11.</td>
+                            <td>Pengajuan Biaya Kesehatan (Medical Reimbursement) sesuai prosedur yang berlaku melalui aplikasi yang ditentukan oleh Pihak Pertama.</td>
+                        </tr>
+                    </table></td>
+                </tr>
+            </table></td>
+        </tr>
+        <tr>
+            <td>4.</td>
+            <td>PPh 21 akan ditanggung dan dibayarkan oleh Pihak Pertama.</td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // 
+        $html = '<div style="text-align:center;"><b>PT. ALITA PRAYA MITRA</b><br/>Jakarta, '.Carbon::parse($trx->tanggal_kontrak)->translatedFormat('j F Y').'</div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=170, $html, 0, 1, 0, true, '', true);
+        $html = '<div style="text-align:center;"><table>
+        <tr>
+            <td width="50%">Pihak Pertama<br/>a.n Direktur<p>&nbsp;</p><p>&nbsp;</p><b><u>'.strtoupper($hco->nama).'</u></b><br/>'.$hco->_jabatan->jabatan.'</td>
+            <td width="50%">Pihak Kedua<br/><p>&nbsp;</p><p>&nbsp;</p><b><u>'.strtoupper($karyawan->nama).'</u></b></td>
+        </tr>
+        </table></div>';
+        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        // 
         $pdf::Output(public_path($filename), 'I');
         return response()->download(public_path($filename));
         
+    }
+
+    public function tanggalKeTeks(string $tanggal)
+    {
+        Carbon::setLocale('id');
+        $date = Carbon::parse($tanggal);
+        $hari = $date->translatedFormat('l');
+        $bulan = $date->translatedFormat('F');
+        $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
+        $tanggalKata = $formatter->format($date->day);
+        $tahunKata = $formatter->format($date->year);
+        return Str::title($hari.' '.$tanggalKata.' '.$bulan.' '.$tahunKata);
     }
     /**
      * Display a listing of the resource.
@@ -282,6 +893,8 @@ class TrxPenilaianController extends Controller
         $arr_id_status_lengkap = array();
         $arr_perusahaan = Perusahaan::select('id','nama')->whereNotIn('id', [0,3])->orderBy('nama', 'asc')->get();
         $perusahaan = $arr_perusahaan;
+        $level = Level::select('id','level')->whereNotIn('id', [0])->orderBy('id', 'asc')->get();
+        $jabatan = Jabatan::select('id','jabatan')->whereNotIn('id', [0])->orderBy('jabatan', 'asc')->get();
         foreach ($trx as $data){
             array_push($arr_id_status, $data->id_status);
             array_push($arr_is_perpanjang, $data->is_perpanjang);
@@ -365,7 +978,7 @@ class TrxPenilaianController extends Controller
         }
         // return response()->json(['id_status_lengkap' => $id_status_lengkap, 'arr_id_status_lengkap' => $arr_id_status_lengkap]);
         // end filter
-        return view( 'formulir.penilaian.index', compact( 'trx', 'no', 'id_status', 'is_perpanjang', 'id_status_lengkap', 'perusahaan', 'arr_id_status', 'arr_is_perpanjang', 'arr_id_status_lengkap', 'arr_perusahaan'));
+        return view( 'formulir.penilaian.index', compact( 'trx', 'no', 'id_status', 'is_perpanjang', 'id_status_lengkap', 'perusahaan', 'level', 'jabatan', 'arr_id_status', 'arr_is_perpanjang', 'arr_id_status_lengkap', 'arr_perusahaan'));
     }
 
     /**
@@ -612,7 +1225,7 @@ class TrxPenilaianController extends Controller
     {
         //
         $id = (new OpenDataController)->decryptWithKey($id);
-        $penilaian = TrxPenilaian::find( $id );
+        $penilaian = TrxPenilaian::find($id);
         // ambil property para pihak
         $karyawan = json_decode($penilaian->karyawan_property, true);
         $penilai1 = json_decode($penilaian->penilai1_property, true);
@@ -956,7 +1569,7 @@ class TrxPenilaianController extends Controller
         // dd($id);
         $where = [ 'id_trx' => $id ];
         $history = TrxPenilaianLog::where($where)->orderBy('created_at','desc')->get();
-        $penilaian = TrxPenilaian::find( $id );
+        $penilaian = TrxPenilaian::find($id);
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         if(Gate::allows('hc_nkp')){
@@ -1077,7 +1690,6 @@ class TrxPenilaianController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
         // dd($request->all(), $id);
         $id = (new OpenDataController)->decryptWithKey($id);
         $id_status = $request->id_status;
@@ -1088,7 +1700,7 @@ class TrxPenilaianController extends Controller
                 $id_status = 15;
             }
         }
-        $trx = TrxPenilaian::find( $id );
+        $trx = TrxPenilaian::find($id);
         if($request->has('penilai_2')){
             $trx->nik_penilai_2 = $request->penilai_2;
             $trx->penilai2_property = $this->getNikProperty($request->penilai_2);
@@ -1170,6 +1782,54 @@ class TrxPenilaianController extends Controller
             $this->insertToDoList($todolist, $mailData);
             $this->sendEmail($mailData);
         }
+        // start
+        // pembuatan dokumen kontrak PKWT
+        // 1=PT ALITA PRAYA MITRA
+        // 2=KKWT
+        $check1 = Karyawan::where(['nik'=>$trx->nik_karyawan, 'is_aktif'=>1, 'kode_perusahaan'=>1, 'kode_status'=>2])->first();
+        // dd($check1->nama);
+        // 1=Diperpanjang
+        // 4=Done by HC (180)
+        // 8=Done by HC (360)
+        $check2 = TrxPenilaian::where(['id'=>$trx->id, 'is_perpanjang'=>1])->whereIn('id_status', [4,8])->exists();
+        if(!empty($check1) && $check2){
+            $no_kontrak = TrxPenilaian::where(['id_perusahaan'=>1, 'is_perpanjang'=>1])->whereIn('id_status', [4,8])->whereYear('tanggal_kontrak', now()->year)->count();
+            $trx = TrxPenilaian::find($id);
+            if(empty($trx->no_kontrak)){
+                $trx->no_kontrak = $no_kontrak + 1;
+            }
+            $trx->tanggal_kontrak = Carbon::parse($check1->tanggal_berakhir)->addDay()->format('Y-m-d');
+            $trx->tanggal_terhitung = Carbon::parse($check1->tanggal_berakhir)->addDay()->format('Y-m-d');
+            $trx->id_perusahaan = $check1->kode_perusahaan;
+            $trx->id_divisi = $check1->kode_divisi;
+            $trx->id_departemen = $check1->kode_departemen;
+            $trx->id_sub_departemen = $check1->kode_sub_departemen;
+            $trx->id_level = $check1->kode_level;
+            $trx->id_jabatan = $check1->kode_jabatan;
+            // ambil angka payroll
+            $payroll = TrxPayroll::where(['nik'=>$trx->nik_karyawan, 'bulan'=>now()->month, 'tahun'=>now()->year])->first();
+            if(empty($payroll)){
+                $payroll = TrxPayrollLog::where(['nik'=>$trx->nik_karyawan, 'bulan'=>now()->subMonth()->month, 'tahun'=>now()->subMonth()->year])->first();
+            }
+            // ambil angka tunjangan
+            $tunjangan = TrxPayrollAddsub::where(['nik'=>$trx->nik_karyawan, 'bulan'=>now()->month, 'tahun'=>now()->year])->whereIn('id_addsub', [1,2,3,4,5])->get();
+            if(count($tunjangan)==0){
+                $tunjangan = TrxPayrollAddsubLog::where(['nik'=>$trx->nik_karyawan, 'bulan'=>now()->subMonth()->month, 'tahun'=>now()->subMonth()->year])->whereIn('id_addsub', [1,2,3,4,5])->get();
+            }
+            $trx->gapok = $payroll->gapok;
+            // 1=Tunjangan Makan
+            $trx->t_makan = $tunjangan->where('id_addsub', 1)->first()->angka;
+            // 2=Tunjangan Transportasi
+            $trx->t_transportasi = $tunjangan->where('id_addsub', 2)->first()->angka;
+            // 3=Tunjangan Jabatan
+            $trx->t_jabatan = $tunjangan->where('id_addsub', 3)->first()->angka;
+            // 4=Tunjangan Telekomunikasi
+            $trx->t_telekomunikasi = $tunjangan->where('id_addsub', 4)->first()->angka;
+            // 5=Tunjangan Lainnya
+            $trx->t_lain = $tunjangan->where('id_addsub', 5)->first()->angka;
+            $trx->update();
+        }
+        // end
         return redirect( 'penilaian' )->with( 'msg', 'Data is saved successfully.' );
     }
     
@@ -1178,7 +1838,7 @@ class TrxPenilaianController extends Controller
         // dd($request->all(), $id);
         $pic = $request->pic;
         $id = (new OpenDataController)->decryptWithKey($id);
-        $penilaian = TrxPenilaian::find( $id );
+        $penilaian = TrxPenilaian::find($id);
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $_karyawan = json_decode($penilaian->karyawan_property, true);
