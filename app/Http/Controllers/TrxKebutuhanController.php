@@ -394,6 +394,12 @@ class TrxKebutuhanController extends Controller
             // outstanding
             $query = TrxKebutuhanMaster::whereIn(DB::raw('YEAR(created_at)'), $tahun);
             $outstanding = $query->whereIn('status_pengajuan', $sts_outstanding)->get();
+            // dd($outstanding);
+            $arr = array();
+            foreach($outstanding as $data){
+                array_push($arr, $data->id);
+            }
+            // dd($arr);
             $n_outstanding = $outstanding->sum('jumlah');
             $arr_direktorat = [];
             $arr_divisi = [];
