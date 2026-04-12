@@ -34,11 +34,71 @@
             <div class="card">
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
-                        <li class="nav-item"><a class="nav-link active" id="pills-current-tab" data-bs-toggle="pill" href="#pills-current" role="tab" aria-controls="pills-current" aria-selected="true">Terkini</a></li>
-                        <li class="nav-item"><a class="nav-link" id="pills-history-tab" data-bs-toggle="pill" href="#pills-history" role="tab" aria-controls="pills-history" aria-selected="true">Histori</a></li>
+                        <li class="nav-item"><a class="nav-link @if($id == 0) active @endif" id="pills-current-tab" data-bs-toggle="pill" href="#pills-current" role="tab" aria-controls="pills-current" aria-selected="true">Terkini</a></li>
+                        <li class="nav-item"><a class="nav-link @if($id == 1) active @endif" id="pills-history-tab" data-bs-toggle="pill" href="#pills-history" role="tab" aria-controls="pills-history" aria-selected="true">Histori</a></li>
                     </ul>
                     <div class="tab-content" id="pills-warningtabContent">
-                        <div class="tab-pane fade show active" id="pills-current" role="tabpanel" aria-labelledby="pills-current-tab">
+                        <div class="tab-pane fade  @if($id == 0) show active @endif" id="pills-current" role="tabpanel" aria-labelledby="pills-current-tab">
+                            <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                            <div class="collapse" id="collapse_filter">
+                                <form id="form0" name="form0" class="mt-2" action="{{ route('karyawan.dashboard', 0) }}" method="get" enctype="multipart/form-data">
+                                    <div class="row mt-2">
+                                        <div class="col-sm-4">
+                                            <label class="h6">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin(this)" /> Check All
+                                            <label class="d-block" for="select_kelamin">
+                                                @foreach ($select_kelamin as $data)
+                                                    <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br />
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="h6">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status(this)" /> Check All
+                                            <label class="d-block" for="select_status">
+                                                @foreach ($select_status as $data)
+                                                    <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br />
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_select_perusahaan(this)" /> Check All
+                                            <label class="d-block" for="select_perusahaan">
+                                                @foreach ($select_perusahaan as $data)
+                                                    <input class="checkbox_animated" id="select_perusahaan[]" name="select_perusahaan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_perusahaan)) checked @endif>{{ $data->nama }}<br />
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="h6">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level(this)" /> Check All
+                                            <label class="d-block" for="select_level">
+                                                @foreach ($select_level as $data)
+                                                    <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br />
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="h6">Pendidikan</label>&nbsp;<input type="checkbox" onClick="toggle_select_pendidikan(this)" /> Check All
+                                            <label class="d-block" for="select_pendidikan">
+                                                @foreach ($select_pendidikan as $data)
+                                                    <input class="checkbox_animated" id="select_pendidikan[]" name="select_pendidikan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_pendidikan)) checked @endif>{{ $data->jenjang }}<br />
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="h6">Generasi</label>&nbsp;<input type="checkbox" onClick="toggle_select_generasi(this)" /> Check All
+                                            <label class="d-block" for="select_generasi">
+                                                @foreach ($select_generasi as $data)
+                                                    <input class="checkbox_animated" id="select_generasi[]" name="select_generasi[]" type="checkbox" value="{{ $data['id'] }}" @if (in_array($data['id'], $arr_select_generasi)) checked @endif>{{ $data['data'] }}<br />
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="{{ route('karyawan.dashboard', 0) }}" class="btn btn-info" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                             <div class="row mt-2">
                                 @php $i = 0; @endphp
                                 <div class="col-xl-4 col-sm-4">
@@ -58,7 +118,7 @@
                                         <div class="p-3">
                                             <img src="{{ asset('assets/images/matta/dashboard/male-removebg-preview.png') }}" alt="People Icon" style="height:100px; object-fit:cover; border-radius:50%;">
                                         </div>
-                                        <h2>{{ $jumlah_karyawan_kelamin_now['Pria']['jumlah'] }}</h2>
+                                        <h2>@if(!empty($jumlah_karyawan_kelamin_now['Pria']['jumlah'])){{ $jumlah_karyawan_kelamin_now['Pria']['jumlah'] }} @else 0 @endif</h2>
                                     </div>
                                 </div>
                                 <div class="col-xl-4 col-sm-4">
@@ -67,7 +127,7 @@
                                         <div class="p-3">
                                             <img src="{{ asset('assets/images/matta/dashboard/female-removebg-preview.png') }}" alt="People Icon" style="height:100px; object-fit:cover; border-radius:50%;">
                                         </div>
-                                        <h2>{{ $jumlah_karyawan_kelamin_now['Wanita']['jumlah'] }}</h2>
+                                        <h2>@if(!empty($jumlah_karyawan_kelamin_now['Wanita']['jumlah'])){{ $jumlah_karyawan_kelamin_now['Wanita']['jumlah'] }} @else 0 @endif</h2>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-sm-6">
@@ -96,7 +156,63 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
+                        <div class="tab-pane fade @if($id == 1) show active @endif" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
+                            <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                            <div class="collapse" id="collapse_filter">
+                                <form id="form1" name="form1" class="mt-2" action="{{ route('karyawan.dashboard', 1) }}" method="get" enctype="multipart/form-data">
+                                    <div class="row mt-2">
+                                        <div class="col-sm-4">
+                                            <label class="h6" for="nama">Bulan-Tahun</label>
+                                            <div>
+                                                <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_dari }}">
+                                                <div class="invalid-feedback txt-danger">Field is required.</div>
+                                            </div>
+                                            sampai
+                                            <div>
+                                                <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_sampai }}">
+                                                <div class="invalid-feedback txt-danger">Field is required.</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="h6">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin(this)" /> Check All
+                                            <label class="d-block" for="select_kelamin">
+                                                @foreach ($select_kelamin as $data)
+                                                    <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br />
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="h6">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status(this)" /> Check All
+                                            <label class="d-block" for="select_status">
+                                                @foreach ($select_status as $data)
+                                                    <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br />
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_select_perusahaan(this)" /> Check All
+                                            <label class="d-block" for="select_perusahaan">
+                                                @foreach ($select_perusahaan as $data)
+                                                    <input class="checkbox_animated" id="select_perusahaan[]" name="select_perusahaan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_perusahaan)) checked @endif>{{ $data->nama }}<br />
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="h6">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level(this)" /> Check All
+                                            <label class="d-block" for="select_level">
+                                                @foreach ($select_level as $data)
+                                                    <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br />
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="{{ route('karyawan.dashboard', 1) }}" class="btn btn-info" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                             <div class="row mt-2">
                                 <div class="col-xl-12 col-sm-12">
                                     <h5 class="text-center">{{ $lable[++$i] }}</h5>
@@ -105,6 +221,14 @@
                                 <div class="col-xl-12 col-sm-12">
                                     <h5 class="text-center">{{ $lable[++$i] }}</h5>
                                     <div id="chart_jumlah_karyawan_kelamin"></div>
+                                </div>
+                                <div class="col-xl-12 col-sm-12">
+                                    <h5 class="text-center">{{ $lable[++$i] }}</h5>
+                                    <div id="chart_jumlah_karyawan_status"></div>
+                                </div>
+                                <div class="col-xl-12 col-sm-12">
+                                    <h5 class="text-center">{{ $lable[++$i] }}</h5>
+                                    <div id="chart_jumlah_karyawan_level"></div>
                                 </div>
                                 <div class="col-xl-12 col-sm-12">
                                     <h5 class="text-center">{{ $lable[++$i] }}</h5>
@@ -121,14 +245,6 @@
                                 <div class="col-xl-12 col-sm-12">
                                     <h5 class="text-center">{{ $lable[++$i] }}</h5>
                                     <div id="chart_jumlah_karyawan_subdep"></div>
-                                </div>
-                                <div class="col-xl-12 col-sm-12">
-                                    <h5 class="text-center">{{ $lable[++$i] }}</h5>
-                                    <div id="chart_jumlah_karyawan_status"></div>
-                                </div>
-                                <div class="col-xl-12 col-sm-12">
-                                    <h5 class="text-center">{{ $lable[++$i] }}</h5>
-                                    <div id="chart_jumlah_karyawan_level"></div>
                                 </div>
                             </div>
                         </div>
@@ -154,7 +270,101 @@
 <script src="{{ asset('assets/js/chart/apex-chart/chart-custom.js') }}"></script>
 {{-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> --}}
 <script type="text/javascript">
+// 
+function toggle_select_kelamin(source) {
+    checkboxes = document.getElementsByName('select_kelamin[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_select_status(source) {
+    checkboxes = document.getElementsByName('select_status[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_select_perusahaan(source) {
+    checkboxes = document.getElementsByName('select_perusahaan[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_select_level(source) {
+    checkboxes = document.getElementsByName('select_level[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_select_pendidikan(source) {
+    checkboxes = document.getElementsByName('select_pendidikan[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_select_generasi(source) {
+    checkboxes = document.getElementsByName('select_generasi[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_select_aktif(source) {
+    checkboxes = document.getElementsByName('select_aktif[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+// 
 $(document).ready(function() {
+    $('#form1').on('submit', function (e) {
+        let select_kelamin = $('input[name="select_kelamin[]"]:checked').length;
+        if (select_kelamin < 1) {
+            e.preventDefault();
+            alert("Jenis Kelamin is mandatory");
+        }
+        let select_status = $('input[name="select_status[]"]:checked').length;
+        if (select_status < 1) {
+            e.preventDefault();
+            alert("Status Karyawan is mandatory");
+        }
+        let select_perusahaan = $('input[name="select_perusahaan[]"]:checked').length;
+        if (select_perusahaan < 1) {
+            e.preventDefault();
+            alert("Perusahaan is mandatory");
+        }
+        let select_level = $('input[name="select_level[]"]:checked').length;
+        if (select_level < 1) {
+            e.preventDefault();
+            alert("Level is mandatory");
+        }
+    });
+    $('#form0').on('submit', function (e) {
+        let select_kelamin = $('input[name="select_kelamin[]"]:checked').length;
+        if (select_kelamin < 1) {
+            e.preventDefault();
+            alert("Jenis Kelamin is mandatory");
+        }
+        let select_status = $('input[name="select_status[]"]:checked').length;
+        if (select_status < 1) {
+            e.preventDefault();
+            alert("Status Karyawan is mandatory");
+        }
+        let select_perusahaan = $('input[name="select_perusahaan[]"]:checked').length;
+        if (select_perusahaan < 1) {
+            e.preventDefault();
+            alert("Perusahaan is mandatory");
+        }
+        let select_level = $('input[name="select_level[]"]:checked').length;
+        if (select_level < 1) {
+            e.preventDefault();
+            alert("Level is mandatory");
+        }
+        let select_generasi = $('input[name="select_generasi[]"]:checked').length;
+        if (select_generasi < 1) {
+            e.preventDefault();
+            alert("Generasi is mandatory");
+        }
+    });
+    // 
     function generateColors(count){
         let colors = [];
         for(let i=0;i<count;i++){
