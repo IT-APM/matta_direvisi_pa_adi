@@ -8,7 +8,7 @@
 @endsection
 
 @section('breadcrumb-title')
-<h3>Upload Data</h3>
+<h3>Upload Data Master Karyawan</h3>
 @endsection
 
 @section('breadcrumb-items')
@@ -43,13 +43,13 @@
                         <div class="col-md-12">
                             <form action="{{ route('karyawan.upload_data_xlsx', 0) }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to upload this data?');">
                             @csrf
-                            <input type="hidden" id="jenis" name="jenis" value="data_findim">
-                            <label class="h6">Data Findim</label>
+                            <input type="hidden" id="jenis" name="jenis" value="data_master_karyawan">
+                            <label class="h6">Data Master Karyawan</label>
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <input name="template" id="template" class="form-control" type="file" required="">
                                     <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
-                                    <br/><a href="{{ asset('assets/template/template_import_findim_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
+                                    <br/><a href="{{ asset('assets/template/template_upload_karyawan_v3.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download template</a>
                                 </div>
                                 <div class="col-md-2">
                                     <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
