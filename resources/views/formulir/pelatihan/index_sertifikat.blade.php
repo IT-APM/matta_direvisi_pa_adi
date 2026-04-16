@@ -102,7 +102,7 @@
                             <div class="col-md-8">
                                 <input name="template" id="template" class="form-control" type="file" required="">
                                 <label class="form-label">Maksimal 2 MB dengan format xls/xlsx</label>
-                                <br/><a href="{{ asset('assets/template/template_import_sertifikat_v1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download Template</a>
+                                <br/><a href="{{ asset('assets/template/template_import_sertifikat_v1.1.xlsx') }}" target="_blank"><i class="icon-file"></i>&nbsp;Download Template</a>
                             </div>
                             <div class="col-md-4">
                                 <button type="submit" class="btn btn-success"><i class="fa fa-upload"></i> Upload</button>
@@ -129,6 +129,8 @@
                                     <th>Tanggal Mulai</th>
                                     <th>Tanggal Akhir</th>
                                     <th>No Sertifikat</th>
+                                    <th>No Kartu Lisensi</th>
+                                    <th>No Kartu Anggota</th>
                                     <th>Tanggal Sertifikat</th>
                                     <th>Tanggal Kedaluwarsa</th>
                                     <th>Sertifikat</th>
@@ -181,6 +183,8 @@
                                         @endif
                                     </td>
                                     <td>{{ $data->nomor_sertifikat }}</td>
+                                    <td>{{ $data->no_kartu_lisensi }}</td>
+                                    <td>{{ $data->no_kartu_anggota }}</td>
                                     <td>
                                         @if(!empty($data->tanggal_sertifikat) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $data->tanggal_sertifikat))
                                         {{ Carbon\Carbon::createFromFormat('Y-m-d', $data->tanggal_sertifikat)->format('d-m-Y') }}
