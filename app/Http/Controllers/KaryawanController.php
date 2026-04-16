@@ -71,9 +71,10 @@ class KaryawanController extends Controller
                 'template'=>'required|file|mimes:xls,xlsx|max:2048',
             ]);
             // upload data
-            if($jenis == 'data_findim'){
+            if($jenis == 'data_master_karyawan'){
                 $path = $request->file('template')->getPathname();
                 $trx = Excel::toArray([], $path);
+                // data findim
                 $data0 = $trx[0];
                 // 100=NIP
                 // 101=NO SUB DEPARTEMENT
@@ -98,7 +99,6 @@ class KaryawanController extends Controller
                     // get karyawan
                     $where = ['nik' => $data0[$x][$_100]];
                     $karyawan = Karyawan::where($where)->first();
-                    // 
                     // get NO SUB DEPARTEMENT
                     $where = ['subdepartemen_id' => $data0[$x][$_101]];
                     $f_sub_dep = MtrFindimSubdepartemen::where($where)->first();
@@ -160,6 +160,39 @@ class KaryawanController extends Controller
                         $karyawan->findim_divisi = $f_divisi->id;
                         $karyawan->findim_departemen = $f_dep->id;
                         $karyawan->findim_subdepartemen = $f_sub_dep->id;
+                        $karyawan->update();
+                    }
+                }
+                // data karyawan
+                $data0 = $trx[1];
+                // 1=NIP=nik
+                // 2=Nomor Rekening=no_rek
+                // 3=Nama Bank=nama_bank
+                // 4=Rekening Atas Nama=nama_rek
+                // 5=Nomor BPJS KS=no_bpjs
+                // 6=Nomor BPJS TK=no_bpjstk
+                // 7=Nomor Telepon Darurat=telepon_darurat
+                // 8=Nomor NPWP=no_npwp
+                $nik = array_search(1, $data0[0]);
+                $no_rek = array_search(2, $data0[0]);
+                $nama_bank = array_search(3, $data0[0]);
+                $nama_rek = array_search(4, $data0[0]);
+                $no_bpjs = array_search(5, $data0[0]);
+                $no_bpjstk = array_search(6, $data0[0]);
+                $telepon_darurat = array_search(7, $data0[0]);
+                $no_npwp = array_search(8, $data0[0]);
+                // dimulai dari baris ke-3
+                for ($x = 2; $x < count($data0); $x++) {
+                    $where = ['nik' => $data0[$x][$nik]];
+                    $karyawan = Karyawan::where($where)->first();
+                    if($karyawan){
+                        $karyawan->no_rek = $data0[$x][$no_rek];
+                        $karyawan->nama_bank = $data0[$x][$nama_bank];
+                        $karyawan->nama_rek = $data0[$x][$nama_rek];
+                        $karyawan->no_bpjs = $data0[$x][$no_bpjs];
+                        $karyawan->no_bpjstk = $data0[$x][$no_bpjstk];
+                        $karyawan->telepon_darurat = $data0[$x][$telepon_darurat];
+                        $karyawan->no_npwp = $data0[$x][$no_npwp];
                         $karyawan->update();
                     }
                 }
