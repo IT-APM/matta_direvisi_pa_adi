@@ -68,6 +68,10 @@ class TrxPelatihanSertifikatController extends Controller
             $_15 = array_search(15, $data0[0]);
             // Sertifikat (url)
             $_16 = array_search(16, $data0[0]);
+            // No Kartu Lisensi
+            $_17 = array_search(17, $data0[0]);
+            // No Kartu Anggota
+            $_18 = array_search(18, $data0[0]);
             for ($x = 2; $x < count($data0); $x++) {
                 $nik = $data0[$x][$_3];
                 $trx = New TrxPelatihanSertifikat;
@@ -90,6 +94,8 @@ class TrxPelatihanSertifikatController extends Controller
                 $trx->tanggal_sertifikat = Carbon::createFromFormat('d-m-Y', $data0[$x][$_14])->format('Y-m-d');
                 $trx->tanggal_kadaluarsa = Carbon::createFromFormat('d-m-Y', $data0[$x][$_15])->format('Y-m-d');
                 $trx->sertifikat_link = $data0[$x][$_16];
+                $trx->no_kartu_lisensi = $data0[$x][$_17];
+                $trx->no_kartu_anggota = $data0[$x][$_18];
                 $trx->save();
             }
             return redirect('pelatihan_sertifikat')->with('msg', 'Data is saved successfully.');
@@ -239,6 +245,8 @@ class TrxPelatihanSertifikatController extends Controller
         $trx->tanggal_mulai = $request->tanggal_mulai;
         $trx->tanggal_akhir = $request->tanggal_akhir;
         $trx->nomor_sertifikat = $request->nomor_sertifikat;
+        $trx->no_kartu_lisensi = $request->no_kartu_lisensi;
+        $trx->no_kartu_anggota = $request->no_kartu_anggota;
         $trx->tanggal_sertifikat = $request->tanggal_sertifikat;
         $trx->tanggal_kadaluarsa = $request->tanggal_kadaluarsa;
         $trx->save();
@@ -300,6 +308,8 @@ class TrxPelatihanSertifikatController extends Controller
         $trx->judul = $request->judul;
         $trx->lembaga = $request->lembaga;
         $trx->nomor_sertifikat = $request->nomor_sertifikat;
+        $trx->no_kartu_lisensi = $request->no_kartu_lisensi;
+        $trx->no_kartu_anggota = $request->no_kartu_anggota;
         $trx->biaya = str_replace(',', '', $request->biaya);
         $trx->tanggal_mulai = $request->tanggal_mulai;
         $trx->tanggal_akhir = $request->tanggal_akhir;
