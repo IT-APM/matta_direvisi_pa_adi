@@ -342,13 +342,13 @@
                         <!-- finish -->
                         <div class="col-md-12">
                             {{-- <div class="card-header">
-                                <h5>Line Approval</h5>
+                                <h5>Line Approval Pengajuan</h5>
                             </div> --}}
                             @php
                             $check = App\Models\KebutuhanNikKecuali::where(['karyawan'=>$nik_pengaju])->first();
                             @endphp
                             <div class="card-body">
-                                <h5>Line Approval</h5>
+                                <h5>Line Approval Pengajuan</h5>
                                 <div class="row g-2">
                                     <div class="col-md-6">
                                         <label class="form-label" for="layer1">Layer 1*</label>
@@ -402,6 +402,13 @@
 <script type="text/javascript">
 // 
 $(document).ready(function() {
+    // 
+    $('#layer1').change(function() {
+        alert('Apakah Anda Yakin Akan Merubah Line Approval Pengajuan?');
+    });
+    $('#layer2').change(function() {
+        alert('Apakah Anda Yakin Akan Merubah Line Approval Pengajuan?');
+    });
     // 
     get_kode_divisi();
     function get_kode_divisi() {
