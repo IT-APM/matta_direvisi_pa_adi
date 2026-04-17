@@ -150,7 +150,7 @@
                                             <td>
                                                 @if($data->id_perusahaan == 1)
                                                     <a href="{{ route('penilaian.kontrak', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" data-toggle="tooltip" title="Kontrak PKWT" target="_blank"><i class="fa fa-file-pdf-o text-success"></i></a>
-                                                    <a class="edit_pkwt" href="#" data-bs-toggle="modal" data-bs-target="#editModal" title="Revision"
+                                                    <a class="edit_pkwt" href="#" id="edit_pkwt" name="edit_pkwt"  data-bs-toggle="modal" data-bs-target="#editModal" title="Revision"
                                                         data-id="{{ $data->id }}"
                                                         data-no_kontrak="{{ $data->no_kontrak }}"
                                                         data-tanggal_kontrak="{{ $data->tanggal_kontrak }}"
@@ -538,7 +538,8 @@
                 });
             });
             // 
-            $('.edit_pkwt').on('click', function() {
+            $(document).on('click', '#edit_pkwt', function(event) {
+            // $('.edit_pkwt').on('click', function() {
                 $('input[name="id"]').val($(this).data('id'));
                 $('input[name="no_kontrak"]').val($(this).data('no_kontrak'));
                 $('input[name="tanggal_kontrak"]').val($(this).data('tanggal_kontrak'));
