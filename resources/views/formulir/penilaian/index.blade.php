@@ -149,7 +149,8 @@
                                             @can('hc')
                                             <td>
                                                 @if($data->id_perusahaan == 1)
-                                                    <a href="{{ route('penilaian.kontrak', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" data-toggle="tooltip" title="Kontrak PKWT" target="_blank"><i class="fa fa-file-pdf-o text-success"></i></a>
+                                                    <a href="{{ route('penilaian.kontrak', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'header'=>true]) }}" data-toggle="tooltip" title="Kontrak PKWT-Header" target="_blank"><i class="fa fa-file-pdf-o text-success"></i></a>
+                                                    <a href="{{ route('penilaian.kontrak', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'header'=>false]) }}" data-toggle="tooltip" title="Kontrak PKWT" target="_blank"><i class="fa fa-file-pdf-o text-warning"></i></a>
                                                     <a class="edit_pkwt" href="#" id="edit_pkwt" name="edit_pkwt"  data-bs-toggle="modal" data-bs-target="#editModal" title="Revision"
                                                         data-id="{{ $data->id }}"
                                                         data-no_kontrak="{{ $data->no_kontrak }}"
