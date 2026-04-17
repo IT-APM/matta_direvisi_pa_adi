@@ -163,18 +163,30 @@ class TrxPenilaianController extends Controller
         }
         $waktu = date('YmdHis');
         $filename = 'Kontrak PKWT '.$waktu.'.pdf';
+        $header = $request->header;
         $pdf = new TCPDF;
         $pdf::SetTitle('Kontrak PKWT');
         $pdf::SetFont('times', '', 10, '', true);
-        $pdf::SetAutoPageBreak(true, 0);
         // Page 1
         $pdf::AddPage();
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header.png');
-        $x = 7;
-        $y = 23;
-        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
-        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        // $param = 10.00125;
+        $left = 25.4;
+        $top = 20.6;
+        $right = 25.4;
+        $pdf::SetMargins(0, 0, $right);
+        $pdf::SetAutoPageBreak(true, 0);
+        if($header){
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header.png');
+            $pdf::Image($bgImagePath, 0, 0, 210, 0, '', '', '', false, 300, '', false, false, 0);
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+            $pdf::Image($bgImagePath, 0, 275, 210, 0, '', '', '', false, 300, '', false, false, 0);
+        }
+        // $top = 20.6;
+        // $x = 7;
+        // $y = 23;
+        // $x = 25.4;
+        $x = $left;
+        $y = $top;
         // No.041-PKWT/ADM-APM/PC/III/2026<br/>
         $html = '<div style="text-align:center;"><b><u>PERJANJIAN KERJA WAKTU TERTENTU</u></b><br/>
         No.'.$no_kontrak.'<br/>
@@ -182,9 +194,10 @@ class TrxPenilaianController extends Controller
         <b>PT. ALITA PRAYA MITRA</b><br/>
         DENGAN<br/>
         <b>'.strtoupper($karyawan->nama).'</b></div>';
+        // $pdf::writeHTMLCell(0, 0, 0, $y, $html, 0, 1, 0, true, '', true);
         $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;">Pada hari ini '.$tanggal_kontrak.' di Kantor PT. ALITA PRAYA MITRA Jl. Muara Dalam No.108 Kelurahan Tanjung Barat Kecamatan Jagakarsa, Jakarta Selatan, telah tercapai kesepakatan antara pihak-pihak :</div>';
-        $pdf::writeHTMLCell(0, 0, $x, $y+=35, $html, 0, 1, 0, true, '', true);
+        $pdf::writeHTMLCell(0, 0, $x, $y+=30, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
         <tr>
             <td width="4%">I.</td>
@@ -198,9 +211,9 @@ class TrxPenilaianController extends Controller
             <td>II.</td>
             <td><table>
                     <tr>
-                        <td width="20%">Nama</td>
+                        <td width="25%">Nama</td>
                         <td width="2%">:</td>
-                        <td width="78%">'.$karyawan['nama'].'</td>
+                        <td width="73%">'.$karyawan['nama'].'</td>
                     </tr>
                     <tr>
                         <td>Tempat & tgl lahir</td>
@@ -251,7 +264,7 @@ class TrxPenilaianController extends Controller
         </table></div>';
         $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;">Dan secara bersamaan dalam Perjanjian Kerja Waktu Tertentu (<b>“Perjanjian”</b>) ini disebut sebagai <b>Para Pihak</b></div>';
-        $pdf::writeHTMLCell(0, 0, $x, $y+=65, $html, 0, 1, 0, true, '', true);
+        $pdf::writeHTMLCell(0, 0, $x, $y+=75, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:center;"><b>PASAL 1<br/>HUBUNGAN KERJA DAN MASA KERJA</b></div>';
         $pdf::writeHTMLCell(0, 0, $x, $y+=10, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
@@ -288,13 +301,15 @@ class TrxPenilaianController extends Controller
         // page 2
         $pdf::AddPage();
         $pdf::SetAutoPageBreak(true, 0);
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
-        $x = 7;
-        $y = 23;
-        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
-        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        if($header){
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
+            $pdf::Image($bgImagePath, 0, 0, 210, 0, '', '', '', false, 300, '', false, false, 0);
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+            $pdf::Image($bgImagePath, 0, 275, 210, 0, '', '', '', false, 300, '', false, false, 0);
+        }
         // 
+        $x = $left;
+        $y = $top;
         $html = '<div style="text-align:center;"><b>PASAL 2<br/>PEKERJAAN DAN PENEMPATAN</b></div>';
         $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
@@ -430,13 +445,15 @@ class TrxPenilaianController extends Controller
         // page 3
         $pdf::AddPage();
         $pdf::SetAutoPageBreak(true, 0);
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
-        $x = 7;
-        $y = 23;
-        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
-        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        if($header){
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
+            $pdf::Image($bgImagePath, 0, 0, 210, 0, '', '', '', false, 300, '', false, false, 0);
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+            $pdf::Image($bgImagePath, 0, 275, 210, 0, '', '', '', false, 300, '', false, false, 0);
+        }
         // 
+        $x = $left;
+        $y = $top;
         $html = '<div style="text-align:center;"><b>PASAL 6<br/>SANKSI</b></div>';
         $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
@@ -480,7 +497,7 @@ class TrxPenilaianController extends Controller
         $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
         // 
         $html = '<div style="text-align:center;"><b>PASAL 7<br/>KERAHASIAAN DATA DAN INFORMASI</b></div>';
-        $pdf::writeHTMLCell(0, 0, $x, $y+=95, $html, 0, 1, 0, true, '', true);
+        $pdf::writeHTMLCell(0, 0, $x, $y+=110, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
         <tr>
             <td width="4%">1)</td>
@@ -506,7 +523,7 @@ class TrxPenilaianController extends Controller
         $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
         // 
         $html = '<div style="text-align:center;"><b>PASAL 8<br/>LARANGAN PENGGUNAAN APLIKASI ILEGAL</b></div>';
-        $pdf::writeHTMLCell(0, 0, $x, $y+=65, $html, 0, 1, 0, true, '', true);
+        $pdf::writeHTMLCell(0, 0, $x, $y+=70, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
         <tr>
             <td width="4%">1)</td>
@@ -525,13 +542,15 @@ class TrxPenilaianController extends Controller
         // page 4
         $pdf::AddPage();
         $pdf::SetAutoPageBreak(true, 0);
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
-        $x = 7;
-        $y = 23;
-        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
-        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        if($header){
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
+            $pdf::Image($bgImagePath, 0, 0, 210, 0, '', '', '', false, 300, '', false, false, 0);
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+            $pdf::Image($bgImagePath, 0, 275, 210, 0, '', '', '', false, 300, '', false, false, 0);
+        }
         // 
+        $x = $left;
+        $y = $top;
         $html = '<div style="text-align:justify;"><table>
         <tr>
             <td width="4%">3)</td>
@@ -549,7 +568,7 @@ class TrxPenilaianController extends Controller
         $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
         // 
         $html = '<div style="text-align:center;"><b>PASAL 9<br/>PERLINDUNGAN DATA PRIBADI</b></div>';
-        $pdf::writeHTMLCell(0, 0, $x, $y+=40, $html, 0, 1, 0, true, '', true);
+        $pdf::writeHTMLCell(0, 0, $x, $y+=35, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
         <tr>
             <td width="4%">1)</td>
@@ -617,7 +636,7 @@ class TrxPenilaianController extends Controller
         $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
         // 
         $html = '<div style="text-align:center;"><b>PASAL 11<br/>PENYELESAIAN PERSELISIHAN</b></div>';
-        $pdf::writeHTMLCell(0, 0, $x, $y+=60, $html, 0, 1, 0, true, '', true);
+        $pdf::writeHTMLCell(0, 0, $x, $y+=65, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
         <tr>
             <td width="4%">1)</td>
@@ -636,13 +655,15 @@ class TrxPenilaianController extends Controller
         // page 5
         $pdf::AddPage();
         $pdf::SetAutoPageBreak(true, 0);
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
-        $x = 7;
-        $y = 23;
-        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
-        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        if($header){
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
+            $pdf::Image($bgImagePath, 0, 0, 210, 0, '', '', '', false, 300, '', false, false, 0);
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+            $pdf::Image($bgImagePath, 0, 275, 210, 0, '', '', '', false, 300, '', false, false, 0);
+        }
         // 
+        $x = $left;
+        $y = $top;
         $html = '<div style="text-align:justify;"><table>
         <tr>
             <td>Pihak Pertama dan Pihak Kedua dalam melaksanakan Perjanjian ini terikat oleh Peraturan Perusahaan, Keputusan Perusahaan dan peraturan perundang-undangan yang berlaku. Demikian Perjanjian ini dibuat dalam rangkap 2 (dua) dan bermeterai cukup, Pihak Pertama dan Pihak Kedua masing-masing memperoleh 1 (satu) rangkap asli yang kesemuanya mempunyai kekuatan hukum dan pembuktian yang sama.</td>
@@ -662,13 +683,15 @@ class TrxPenilaianController extends Controller
         // page 6
         $pdf::AddPage();
         $pdf::SetAutoPageBreak(true, 0);
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
-        $x = 7;
-        $y = 23;
-        $pdf::Image($bgImagePath, 0, 0, 210, $y, '', '', '', false, 300, '', false, false, 0);
-        $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
-        $pdf::Image($bgImagePath, 0, 275, 210, 16, '', '', '', false, 300, '', false, false, 0);
+        if($header){
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_header_p2.png');
+            $pdf::Image($bgImagePath, 0, 0, 210, 0, '', '', '', false, 300, '', false, false, 0);
+            $bgImagePath = public_path('assets/images/matta/bg_alita_a4_footer.png');
+            $pdf::Image($bgImagePath, 0, 275, 210, 0, '', '', '', false, 300, '', false, false, 0);
+        }
         // 
+        $x = $left;
+        $y = $top;
         $html = '<div style="text-align:center;"><b>LAMPIRAN PERJANJIAN KERJA KARYAWAN<br/>No.'.$no_kontrak.'</b></div>';
         $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
@@ -678,54 +701,42 @@ class TrxPenilaianController extends Controller
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td>&nbsp;</td>
             <td><table>
                 <tr>
-                    <td width="25%">Gaji Pokok</td>
+                    <td width="35%">Gaji Pokok</td>
                     <td width="5%">: Rp</td>
-                    <td width="10%" style="text-align:right;">'.number_format($trx->gapok, 0, ',', '.').'</td>
+                    <td width="12%" style="text-align:right;">'.number_format($trx->gapok, 0, ',', '.').'</td>
                 </tr>
                 <tr>
                     <td>Tunjangan Makan</td>
                     <td>: Rp</td>
-                    <td width="10%" style="text-align:right;">'.number_format($trx->t_makan, 0, ',', '.').'</td>
+                    <td style="text-align:right;">'.number_format($trx->t_makan, 0, ',', '.').'</td>
                 </tr>
                 <tr>
                     <td>Tunjangan Transport</td>
                     <td>: Rp</td>
-                    <td width="10%" style="text-align:right;">'.number_format($trx->t_transportasi, 0, ',', '.').'</td>
+                    <td style="text-align:right;">'.number_format($trx->t_transportasi, 0, ',', '.').'</td>
                 </tr>
                 <tr>
                     <td>Tunjangan Jabatan</td>
                     <td>: Rp</td>
-                    <td width="10%" style="text-align:right;">'.number_format($trx->t_jabatan, 0, ',', '.').'</td>
+                    <td style="text-align:right;">'.number_format($trx->t_jabatan, 0, ',', '.').'</td>
                 </tr>
                 <tr>
                     <td>Tunjangan Telekomunikasi</td>
                     <td>: Rp</td>
-                    <td width="10%" style="text-align:right;">'.number_format($trx->t_telekomunikasi, 0, ',', '.').'</td>
+                    <td style="text-align:right;">'.number_format($trx->t_telekomunikasi, 0, ',', '.').'</td>
                 </tr>
                 <tr>
                     <td>Tunjangan Lain-lain</td>
                     <td>: Rp</td>
-                    <td width="10%" style="text-align:right;">'.number_format($trx->t_lain, 0, ',', '.').'</td>
+                    <td style="text-align:right;">'.number_format($trx->t_lain, 0, ',', '.').'</td>
                 </tr>
             </table></td>
         </tr>
         <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
             <td>2.</td>
             <td>Upah Lembur diberikan secara khusus untuk Level Non-Staff dan Staff sesuai ketentuan dan prosedur yang berlaku.</td>
-        </tr>
-        <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
         </tr>
         <tr>
             <td>3.</td>
@@ -816,14 +827,14 @@ class TrxPenilaianController extends Controller
         $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
         // 
         $html = '<div style="text-align:center;"><b>PT. ALITA PRAYA MITRA</b><br/>Jakarta, '.Carbon::parse($trx->tanggal_kontrak)->translatedFormat('j F Y').'</div>';
-        $pdf::writeHTMLCell(0, 0, $x, $y+=170, $html, 0, 1, 0, true, '', true);
+        $pdf::writeHTMLCell(0, 0, $x, $y+=180, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:center;"><table>
         <tr>
             <td width="50%">Pihak Pertama<br/>a.n Direktur<p>&nbsp;</p><p>&nbsp;</p><b><u>'.strtoupper($hco->nama).'</u></b><br/>'.$hco->_jabatan->jabatan.'</td>
             <td width="50%">Pihak Kedua<br/><p>&nbsp;</p><p>&nbsp;</p><b><u>'.strtoupper($karyawan->nama).'</u></b></td>
         </tr>
         </table></div>';
-        $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
+        $pdf::writeHTMLCell(0, 0, $x, $y+=10, $html, 0, 1, 0, true, '', true);
         // 
         $pdf::Output(public_path($filename), 'I');
         return response()->download(public_path($filename));
