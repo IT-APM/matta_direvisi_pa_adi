@@ -1798,7 +1798,10 @@ class TrxPenilaianController extends Controller
             if(empty($trx->no_kontrak)){
                 $trx->no_kontrak = $no_kontrak + 1;
             }
-            $trx->tanggal_kontrak = Carbon::parse($check1->tanggal_berakhir)->addDay()->format('Y-m-d');
+            // $trx->tanggal_kontrak = Carbon::parse($check1->tanggal_berakhir)->addDay()->format('Y-m-d');
+            // tanggal_kontrak diambil dari tanggal hari ini
+            $trx->tanggal_kontrak = Carbon::today()->format('Y-m-d');
+            // tanggal_terhitung diambil dari 1 hari setelah tanggal_berakhir
             $trx->tanggal_terhitung = Carbon::parse($check1->tanggal_berakhir)->addDay()->format('Y-m-d');
             $trx->id_perusahaan = $check1->kode_perusahaan;
             $trx->id_divisi = $check1->kode_divisi;
