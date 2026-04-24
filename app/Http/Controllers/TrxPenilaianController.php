@@ -862,23 +862,23 @@ class TrxPenilaianController extends Controller
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no = 0;
-        $trx = TrxPenilaian::orderBy( 'id', 'desc' )->get();
+        $trx = TrxPenilaian::orderBy('id', 'desc')->where('created_at', '>=', Carbon::now()->subDays(30))->get();
         if(Gate::allows('hc_nkp')){
-            $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy( 'id', 'desc' )->get();
+            $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
         }
         if(auth()->user()->userrole == 'nhc'){
             // nik_karyawan
             $where = ['nik_karyawan' => auth()->user()->nik];
-            $trx = TrxPenilaian::where($where)->orderBy( 'id', 'desc' )->get();
+            $trx = TrxPenilaian::where($where)->orderBy('id', 'desc')->where('created_at', '>=', Carbon::now()->subDays(30))->get();
             // nik_penilai_1
             $where = ['nik_penilai_1' => auth()->user()->nik];
-            $trx = $trx->concat(TrxPenilaian::where($where)->orderBy( 'id', 'desc' )->get());
+            $trx = $trx->concat(TrxPenilaian::where($where)->orderBy('id', 'desc')->where('created_at', '>=', Carbon::now()->subDays(30))->get());
             // nik_penilai_2
             $where = ['nik_penilai_2' => auth()->user()->nik];
-            $trx = $trx->concat(TrxPenilaian::where($where)->orderBy( 'id', 'desc' )->get());
+            $trx = $trx->concat(TrxPenilaian::where($where)->orderBy('id', 'desc')->where('created_at', '>=', Carbon::now()->subDays(30))->get());
             // nik_penilai_3
             $where = ['nik_penilai_3' => auth()->user()->nik];
-            $trx = $trx->concat(TrxPenilaian::where($where)->orderBy( 'id', 'desc' )->get());
+            $trx = $trx->concat(TrxPenilaian::where($where)->orderBy('id', 'desc')->where('created_at', '>=', Carbon::now()->subDays(30))->get());
         }
         // foreach ($trx as $value) {
         //     $trxM = TrxPenilaian::find( $value->id );
@@ -906,19 +906,25 @@ class TrxPenilaianController extends Controller
         $perusahaan = $arr_perusahaan;
         $level = Level::select('id','level')->whereNotIn('id', [0])->orderBy('id', 'asc')->get();
         $jabatan = Jabatan::select('id','jabatan')->whereNotIn('id', [0])->orderBy('jabatan', 'asc')->get();
-        foreach ($trx as $data){
-            array_push($arr_id_status, $data->id_status);
-            array_push($arr_is_perpanjang, $data->is_perpanjang);
-        }
-        $id_status = MtrPenilaianStatus::whereIn('id', $arr_id_status)->orderBy('id', 'asc')->get();
-        $is_perpanjang = MtrPenilaianPerpanjang::whereIn('id', $arr_is_perpanjang)->orderBy('id', 'asc')->get();
+        // foreach ($trx as $data){
+        //     array_push($arr_id_status, $data->id_status);
+        //     array_push($arr_is_perpanjang, $data->is_perpanjang);
+        // }
+        // $id_status = MtrPenilaianStatus::whereIn('id', $arr_id_status)->orderBy('id', 'asc')->get();
+        // $is_perpanjang = MtrPenilaianPerpanjang::whereIn('id', $arr_is_perpanjang)->orderBy('id', 'asc')->get();
+        $id_status = MtrPenilaianStatus::orderBy('id', 'asc')->get();
+        $is_perpanjang = MtrPenilaianPerpanjang::orderBy('id', 'asc')->get();
         $id_status_lengkap = [23];
+        $tanggal_mulai = '';
+        $tanggal_akhir = '';
         // start filter
         if($request->filter == true){
             $_id_status = $request->input('id_status', []);
             $_is_perpanjang = $request->input('is_perpanjang', []);
             $_id_status_lengkap = $request->input('id_status_lengkap', []);
             $_perusahaan = $request->input('perusahaan', []);
+            $tanggal_mulai = $request->tanggal_mulai;
+            $tanggal_akhir = $request->tanggal_akhir;
             if(count($_id_status) > 0){
                 $arr_id_status = $_id_status;
             }
@@ -944,14 +950,14 @@ class TrxPenilaianController extends Controller
                 $arr_perusahaan = array();
             }
             $nik_karyawan = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get()->toArray();
-            $trx = TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->orderBy('id', 'desc')->get();
+            $trx = TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
             if(Gate::allows('hc_nkp')){
-                $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->orderBy('id', 'desc')->get();
+                $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
             }
             if(count($_id_status_lengkap) > 0){
-                $trx = TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', [6, 7])->whereIn('is_perpanjang', $arr_is_perpanjang)->orderBy('id', 'desc')->get();
+                $trx = TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', [6, 7])->whereIn('is_perpanjang', $arr_is_perpanjang)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
                 if(Gate::allows('hc_nkp')){
-                    $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', [6, 7])->whereIn('is_perpanjang', $arr_is_perpanjang)->orderBy('id', 'desc')->get();
+                    $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', [6, 7])->whereIn('is_perpanjang', $arr_is_perpanjang)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
                 }
                 foreach ($trx as $data){
                     // Done By Reviewer 2
@@ -970,16 +976,16 @@ class TrxPenilaianController extends Controller
             if(auth()->user()->userrole == 'nhc'){
                 // nik_karyawan
                 $where = ['nik_karyawan' => auth()->user()->nik];
-                $trx = TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->where($where)->orderBy('id', 'desc')->get();
+                $trx = TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->where($where)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
                 // nik_penilai_1
                 $where = ['nik_penilai_1' => auth()->user()->nik];
-                $trx = $trx->concat(TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->where($where)->orderBy('id', 'desc')->get());
+                $trx = $trx->concat(TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->where($where)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get());
                 // nik_penilai_2
                 $where = ['nik_penilai_2' => auth()->user()->nik];
-                $trx = $trx->concat(TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->where($where)->orderBy('id', 'desc')->get());
+                $trx = $trx->concat(TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->where($where)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get());
                 // nik_penilai_3
                 $where = ['nik_penilai_3' => auth()->user()->nik];
-                $trx = $trx->concat(TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->where($where)->orderBy('id', 'desc')->get());
+                $trx = $trx->concat(TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->where($where)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get());
             }
         }else{
             $arr_id_status = array();
@@ -989,7 +995,7 @@ class TrxPenilaianController extends Controller
         }
         // return response()->json(['id_status_lengkap' => $id_status_lengkap, 'arr_id_status_lengkap' => $arr_id_status_lengkap]);
         // end filter
-        return view( 'formulir.penilaian.index', compact( 'trx', 'no', 'id_status', 'is_perpanjang', 'id_status_lengkap', 'perusahaan', 'level', 'jabatan', 'arr_id_status', 'arr_is_perpanjang', 'arr_id_status_lengkap', 'arr_perusahaan'));
+        return view( 'formulir.penilaian.index', compact( 'trx', 'no', 'id_status', 'is_perpanjang', 'id_status_lengkap', 'perusahaan', 'level', 'jabatan', 'arr_id_status', 'arr_is_perpanjang', 'arr_id_status_lengkap', 'arr_perusahaan', 'tanggal_mulai', 'tanggal_akhir'));
     }
 
     /**
@@ -1801,8 +1807,8 @@ class TrxPenilaianController extends Controller
         // 1=Diperpanjang
         // 4=Done by HC (180)
         // 8=Done by HC (360)
-        $check2 = TrxPenilaian::where(['id'=>$id, 'id_perusahaan'=>1, 'is_perpanjang'=>1])->whereIn('id_status', [4,8])->exists();
-        $no_kontrak = TrxPenilaian::where(['id_perusahaan'=>1, 'is_perpanjang'=>1])->whereIn('id_status', [4,8])->whereYear('tanggal_kontrak', now()->year)->orderBy('no_kontrak', 'desc')->first()->no_kontrak;
+        $check2 = TrxPenilaian::where(['id'=>$id, 'is_perpanjang'=>1])->whereIn('id_status', [4,8])->exists();
+        $no_kontrak = TrxPenilaian::where(['is_perpanjang'=>1])->whereIn('id_status', [4,8])->whereYear('tanggal_kontrak', now()->year)->orderBy('no_kontrak', 'desc')->first()->no_kontrak;
         if(empty($no_kontrak)){
             $no_kontrak = 1;
         }else{
