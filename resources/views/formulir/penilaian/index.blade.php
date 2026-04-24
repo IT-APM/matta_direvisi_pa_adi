@@ -49,7 +49,13 @@
                         <div class="collapse" id="collapse_filter">
                             <form class="mt-2" action="{{ route('penilaian.index') }}" method="get" enctype="multipart/form-data">
                                 <div class="row">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
+                                        <label class="h6">Tanggal</label>
+                                        <input class="form-control" name="tanggal_mulai" id="tanggal_mulai" type="date" required="" value="{{ $tanggal_mulai }}">
+                                        sampai
+                                        <input class="form-control" name="tanggal_akhir" id="tanggal_akhir" type="date" required="" value="{{ $tanggal_akhir }}">
+                                    </div>
+                                    <div class="col-sm-3">
                                         <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_id_status(this)" /> Check All
                                         <label class="d-block" for="id_status">
                                             @foreach ($id_status as $data)
@@ -65,7 +71,7 @@
                                             </label>
                                         @endcan
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <label class="h6">Status Perpanjangan</label>&nbsp;<input type="checkbox" onClick="toggle_is_perpanjang(this)" /> Check All
                                         <label class="d-block" for="is_perpanjang">
                                             @foreach ($is_perpanjang as $data)
@@ -73,7 +79,7 @@
                                             @endforeach
                                         </label>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
                                         <label class="d-block" for="perusahaan">
                                             @foreach ($perusahaan as $data)
