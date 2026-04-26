@@ -362,8 +362,8 @@ class TrxBpdController extends Controller
             $status_id = 6;
             // jika direject maka uang saku harus dihapus semua
             // selanjutnya akan dihitung ulang terhadap updatenya
-            $where = ['id_trx' => $id_trx];
-            $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2])->delete();
+            $where = ['id_trx' => $id_trx, 'jenis' => 'coa'];
+            $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2,76,89])->delete();
         }
         if($new == 'reimburse'){
             // 33 = Pengajuan Reimburse
@@ -373,8 +373,8 @@ class TrxBpdController extends Controller
                 // selanjutnya akan dihitung ulang terhadap updatenya
                 // 37 = Perbaikan Reimburse oleh Pengaju
                 $status_id = 37;
-                $where = ['id_trx' => $id_trx];
-                $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2])->delete();
+                $where = ['id_trx' => $id_trx, 'jenis' => 'coa'];
+                $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2,76,89])->delete();
             }
         }
         // 
@@ -1781,8 +1781,8 @@ class TrxBpdController extends Controller
             // jika direject maka uang saku harus dihapus semua
             // selanjutnya akan dihitung ulang terhadap updatenya
             if($view <> 'approval_pa'){
-                $where = ['id_trx' => $id];
-                $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2])->delete();
+                $where = ['id_trx' => $id, 'jenis' => 'coa'];
+                $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2,76,89])->delete();
 
             }
             // get kelompok
@@ -2228,7 +2228,7 @@ class TrxBpdController extends Controller
             // selanjutnya akan dihitung ulang terhadap updatenya
             if($view == 'reject_realisasi_pa'){
                 $where = ['id_trx' => $id, 'jenis' => 'realisasi_coa'];
-                $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2])->delete();
+                $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2,76,89])->delete();
 
             }
             // ada perubahan tujuan/tanggal
@@ -2434,7 +2434,7 @@ class TrxBpdController extends Controller
             // jika direject maka uang saku harus dihapus semua
             // selanjutnya akan dihitung ulang terhadap updatenya
             $where = ['id_trx' => $id, 'jenis' => 'realisasi_coa'];
-            $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2])->delete();
+            $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2,76,89])->delete();
             // uang saku insertBpdUangSaku pengaju
             $_uang_saku = 0;
             // project
@@ -2686,8 +2686,8 @@ class TrxBpdController extends Controller
             // jika direject maka uang saku harus dihapus semua
             // selanjutnya akan dihitung ulang terhadap updatenya
             if($view <> 'reimburse_pa'){
-                $where = ['id_trx' => $id];
-                $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2])->delete();
+                $where = ['id_trx' => $id, 'jenis' => 'coa'];
+                $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2,76,89])->delete();
 
             }
             // get kelompok
@@ -3091,7 +3091,7 @@ class TrxBpdController extends Controller
     public function delete_info(Request $request, $id)
     {
         // 
-        $data = TrxBpdDetailInfo::find( $request->id_data );
+        $data = TrxBpdDetailInfo::find($request->id_data);
         $data->delete();
         return redirect()->route('bpd.show', [$id, 'view'=>$request->view])->with( 'msg', 'Data is deleted successfully.' );
     }
@@ -3100,7 +3100,7 @@ class TrxBpdController extends Controller
     public function delete_biaya(Request $request, $id)
     {
         //
-        $data = TrxBpdDetailBiaya::find( $request->id_data );
+        $data = TrxBpdDetailBiaya::find($request->id_data);
         $data->delete();
         return redirect()->route('bpd.show', [$id, 'view'=>$request->view])->with( 'msg', 'Data is deleted successfully.' );
     }
@@ -3117,7 +3117,7 @@ class TrxBpdController extends Controller
         }
         $nominal = str_replace( ',', '', $nominal );
         //
-        $trx = TrxBpdDetailBiaya::find( $request->id_data );
+        $trx = TrxBpdDetailBiaya::find($request->id_data);
         $trx->nominal = $nominal;
         $trx->update();
         return redirect()->route('bpd.show', [$id, 'view'=>'edit'])->with( 'msg', 'Data is updated successfully.' );
