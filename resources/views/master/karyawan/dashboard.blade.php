@@ -5,16 +5,21 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatable-extension.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 @endsection
 
 @section('style')
 <style>
-    /* button.dt-button {
+    button.dt-button {
     float:none;
     text-align:center;
     color: black;
     background: white;
-    } */
+    }
+     .datepicker {
+        border: 1px solid grey !important;
+        /* border-radius: 10px; */
+    }
 </style>
 @endsection
 
@@ -35,61 +40,90 @@
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
                         <li class="nav-item"><a class="nav-link @if($id == 0) active @endif" id="pills-current-tab" data-bs-toggle="pill" href="#pills-current" role="tab" aria-controls="pills-current" aria-selected="true">Terkini</a></li>
-                        <li class="nav-item"><a class="nav-link @if($id == 1) active @endif" id="pills-history-tab" data-bs-toggle="pill" href="#pills-history" role="tab" aria-controls="pills-history" aria-selected="true">Histori</a></li>
+                        <li class="nav-item"><a class="nav-link @if($id == 1) active @endif" id="pills-history-tab" data-bs-toggle="pill" href="#pills-history" role="tab" aria-controls="pills-history" aria-selected="true">Histori/Year On Year</a></li>
+                        {{-- <li class="nav-item"><a class="nav-link @if($id == 2) active @endif" id="pills-year-tab" data-bs-toggle="pill" href="#pills-year" role="tab" aria-controls="pills-year" aria-selected="true">Year On Year</a></li> --}}
                     </ul>
                     <div class="tab-content" id="pills-warningtabContent">
+                        {{--  --}}
                         <div class="tab-pane fade  @if($id == 0) show active @endif" id="pills-current" role="tabpanel" aria-labelledby="pills-current-tab">
-                            <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
-                            <div class="collapse" id="collapse_filter">
+                            <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter_form0" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                            <div class="collapse" id="collapse_filter_form0">
                                 <form id="form0" name="form0" class="mt-2" action="{{ route('karyawan.dashboard', 0) }}" method="get" enctype="multipart/form-data">
                                     <div class="row mt-2">
-                                        <div class="col-sm-4">
-                                            <label class="h6">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin(this)" /> Check All
-                                            <label class="d-block" for="select_kelamin">
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_kelamin_form0">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin('form0')" id="all_kelamin" name="all_kelamin"/> Check All
+                                            <div class="collapse" id="box_select_kelamin_form0">
                                                 @foreach ($select_kelamin as $data)
-                                                    <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br />
+                                                    <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br/>
                                                 @endforeach
-                                            </label>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="h6">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status(this)" /> Check All
-                                            <label class="d-block" for="select_status">
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_status_form0">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status('form0')" id="all_status" name="all_status"/> Check All
+                                            <div class="collapse" id="box_select_status_form0">
                                                 @foreach ($select_status as $data)
-                                                    <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br />
+                                                    <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br/>
                                                 @endforeach
-                                            </label>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_select_perusahaan(this)" /> Check All
-                                            <label class="d-block" for="select_perusahaan">
-                                                @foreach ($select_perusahaan as $data)
-                                                    <input class="checkbox_animated" id="select_perusahaan[]" name="select_perusahaan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_perusahaan)) checked @endif>{{ $data->nama }}<br />
-                                                @endforeach
-                                            </label>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label class="h6">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level(this)" /> Check All
-                                            <label class="d-block" for="select_level">
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_level_form0">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level('form0')" id="all_level" name="all_level"/> Check All
+                                            <div class="collapse" id="box_select_level_form0">
                                                 @foreach ($select_level as $data)
-                                                    <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br />
+                                                    <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br/>
                                                 @endforeach
-                                            </label>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="h6">Pendidikan</label>&nbsp;<input type="checkbox" onClick="toggle_select_pendidikan(this)" /> Check All
-                                            <label class="d-block" for="select_pendidikan">
-                                                @foreach ($select_pendidikan as $data)
-                                                    <input class="checkbox_animated" id="select_pendidikan[]" name="select_pendidikan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_pendidikan)) checked @endif>{{ $data->jenjang }}<br />
-                                                @endforeach
-                                            </label>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label class="h6">Generasi</label>&nbsp;<input type="checkbox" onClick="toggle_select_generasi(this)" /> Check All
-                                            <label class="d-block" for="select_generasi">
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_generasi">Generasi</label>&nbsp;<input type="checkbox" onClick="toggle_select_generasi('form0')" id="all_generasi" name="all_generasi"/> Check All
+                                            <div class="collapse" id="box_select_generasi">
                                                 @foreach ($select_generasi as $data)
-                                                    <input class="checkbox_animated" id="select_generasi[]" name="select_generasi[]" type="checkbox" value="{{ $data['id'] }}" @if (in_array($data['id'], $arr_select_generasi)) checked @endif>{{ $data['data'] }}<br />
+                                                    <input class="checkbox_animated" id="select_generasi[]" name="select_generasi[]" type="checkbox" value="{{ $data['id'] }}" @if (in_array($data['id'], $arr_select_generasi)) checked @endif>{{ $data['data'] }}<br/>
                                                 @endforeach
-                                            </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_pendidikan">Pendidikan</label>&nbsp;<input type="checkbox" onClick="toggle_select_pendidikan('form0')" id="all_pendidikan" name="all_pendidikan"/> Check All
+                                            <div class="collapse" id="box_select_pendidikan">
+                                                @foreach ($select_pendidikan as $data)
+                                                    <input class="checkbox_animated" id="select_pendidikan[]" name="select_pendidikan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_pendidikan)) checked @endif>{{ $data->jenjang }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">&nbsp;</div>
+                                        <div class="col-sm-3">&nbsp;</div>
+                                        <div class="col-sm-3">&nbsp;</div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_perusahaan_form0">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan('form0')" id="all_perusahaan" name="all_perusahaan"/> Check All
+                                            <div class="collapse" id="box_perusahaan_form0">
+                                                @foreach ($perusahaan as $data)
+                                                    <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan('form0')" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_divisi">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi('form0')" id="all_divisi" name="all_divisi"/> Check All
+                                            <div class="collapse" id="div_kode_divisi">
+                                                @foreach ($divisi as $data)
+                                                    <input class="checkbox_animated" id="kode_divisi[]" name="kode_divisi[]" type="checkbox" onClick="get_kode_divisi('form0')" value="{{ $data->id }}" @if (in_array($data->id, $arr_divisi)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_departemen">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen('form0')" id="all_departemen" name="all_departemen"/> Check All
+                                            <div class="collapse" id="div_kode_departemen">
+                                                @foreach ($departemen as $data)
+                                                    <input class="checkbox_animated" id="kode_departemen[]" name="kode_departemen[]" type="checkbox" onClick="get_kode_departemen('form0')" value="{{ $data->id }}" @if (in_array($data->id, $arr_departemen)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_sub_departemen">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen('form0')" id="all_sub_departemen" name="all_sub_departemen"/> Check All
+                                            <div class="collapse" id="div_kode_sub_departemen">
+                                                @foreach ($sub_departemen as $data)
+                                                    <input class="checkbox_animated" id="kode_sub_departemen[]" name="kode_sub_departemen[]" type="checkbox" onClick="get_kode_sub_departemen('form0')" value="{{ $data->id }}" @if (in_array($data->id, $arr_sub_departemen)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row mt-2">
@@ -156,54 +190,77 @@
                                 </div>
                             </div>
                         </div>
+                        {{--  --}}
                         <div class="tab-pane fade @if($id == 1) show active @endif" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
-                            <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
-                            <div class="collapse" id="collapse_filter">
+                            <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter_form1" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter Histori</button>
+                            <div class="collapse" id="collapse_filter_form1">
                                 <form id="form1" name="form1" class="mt-2" action="{{ route('karyawan.dashboard', 1) }}" method="get" enctype="multipart/form-data">
                                     <div class="row mt-2">
-                                        <div class="col-sm-4">
-                                            <label class="h6" for="nama">Bulan-Tahun</label>
+                                        <div class="col-sm-3 mb-2">
+                                            <label class="h6">Bulan-Tahun</label>
                                             <div>
-                                                <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_dari }}">
-                                                <div class="invalid-feedback txt-danger">Field is required.</div>
+                                                <input name="bulan_tahun_dari" id="bulan_tahun_dari" class="form-control digits" type="month" value="{{ $bulan_tahun_dari }}">
                                             </div>
                                             sampai
                                             <div>
-                                                <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" required="" value="{{ $bulan_tahun_sampai }}">
-                                                <div class="invalid-feedback txt-danger">Field is required.</div>
+                                                <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" value="{{ $bulan_tahun_sampai }}">
                                             </div>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="h6">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin(this)" /> Check All
-                                            <label class="d-block" for="select_kelamin">
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_kelamin_form1">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin('form1')" id="all_kelamin" name="all_kelamin"/> Check All
+                                            <div class="collapse" id="box_select_kelamin_form1">
                                                 @foreach ($select_kelamin as $data)
-                                                    <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br />
+                                                    <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br/>
                                                 @endforeach
-                                            </label>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="h6">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status(this)" /> Check All
-                                            <label class="d-block" for="select_status">
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_status_form1">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status('form1')" id="all_status" name="all_status"/> Check All
+                                            <div class="collapse" id="box_select_status_form1">
                                                 @foreach ($select_status as $data)
-                                                    <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br />
+                                                    <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br/>
                                                 @endforeach
-                                            </label>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_select_perusahaan(this)" /> Check All
-                                            <label class="d-block" for="select_perusahaan">
-                                                @foreach ($select_perusahaan as $data)
-                                                    <input class="checkbox_animated" id="select_perusahaan[]" name="select_perusahaan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_perusahaan)) checked @endif>{{ $data->nama }}<br />
-                                                @endforeach
-                                            </label>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label class="h6">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level(this)" /> Check All
-                                            <label class="d-block" for="select_level">
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_level_form1">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level('form1')" id="all_level" name="all_level"/> Check All
+                                            <div class="collapse" id="box_select_level_form1">
                                                 @foreach ($select_level as $data)
-                                                    <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br />
+                                                    <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br/>
                                                 @endforeach
-                                            </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_perusahaan_form1">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan('form1')" id="all_perusahaan" name="all_perusahaan"/> Check All
+                                            <div class="collapse" id="box_perusahaan_form1">
+                                                @foreach ($perusahaan as $data)
+                                                    <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan('form1')" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_divisi">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi('form1')" id="all_divisi" name="all_divisi"/> Check All
+                                            <div class="collapse" id="div_kode_divisi">
+                                                @foreach ($divisi as $data)
+                                                    <input class="checkbox_animated" id="kode_divisi[]" name="kode_divisi[]" type="checkbox" onClick="get_kode_divisi('form1')" value="{{ $data->id }}" @if (in_array($data->id, $arr_divisi)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_departemen">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen('form1')" id="all_departemen" name="all_departemen"/> Check All
+                                            <div class="collapse" id="div_kode_departemen">
+                                                @foreach ($departemen as $data)
+                                                    <input class="checkbox_animated" id="kode_departemen[]" name="kode_departemen[]" type="checkbox" onClick="get_kode_departemen('form1')" value="{{ $data->id }}" @if (in_array($data->id, $arr_departemen)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_sub_departemen">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen('form1')" id="all_sub_departemen" name="all_sub_departemen"/> Check All
+                                            <div class="collapse" id="div_kode_sub_departemen">
+                                                @foreach ($sub_departemen as $data)
+                                                    <input class="checkbox_animated" id="kode_sub_departemen[]" name="kode_sub_departemen[]" type="checkbox" onClick="get_kode_sub_departemen('form1')" value="{{ $data->id }}" @if (in_array($data->id, $arr_sub_departemen)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row mt-2">
@@ -213,6 +270,117 @@
                                     </div>
                                 </form>
                             </div>
+                            <hr/>
+                            <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter_form2" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter Year On Year</button>
+                            <div class="collapse" id="collapse_filter_form2">
+                                <form id="form2" name="form2" class="mt-2" action="{{ route('karyawan.dashboard', 1) }}" method="get" enctype="multipart/form-data">
+                                    <div class="row mt-2">
+                                        <div class="col-sm-3 mb-2">
+                                            <label class="h6">Tahun</label>
+                                            <div>
+                                                <input min="1" type="number" class="form-control digits" name="tahun_dari" id="tahun_dari" @if($tahun_dari>0) value="{{ $tahun_dari }}" @endif>
+                                            </div>
+                                            sampai
+                                            <div>
+                                                <input min="1" type="number" class="form-control digits" name="tahun_sampai" id="tahun_sampai" @if($tahun_sampai>0) value="{{ $tahun_sampai }}" @endif>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6">Periode</label>
+                                            <div>
+                                                <select class="form-select" name="select_periode" id="select_periode">
+                                                    <option value="">Pilih...</option>
+                                                    <option value="01" @if($select_periode == "01") selected="" @endif>Januari</option>
+                                                    <option value="02" @if($select_periode == "02") selected="" @endif>Februari</option>
+                                                    <option value="03" @if($select_periode == "03") selected="" @endif>Maret</option>
+                                                    <option value="04" @if($select_periode === "04") selected="" @endif>April</option>
+                                                    <option value="05" @if($select_periode == "05") selected="" @endif>Mei</option>
+                                                    <option value="06" @if($select_periode == "06") selected="" @endif>Juni</option>
+                                                    <option value="07" @if($select_periode == "07") selected="" @endif>Juli</option>
+                                                    <option value="08" @if($select_periode == "08") selected="" @endif>Agustus</option>
+                                                    <option value="09" @if($select_periode == "09") selected="" @endif>September</option>
+                                                    <option value="10" @if($select_periode == "10") selected="" @endif>Oktober</option>
+                                                    <option value="11" @if($select_periode == "11") selected="" @endif>November</option>
+                                                    <option value="12" @if($select_periode == "12") selected="" @endif>Desember</option>
+                                                    <option disabled="" value="">--------</option>
+                                                    <option value="01,02,03" @if($select_periode == "01,02,03") selected="" @endif>Kuartal 1</option>
+                                                    <option value="04,05,06" @if($select_periode == "04,05,06") selected="" @endif>Kuartal 2</option>
+                                                    <option value="07,08,09" @if($select_periode == "07,08,09") selected="" @endif>Kuartal 3</option>
+                                                    <option value="10,11,12" @if($select_periode == "10,11,12") selected="" @endif>Kuartal 4</option>
+                                                    <option disabled="" value="">--------</option>
+                                                    <option value="01,02,03,04,05,06" @if($select_periode == "01,02,03,04,05,06") selected="" @endif>Semester 1</option>
+                                                    <option value="07,08,09,10,11,12" @if($select_periode == "07,08,09,10,11,12") selected="" @endif>Semester 2</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_kelamin_form2">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin('form2')" id="all_kelamin" name="all_kelamin"/> Check All
+                                            <div class="collapse" id="box_select_kelamin_form2">
+                                                @foreach ($select_kelamin as $data)
+                                                    <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_status_form2">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status('form2')" id="all_status" name="all_status"/> Check All
+                                            <div class="collapse" id="box_select_status_form2">
+                                                @foreach ($select_status as $data)
+                                                    <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_level_form2">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level('form2')" id="all_level" name="all_level"/> Check All
+                                            <div class="collapse" id="box_select_level_form2">
+                                                @foreach ($select_level as $data)
+                                                    <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">&nbsp;</div>
+                                        <div class="col-sm-3">&nbsp;</div>
+                                        <div class="col-sm-3">&nbsp;</div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_perusahaan_form2">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan('form2')" id="all_perusahaan" name="all_perusahaan"/> Check All
+                                            <div class="collapse" id="box_perusahaan_form2">
+                                                @foreach ($perusahaan as $data)
+                                                    <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_divisi">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi('form2')" id="all_divisi" name="all_divisi"/> Check All
+                                            <div class="collapse" id="div_kode_divisi">
+                                                @foreach ($divisi as $data)
+                                                    <input class="checkbox_animated" id="kode_divisi[]" name="kode_divisi[]" type="checkbox" onClick="get_kode_divisi('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_divisi)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_departemen">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen('form2')" id="all_departemen" name="all_departemen"/> Check All
+                                            <div class="collapse" id="div_kode_departemen">
+                                                @foreach ($departemen as $data)
+                                                    <input class="checkbox_animated" id="kode_departemen[]" name="kode_departemen[]" type="checkbox" onClick="get_kode_departemen('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_departemen)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_sub_departemen">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen('form2')" id="all_sub_departemen" name="all_sub_departemen"/> Check All
+                                            <div class="collapse" id="div_kode_sub_departemen">
+                                                @foreach ($sub_departemen as $data)
+                                                    <input class="checkbox_animated" id="kode_sub_departemen[]" name="kode_sub_departemen[]" type="checkbox" onClick="get_kode_sub_departemen('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_sub_departemen)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="{{ route('karyawan.dashboard', 1) }}" class="btn btn-info" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <hr/>
                             <div class="row mt-2">
                                 <div class="col-xl-12 col-sm-12">
                                     <h5 class="text-center">{{ $lable[++$i] }}</h5>
@@ -248,11 +416,143 @@
                                 </div>
                             </div>
                         </div>
+                        {{--  --}}
+                        {{-- <div class="tab-pane fade @if($id == 2) show active @endif" id="pills-year" role="tabpanel" aria-labelledby="pills-year-tab">
+                            <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter_form2" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
+                            <div class="collapse" id="collapse_filter_form2">
+                                <form id="form2" name="form2" class="mt-2" action="{{ route('karyawan.dashboard', 2) }}" method="get" enctype="multipart/form-data">
+                                    <div class="row mt-2">
+                                        <div class="col-sm-3 mb-2">
+                                            <label class="h6">Tahun</label>
+                                            <div>
+                                                <input min="1" type="number" class="form-control digits" name="tahun_dari" id="tahun_dari" value="{{ $tahun_dari }}">
+                                            </div>
+                                            sampai
+                                            <div>
+                                                <input min="1" type="number" class="form-control digits" name="tahun_sampai" id="tahun_sampai" value="{{ $tahun_sampai }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6">Periode</label>
+                                            <div>
+                                                <select class="form-select" name="select_periode" id="select_periode">
+                                                    <option value="">Pilih...</option>
+                                                    <option value="01" @if($select_periode == "01") selected="" @endif>Januari</option>
+                                                    <option value="02" @if($select_periode == "02") selected="" @endif>Februari</option>
+                                                    <option value="03" @if($select_periode == "03") selected="" @endif>Maret</option>
+                                                    <option value="04" @if($select_periode === "04") selected="" @endif>April</option>
+                                                    <option value="05" @if($select_periode == "05") selected="" @endif>Mei</option>
+                                                    <option value="06" @if($select_periode == "06") selected="" @endif>Juni</option>
+                                                    <option value="07" @if($select_periode == "07") selected="" @endif>Juli</option>
+                                                    <option value="08" @if($select_periode == "08") selected="" @endif>Agustus</option>
+                                                    <option value="09" @if($select_periode == "09") selected="" @endif>September</option>
+                                                    <option value="10" @if($select_periode == "10") selected="" @endif>Oktober</option>
+                                                    <option value="11" @if($select_periode == "11") selected="" @endif>November</option>
+                                                    <option value="12" @if($select_periode == "12") selected="" @endif>Desember</option>
+                                                    <option disabled="" value="">--------</option>
+                                                    <option value="01,02,03" @if($select_periode == "01,02,03") selected="" @endif>Kuartal 1</option>
+                                                    <option value="04,05,06" @if($select_periode == "04,05,06") selected="" @endif>Kuartal 2</option>
+                                                    <option value="07,08,09" @if($select_periode == "07,08,09") selected="" @endif>Kuartal 3</option>
+                                                    <option value="10,11,12" @if($select_periode == "10,11,12") selected="" @endif>Kuartal 4</option>
+                                                    <option disabled="" value="">--------</option>
+                                                    <option value="01,02,03,04,05,06" @if($select_periode == "01,02,03,04,05,06") selected="" @endif>Semester 1</option>
+                                                    <option value="07,08,09,10,11,12" @if($select_periode == "07,08,09,10,11,12") selected="" @endif>Semester 2</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_kelamin_form2">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin('form2')" id="all_kelamin" name="all_kelamin"/> Check All
+                                            <div class="collapse" id="box_select_kelamin_form2">
+                                                @foreach ($select_kelamin as $data)
+                                                    <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_status_form2">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status('form2')" id="all_status" name="all_status"/> Check All
+                                            <div class="collapse" id="box_select_status_form2">
+                                                @foreach ($select_status as $data)
+                                                    <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_level_form2">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level('form2')" id="all_level" name="all_level"/> Check All
+                                            <div class="collapse" id="box_select_level_form2">
+                                                @foreach ($select_level as $data)
+                                                    <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">&nbsp;</div>
+                                        <div class="col-sm-3">&nbsp;</div>
+                                        <div class="col-sm-3">&nbsp;</div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_perusahaan_form2">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan('form2')" id="all_perusahaan" name="all_perusahaan"/> Check All
+                                            <div class="collapse" id="box_perusahaan_form2">
+                                                @foreach ($perusahaan as $data)
+                                                    <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_divisi">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi('form2')" id="all_divisi" name="all_divisi"/> Check All
+                                            <div class="collapse" id="div_kode_divisi">
+                                                @foreach ($divisi as $data)
+                                                    <input class="checkbox_animated" id="kode_divisi[]" name="kode_divisi[]" type="checkbox" onClick="get_kode_divisi('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_divisi)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_departemen">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen('form2')" id="all_departemen" name="all_departemen"/> Check All
+                                            <div class="collapse" id="div_kode_departemen">
+                                                @foreach ($departemen as $data)
+                                                    <input class="checkbox_animated" id="kode_departemen[]" name="kode_departemen[]" type="checkbox" onClick="get_kode_departemen('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_departemen)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_sub_departemen">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen('form2')" id="all_sub_departemen" name="all_sub_departemen"/> Check All
+                                            <div class="collapse" id="div_kode_sub_departemen">
+                                                @foreach ($sub_departemen as $data)
+                                                    <input class="checkbox_animated" id="kode_sub_departemen[]" name="kode_sub_departemen[]" type="checkbox" onClick="get_kode_sub_departemen('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_sub_departemen)) checked @endif>{{ $data->nama }}<br/>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="{{ route('karyawan.dashboard', 2) }}" class="btn btn-info" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-xl-12 col-sm-12">
+                                    <div id="chart_jumlah_karyawan_yoy"></div>
+                                </div>
+                            </div>
+                        </div> --}}
+                        {{--  --}}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detail Data</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="detailContent"></div>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection
 
@@ -268,100 +568,422 @@
 <script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script>
 <script src="{{ asset('assets/js/chart/apex-chart/stock-prices.js') }}"></script>
 <script src="{{ asset('assets/js/chart/apex-chart/chart-custom.js') }}"></script>
-{{-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script type="text/javascript">
 // 
+function get_kode_perusahaan(source) {
+    getDivisi(source);
+}
+// 
+function get_kode_divisi(source) {
+    getDepartemen(source);
+}
+// 
+function get_kode_departemen(source) {
+    getSubDepartemen(source);
+}
+// 
+function getDivisi(source) {
+    let form = $("#" + source);
+    var _kode_perusahaan = [];
+    form.find('input[id="kode_perusahaan[]"]:checked').each(function() {
+        _kode_perusahaan.push($(this).val());
+    });
+    form.find('#div_kode_divisi').empty();
+    form.find('#div_kode_departemen').empty();
+    form.find('#div_kode_sub_departemen').empty();
+    // AJAX request 
+    $.ajax({
+        url: "{{ route('getDivisi') }}" + "/" + _kode_perusahaan,
+        type: 'get',
+        dataType: 'json',
+        success: function(response) {
+            var len = 0;
+            if (response != null) {
+                len = response.length;
+            }
+            if (len > 0) {
+                for (var i = 0; i < len; i++) {
+                    var id = response[i]['id'];
+                    var nama = response[i]['nama'];
+                    var option = "<input class='checkbox_animated' id='kode_divisi[]' name='kode_divisi[]' type='checkbox' onClick='get_kode_divisi()' value='" + id + "'> " + nama + "<br/>";
+                    form.find("#div_kode_divisi").append(option);
+                }
+            }
+        }
+    });
+}
+// 
+function getDepartemen(source) {
+    let form = $("#" + source);
+    var _kode_divisi = [];
+    form.find('input[id="kode_divisi[]"]:checked').each(function() {
+        _kode_divisi.push($(this).val());
+    });
+    form.find('#div_kode_departemen').empty();
+    form.find('#div_kode_sub_departemen').empty();
+    $.ajax({
+        url: "{{ route('getDepartemen') }}" + "/" + _kode_divisi,
+        type: 'get',
+        dataType: 'json',
+        success: function(response) {
+            var len = 0;
+            if (response != null) {
+                len = response.length;
+            }
+            if (len > 0) {
+                for (var i = 0; i < len; i++) {
+                    var id = response[i]['id'];
+                    var nama = response[i]['nama'];
+                    var option = "<input class='checkbox_animated' id='kode_departemen[]' name='kode_departemen[]' type='checkbox' onClick='get_kode_departemen()' value='" + id + "'> " + nama + "<br/>";
+                    form.find("#div_kode_departemen").append(option);
+                }
+            }
+        }
+    });
+}
+// 
+function getSubDepartemen(source) {
+    let form = $("#" + source);
+    var _kode_departemen = [];
+    form.find('input[id="kode_departemen[]"]:checked').each(function() {
+        _kode_departemen.push($(this).val());
+    });
+    form.find('#div_kode_sub_departemen').empty();
+    $.ajax({
+        url: "{{ route('getSubDepartemen') }}" + "/" + _kode_departemen,
+        type: 'get',
+        dataType: 'json',
+        success: function(response) {
+            var len = 0;
+            if (response != null) {
+                len = response.length;
+            }
+            if (len > 0) {
+                for (var i = 0; i < len; i++) {
+                    var id = response[i]['id'];
+                    var nama = response[i]['nama'];
+                    var option = "<input class='checkbox_animated' id='kode_sub_departemen[]' name='kode_sub_departemen[]' type='checkbox' value='" + id + "'> " + nama + "<br/>";
+                    form.find("#div_kode_sub_departemen").append(option);
+                }
+            }
+        }
+    });
+}
+// 
+$('#tahun_sampai').datepicker({
+    format: "yyyy",
+    viewMode: "years",
+    minViewMode: "years",
+    autoclose: true
+});
+$('#tahun_dari').datepicker({
+    format: "yyyy",
+    viewMode: "years",
+    minViewMode: "years",
+    autoclose: true
+});
+// 
 function toggle_select_kelamin(source) {
-    checkboxes = document.getElementsByName('select_kelamin[]');
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        checkboxes[i].checked = source.checked;
-    }
+    let form = $("#" + source);
+    let isChecked = form.find("input[name='all_kelamin']").prop('checked');
+    form.find('input[name="select_kelamin[]"]').prop('checked', isChecked);
+
 }
 function toggle_select_status(source) {
-    checkboxes = document.getElementsByName('select_status[]');
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        checkboxes[i].checked = source.checked;
-    }
+    let form = $("#" + source);
+    let isChecked = form.find("input[name='all_status']").prop('checked');
+    form.find('input[name="select_status[]"]').prop('checked', isChecked);
 }
-function toggle_select_perusahaan(source) {
-    checkboxes = document.getElementsByName('select_perusahaan[]');
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        checkboxes[i].checked = source.checked;
-    }
+function toggle_perusahaan(source) {
+    let form = $("#" + source);
+    let isChecked = form.find("input[name='all_perusahaan']").prop('checked');
+    form.find('input[name="kode_perusahaan[]"]').prop('checked', isChecked);
+    getDivisi(source);
+}
+function toggle_divisi(source) {
+    let form = $("#" + source);
+    let isChecked = form.find("input[name='all_divisi']").prop('checked');
+    form.find('input[name="kode_divisi[]"]').prop('checked', isChecked);
+    getDepartemen(source);
+}
+function toggle_kode_departemen(source) {
+    let form = $("#" + source);
+    let isChecked = form.find("input[name='all_departemen']").prop('checked');
+    form.find('input[name="kode_departemen[]"]').prop('checked', isChecked);
+    getSubDepartemen(source);
+}
+function toggle_kode_sub_departemen(source) {
+    let form = $("#" + source);
+    let isChecked = form.find("input[name='all_sub_departemen']").prop('checked');
+    form.find('input[name="kode_sub_departemen[]"]').prop('checked', isChecked);
 }
 function toggle_select_level(source) {
-    checkboxes = document.getElementsByName('select_level[]');
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        checkboxes[i].checked = source.checked;
-    }
+    let form = $("#" + source);
+    let isChecked = form.find("input[name='all_level']").prop('checked');
+    form.find('input[name="select_level[]"]').prop('checked', isChecked);
 }
 function toggle_select_pendidikan(source) {
-    checkboxes = document.getElementsByName('select_pendidikan[]');
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        checkboxes[i].checked = source.checked;
-    }
+    let form = $("#" + source);
+    let isChecked = form.find("input[name='all_pendidikan']").prop('checked');
+    form.find('input[name="select_pendidikan[]"]').prop('checked', isChecked);
 }
 function toggle_select_generasi(source) {
-    checkboxes = document.getElementsByName('select_generasi[]');
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        checkboxes[i].checked = source.checked;
-    }
-}
-function toggle_select_aktif(source) {
-    checkboxes = document.getElementsByName('select_aktif[]');
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        checkboxes[i].checked = source.checked;
-    }
+    let form = $("#" + source);
+    let isChecked = form.find("input[name='all_generasi']").prop('checked');
+    form.find('input[name="select_generasi[]"]').prop('checked', isChecked);
 }
 // 
 $(document).ready(function() {
+    // 
+    var id = {{ $id }};
+    // var select_periode = {{ $select_periode }};
+    var tahun_dari = {{ $tahun_dari }};
+    var tahun_sampai = {{ $tahun_sampai }};
+    // alert(select_periode);
+    if(id == 0){
+        $('#form1').find('input, textarea, select').each(function() {
+            if ($(this).is(':checkbox') || $(this).is(':radio')) {
+                $(this).prop('checked', false);
+            } else {
+                $(this).val('');
+            }
+        });
+        $('#form2').find('input, textarea, select').each(function() {
+            if ($(this).is(':checkbox') || $(this).is(':radio')) {
+                $(this).prop('checked', false);
+            } else {
+                $(this).val('');
+            }
+        });
+        let form = $("#form0");
+        let total = form.find("input[name='select_kelamin[]']").length;
+        let checked = form.find("input[name='select_kelamin[]']:checked").length;
+        form.find("#all_kelamin").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='select_status[]']").length;
+        checked = form.find("input[name='select_status[]']:checked").length;
+        form.find("#all_status").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='select_level[]']").length;
+        checked = form.find("input[name='select_level[]']:checked").length;
+        form.find("#all_level").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='select_generasi[]']").length;
+        checked = form.find("input[name='select_generasi[]']:checked").length;
+        form.find("#all_generasi").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='select_pendidikan[]']").length;
+        checked = form.find("input[name='select_pendidikan[]']:checked").length;
+        form.find("#all_pendidikan").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_perusahaan[]']").length;
+        checked = form.find("input[name='kode_perusahaan[]']:checked").length;
+        form.find("#all_perusahaan").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_divisi[]']").length;
+        checked = form.find("input[name='kode_divisi[]']:checked").length;
+        form.find("#all_divisi").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_departemen[]']").length;
+        checked = form.find("input[name='kode_departemen[]']:checked").length;
+        form.find("#all_departemen").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_sub_departemen[]']").length;
+        checked = form.find("input[name='kode_sub_departemen[]']:checked").length;
+        form.find("#all_sub_departemen").prop("checked", total > 0 && total === checked);
+    }else if(id == 1 && tahun_dari == 0 && tahun_sampai == 0){
+        $('#form0').find('input, textarea, select').each(function() {
+            if ($(this).is(':checkbox') || $(this).is(':radio')) {
+                $(this).prop('checked', false);
+            } else {
+                $(this).val('');
+            }
+        });
+        $('#form2').find('input, textarea, select').each(function() {
+            if ($(this).is(':checkbox') || $(this).is(':radio')) {
+                $(this).prop('checked', false);
+            } else {
+                $(this).val('');
+            }
+        });
+        let form = $("#form1");
+        let total = form.find("input[name='select_kelamin[]']").length;
+        let checked = form.find("input[name='select_kelamin[]']:checked").length;
+        form.find("#all_kelamin").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='select_status[]']").length;
+        checked = form.find("input[name='select_status[]']:checked").length;
+        form.find("#all_status").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='select_level[]']").length;
+        checked = form.find("input[name='select_level[]']:checked").length;
+        form.find("#all_level").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_perusahaan[]']").length;
+        checked = form.find("input[name='kode_perusahaan[]']:checked").length;
+        form.find("#all_perusahaan").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_divisi[]']").length;
+        checked = form.find("input[name='kode_divisi[]']:checked").length;
+        form.find("#all_divisi").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_departemen[]']").length;
+        checked = form.find("input[name='kode_departemen[]']:checked").length;
+        form.find("#all_departemen").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_sub_departemen[]']").length;
+        checked = form.find("input[name='kode_sub_departemen[]']:checked").length;
+        form.find("#all_sub_departemen").prop("checked", total > 0 && total === checked);
+    }else if(id == 1 && tahun_dari > 0 && tahun_sampai > 0){
+        $('#form0').find('input, textarea, select').each(function() {
+            if ($(this).is(':checkbox') || $(this).is(':radio')) {
+                $(this).prop('checked', false);
+            } else {
+                $(this).val('');
+            }
+        });
+        $('#form1').find('input, textarea, select').each(function() {
+            if ($(this).is(':checkbox') || $(this).is(':radio')) {
+                $(this).prop('checked', false);
+            } else {
+                $(this).val('');
+            }
+        });
+        let form = $("#form2");
+        let total = form.find("input[name='select_kelamin[]']").length;
+        let checked = form.find("input[name='select_kelamin[]']:checked").length;
+        form.find("#all_kelamin").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='select_status[]']").length;
+        checked = form.find("input[name='select_status[]']:checked").length;
+        form.find("#all_status").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='select_level[]']").length;
+        checked = form.find("input[name='select_level[]']:checked").length;
+        form.find("#all_level").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_perusahaan[]']").length;
+        checked = form.find("input[name='kode_perusahaan[]']:checked").length;
+        form.find("#all_perusahaan").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_divisi[]']").length;
+        checked = form.find("input[name='kode_divisi[]']:checked").length;
+        form.find("#all_divisi").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_departemen[]']").length;
+        checked = form.find("input[name='kode_departemen[]']:checked").length;
+        form.find("#all_departemen").prop("checked", total > 0 && total === checked);
+        total = form.find("input[name='kode_sub_departemen[]']").length;
+        checked = form.find("input[name='kode_sub_departemen[]']:checked").length;
+        form.find("#all_sub_departemen").prop("checked", total > 0 && total === checked);
+    }
+    // 
+    $('#form2').on('submit', function (e) {
+        let form = $(this);
+        let errors = [];
+        let select = form.find($('#tahun_dari')).val();
+        let select2 = form.find($('#tahun_sampai')).val();
+        if (!select || !select2) {
+            errors.push("Tahun is mandatory");
+        }
+        select = form.find($('#select_periode')).val();
+        if (!select) {
+            errors.push("Periode is mandatory");
+        }
+        select = form.find($('input[name="select_kelamin[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Jenis Kelamin is mandatory");
+        }
+        select = form.find($('input[name="select_status[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Status Karyawan is mandatory");
+        }
+        select = form.find($('input[name="select_level[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Level is mandatory");
+        }
+        select = form.find($('input[name="kode_perusahaan[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Perusahaan is mandatory");
+        }
+        select = form.find($('input[name="kode_divisi[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Direktorat is mandatory");
+        }
+        select = form.find($('input[name="kode_departemen[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Divisi is mandatory");
+        }
+        select = form.find($('input[name="kode_sub_departemen[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Departemen is mandatory");
+        }
+        if (errors.length > 0) {
+            e.preventDefault();
+            alert(errors.join('\n'));
+        }
+    });
     $('#form1').on('submit', function (e) {
-        let select_kelamin = $('input[name="select_kelamin[]"]:checked').length;
-        if (select_kelamin < 1) {
-            e.preventDefault();
-            alert("Jenis Kelamin is mandatory");
+        let form = $(this);
+        let errors = [];
+        let select = form.find($('#bulan_tahun_dari')).val();
+        let select2 = form.find($('#bulan_tahun_sampai')).val();
+        if (!select || !select2) {
+            errors.push("Bulan Tahun is mandatory");
         }
-        let select_status = $('input[name="select_status[]"]:checked').length;
-        if (select_status < 1) {
-            e.preventDefault();
-            alert("Status Karyawan is mandatory");
+        select = form.find($('input[name="select_kelamin[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Jenis Kelamin is mandatory");
         }
-        let select_perusahaan = $('input[name="select_perusahaan[]"]:checked').length;
-        if (select_perusahaan < 1) {
-            e.preventDefault();
-            alert("Perusahaan is mandatory");
+        select = form.find($('input[name="select_status[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Status Karyawan is mandatory");
         }
-        let select_level = $('input[name="select_level[]"]:checked').length;
-        if (select_level < 1) {
+        select = form.find($('input[name="select_level[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Level is mandatory");
+        }
+        select = form.find($('input[name="kode_perusahaan[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Perusahaan is mandatory");
+        }
+        select = form.find($('input[name="kode_divisi[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Direktorat is mandatory");
+        }
+        select = form.find($('input[name="kode_departemen[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Divisi is mandatory");
+        }
+        select = form.find($('input[name="kode_sub_departemen[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Departemen is mandatory");
+        }
+        if (errors.length > 0) {
             e.preventDefault();
-            alert("Level is mandatory");
+            alert(errors.join('\n'));
         }
     });
     $('#form0').on('submit', function (e) {
-        let select_kelamin = $('input[name="select_kelamin[]"]:checked').length;
-        if (select_kelamin < 1) {
-            e.preventDefault();
-            alert("Jenis Kelamin is mandatory");
+        let form = $(this);
+        let errors = [];
+        let select = form.find($('input[name="select_kelamin[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Jenis Kelamin is mandatory");
         }
-        let select_status = $('input[name="select_status[]"]:checked').length;
-        if (select_status < 1) {
-            e.preventDefault();
-            alert("Status Karyawan is mandatory");
+        select = form.find($('input[name="select_status[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Status Karyawan is mandatory");
         }
-        let select_perusahaan = $('input[name="select_perusahaan[]"]:checked').length;
-        if (select_perusahaan < 1) {
-            e.preventDefault();
-            alert("Perusahaan is mandatory");
+        select = form.find($('input[name="select_level[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Level is mandatory");
         }
-        let select_level = $('input[name="select_level[]"]:checked').length;
-        if (select_level < 1) {
-            e.preventDefault();
-            alert("Level is mandatory");
+        select = form.find($('input[name="select_generasi[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Generasi is mandatory");
         }
-        let select_generasi = $('input[name="select_generasi[]"]:checked').length;
-        if (select_generasi < 1) {
+        select = form.find($('input[name="kode_perusahaan[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Perusahaan is mandatory");
+        }
+        select = form.find($('input[name="kode_divisi[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Direktorat is mandatory");
+        }
+        select = form.find($('input[name="kode_departemen[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Divisi is mandatory");
+        }
+        select = form.find($('input[name="kode_sub_departemen[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Departemen is mandatory");
+        }
+        if (errors.length > 0) {
             e.preventDefault();
-            alert("Generasi is mandatory");
+            alert(errors.join('\n'));
         }
     });
     // 
@@ -417,7 +1039,8 @@ $(document).ready(function() {
             },
             xaxis: {
                 categories: categories,
-                tickPlacement: chartType === 'line' ? 'between' : 'on',
+                // tickPlacement: chartType === 'line' ? 'between' : 'on',
+                tickPlacement: 'between',
             },
             yaxis: {
                 min: 0,
@@ -426,6 +1049,9 @@ $(document).ready(function() {
             },
             legend: { position: 'top' },
             fill: { opacity: 0.8 },
+            dataLabels: {
+                style: { colors: ['#000'] }
+            },
         };
         if (chartType === 'line') {
             options.stroke = {
@@ -474,7 +1100,8 @@ $(document).ready(function() {
             },
             xaxis: {
                 categories: categories,
-                tickPlacement: chartType === 'line' ? 'between' : 'on',
+                // tickPlacement: chartType === 'line' ? 'between' : 'on',
+                tickPlacement: 'between',
             },
             yaxis: {
                 min: 0,
@@ -483,6 +1110,9 @@ $(document).ready(function() {
             },
             legend: { position: 'top' },
             fill: { opacity: 0.8 },
+            dataLabels: {
+                style: { colors: ['#000'] }
+            },
         };
         if (chartType === 'line') {
             options.stroke = {
@@ -501,7 +1131,60 @@ $(document).ready(function() {
         const options = {
             chart: {
                 type: chartType,
-                height: height
+                height: height,
+                events: (chartType === 'pie') ? {
+                    dataPointSelection: function(event, chartContext, config) {
+                        const index = config.dataPointIndex;
+                        let key;
+                        key = config.w.globals.labels[index];
+                        const rawData = dataObj[key];
+                        document.querySelector('#detailModal .modal-title').innerText = `Detail: ${key}`;
+                        const tableId = 'detailTable';
+                        let html = `
+                            <table id="${tableId}" class="table table-striped table-bordered w-100">
+                                <thead>
+                                    <tr>
+                                        <th>NIP</th>
+                                        <th>Nama</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+                        rawData.detail.forEach(row => {
+                            html += `
+                                <tr>
+                                    <td>${row.nik ?? ''}</td>
+                                    <td>${row.nama ?? ''}</td>
+                                </tr>
+                            `;
+                        });
+                        html += `
+                                </tbody>
+                            </table>
+                        `;
+                        document.getElementById('detailContent').innerHTML = html;
+                        // destroy kalau sudah pernah ada datatable
+                        if ($.fn.DataTable.isDataTable('#' + tableId)) {
+                            $('#' + tableId).DataTable().destroy();
+                        }
+                        // init DataTables
+                        setTimeout(() => {
+                            $('#' + tableId).DataTable({
+                                order: [[1, 'asc']],
+                                dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
+                                    "<'row'<'col-sm-12'rt>>" +
+                                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                                buttons: [
+                                    'copy', 'csv', 'excel', 'pdf', 'print'
+                                ],
+                                lengthMenu: [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500, "All"]]
+                            });
+                        }, 100);
+                        // show modal
+                        const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+                        modal.show();
+                    }
+                } : {}
             },
             series: series,
             labels: labels,
@@ -527,7 +1210,60 @@ $(document).ready(function() {
         const options = {
             chart: {
                 type: chartType,
-                height: height
+                height: height,
+                events: chartType === 'bar' ? {
+                    dataPointSelection: function(event, chartContext, config) {
+                        const index = config.dataPointIndex;
+                        const key = Object.keys(dataObj)[index];
+                        const rawData = dataObj[key];
+                        document.querySelector('#detailModal .modal-title').innerText = `Detail: ${key}`;
+                        const tableId = 'detailTable';
+                        let html = `
+                            <table id="${tableId}" class="table table-striped table-bordered w-100">
+                                <thead>
+                                    <tr>
+                                        <th>NIP</th>
+                                        <th>Nama</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+                        rawData.detail.forEach(row => {
+                            html += `
+                                <tr>
+                                    <td>${row.nik ?? ''}</td>
+                                    <td>${row.nama ?? ''}</td>
+                                </tr>
+                            `;
+                        });
+                        html += `
+                                </tbody>
+                            </table>
+                        `;
+                        document.getElementById('detailContent').innerHTML = html;
+                        // destroy kalau sudah pernah ada datatable
+                        if ($.fn.DataTable.isDataTable('#' + tableId)) {
+                            $('#' + tableId).DataTable().destroy();
+                        }
+                        // init DataTables
+                        setTimeout(() => {
+                            $('#' + tableId).DataTable({
+                                order: [[1, 'asc']],
+                                // dom: 'lBfrtip',
+                                dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
+                                "<'row'<'col-sm-12'rt>>" +
+                                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                                buttons: [
+                                    'copy', 'csv', 'excel', 'pdf', 'print'
+                                ],
+                                "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]]
+                            });
+                        }, 100);
+                        // show modal
+                        const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+                        modal.show();
+                    }
+                } : {}
             },
             series: [{
                 name: 'Jumlah',
@@ -543,22 +1279,29 @@ $(document).ready(function() {
             colors: colors,
             xaxis: {
                 categories: categories,
+                // tickPlacement: chartType === 'line' ? 'between' : 'on',
+                tickPlacement: 'between',
                 labels: {
-                    rotate: -45,
+                    rotate: -30,
                     // offsetY: -5,
                     rotateAlways: true,
                     hideOverlappingLabels: false,
-                    trim: true,
+                    trim: false,
                     // offsetY: 50,
                 },
             },
-            padding: {
-                bottom: 500
-            },
+            // padding: {
+            //     bottom: 500
+            // },
             yaxis: {
                 min: 0,
                 max: maxValue,
                 title: { text: 'Jumlah' }
+            },
+            legend: { position: 'top' },
+            fill: { opacity: 0.8 },
+            dataLabels: {
+                style: { colors: ['#000'] }
             },
             plotOptions: {
                 bar: {
@@ -568,10 +1311,179 @@ $(document).ready(function() {
                     borderRadiusApplication: 'end',
                 }
             },
-            dataLabels: {
-                enabled: true
-            },
+            // dataLabels: {
+            //     enabled: true
+            // },
         };
+        if (chartType === 'line') {
+            options.stroke = {
+                curve: 'smooth',
+                width: 3
+            };
+            // options.markers = { size: 5 };
+        }
+        const chart = new ApexCharts(document.querySelector(`#${containerId}`), options);
+        chart.render();
+    }
+    // 
+    function render_chart_yoy(dataObj, containerId, chartType, height, selectedMonths = []) {
+        const parsed = Object.entries(dataObj).map(([date, val]) => {
+            const [year, month] = date.split('-');
+            return {
+                year,
+                month,
+                value: val.value || 0
+            };
+        });
+        let months = [...new Set(parsed.map(d => d.month))].sort();
+        if (selectedMonths.length > 0) {
+            months = months.filter(m => selectedMonths.includes(m));
+        }
+        const years = [...new Set(parsed.map(d => d.year))].sort();
+        const series = years.map(year => ({
+            name: year,
+            data: months.map(month => {
+                const found = parsed.find(d => d.year === year && d.month === month);
+                return found ? found.value : 0;
+            })
+        }));
+        const maxValue = Math.max(...series.flatMap(s => s.data)) + 5;
+        const monthNames = {
+            '01': 'Jan', '02': 'Feb', '03': 'Mar',
+            '04': 'Apr', '05': 'Mei', '06': 'Jun',
+            '07': 'Jul', '08': 'Agu', '09': 'Sep',
+            '10': 'Okt', '11': 'Nov', '12': 'Des'
+        };
+        const options = {
+            chart: {
+                type: chartType,
+                height: height,
+                zoom: { enabled: false },
+            },
+            series: series,
+            xaxis: {
+                categories: months.map(m => monthNames[m] || m),
+                // categories: months,
+                // title: { text: 'Bulan' }
+            },
+            yaxis: {
+                min: 0,
+                max: maxValue,
+                title: { text: 'Jumlah' }
+            },
+            legend: { position: 'top' },
+            fill: { opacity: 0.8 },
+            dataLabels: {
+                style: { colors: ['#000'] }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '80%',
+                    borderRadius: 3,
+                }
+            },
+            // dataLabels: {
+            //     style: {
+            //         fontSize: '10px',
+            //         colors: ['#fff'],
+            //     }
+            // },
+            // fill: { opacity: 0.8 },
+        };
+        if (chartType === 'line') {
+            options.stroke = {
+                curve: 'smooth',
+                width: 3
+            };
+        }
+        const chart = new ApexCharts(document.querySelector(`#${containerId}`), options);
+        chart.render();
+    }
+    // 
+    function render_chart_yoy_gender(dataObj, containerId, chartType, height, selectedMonths = []) {
+        // Parse data
+        const parsed = Object.entries(dataObj).map(([date, val]) => {
+            const [year, month] = date.split('-');
+            return {
+                year,
+                month,
+                pria: val.pria || 0,
+                wanita: val.wanita || 0
+            };
+        });
+        // Ambil bulan unik
+        let months = [...new Set(parsed.map(d => d.month))].sort();
+        // Filter bulan (kalau ada)
+        if (selectedMonths.length > 0) {
+            months = months.filter(m => selectedMonths.includes(m));
+        }
+        // Ambil tahun unik
+        const years = [...new Set(parsed.map(d => d.year))].sort();
+        const genders = ['pria', 'wanita'];
+        const series = [];
+        // Build series: kombinasi gender + tahun
+        years.forEach(year => {
+            genders.forEach(gender => {
+                series.push({
+                    name: `${gender} ${year}`,
+                    data: months.map(month => {
+                        const found = parsed.find(d => d.year === year && d.month === month);
+                        return found ? found[gender] : 0;
+                    })
+                });
+            });
+        });
+        const maxValue = Math.max(...series.flatMap(s => s.data)) + 5;
+        // Mapping nama bulan (opsional biar rapi)
+        const monthNames = {
+            '01': 'Jan', '02': 'Feb', '03': 'Mar',
+            '04': 'Apr', '05': 'Mei', '06': 'Jun',
+            '07': 'Jul', '08': 'Agu', '09': 'Sep',
+            '10': 'Okt', '11': 'Nov', '12': 'Des'
+        };
+        const options = {
+            chart: {
+                type: chartType,
+                height: height,
+                zoom: { enabled: false },
+            },
+            series: series,
+            xaxis: {
+                categories: months.map(m => monthNames[m] || m),
+                // title: { text: 'Bulan' }
+            },
+            yaxis: {
+                min: 0,
+                max: maxValue,
+                title: { text: 'Jumlah' }
+            },
+            legend: { position: 'top' },
+            fill: { opacity: 0.8 },
+            dataLabels: {
+                style: { colors: ['#000'] }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '80%',
+                    borderRadius: 3,
+                }
+            },
+            // dataLabels: {
+            //     style: {
+            //         fontSize: '10px',
+            //         colors: ['#000'],
+            //     }
+            // },
+            // fill: { opacity: 0.8 },
+        };
+        if (chartType === 'line') {
+            options.stroke = {
+                curve: 'smooth',
+                width: 3
+            };
+        }
         const chart = new ApexCharts(document.querySelector(`#${containerId}`), options);
         chart.render();
     }
@@ -583,14 +1495,34 @@ $(document).ready(function() {
     render_chart_v4(@json($jumlah_karyawan_pendidikan_now), 'chart_jumlah_karyawan_pendidikan_now', 'bar', 400, ['#00E396']);
     render_chart_v4(@json($jumlah_karyawan_kelahiran_now), 'chart_jumlah_karyawan_kelahiran_now', 'bar', 400, ['#FEB019']);
     // history
-    render_chart_v1(@json($jumlah_karyawan), 'chart_jumlah_karyawan', 'line', 300);
-    render_chart_v1(@json($jumlah_karyawan_kelamin), 'chart_jumlah_karyawan_kelamin', 'line', 300);
-    render_chart_v1(@json($jumlah_karyawan_perusahaan), 'chart_jumlah_karyawan_perusahaan', 'line', 300);
-    render_chart_v1(@json($jumlah_karyawan_divisi), 'chart_jumlah_karyawan_divisi', 'line', 300);
-    render_chart_v1(@json($jumlah_karyawan_dep), 'chart_jumlah_karyawan_dep', 'line', 300);
-    render_chart_v1(@json($jumlah_karyawan_subdep), 'chart_jumlah_karyawan_subdep', 'line', 700);
-    render_chart_v1(@json($jumlah_karyawan_status), 'chart_jumlah_karyawan_status', 'line', 300);
-    render_chart_v1(@json($jumlah_karyawan_level), 'chart_jumlah_karyawan_level', 'line', 300);
+    render_chart_v1(@json($jumlah_karyawan), 'chart_jumlah_karyawan', 'bar', 300);
+    render_chart_v1(@json($jumlah_karyawan_kelamin), 'chart_jumlah_karyawan_kelamin', 'bar', 300);
+    render_chart_v1(@json($jumlah_karyawan_perusahaan), 'chart_jumlah_karyawan_perusahaan', 'bar', 300);
+    render_chart_v1(@json($jumlah_karyawan_divisi), 'chart_jumlah_karyawan_divisi', 'bar', 300);
+    render_chart_v1(@json($jumlah_karyawan_dep), 'chart_jumlah_karyawan_dep', 'bar', 300);
+    render_chart_v1(@json($jumlah_karyawan_subdep), 'chart_jumlah_karyawan_subdep', 'bar', 700);
+    render_chart_v1(@json($jumlah_karyawan_status), 'chart_jumlah_karyawan_status', 'bar', 300);
+    render_chart_v1(@json($jumlah_karyawan_level), 'chart_jumlah_karyawan_level', 'bar', 300);
+    // // yoy
+    // render_chart_v1(@json($jumlah_karyawan), 'chart_jumlah_karyawan_yoy', 'line', 300);
+    // const dataObj = {
+    //     "2023-01": { value: 8 },
+    //     "2023-02": { value: 12 },
+    //     "2024-01": { value: 10 },
+    //     "2024-02": { value: 15 },
+    //     "2025-01": { value: 20 },
+    //     "2025-02": { value: 25 }
+    // };
+    // render_chart_yoy(dataObj, 'chart_yoy', 'bar', 300, ['01', '02']);
+    // // const dataObj = {
+    // //     "2023-01": { pria: 5, wanita: 3 },
+    // //     "2023-02": { pria: 7, wanita: 5 },
+    // //     "2024-01": { pria: 6, wanita: 4 },
+    // //     "2024-02": { pria: 9, wanita: 6 },
+    // //     "2025-01": { pria: 12, wanita: 8 },
+    // //     "2025-02": { pria: 14, wanita: 11 }
+    // // };
+    // // render_chart_yoy_gender(dataObj, 'chart_yoy_gender', 'bar', 300, ['01', '02']);
 });
 </script>
 @endsection
