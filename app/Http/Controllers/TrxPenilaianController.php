@@ -195,7 +195,7 @@ class TrxPenilaianController extends Controller
         DENGAN<br/>
         <b>'.strtoupper($karyawan->nama).'</b></div>';
         // $pdf::writeHTMLCell(0, 0, 0, $y, $html, 0, 1, 0, true, '', true);
-        $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
+        $pdf::writeHTMLCell(0, 0, $x, $y+=5, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;">Pada hari ini '.$tanggal_kontrak.' di Kantor PT. ALITA PRAYA MITRA Jl. Muara Dalam No.108 Kelurahan Tanjung Barat Kecamatan Jagakarsa, Jakarta Selatan, telah tercapai kesepakatan antara pihak-pihak :</div>';
         $pdf::writeHTMLCell(0, 0, $x, $y+=35, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
