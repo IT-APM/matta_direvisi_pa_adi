@@ -197,7 +197,7 @@ class TrxPenilaianController extends Controller
         // $pdf::writeHTMLCell(0, 0, 0, $y, $html, 0, 1, 0, true, '', true);
         $pdf::writeHTMLCell(0, 0, $x, $y, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;">Pada hari ini '.$tanggal_kontrak.' di Kantor PT. ALITA PRAYA MITRA Jl. Muara Dalam No.108 Kelurahan Tanjung Barat Kecamatan Jagakarsa, Jakarta Selatan, telah tercapai kesepakatan antara pihak-pihak :</div>';
-        $pdf::writeHTMLCell(0, 0, $x, $y+=30, $html, 0, 1, 0, true, '', true);
+        $pdf::writeHTMLCell(0, 0, $x, $y+=35, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:justify;"><table>
         <tr>
             <td width="4%">I.</td>
@@ -955,21 +955,25 @@ class TrxPenilaianController extends Controller
                 $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', $arr_id_status)->whereIn('is_perpanjang', $arr_is_perpanjang)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
             }
             if(count($_id_status_lengkap) > 0){
-                $trx = TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', [6, 7])->whereIn('is_perpanjang', $arr_is_perpanjang)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
+                $trx = TrxPenilaian::whereIn('nik_karyawan', $nik_karyawan)->whereIn('is_perpanjang', $arr_is_perpanjang)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
                 if(Gate::allows('hc_nkp')){
-                    $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $nik_karyawan)->whereIn('id_status', [6, 7])->whereIn('is_perpanjang', $arr_is_perpanjang)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
+                    $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('nik_karyawan', $nik_karyawan)->whereIn('is_perpanjang', $arr_is_perpanjang)->whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->orderBy('id', 'desc')->get();
                 }
-                foreach ($trx as $data){
-                    // Done By Reviewer 2
-                    $where = ['id_status' => 6, 'id_trx' => $data->id];
-                    $trx_2 = TrxPenilaianLog::where($where)->exists();
-                    // Done By Reviewer 3
-                    $where = ['id_status' => 7, 'id_trx' => $data->id];
-                    $trx_3 = TrxPenilaianLog::where($where)->exists();
-                    if($trx_2 && $trx_3){
+                foreach ($trx as $_trx){
+                    $data = DB::select("SELECT * FROM trx_tbl_penilaian_log t
+                    WHERE t.id_trx IN (
+                        SELECT id_trx
+                        FROM trx_tbl_penilaian_log
+                        WHERE id_status IN (6,7)
+                        GROUP BY id_trx
+                        HAVING 
+                            SUM(id_status = 6) > 0
+                            AND SUM(id_status = 7) > 0
+                    ) AND id_trx=".$_trx->id);
+                    if(count($data)>0){
                         // 
                     }else{
-                        $trx = forgetById($trx, $data->id);
+                        $trx = forgetById($trx, $_trx->id);
                     }
                 }
             }
