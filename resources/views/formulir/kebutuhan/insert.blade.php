@@ -351,7 +351,7 @@
                                 <h5>Line Approval Pengajuan</h5>
                                 <div class="row g-2">
                                     <div class="col-md-6">
-                                        <label class="form-label" for="layer1">Layer 1*</label>
+                                        <label class="form-label" for="layer1">Layer 1 Pengaju*</label>
                                         @if(!empty($check))
                                             {{ $check->_layer1->nama }}&nbsp;<input class="form-control" name="layer1" id="layer1" type="text" required="" readonly="" value="{{ $check->layer1 }}">
                                         @else
@@ -362,7 +362,7 @@
                                         @endif
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label" for="layer2">Layer 2*</label>
+                                        <label class="form-label" for="layer2">Layer 2 Pengaju*</label>
                                         @if(!empty($check))
                                             {{ $check->_layer2->nama }}&nbsp;<input class="form-control" name="layer2" id="layer2" type="text" required="" readonly="" value="{{ $check->layer2 }}">
                                         @else
