@@ -39,13 +39,17 @@
             <div class="card">
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
-                        <li class="nav-item"><a class="nav-link @if($id == 0) active @endif" id="pills-current-tab" data-bs-toggle="pill" href="#pills-current" role="tab" aria-controls="pills-current" aria-selected="true">Terkini</a></li>
-                        <li class="nav-item"><a class="nav-link @if($id == 1) active @endif" id="pills-history-tab" data-bs-toggle="pill" href="#pills-history" role="tab" aria-controls="pills-history" aria-selected="true">Histori/Year On Year</a></li>
+                        {{-- <li class="nav-item"><a class="nav-link @if($id == 0) active @endif" id="pills-current-tab" data-bs-toggle="pill" href="{{ route('karyawan.dashboard', 0) }}" role="tab" aria-controls="pills-current" aria-selected="true">Terkini</a></li> --}}
+                        {{-- <li class="nav-item"><a class="nav-link @if($id == 1) active @endif" id="pills-history-tab" data-bs-toggle="pill" href="{{ route('karyawan.dashboard', 1) }}" role="tab" aria-controls="pills-history" aria-selected="true">Histori/Year On Year</a></li> --}}
                         {{-- <li class="nav-item"><a class="nav-link @if($id == 2) active @endif" id="pills-year-tab" data-bs-toggle="pill" href="#pills-year" role="tab" aria-controls="pills-year" aria-selected="true">Year On Year</a></li> --}}
+                        <li class="nav-item"><a class="nav-link @if($id == 0) active @endif" href="{{ route('karyawan.dashboard', 0) }}">Terkini</a></li>
+                        <li class="nav-item"><a class="nav-link @if($id == 1) active @endif" href="{{ route('karyawan.dashboard', 1) }}">Histori/Year On Year</a></li>
                     </ul>
+                    @php $type = request()->get('type', 'bar'); @endphp
                     <div class="tab-content" id="pills-warningtabContent">
                         {{--  --}}
-                        <div class="tab-pane fade  @if($id == 0) show active @endif" id="pills-current" role="tabpanel" aria-labelledby="pills-current-tab">
+                        <div class="tab-pane fade @if($id == 0) show active @endif" id="pills-current" role="tabpanel" aria-labelledby="pills-current-tab">
+                            <a href="{{ request()->fullUrlWithQuery(['type' => 'bar']) }}" class="btn btn-outline-success mt-2" type="button"><i class="fa fa-bar-chart" aria-hidden="true"></i></a>&nbsp;&nbsp;<a href="{{ request()->fullUrlWithQuery(['type' => 'line']) }}" class="btn btn-outline-success mt-2" type="button"><i class="fa fa-line-chart" aria-hidden="true"></i></a><br/>
                             <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter_form0" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                             <div class="collapse" id="collapse_filter_form0">
                                 <form id="form0" name="form0" class="mt-2" action="{{ route('karyawan.dashboard', 0) }}" method="get" enctype="multipart/form-data">
@@ -137,17 +141,24 @@
                                 @php $i = 0; @endphp
                                 <div class="col-xl-4 col-sm-4">
                                     {{-- <div class="card text-white bg-primary text-center"> --}}
-                                    <div class="card-body text-center">
+                                    {{-- <div class="card-body text-center">
+                                        <h5 class="card-title">{{ $lable[$i] }}</h5>
+                                        <div class="p-3">
+                                            <img src="{{ asset('assets/images/matta/dashboard/people.png') }}" alt="People Icon" style="height:100px; object-fit:cover; border-radius:50%;">
+                                        </div>
+                                        <h2>{{ array_sum(array_column($jumlah_karyawan_kelamin_now, 'jumlah')) }}</h2>
+                                    </div> --}}
+                                    {{-- </div> --}}
+                                    <div class="card-body text-center" style="cursor:pointer;" data-key="{{ $lable[$i] }}" data-detail='@json(collect($jumlah_karyawan_kelamin_now)->pluck('detail')->flatten(1))' onclick="showDetail(this)">
                                         <h5 class="card-title">{{ $lable[$i] }}</h5>
                                         <div class="p-3">
                                             <img src="{{ asset('assets/images/matta/dashboard/people.png') }}" alt="People Icon" style="height:100px; object-fit:cover; border-radius:50%;">
                                         </div>
                                         <h2>{{ array_sum(array_column($jumlah_karyawan_kelamin_now, 'jumlah')) }}</h2>
                                     </div>
-                                    {{-- </div> --}}
                                 </div>
                                 <div class="col-xl-4 col-sm-4">
-                                    <div class="card-body text-center">
+                                    <div class="card-body text-center" style="cursor:pointer;" data-key="{{ $lable[$i] }}" @if(!empty($jumlah_karyawan_kelamin_now['Pria']['detail'])) data-detail='@json($jumlah_karyawan_kelamin_now['Pria']['detail'])'  @else [] @endif onclick="showDetail(this)">
                                         <h5 class="card-title">{{ $lable[++$i] }}</h5>
                                         <div class="p-3">
                                             <img src="{{ asset('assets/images/matta/dashboard/male-removebg-preview.png') }}" alt="People Icon" style="height:100px; object-fit:cover; border-radius:50%;">
@@ -156,7 +167,7 @@
                                     </div>
                                 </div>
                                 <div class="col-xl-4 col-sm-4">
-                                    <div class="card-body text-center">
+                                    <div class="card-body text-center" style="cursor:pointer;" data-key="{{ $lable[$i] }}" @if(!empty($jumlah_karyawan_kelamin_now['Wanita']['detail'])) data-detail='@json($jumlah_karyawan_kelamin_now['Wanita']['detail'])'  @else [] @endif onclick="showDetail(this)">
                                         <h5 class="card-title">{{ $lable[++$i] }}</h5>
                                         <div class="p-3">
                                             <img src="{{ asset('assets/images/matta/dashboard/female-removebg-preview.png') }}" alt="People Icon" style="height:100px; object-fit:cover; border-radius:50%;">
@@ -192,6 +203,7 @@
                         </div>
                         {{--  --}}
                         <div class="tab-pane fade @if($id == 1) show active @endif" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
+                            <a href="{{ request()->fullUrlWithQuery(['type' => 'bar']) }}" class="btn btn-outline-success mt-2" type="button"><i class="fa fa-bar-chart" aria-hidden="true"></i></a>&nbsp;&nbsp;<a href="{{ request()->fullUrlWithQuery(['type' => 'line']) }}" class="btn btn-outline-success mt-2" type="button"><i class="fa fa-line-chart" aria-hidden="true"></i></a><br/>
                             <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter_form1" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter Histori</button>
                             <div class="collapse" id="collapse_filter_form1">
                                 <form id="form1" name="form1" class="mt-2" action="{{ route('karyawan.dashboard', 1) }}" method="get" enctype="multipart/form-data">
@@ -271,7 +283,7 @@
                                 </form>
                             </div>
                             <hr/>
-                            <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter_form2" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter Year On Year</button>
+                            <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter_form2" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter Year On Year</button>
                             <div class="collapse" id="collapse_filter_form2">
                                 <form id="form2" name="form2" class="mt-2" action="{{ route('karyawan.dashboard', 1) }}" method="get" enctype="multipart/form-data">
                                     <div class="row mt-2">
@@ -545,7 +557,7 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Detail Data</h5>
+        <h5 class="modal-title"></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
@@ -570,6 +582,52 @@
 <script src="{{ asset('assets/js/chart/apex-chart/chart-custom.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script type="text/javascript">
+// 
+function showDetail(el) {
+    const key = el.dataset.key;
+    const rawData = JSON.parse(el.dataset.detail);
+    const tableId = 'detailTable';
+    const allDetail = Object.values(rawData).flatMap(item => item.detail || []);
+    document.querySelector('#detailModal .modal-title').innerText = `Detail: ${key}`;
+    let html = `
+        <table id="${tableId}" class="table table-striped table-bordered w-100">
+            <thead>
+                <tr>
+                    <th>NIP</th>
+                    <th>Nama</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    rawData.forEach(row => {
+        html += `
+            <tr>
+                <td>${row.nik ?? ''}</td>
+                <td>${row.nama ?? ''}</td>
+            </tr>
+        `;
+    });
+    html += `
+            </tbody>
+        </table>
+    `;
+    document.getElementById('detailContent').innerHTML = html;
+    if ($.fn.DataTable.isDataTable('#' + tableId)) {
+        $('#' + tableId).DataTable().destroy();
+    }
+    setTimeout(() => {
+        $('#' + tableId).DataTable({
+            order: [[1, 'asc']],
+            dom:"<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
+                "<'row'<'col-sm-12'rt>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+            lengthMenu: [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500, "All"]]
+        });
+    }, 100);
+    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+    modal.show();
+}
 // 
 function get_kode_perusahaan(source) {
     getDivisi(source);
@@ -1132,6 +1190,7 @@ $(document).ready(function() {
             chart: {
                 type: chartType,
                 height: height,
+                zoom: { enabled: false },
                 events: (chartType === 'pie') ? {
                     dataPointSelection: function(event, chartContext, config) {
                         const index = config.dataPointIndex;
@@ -1163,11 +1222,9 @@ $(document).ready(function() {
                             </table>
                         `;
                         document.getElementById('detailContent').innerHTML = html;
-                        // destroy kalau sudah pernah ada datatable
                         if ($.fn.DataTable.isDataTable('#' + tableId)) {
                             $('#' + tableId).DataTable().destroy();
                         }
-                        // init DataTables
                         setTimeout(() => {
                             $('#' + tableId).DataTable({
                                 order: [[1, 'asc']],
@@ -1180,7 +1237,6 @@ $(document).ready(function() {
                                 lengthMenu: [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500, "All"]]
                             });
                         }, 100);
-                        // show modal
                         const modal = new bootstrap.Modal(document.getElementById('detailModal'));
                         modal.show();
                     }
@@ -1211,6 +1267,7 @@ $(document).ready(function() {
             chart: {
                 type: chartType,
                 height: height,
+                zoom: { enabled: false },
                 events: chartType === 'bar' ? {
                     dataPointSelection: function(event, chartContext, config) {
                         const index = config.dataPointIndex;
@@ -1241,11 +1298,9 @@ $(document).ready(function() {
                             </table>
                         `;
                         document.getElementById('detailContent').innerHTML = html;
-                        // destroy kalau sudah pernah ada datatable
                         if ($.fn.DataTable.isDataTable('#' + tableId)) {
                             $('#' + tableId).DataTable().destroy();
                         }
-                        // init DataTables
                         setTimeout(() => {
                             $('#' + tableId).DataTable({
                                 order: [[1, 'asc']],
@@ -1490,19 +1545,19 @@ $(document).ready(function() {
     // now
     render_chart_v3(@json($jumlah_karyawan_kelamin_now), 'chart_jumlah_karyawan_kelamin_now', 'pie', 300);
     render_chart_v3(@json($jumlah_karyawan_status_now), 'chart_jumlah_karyawan_status_now', 'pie', 300);
-    render_chart_v4(@json($jumlah_karyawan_perusahaan_now), 'chart_jumlah_karyawan_perusahaan_now', 'bar', 400, ['#008FFB']);
-    render_chart_v4(@json($jumlah_karyawan_level_now), 'chart_jumlah_karyawan_level_now', 'bar', 400, ['#775DD0']);
-    render_chart_v4(@json($jumlah_karyawan_pendidikan_now), 'chart_jumlah_karyawan_pendidikan_now', 'bar', 400, ['#00E396']);
-    render_chart_v4(@json($jumlah_karyawan_kelahiran_now), 'chart_jumlah_karyawan_kelahiran_now', 'bar', 400, ['#FEB019']);
+    render_chart_v4(@json($jumlah_karyawan_perusahaan_now), 'chart_jumlah_karyawan_perusahaan_now', '{{ $type }}', 400, ['#008FFB']);
+    render_chart_v4(@json($jumlah_karyawan_level_now), 'chart_jumlah_karyawan_level_now', '{{ $type }}', 400, ['#775DD0']);
+    render_chart_v4(@json($jumlah_karyawan_pendidikan_now), 'chart_jumlah_karyawan_pendidikan_now', '{{ $type }}', 400, ['#00E396']);
+    render_chart_v4(@json($jumlah_karyawan_kelahiran_now), 'chart_jumlah_karyawan_kelahiran_now', '{{ $type }}', 400, ['#FEB019']);
     // history
-    render_chart_v1(@json($jumlah_karyawan), 'chart_jumlah_karyawan', 'bar', 300);
-    render_chart_v1(@json($jumlah_karyawan_kelamin), 'chart_jumlah_karyawan_kelamin', 'bar', 300);
-    render_chart_v1(@json($jumlah_karyawan_perusahaan), 'chart_jumlah_karyawan_perusahaan', 'bar', 300);
-    render_chart_v1(@json($jumlah_karyawan_divisi), 'chart_jumlah_karyawan_divisi', 'bar', 300);
-    render_chart_v1(@json($jumlah_karyawan_dep), 'chart_jumlah_karyawan_dep', 'bar', 300);
-    render_chart_v1(@json($jumlah_karyawan_subdep), 'chart_jumlah_karyawan_subdep', 'bar', 700);
-    render_chart_v1(@json($jumlah_karyawan_status), 'chart_jumlah_karyawan_status', 'bar', 300);
-    render_chart_v1(@json($jumlah_karyawan_level), 'chart_jumlah_karyawan_level', 'bar', 300);
+    render_chart_v1(@json($jumlah_karyawan), 'chart_jumlah_karyawan', '{{ $type }}', 300);
+    render_chart_v1(@json($jumlah_karyawan_kelamin), 'chart_jumlah_karyawan_kelamin', '{{ $type }}', 300);
+    render_chart_v1(@json($jumlah_karyawan_perusahaan), 'chart_jumlah_karyawan_perusahaan', '{{ $type }}', 300);
+    render_chart_v1(@json($jumlah_karyawan_divisi), 'chart_jumlah_karyawan_divisi', '{{ $type }}', 300);
+    render_chart_v1(@json($jumlah_karyawan_dep), 'chart_jumlah_karyawan_dep', '{{ $type }}', 300);
+    render_chart_v1(@json($jumlah_karyawan_subdep), 'chart_jumlah_karyawan_subdep', '{{ $type }}', 700);
+    render_chart_v1(@json($jumlah_karyawan_status), 'chart_jumlah_karyawan_status', '{{ $type }}', 300);
+    render_chart_v1(@json($jumlah_karyawan_level), 'chart_jumlah_karyawan_level', '{{ $type }}', 300);
     // // yoy
     // render_chart_v1(@json($jumlah_karyawan), 'chart_jumlah_karyawan_yoy', 'line', 300);
     // const dataObj = {
