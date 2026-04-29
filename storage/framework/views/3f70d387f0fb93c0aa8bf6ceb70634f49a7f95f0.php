@@ -106,13 +106,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 $exists = App\Models\TrxPayrollPenyesuaianUpahLog::where(['no_surat'=>$data->no_surat, 'nik'=>$data->nik, 'id_status'=>2, 'bulan'=>$data->bulan, 'tahun'=>$data->tahun])->exists();
                                             ?>
                                             <td>
-                                                <?php if($data->id_addsub != '0'): ?>
-                                                    <input id="id_current[]" name="id_current[]" type="checkbox" value="<?php echo e($data->id); ?>">
-                                                <?php elseif($data->id_addsub == '0' && !empty($data->param1)): ?>
-                                                    <?php if($exists): ?>
-                                                        <input id="id_current[]" name="id_current[]" type="checkbox" value="<?php echo e($data->id); ?>">
-                                                    <?php endif; ?>
-                                                <?php endif; ?>
+                                                
+                                                
+                                                <input id="id_current[]" name="id_current[]" type="checkbox" value="<?php echo e($data->id); ?>">
                                             </td>
                                             <td><?php echo e(++$no); ?></td>
                                             <td><?php echo e($data->id); ?></td>
@@ -123,10 +119,14 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <td><?php echo e($email['subject']); ?></td>
                                             
                                             <td>
+                                                <?php if(!empty($data->filename) && $data->id_addsub == 0): ?>
                                                 <a href="<?php echo e(route('payroll.review', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'pic' => (new App\Http\Controllers\OpenDataController)->encryptWithKey($nik_reviewer), 'id_status' => 1 ])); ?></td>" target="_blank"><i class="fa fa-link"></i>
+                                                <?php endif; ?>
                                             </a>
                                             <td>
+                                                <?php if(!empty($data->filename) && $data->id_addsub == 0): ?>
                                                 <a href="<?php echo e(asset('assets/penyesuaian_upah').'/'.$data->filename); ?>" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                                <?php endif; ?>
                                             </td>
                                             <td><?php echo e($data->created_at); ?></td>
                                         </tr>

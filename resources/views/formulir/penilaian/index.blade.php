@@ -176,6 +176,7 @@
                                                         data-t_lain="{{ $data->t_lain }}">
                                                         <i class="icon-pencil-alt text-success"></i>
                                                     </a>
+                                                    <br/>No. {{ str_pad($data->no_kontrak, 3, '0', STR_PAD_LEFT) }}
                                                 @endif
                                             </td>
                                             @endcan

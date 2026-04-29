@@ -196,57 +196,32 @@
                     $select_area = array_values(array_unique($arr_area));
                     sort($select_area);
                     ?>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('dashboard.biaya', 0)); ?>">
-                        <svg class="stroke-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-charts')); ?>"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
-                        </svg>
-                        <span>Biaya Gaji</span></a></li>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('dashboard.biaya_lain', 0)); ?>">
-                        <svg class="stroke-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-charts')); ?>"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
-                        </svg>
-                        <span>Biaya Lain</span></a></li>
-                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('dashboard.survey_pora', 0)); ?>">
-                        <svg class="stroke-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-charts')); ?>"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
-                        </svg>
-                        <span>Hasil Survey PORA</span></a></li>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="<?php echo e(route('karyawan.dashboard', 0)); ?>">
-                        <svg class="stroke-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-charts')); ?>"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
-                        </svg>
-                        <span>Infografis</span></a></li>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" 
-                        href="<?php echo e(route('kebutuhan.dashboard', [
-                                    'id'=>0, 'filter'=>'true', 'tahun'=>[now()->year],
-                                    'type_direktorat'=>'bar', 'direktorat'=>$select_direktorat,
-                                    'type_divisi'=>'bar', 'divisi'=>$select_divisi,
-                                    'type_departemen'=>'bar', 'departemen'=>$select_departemen,
-                                    'type_status_kerja'=>'bar', 'status_kerja'=>$select_status_kerja,
-                                    'type_area'=>'bar', 'area'=>$select_area,
-                                    ])); ?>">
-                        <svg class="stroke-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-charts')); ?>"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                            <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
-                        </svg>
-                        <span>Recruitment</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="#">
+                                <svg class="stroke-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#stroke-charts')); ?>"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="<?php echo e(asset('assets/svg/icon-sprite.svg#fill-charts')); ?>"> </use>
+                                </svg><span>Dashboard</span></a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="<?php echo e(route('dashboard.biaya', 0)); ?>">Biaya Gaji</a></li>
+                            <li><a href="<?php echo e(route('dashboard.biaya_lain', 0)); ?>">Biaya Lain</a></li>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
+                            <li><a href="<?php echo e(route('dashboard.survey_pora', 0)); ?>">Hasil Survey PORA</a></li>
+                            <li><a href="<?php echo e(route('karyawan.dashboard', 0)); ?>">Infografis</a></li>
+                            <li><a href="<?php echo e(route('kebutuhan.dashboard', [
+                                'id'=>0, 'filter'=>'true', 'tahun'=>[now()->year],
+                                'type_direktorat'=>'bar', 'direktorat'=>$select_direktorat,
+                                'type_divisi'=>'bar', 'divisi'=>$select_divisi,
+                                'type_departemen'=>'bar', 'departemen'=>$select_departemen,
+                                'type_status_kerja'=>'bar', 'status_kerja'=>$select_status_kerja,
+                                'type_area'=>'bar', 'area'=>$select_area,
+                                ])); ?>">Recruitment</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
 					<?php endif; ?>
-					<?php endif; ?>
+                    
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
                     <li class="sidebar-main-title">
                         <div>

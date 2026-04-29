@@ -171,8 +171,9 @@
                                             <td><?php echo e($data->_ot_type_code->ot_type); ?></td>
                                             <td><?php echo e(\Carbon\Carbon::parse($data->ot_start_at)->format('d-m-Y H:i:s')); ?></td>
                                             <td><?php echo e(\Carbon\Carbon::parse($data->ot_end_at)->format('d-m-Y H:i:s')); ?></td>
-                                            <!-- <td><?php echo e(\Carbon\CarbonInterval::seconds($data->ot_length)->cascade()->forHumans()); ?></td> -->
-                                            <td><?php echo e(gmdate('H:i:s', $data->ot_length)); ?></td>
+                                            
+                                            
+                                            <td><?php echo e(sprintf('%02d:%02d:%02d', floor($data->ot_length / 3600), floor(($data->ot_length % 3600) / 60), $data->ot_length % 60)); ?></td>
                                             <td><?php if(!empty($data->ot_start_at_real)): ?> <?php echo e(\Carbon\Carbon::parse($data->ot_start_at_real)->format('d-m-Y H:i:s')); ?> <?php endif; ?></td>
                                             <td><?php if(!empty($data->ot_end_at_real)): ?> <?php echo e(\Carbon\Carbon::parse($data->ot_end_at_real)->format('d-m-Y H:i:s')); ?> <?php endif; ?></td>
                                             <td><?php if(!empty($data->ot_length_real)): ?> <?php echo e($data->ot_length_real); ?> <?php endif; ?></td>
@@ -182,8 +183,9 @@
                                             <td class="text-end"><?php if($_data['status_karyawan']=='Freelance'): ?> <?php if($_isHoliday||$_isWeekend): ?> <?php echo e(number_format($_arr[1]['informasi'])); ?> <?php else: ?> <?php echo e(number_format($_arr[0]['informasi'])); ?> <?php endif; ?> <?php else: ?> <?php echo e(number_format($_data['gaji_pokok'])); ?> <?php endif; ?></td>
                                             <td class="text-end"><?php echo e(number_format($data->ot_length_rp)); ?></td>
                                             <td class="text-end"><?php echo e(number_format(round($data->ot_length_rp, -3))); ?></td>
-                                            <!-- <td><?php if(!empty($data->ot_length_adj)): ?> <?php echo e(\Carbon\CarbonInterval::seconds($data->ot_length_adj)->cascade()->forHumans()); ?> <?php endif; ?></td> -->
-                                            <td><?php if(!empty($data->ot_length_adj)): ?> <?php echo e(gmdate('H:i:s', $data->ot_length_adj)); ?> <?php endif; ?></td>
+                                            
+                                            
+                                            <td><?php if(!empty($data->ot_length_adj)): ?> <?php echo e(sprintf('%02d:%02d:%02d', floor($data->ot_length_adj / 3600), floor(($data->ot_length_adj % 3600) / 60), $data->ot_length_adj % 60)); ?> <?php endif; ?></td>
                                             <!-- <td><?php if(!empty($data->ot_length_adj)): ?> <a href="<?php echo e(route('adj_ot', [$data->id])); ?>" data-toggle="tooltip" title='Adjustment'><?php echo e(number_format($data->ot_length_adj)); ?> <i class="icon-pencil-alt"></i></a> <?php endif; ?></td> -->
                                             <td class="text-end"><?php echo e(number_format($data->ot_length_rp_adj)); ?></td>
                                             <td class="text-end"><?php echo e(number_format(round($data->ot_length_rp_adj, -3))); ?></td>

@@ -179,23 +179,38 @@
                                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hc')): ?>
                                     <td><?php if($data->status_pengajuan==10): ?> <?php echo e($data->updated_at); ?> <?php endif; ?></td>
                                     <?php
-                                        $sla = App\Models\TrxRecruitment::where(['id_kebutuhan'=>$data->id, 'id_status'=>2])->first();
-                                        // $detail = App\Models\TrxKebutuhanDetail::where(['id_kebutuhan'=>$data->id])->orderBy('updated_at', 'desc')->get();
+                                        $sla_start = '';
+                                        $sla_end = '';
+                                        // tidak digunakan
+                                        // 2=Posting
+                                        // $sla = App\Models\TrxRecruitment::where(['id_kebutuhan'=>$data->id, 'id_status'=>2])->first();
                                         $kandidat = App\Models\TrxRecruitmentIdentitas::where(['id_kebutuhan'=>$data->id])->get();
                                         $id_identitas = [];
                                         foreach($kandidat as $_kandidat){
                                             array_push($id_identitas, $_kandidat->id);
                                         }
                                         // 24=Join
-                                        $log = App\Models\TrxRecruitmentLog::whereIn('id_identitas',$id_identitas)->where(['id_status'=>24])->orderBy('created_at', 'desc')->get();
-                                        $sla_start = '';
-                                        $sla_end = '';
+                                        $sla = App\Models\TrxRecruitmentLog::whereIn('id_identitas',$id_identitas)->where(['id_status'=>24])->orderBy('created_at', 'desc')->get();
+                                        if($sla->count() >= $data->jumlah){
+                                            $sla_end = Carbon\Carbon::parse($sla[0]->created_at)->format('Y-m-d');
+                                        }
+                                        // merujuk ke CM 507
+                                        // Default : SLA Add employee dimulai dari Approval By L2 ke Done By HC agar muncul Status SLA
+                                        // 9=Approved by L2 to HC
+                                        $sla = App\Models\TrxKebutuhanLog::where(['id_trx'=>$data->id, 'id_status'=>9])->first();
                                         if(!empty($sla->created_at)){
                                             $sla_start = Carbon\Carbon::parse($sla->created_at)->format('Y-m-d');
                                         }
-                                        if($log->count() >= $data->jumlah){
-                                            $sla_end = Carbon\Carbon::parse($log[0]->created_at)->format('Y-m-d');
+                                        // 10=Done by HC
+                                        if(empty($sla_end)){
+                                            $sla = App\Models\TrxKebutuhanLog::where(['id_trx'=>$data->id, 'id_status'=>10])->first();
+                                            if(!empty($sla->created_at)){
+                                                $sla_end = Carbon\Carbon::parse($sla->created_at)->format('Y-m-d');
+                                            }
                                         }
+                                        // SELECT `id`,`status_pengajuan` FROM `mtr_tbl_kebutuhan_status` WHERE `id` IN (3,5,7,12,13,17,20,24,26,27,28);
+                                        // #Cancel=Orange
+                                        $cancel = App\Models\TrxKebutuhanLog::where(['id_trx'=>$data->id])->whereIn('id_status', [3,5,7,12,13,17,20,24,26,27,28])->exists();
                                     ?>
                                     <td>
                                         <?php if(!empty($sla_start) && !empty($sla_end)): ?>
@@ -231,6 +246,10 @@
                                             <?php else: ?>
                                             <span class="badge badge-danger" style="font-size: 11px;">Overdue</span>
                                             <?php endif; ?>
+                                        <?php elseif($cancel): ?>
+                                            <span class="badge badge-warning" style="font-size: 11px;">Cancel</span>
+                                        <?php else: ?>
+                                            <span class="badge badge-primary" style="font-size: 11px;">On Progress</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>

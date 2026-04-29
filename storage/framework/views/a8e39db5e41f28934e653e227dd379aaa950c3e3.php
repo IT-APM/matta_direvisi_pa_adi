@@ -129,6 +129,16 @@
                             <div class="invalid-feedback txt-danger">Field is required.</div>
                         </div>
                         <div class="col-md-6 mb-2">
+                            <label class="form-label" for="no_kartu_lisensi">No Kartu Lisensi</label>
+                            <input name="no_kartu_lisensi" id="no_kartu_lisensi" class="form-control" type="text" <?php if($status=='edit'): ?> value="<?php echo e($trx->no_kartu_lisensi); ?>" <?php endif; ?>>
+                            <div class="invalid-feedback txt-danger">Field is required.</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label" for="no_kartu_anggota">No Kartu Anggota</label>
+                            <input name="no_kartu_anggota" id="no_kartu_anggota" class="form-control" type="text" <?php if($status=='edit'): ?> value="<?php echo e($trx->no_kartu_anggota); ?>" <?php endif; ?>>
+                            <div class="invalid-feedback txt-danger">Field is required.</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
                             <label class="form-label" for="biaya">Biaya</label>
                             <input min=0 type="number" oninput="validity.valid||(value='');" onfocus="use_number(this)" onblur="use_text(this)" name="biaya" id="biaya" class="form-control numbers" required="" <?php if($status=='edit'): ?> value="<?php echo e($trx->biaya); ?>" <?php endif; ?>>
                             <div class="invalid-feedback txt-danger">Field is required.</div>

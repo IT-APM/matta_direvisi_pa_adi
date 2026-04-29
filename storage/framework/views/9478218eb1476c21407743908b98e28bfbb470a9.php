@@ -96,7 +96,7 @@
                                             </td>
                                         </tr>
                                         <!-- layer2 -->
-                                        <tr>
+                                        <tr><?php if(!empty($layer2['nik'])): ?>
                                             <td><a href="<?php echo e(asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg')); ?>"
                                                     target="_blank"><img class="img-thumbnail"
                                                         src="<?php echo e(asset('assets/images/matta/karyawan/'.$layer2['nik'].'/'.$layer2['nik'].'.jpg')); ?>"
@@ -107,7 +107,7 @@
 
                                                     <br /><?php echo e($layer2['divisi']); ?> / <?php echo e($layer2['dep']); ?> / <?php echo e($layer2['sub_dep']); ?></span>
                                             </td>
-                                        </tr>
+                                        <?php endif; ?></tr>
                                         <!--  -->
                                     </tbody>
                                 </table>

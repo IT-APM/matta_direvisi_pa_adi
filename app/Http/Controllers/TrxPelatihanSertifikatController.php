@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 use App\Models\TrxPelatihanSertifikat;
+use App\Models\TrxPelatihanSertifikatKadaluarsa;
 use App\Models\PelatihanJenis;
 use App\Models\Karyawan;
 
@@ -14,6 +15,117 @@ use Carbon\Carbon;
 
 class TrxPelatihanSertifikatController extends Controller
 {
+
+    public function kadaluarsa(Request $request, $id)
+    {
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
+        if (!auth()->check()) {
+            session(['url.intended' => url()->full()]);
+            return redirect()->route('login-one');
+        }
+        $no = 0;
+        $trx = TrxPelatihanSertifikatKadaluarsa::orderBy('nama', 'asc')->get();
+        if(Gate::allows('hc_nkp')){
+            $trx = TrxPelatihanSertifikatKadaluarsa::whereIn('nik',$arr_nik_nkp)->orderBy('nama', 'asc')->get();
+        }
+        $jenis = PelatihanJenis::orderBy('jenis', 'asc')->get();
+        $aktif_non = collect([
+            '1' => 'Aktif',
+            '0' => 'Non Aktif',
+        ]);
+        $int_ext = collect([
+            'Eksternal' => 'Eksternal',
+            'Internal' => 'Internal',
+        ]);
+        $kta = collect([
+            'Ada' => 'Ada',
+            'Tidak Ada' => 'Tidak Ada',
+        ]);
+        $arr_jenis = [];
+        $arr_aktif_non = [];
+        $arr_int_ext = [];
+        $arr_kta = [];
+        // start filter
+        if($request->filter == true){
+            $_aktif_non = $request->input('aktif_non', []);
+            $_jenis = $request->input('jenis', []);
+            $_int_ext = $request->input('int_ext', []);
+            $_kta = $request->input('kta', []);
+            // dd($_kta);
+            if(count($_aktif_non) > 0){
+                $arr_aktif_non = $_aktif_non;
+            }
+            // else{
+            //     $arr_aktif_non = array();
+            // }
+            if(count($_jenis) > 0){
+                $arr_jenis = $_jenis;
+            }
+            // else{
+            //     $arr_jenis = array();
+            // }
+            if(count($_int_ext) > 0){
+                $arr_int_ext = $_int_ext;
+            }
+            // else{
+            //     $arr_int_ext = array();
+            // }
+            if(count($_kta) > 0){
+                $arr_kta = $_kta;
+            }
+            // else{
+            //     $arr_kta = array();
+            // }
+            $arr_nik = Karyawan::where(['is_aktif'=>1])->pluck('nik')->toArray();
+            $trx = TrxPelatihanSertifikatKadaluarsa::whereIn('nik', [])->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+            if(in_array(1, $_aktif_non) && in_array(0, $_aktif_non)){
+                $trx = TrxPelatihanSertifikatKadaluarsa::whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+            }else if(in_array(1, $_aktif_non)){
+                $trx = TrxPelatihanSertifikatKadaluarsa::whereIn('nik', $arr_nik)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+            }else if(in_array(0, $_aktif_non)){
+                $trx = TrxPelatihanSertifikatKadaluarsa::whereNotIn('nik', $arr_nik)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+            }
+            if(Gate::allows('hc_nkp')){
+                $trx = TrxPelatihanSertifikatKadaluarsa::whereIn('nik', [])->whereIn('nik',$arr_nik_nkp)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+                if(in_array(1, $_aktif_non) && in_array(0, $_aktif_non)){
+                    $trx = TrxPelatihanSertifikatKadaluarsa::whereIn('nik',$arr_nik_nkp)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+                }else if(in_array(1, $_aktif_non)){
+                    $trx = TrxPelatihanSertifikatKadaluarsa::whereIn('nik', $arr_nik)->whereIn('nik',$arr_nik_nkp)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+                }else if(in_array(0, $_aktif_non)){
+                    $trx = TrxPelatihanSertifikatKadaluarsa::whereNotIn('nik', $arr_nik)->whereIn('nik',$arr_nik_nkp)->whereIn('jenis', $arr_jenis)->whereIn('int_ext', $arr_int_ext)->whereIn('kta', $arr_kta)->orderBy('nama', 'asc')->get();
+                }
+            }
+        }else{
+            $arr_aktif_non = array();
+            $arr_int_ext = array();
+            $arr_jenis = array();
+            $arr_kta = array();
+        }
+        // end filter
+        return view('formulir.pelatihan.index_sertifikat_kadaluarsa', compact('trx', 'no', 'jenis', 'aktif_non', 'int_ext', 'kta', 'arr_jenis', 'arr_aktif_non', 'arr_int_ext', 'arr_kta'));
+    }
+
+    public function scheduler(Request $request, $id)
+    {
+        // dd($request->all(), $id);
+        // 2 bulan = 60
+        // 1 bulan = 30
+        // 2 minggu = 14
+        $data = [];
+        $check = Carbon::today()->addDays($id);
+        $trx = TrxPelatihanSertifikat::whereBetween('tanggal_kadaluarsa', [Carbon::today(), $check])->orderBy('tanggal_kadaluarsa', 'desc')->get();
+        foreach($trx as $_trx){
+            $check = Karyawan::where(['nik'=>$_trx->nik, 'is_aktif'=>1])->exists();
+            if($check){
+                array_push($data, TrxPelatihanSertifikat::find($_trx->id));
+                if(empty(TrxPelatihanSertifikatKadaluarsa::find($_trx->id))){
+                    TrxPelatihanSertifikatKadaluarsa::create($_trx->toArray());
+                }
+            }
+        }
+        // dd($data);
+    }
 
     public function upload_file(Request $request)
     {
@@ -108,7 +220,7 @@ class TrxPelatihanSertifikatController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {   
+    {
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         if (!auth()->check()) {

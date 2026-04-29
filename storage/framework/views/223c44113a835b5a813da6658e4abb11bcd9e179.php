@@ -35,100 +35,110 @@
                 <div class="card-body">
                     <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                     <div class="collapse" id="collapse_filter">
-                        <form class="mt-2" action="<?php echo e(route('kebutuhan.dashboard', 0)); ?>" method="get" enctype="multipart/form-data">
+                        <form id="form" name="form" class="mt-2" action="<?php echo e(route('kebutuhan.dashboard', 0)); ?>" method="get" enctype="multipart/form-data">
                             <div class="row mt-2">
                                 <div class="col-sm-4">
-                                    <label class="h6">Tahun</label>&nbsp;<input type="checkbox" onClick="toggle_tahun(this)" /> Check All
-                                    <label class="d-block" for="tahun">
+                                    <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_tahun">Tahun</label>&nbsp;<input type="checkbox" onClick="toggle_tahun(this)" id="all_tahun" name="all_tahun"/> Check All
+                                    <div class="collapse" id="box_tahun">
                                         <?php $__currentLoopData = $select_tahun; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <input class="checkbox_animated" id="tahun[]" name="tahun[]" type="checkbox" value="<?php echo e($_data); ?>" <?php if(in_array($_data, $arr_select_tahun)): ?> checked <?php endif; ?>>
                                             <?php echo e($_data); ?><br/>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </label>
+                                    </div><br/>
                                     <?php $type_status_kerja = request()->get('type_status_kerja'); ?>
-                                    <label class="h6">Status Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_status_kerja(this)" /> Check All<br/>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_status_kerja" id="type_status_kerja" value="bar" <?php echo e(is_null($type_status_kerja) || $type_status_kerja === 'bar' ? 'checked' : ''); ?>>
-                                        <label class="form-check-label">Bar</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_status_kerja" id="type_status_kerja" value="line" <?php echo e($type_status_kerja === 'line' ? 'checked' : ''); ?>>
-                                        <label class="form-check-label">Line</label>
-                                    </div>
-                                    <label class="d-block" for="status_kerja">
-                                        <?php $__currentLoopData = $select_status_kerja; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <input class="checkbox_animated" id="status_kerja[]" name="status_kerja[]" type="checkbox" value="<?php echo e($_data); ?>" <?php if(in_array($_data, $arr_select_status_kerja)): ?> checked <?php endif; ?>>
-                                            <?php echo e($_data); ?><br/>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </label>
+                                    <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_status_kerja">Status Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_status_kerja(this)" id="all_status_kerja" name="all_status_kerja"/> Check All
+                                    <div class="collapse" id="box_status_kerja">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="type_status_kerja" id="type_status_kerja" value="bar" <?php echo e(is_null($type_status_kerja) || $type_status_kerja === 'bar' ? 'checked' : ''); ?>>
+                                            <label class="form-check-label">Bar</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="type_status_kerja" id="type_status_kerja" value="line" <?php echo e($type_status_kerja === 'line' ? 'checked' : ''); ?>>
+                                            <label class="form-check-label">Line</label>
+                                        </div>
+                                        <label class="d-block" for="status_kerja">
+                                            <?php $__currentLoopData = $select_status_kerja; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <input class="checkbox_animated" id="status_kerja[]" name="status_kerja[]" type="checkbox" value="<?php echo e($_data); ?>" <?php if(in_array($_data, $arr_select_status_kerja)): ?> checked <?php endif; ?>>
+                                                <?php echo e($_data); ?><br/>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </label>
+                                    </div><br/>
                                     <?php $type_area = request()->get('type_area'); ?>
-                                    <label class="h6">Area Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_area(this)" /> Check All<br/>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_area" id="type_area" value="bar" <?php echo e(is_null($type_area) || $type_area === 'bar' ? 'checked' : ''); ?>>
-                                        <label class="form-check-label">Bar</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_area" id="type_area" value="line" <?php echo e($type_area === 'line' ? 'checked' : ''); ?>>
-                                        <label class="form-check-label">Line</label>
-                                    </div>
-                                    <label class="d-block" for="area">
-                                        <?php $__currentLoopData = $select_area; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <input class="checkbox_animated" id="area[]" name="area[]" type="checkbox" value="<?php echo e($_data); ?>" <?php if(in_array($_data, $arr_select_area)): ?> checked <?php endif; ?>>
-                                            <?php echo e($_data); ?><br/>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </label>
+                                    <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_area">Area Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_area(this)" id="all_area" name="all_area"/> Check All
+                                        <div class="collapse" id="box_area">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="type_area" id="type_area" value="bar" <?php echo e(is_null($type_area) || $type_area === 'bar' ? 'checked' : ''); ?>>
+                                            <label class="form-check-label">Bar</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="type_area" id="type_area" value="line" <?php echo e($type_area === 'line' ? 'checked' : ''); ?>>
+                                            <label class="form-check-label">Line</label>
+                                        </div>
+                                        <label class="d-block" for="area">
+                                            <?php $__currentLoopData = $select_area; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <input class="checkbox_animated" id="area[]" name="area[]" type="checkbox" value="<?php echo e($_data); ?>" <?php if(in_array($_data, $arr_select_area)): ?> checked <?php endif; ?>>
+                                                <?php echo e($_data); ?><br/>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </label>
+                                    </div><br/>
                                 </div>
                                 <div class="col-sm-4">
                                     <?php $type_direktorat = request()->get('type_direktorat'); ?>
-                                    <label class="h6">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_direktorat(this)" /> Check All<br/>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_direktorat" id="type_direktorat" value="bar" <?php echo e(is_null($type_direktorat) || $type_direktorat === 'bar' ? 'checked' : ''); ?>>
-                                        <label class="form-check-label">Bar</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_direktorat" id="type_direktorat" value="line" <?php echo e($type_direktorat === 'line' ? 'checked' : ''); ?>>
-                                        <label class="form-check-label">Line</label>
-                                    </div>
-                                    <label class="d-block" for="direktorat">
-                                        <?php $__currentLoopData = $select_direktorat; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <input class="checkbox_animated" id="direktorat[]" name="direktorat[]" type="checkbox" value="<?php echo e($_data); ?>" <?php if(in_array($_data, $arr_select_direktorat)): ?> checked <?php endif; ?>>
-                                            <?php echo e($_data); ?><br/>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </label>
+                                    <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_direktorat">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_direktorat(this)" id="all_direktorat" name="all_direktorat"/> Check All
+                                    <div class="collapse" id="box_direktorat">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="type_direktorat" id="type_direktorat" value="bar" <?php echo e(is_null($type_direktorat) || $type_direktorat === 'bar' ? 'checked' : ''); ?>>
+                                            <label class="form-check-label">Bar</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="type_direktorat" id="type_direktorat" value="line" <?php echo e($type_direktorat === 'line' ? 'checked' : ''); ?>>
+                                            <label class="form-check-label">Line</label>
+                                        </div>
+                                        <label class="d-block" for="direktorat">
+                                            <?php $__currentLoopData = $select_direktorat; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <input class="checkbox_animated" id="direktorat[]" name="direktorat[]" type="checkbox" value="<?php echo e($_data); ?>" <?php if(in_array($_data, $arr_select_direktorat)): ?> checked <?php endif; ?>>
+                                                <?php echo e($_data); ?><br/>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </label>
+                                    </div><br/>
                                     <?php $type_divisi = request()->get('type_divisi'); ?>
-                                    <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_divisi(this)" /> Check All<br/>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_divisi" id="type_divisi" value="bar" <?php echo e(is_null($type_divisi) || $type_divisi === 'bar' ? 'checked' : ''); ?>>
-                                        <label class="form-check-label">Bar</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_divisi" id="type_divisi" value="line" <?php echo e($type_divisi === 'line' ? 'checked' : ''); ?>>
-                                        <label class="form-check-label">Line</label>
-                                    </div>
-                                    <label class="d-block" for="divisi">
-                                        <?php $__currentLoopData = $select_divisi; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <input class="checkbox_animated" id="divisi[]" name="divisi[]" type="checkbox" value="<?php echo e($_data); ?>" <?php if(in_array($_data, $arr_select_divisi)): ?> checked <?php endif; ?>>
-                                            <?php echo e($_data); ?><br/>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </label>
+                                    <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_divisi">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_divisi(this)" id="all_divisi" name="all_divisi"/> Check All
+                                    <div class="collapse" id="box_divisi">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="type_divisi" id="type_divisi" value="bar" <?php echo e(is_null($type_divisi) || $type_divisi === 'bar' ? 'checked' : ''); ?>>
+                                            <label class="form-check-label">Bar</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="type_divisi" id="type_divisi" value="line" <?php echo e($type_divisi === 'line' ? 'checked' : ''); ?>>
+                                            <label class="form-check-label">Line</label>
+                                        </div>
+                                        <label class="d-block" for="divisi">
+                                            <?php $__currentLoopData = $select_divisi; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <input class="checkbox_animated" id="divisi[]" name="divisi[]" type="checkbox" value="<?php echo e($_data); ?>" <?php if(in_array($_data, $arr_select_divisi)): ?> checked <?php endif; ?>>
+                                                <?php echo e($_data); ?><br/>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </label>
+                                    </div><br/>
                                 </div>
                                 <div class="col-sm-4">
                                     <?php $type_departemen = request()->get('type_departemen'); ?>
-                                    <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_departemen(this)" /> Check All<br/>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_departemen" id="type_departemen" value="bar" <?php echo e(is_null($type_departemen) || $type_departemen === 'bar' ? 'checked' : ''); ?>>
-                                        <label class="form-check-label">Bar</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="type_departemen" id="type_departemen" value="line" <?php echo e($type_departemen === 'line' ? 'checked' : ''); ?>>
-                                        <label class="form-check-label">Line</label>
-                                    </div>
-                                    <label class="d-block" for="departemen">
-                                        <?php $__currentLoopData = $select_departemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <input class="checkbox_animated" id="departemen[]" name="departemen[]" type="checkbox" value="<?php echo e($_data); ?>" <?php if(in_array($_data, $arr_select_departemen)): ?> checked <?php endif; ?>>
-                                            <?php echo e($_data); ?><br/>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </label>
+                                    <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_departemen">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_departemen(this)" id="all_departemen" name="all_departemen"/> Check All
+                                    <div class="collapse" id="box_departemen">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="type_departemen" id="type_departemen" value="bar" <?php echo e(is_null($type_departemen) || $type_departemen === 'bar' ? 'checked' : ''); ?>>
+                                            <label class="form-check-label">Bar</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="type_departemen" id="type_departemen" value="line" <?php echo e($type_departemen === 'line' ? 'checked' : ''); ?>>
+                                            <label class="form-check-label">Line</label>
+                                        </div>
+                                        <label class="d-block" for="departemen">
+                                            <?php $__currentLoopData = $select_departemen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <input class="checkbox_animated" id="departemen[]" name="departemen[]" type="checkbox" value="<?php echo e($_data); ?>" <?php if(in_array($_data, $arr_select_departemen)): ?> checked <?php endif; ?>>
+                                                <?php echo e($_data); ?><br/>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </label>
+                                    </div><br/>
                                 </div>
                             </div>
                             <?php
@@ -311,6 +321,58 @@ function toggle_area(source) {
     }
 }
 $(document).ready(function() {
+    let total = $("input[name='tahun[]']").length;
+    let checked = $("input[name='tahun[]']:checked").length;
+    $("#all_tahun").prop("checked", total > 0 && total === checked);
+    total = $("input[name='status_kerja[]']").length;
+    checked = $("input[name='status_kerja[]']:checked").length;
+    $("#all_status_kerja").prop("checked", total > 0 && total === checked);
+    total = $("input[name='area[]']").length;
+    checked = $("input[name='area[]']:checked").length;
+    $("#all_area").prop("checked", total > 0 && total === checked);
+    total = $("input[name='direktorat[]']").length;
+    checked = $("input[name='direktorat[]']:checked").length;
+    $("#all_direktorat").prop("checked", total > 0 && total === checked);
+    total = $("input[name='divisi[]']").length;
+    checked = $("input[name='divisi[]']:checked").length;
+    $("#all_divisi").prop("checked", total > 0 && total === checked);
+    total = $("input[name='departemen[]']").length;
+    checked = $("input[name='departemen[]']:checked").length;
+    $("#all_departemen").prop("checked", total > 0 && total === checked);
+    // 
+    $('#form').on('submit', function (e) {
+        let form = $(this);
+        let errors = [];
+        let select = form.find($('input[name="tahun[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Tahun is mandatory");
+        }
+        select = form.find($('input[name="status_kerja[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Status Kerja is mandatory");
+        }
+        select = form.find($('input[name="area[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Area Kerja is mandatory");
+        }
+        select = form.find($('input[name="direktorat[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Direktorat is mandatory");
+        }
+        select = form.find($('input[name="divisi[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Divisi is mandatory");
+        }
+        select = form.find($('input[name="departemen[]"]:checked')).length;
+        if (select < 1) {
+            errors.push("Departemen is mandatory");
+        }
+        if (errors.length > 0) {
+            e.preventDefault();
+            alert(errors.join('\n'));
+        }
+    });
+    // 
     function render_chart_v2(dataObj, containerId, chartType) {
         const categories = Object.keys(dataObj);
         const direktoratSet = new Set();
@@ -349,7 +411,16 @@ $(document).ready(function() {
             },
             xaxis: {
                 categories: categories,
-                tickPlacement: chartType === 'line' ? 'between' : 'on',
+                // tickPlacement: chartType === 'line' ? 'between' : 'on',
+                tickPlacement: 'between',
+                labels: {
+                    rotate: -30,
+                    // offsetY: -5,
+                    rotateAlways: true,
+                    hideOverlappingLabels: false,
+                    trim: false,
+                    // offsetY: 50,
+                },
             },
             yaxis: {
                 max: maxValue,
@@ -357,6 +428,9 @@ $(document).ready(function() {
             },
             legend: { position: 'top' },
             fill: { opacity: 0.8 },
+            dataLabels: {
+                style: { colors: ['#000'] }
+            },
         };
         if (chartType === 'line') {
             options.stroke = {
@@ -394,6 +468,12 @@ $(document).ready(function() {
                 zoom: { enabled: false },
             },
             series: series,
+            grid: {
+                padding: {
+                    left: 20,
+                    right: 20
+                }
+            },
             colors: [
                 '#00E396',
                 '#FF4560',
@@ -409,7 +489,16 @@ $(document).ready(function() {
             },
             xaxis: {
                 categories: categories,
-                tickPlacement: chartType === 'line' ? 'between' : 'on',
+                // tickPlacement: chartType === 'line' ? 'between' : 'on',
+                tickPlacement: 'between',
+                labels: {
+                    rotate: -30,
+                    // offsetY: -5,
+                    rotateAlways: true,
+                    hideOverlappingLabels: false,
+                    trim: false,
+                    // offsetY: 50,
+                },
             },
             yaxis: {
                 max: maxValue,
@@ -417,6 +506,9 @@ $(document).ready(function() {
             },
             legend: { position: 'top' },
             fill: { opacity: 0.8 },
+            dataLabels: {
+                style: { colors: ['#000'] }
+            },
         };
         if (chartType === 'line') {
             options.stroke = {
@@ -457,21 +549,39 @@ $(document).ready(function() {
             series: series,
             colors: [
                 '#00E396',
-                '#008FFB',
                 '#FF4560',
                 '#FEB019',
+                '#008FFB',
             ],
+            grid: {
+                padding: {
+                    left: 20,
+                    right: 20
+                }
+            },
             plotOptions: {
                 bar: {
                     horizontal: false,
                     columnWidth: '95%',
                     borderRadius: 3,
                     borderRadiusApplication: 'end',
+                    // dataLabels: {
+                    //     position: 'top',
+                    // }
                 }
             },
             xaxis: {
                 categories: categories,
-                tickPlacement: chartType === 'line' ? 'between' : 'on',
+                // tickPlacement: chartType === 'line' ? 'between' : 'on',
+                tickPlacement: 'between',
+                labels: {
+                    rotate: -30,
+                    // offsetY: -5,
+                    rotateAlways: true,
+                    hideOverlappingLabels: false,
+                    trim: false,
+                    // offsetY: 50,
+                },
             },
             yaxis: {
                 max: maxValue,
@@ -479,6 +589,9 @@ $(document).ready(function() {
             },
             legend: { position: 'top' },
             fill: { opacity: 0.8 },
+            dataLabels: {
+                style: { colors: ['#000'] }
+            },
         };
         if (chartType === 'line') {
             options.stroke = {
