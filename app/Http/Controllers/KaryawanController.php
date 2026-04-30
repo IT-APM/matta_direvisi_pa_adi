@@ -174,6 +174,9 @@ class KaryawanController extends Controller
                 // 7=Nomor Telepon Darurat=telepon_darurat
                 // 8=Nomor NPWP=no_npwp
                 // 9=Nomor KTP=no_ktp
+                // 10=Alamat KTP=alamat_ktp
+                // 11=Nama Pasangan=nama_pasangan
+                // 12=Status Sipil=kode_kawin
                 $nik = array_search(1, $data0[0]);
                 $no_rek = array_search(2, $data0[0]);
                 $nama_bank = array_search(3, $data0[0]);
@@ -183,19 +186,47 @@ class KaryawanController extends Controller
                 $telepon_darurat = array_search(7, $data0[0]);
                 $no_npwp = array_search(8, $data0[0]);
                 $no_ktp = array_search(9, $data0[0]);
+                $alamat_ktp = array_search(10, $data0[0]);
+                $nama_pasangan = array_search(11, $data0[0]);
+                $kode_kawin = array_search(12, $data0[0]);
                 // dimulai dari baris ke-3
                 for ($x = 2; $x < count($data0); $x++) {
                     $where = ['nik' => $data0[$x][$nik]];
                     $karyawan = Karyawan::where($where)->first();
                     if($karyawan){
-                        $karyawan->no_rek = $data0[$x][$no_rek];
-                        $karyawan->nama_bank = $data0[$x][$nama_bank];
-                        $karyawan->nama_rek = $data0[$x][$nama_rek];
-                        $karyawan->no_bpjs = $data0[$x][$no_bpjs];
-                        $karyawan->no_bpjstk = $data0[$x][$no_bpjstk];
-                        $karyawan->telepon_darurat = $data0[$x][$telepon_darurat];
-                        $karyawan->no_npwp = $data0[$x][$no_npwp];
-                        $karyawan->no_ktp = $data0[$x][$no_ktp];
+                        if(!empty($data0[$x][$no_rek])){
+                            $karyawan->no_rek = $data0[$x][$no_rek];
+                        }
+                        if(!empty($data0[$x][$nama_bank])){
+                            $karyawan->nama_bank = $data0[$x][$nama_bank];
+                        }
+                        if(!empty($data0[$x][$nama_rek])){
+                            $karyawan->nama_rek = $data0[$x][$nama_rek];
+                        }
+                        if(!empty($data0[$x][$no_bpjs])){
+                            $karyawan->no_bpjs = $data0[$x][$no_bpjs];
+                        }
+                        if(!empty($data0[$x][$no_bpjstk])){
+                            $karyawan->no_bpjstk = $data0[$x][$no_bpjstk];
+                        }
+                        if(!empty($data0[$x][$telepon_darurat])){
+                            $karyawan->telepon_darurat = $data0[$x][$telepon_darurat];
+                        }
+                        if(!empty($data0[$x][$no_npwp])){
+                            $karyawan->no_npwp = $data0[$x][$no_npwp];
+                        }
+                        if(!empty($data0[$x][$no_ktp])){
+                            $karyawan->no_ktp = $data0[$x][$no_ktp];
+                        }
+                        if(!empty($data0[$x][$alamat_ktp])){
+                            $karyawan->alamat_ktp = $data0[$x][$alamat_ktp];
+                        }
+                        if(!empty($data0[$x][$nama_pasangan])){
+                            $karyawan->nama_pasangan = $data0[$x][$nama_pasangan];
+                        }
+                        if(!empty($data0[$x][$kode_kawin])){
+                            $karyawan->kode_kawin = Kawin::where('status_kawin', $kode_kawin)->value('id');
+                        }
                         $karyawan->update();
                     }
                 }
