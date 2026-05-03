@@ -70,6 +70,12 @@ class MattaApi extends Controller
 		if($request->att_data_src == 'Overtime'){
 			$ot = $this->updateOvertime($request);
 		}
+        // refer to cm 523
+        // refer to "C:\alita\matta\data_master\kemungkinan cico v1.xlsx"
+        $_data = Attendance::where(['id'=>$data->id, 'att_data_src'=>'Regular', 'att_type'=>'Clock-in', 'att_wd_ot_id'=>0]);
+        if($_data->exists() && Carbon::now()->format('H:i:s') > '09:00:00'){
+            $_data->update(['att_status' => 'Late-in']);
+        }
         // 
         return response()->json( [ 'success' => true, 'message' => 'Data is inserted successfully.', 'data' => $data ], 200 );
     }
@@ -464,7 +470,7 @@ class MattaApi extends Controller
         $tgl = date('Y-m-d');
         $jam = date('H:i:s');
         $input = date('Y-m-d H:i:s');
-        $isClock =array("isClock"=>true);
+        $isClock = array("isClock"=>true);
         $arr = array();
         // $where = [ 'nik' => $nik, 'working_date' => $tgl ];
         // $data = WorkingDay::where($where)->get();
@@ -498,30 +504,30 @@ class MattaApi extends Controller
         if($this->checkIfExist($fromClockout,$toClockout,$input)){
             $isWindowClockout = true;
         }
-        $isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
+        $isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
         // apakah harus clockin di hari kerja dan between clock window dan belum clock in
         if($isClock["isClock"] && $isWindowClockin && $nGetClock["n_clockin"]==0){
-            $isClockinout =array("isClockin"=>true, "isClockout"=>false, "isCheckin"=>false);
+            $isClockinout = array("isClockin"=>true, "isClockout"=>false, "isCheckin"=>false);
         }
         // apakah harus clockout di hari kerja dan between clock window dan belum clock out
         else if($isClock["isClock"] && $isWindowClockout && $nGetClock["n_clockin"]>0){
             if($nGetClock["n_clockout"]>0){
-                $isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
+                $isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
             }else{
-                $isClockinout =array("isClockin"=>false, "isClockout"=>true, "isCheckin"=>true);
+                $isClockinout = array("isClockin"=>false, "isClockout"=>true, "isCheckin"=>true);
             }
         }
         // check in
         else if($isClock["isClock"] && $nGetClock["n_clockout"]==0 && $nGetClock["n_clockin"]>0){
-            $isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>true);
+            $isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>true);
         }
         // jika cuti tidak cico
 		if($this->isCuti($nik, $tgl)){
-			$isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
+			$isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
 		}
         // jika sakit tidak cico
 		if($this->isSakit($nik, $tgl)){
-			$isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
+			$isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
 		}
         return $isClockinout;
     }
@@ -544,6 +550,9 @@ class MattaApi extends Controller
                 $isClock = array("isClock"=>true);
             }
         }
+        // ambil data clock in = dtClockin
+        $getDataClock = $this->getDataClock($nik, $tgl);
+        $dtClockin = $this->getDataClock($nik, $tgl)['dtClockin'];
         // mendapatkan jumlah clock in atau clock out
         // jika sudah n_clockin maka 1 jika sudah n_clockout maka 1 jika belum maka 0
         $nGetClock = $this->getNClock($nik, $tgl);
@@ -553,6 +562,7 @@ class MattaApi extends Controller
         $toClockin = "0000-00-00 00:00:00";
         $fromClockout = "0000-00-00 00:00:00";
         $toClockout = "0000-00-00 00:00:00";
+        // return response()->json($data);
         $input = $waktu;
         // jika nik adalah reguler maka waktu yang digunakan adalah today
         if($data[0]->is_reguler == 1){
@@ -573,39 +583,44 @@ class MattaApi extends Controller
         if($this->checkIfExist($fromClockout,$toClockout,$input)){
             $isWindowClockout = true;
         }
-        $isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
+        $isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
         // apakah harus clockin di hari kerja dan between clock window dan belum clock in
         if($isClock["isClock"] && $isWindowClockin && $nGetClock["n_clockin"]==0){
-            $isClockinout =array("isClockin"=>true, "isClockout"=>false, "isCheckin"=>false);
+            $isClockinout = array("isClockin"=>true, "isClockout"=>false, "isCheckin"=>false);
         }
         // apakah harus clockout di hari kerja dan between clock window dan belum clock out
         else if($isClock["isClock"] && $isWindowClockout && $nGetClock["n_clockin"]>0){
             if($nGetClock["n_clockout"]>0){
-                $isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
+                $isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
             }else{
-                $isClockinout =array("isClockin"=>false, "isClockout"=>true, "isCheckin"=>true);
+                $isClockinout = array("isClockin"=>false, "isClockout"=>true, "isCheckin"=>true);
+                // refer to cm 523
+                // refer to "C:\alita\matta\data_master\kemungkinan cico v1.xlsx"
+                if($data[0]->is_reguler == 1 && Carbon::parse($dtClockin)->diffInHours(Carbon::now()) < 9){
+                    $isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>true);
+                }
             }
         }
         // check in
         else if($isClock["isClock"] && $nGetClock["n_clockout"]==0 && $nGetClock["n_clockin"]>0){
-            $isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>true);
+            $isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>true);
         }
         // else{
-        //     $isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>true);
+        //     $isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>true);
         // }
         // jika cuti tidak cico
 		if($this->isCuti($nik, $tgl)){
-			$isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
+			$isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
 		}
         // jika sakit tidak cico
 		if($this->isSakit($nik, $tgl)){
-			$isClockinout =array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
+			$isClockinout = array("isClockin"=>false, "isClockout"=>false, "isCheckin"=>false);
 		}
         array_push($data, $isClock);
         array_push($data, $nGetClock);
         array_push($data, array("tgl"=>$tgl, "jam"=>$jam));
         array_push($data, $isClockinout);
-        array_push($data, $this->getDataClock($nik, $tgl));
+        array_push($data, $getDataClock);
         // echo $isClock["isClock"];
         return $data;
     }
