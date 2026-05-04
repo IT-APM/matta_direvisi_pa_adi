@@ -72,9 +72,14 @@ class MattaApi extends Controller
 		}
         // refer to cm 523
         // refer to "C:\alita\matta\data_master\kemungkinan cico v1.xlsx"
-        $_data = Attendance::where(['id'=>$data->id, 'att_data_src'=>'Regular', 'att_type'=>'Clock-in', 'att_wd_ot_id'=>0]);
-        if($_data->exists() && Carbon::now()->format('H:i:s') > '09:00:00'){
-            $_data->update(['att_status' => 'Late-in']);
+        $_data = Attendance::where(['id'=>$data->id, 'att_data_src'=>'Regular', 'att_type'=>'Clock-in', 'att_wd_ot_id'=>0, 'wg_id'=>1]);
+        // if($_data->exists() && Carbon::now()->format('H:i:s') > '09:00:00'){
+        if($_data->exists()){
+            if(Carbon::now()->greaterThan(Carbon::today()->setTime(9, 0, 0))){
+                $_data->update(['att_status' => 'Late-in']);
+            }else{
+                $_data->update(['att_status' => 'Book-in']);
+            }
         }
         // 
         return response()->json( [ 'success' => true, 'message' => 'Data is inserted successfully.', 'data' => $data ], 200 );
