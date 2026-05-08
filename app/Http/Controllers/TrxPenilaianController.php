@@ -414,7 +414,7 @@ class TrxPenilaianController extends Controller
         $html = '<div style="text-align:justify;"><table>
         <tr>
             <td width="4%">1)</td>
-            <td width="96%">Pihak Kedua berkewajiban untuk memenuhi Jadwal Kerja yang berlaku yaitu Senin – Jumat pukul 09.00 – 18.00.</td>
+            <td width="96%">Pihak Kedua berkewajiban untuk memenuhi Jadwal Kerja yang berlaku yaitu Senin – Jumat pukul 08.30 – 17.30.</td>
         </tr>
         <tr>
             <td>&nbsp;</td>
