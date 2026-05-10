@@ -39,9 +39,6 @@
             <div class="card">
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
-                        {{-- <li class="nav-item"><a class="nav-link @if($id == 0) active @endif" id="pills-current-tab" data-bs-toggle="pill" href="{{ route('karyawan.dashboard', 0) }}" role="tab" aria-controls="pills-current" aria-selected="true">Terkini</a></li> --}}
-                        {{-- <li class="nav-item"><a class="nav-link @if($id == 1) active @endif" id="pills-history-tab" data-bs-toggle="pill" href="{{ route('karyawan.dashboard', 1) }}" role="tab" aria-controls="pills-history" aria-selected="true">Histori/Year On Year</a></li> --}}
-                        {{-- <li class="nav-item"><a class="nav-link @if($id == 2) active @endif" id="pills-year-tab" data-bs-toggle="pill" href="#pills-year" role="tab" aria-controls="pills-year" aria-selected="true">Year On Year</a></li> --}}
                         <li class="nav-item"><a class="nav-link @if($id == 0) active @endif" href="{{ route('karyawan.dashboard', 0) }}">Terkini</a></li>
                         <li class="nav-item"><a class="nav-link @if($id == 1) active @endif" href="{{ route('karyawan.dashboard', 1) }}">Histori/Year On Year</a></li>
                     </ul>
@@ -140,15 +137,6 @@
                             <div class="row mt-2">
                                 @php $i = 0; @endphp
                                 <div class="col-xl-4 col-sm-4">
-                                    {{-- <div class="card text-white bg-primary text-center"> --}}
-                                    {{-- <div class="card-body text-center">
-                                        <h5 class="card-title">{{ $lable[$i] }}</h5>
-                                        <div class="p-3">
-                                            <img src="{{ asset('assets/images/matta/dashboard/people.png') }}" alt="People Icon" style="height:100px; object-fit:cover; border-radius:50%;">
-                                        </div>
-                                        <h2>{{ array_sum(array_column($jumlah_karyawan_kelamin_now, 'jumlah')) }}</h2>
-                                    </div> --}}
-                                    {{-- </div> --}}
                                     <div class="card-body text-center" style="cursor:pointer;" data-key="{{ $lable[$i] }}" data-detail='@json(collect($jumlah_karyawan_kelamin_now)->pluck('detail')->flatten(1))' onclick="showDetail(this)">
                                         <h5 class="card-title">{{ $lable[$i] }}</h5>
                                         <div class="p-3">
@@ -414,137 +402,20 @@
                                     <h5 class="text-center">{{ $lable[++$i] }}</h5>
                                     <div id="chart_jumlah_karyawan_perusahaan"></div>
                                 </div>
-                                <div class="col-xl-12 col-sm-12">
+                                {{-- <div class="col-xl-12 col-sm-12">
                                     <h5 class="text-center">{{ $lable[++$i] }}</h5>
                                     <div id="chart_jumlah_karyawan_divisi"></div>
-                                </div>
-                                <div class="col-xl-12 col-sm-12">
+                                </div> --}}
+                                {{-- <div class="col-xl-12 col-sm-12">
                                     <h5 class="text-center">{{ $lable[++$i] }}</h5>
                                     <div id="chart_jumlah_karyawan_dep"></div>
                                 </div>
                                 <div class="col-xl-12 col-sm-12">
                                     <h5 class="text-center">{{ $lable[++$i] }}</h5>
                                     <div id="chart_jumlah_karyawan_subdep"></div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
-                        {{--  --}}
-                        {{-- <div class="tab-pane fade @if($id == 2) show active @endif" id="pills-year" role="tabpanel" aria-labelledby="pills-year-tab">
-                            <button class="btn btn-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter_form2" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
-                            <div class="collapse" id="collapse_filter_form2">
-                                <form id="form2" name="form2" class="mt-2" action="{{ route('karyawan.dashboard', 2) }}" method="get" enctype="multipart/form-data">
-                                    <div class="row mt-2">
-                                        <div class="col-sm-3 mb-2">
-                                            <label class="h6">Tahun</label>
-                                            <div>
-                                                <input min="1" type="number" class="form-control digits" name="tahun_dari" id="tahun_dari" value="{{ $tahun_dari }}">
-                                            </div>
-                                            sampai
-                                            <div>
-                                                <input min="1" type="number" class="form-control digits" name="tahun_sampai" id="tahun_sampai" value="{{ $tahun_sampai }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <label class="h6">Periode</label>
-                                            <div>
-                                                <select class="form-select" name="select_periode" id="select_periode">
-                                                    <option value="">Pilih...</option>
-                                                    <option value="01" @if($select_periode == "01") selected="" @endif>Januari</option>
-                                                    <option value="02" @if($select_periode == "02") selected="" @endif>Februari</option>
-                                                    <option value="03" @if($select_periode == "03") selected="" @endif>Maret</option>
-                                                    <option value="04" @if($select_periode === "04") selected="" @endif>April</option>
-                                                    <option value="05" @if($select_periode == "05") selected="" @endif>Mei</option>
-                                                    <option value="06" @if($select_periode == "06") selected="" @endif>Juni</option>
-                                                    <option value="07" @if($select_periode == "07") selected="" @endif>Juli</option>
-                                                    <option value="08" @if($select_periode == "08") selected="" @endif>Agustus</option>
-                                                    <option value="09" @if($select_periode == "09") selected="" @endif>September</option>
-                                                    <option value="10" @if($select_periode == "10") selected="" @endif>Oktober</option>
-                                                    <option value="11" @if($select_periode == "11") selected="" @endif>November</option>
-                                                    <option value="12" @if($select_periode == "12") selected="" @endif>Desember</option>
-                                                    <option disabled="" value="">--------</option>
-                                                    <option value="01,02,03" @if($select_periode == "01,02,03") selected="" @endif>Kuartal 1</option>
-                                                    <option value="04,05,06" @if($select_periode == "04,05,06") selected="" @endif>Kuartal 2</option>
-                                                    <option value="07,08,09" @if($select_periode == "07,08,09") selected="" @endif>Kuartal 3</option>
-                                                    <option value="10,11,12" @if($select_periode == "10,11,12") selected="" @endif>Kuartal 4</option>
-                                                    <option disabled="" value="">--------</option>
-                                                    <option value="01,02,03,04,05,06" @if($select_periode == "01,02,03,04,05,06") selected="" @endif>Semester 1</option>
-                                                    <option value="07,08,09,10,11,12" @if($select_periode == "07,08,09,10,11,12") selected="" @endif>Semester 2</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_kelamin_form2">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin('form2')" id="all_kelamin" name="all_kelamin"/> Check All
-                                            <div class="collapse" id="box_select_kelamin_form2">
-                                                @foreach ($select_kelamin as $data)
-                                                    <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br/>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_status_form2">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status('form2')" id="all_status" name="all_status"/> Check All
-                                            <div class="collapse" id="box_select_status_form2">
-                                                @foreach ($select_status as $data)
-                                                    <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br/>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_level_form2">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level('form2')" id="all_level" name="all_level"/> Check All
-                                            <div class="collapse" id="box_select_level_form2">
-                                                @foreach ($select_level as $data)
-                                                    <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br/>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">&nbsp;</div>
-                                        <div class="col-sm-3">&nbsp;</div>
-                                        <div class="col-sm-3">&nbsp;</div>
-                                        <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_perusahaan_form2">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan('form2')" id="all_perusahaan" name="all_perusahaan"/> Check All
-                                            <div class="collapse" id="box_perusahaan_form2">
-                                                @foreach ($perusahaan as $data)
-                                                    <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>{{ $data->nama }}<br/>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_divisi">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi('form2')" id="all_divisi" name="all_divisi"/> Check All
-                                            <div class="collapse" id="div_kode_divisi">
-                                                @foreach ($divisi as $data)
-                                                    <input class="checkbox_animated" id="kode_divisi[]" name="kode_divisi[]" type="checkbox" onClick="get_kode_divisi('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_divisi)) checked @endif>{{ $data->nama }}<br/>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_departemen">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen('form2')" id="all_departemen" name="all_departemen"/> Check All
-                                            <div class="collapse" id="div_kode_departemen">
-                                                @foreach ($departemen as $data)
-                                                    <input class="checkbox_animated" id="kode_departemen[]" name="kode_departemen[]" type="checkbox" onClick="get_kode_departemen('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_departemen)) checked @endif>{{ $data->nama }}<br/>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_sub_departemen">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen('form2')" id="all_sub_departemen" name="all_sub_departemen"/> Check All
-                                            <div class="collapse" id="div_kode_sub_departemen">
-                                                @foreach ($sub_departemen as $data)
-                                                    <input class="checkbox_animated" id="kode_sub_departemen[]" name="kode_sub_departemen[]" type="checkbox" onClick="get_kode_sub_departemen('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_sub_departemen)) checked @endif>{{ $data->nama }}<br/>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-2">
-                                        <div class="col-sm-12">
-                                            <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | <a href="{{ route('karyawan.dashboard', 2) }}" class="btn btn-info" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</a>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col-xl-12 col-sm-12">
-                                    <div id="chart_jumlah_karyawan_yoy"></div>
-                                </div>
-                            </div>
-                        </div> --}}
                         {{--  --}}
                     </div>
                 </div>
@@ -1056,22 +927,83 @@ $(document).ready(function() {
     // 
     function render_chart_v1(dataObj, containerId, chartType, height) {
         const categories = Object.keys(dataObj);
-        // const seriesKeys = Object.keys(dataObj[categories[0]]);
-        // const series = seriesKeys.map(key => ({
-        //     name: key,
-        //     data: Object.values(dataObj).map(item => item[key])
-        // }));
         const seriesKeys = [...new Set(Object.values(dataObj).flatMap(item => Object.keys(item)))].sort();
         const series = seriesKeys.map(key => ({
             name: key,
-            data: Object.values(dataObj).map(item => item[key] || 0)
-        }));
+            data: Object.values(dataObj).map(item => item[key].jumlah || 0)
+        })).filter(s => s.data.some(val => val > 0));
         const maxValue = Math.max(...series.flatMap(s => s.data)) + 5;
         const options = {
             chart: {
                 type: chartType,
                 height: height,
                 zoom: { enabled: false },
+                events: chartType === 'bar' ? {
+                    dataPointSelection: function(event, chartContext, config) {
+                        const index = config.dataPointIndex;
+                        const seriesIndex = config.seriesIndex;
+                        // nama category
+                        const monthKey = Object.keys(dataObj)[index];
+                        // nama series
+                        const seriesName = config.w.config.series[seriesIndex].name;
+                        // ambil object data
+                        const rawData = dataObj[monthKey]?.[seriesName];
+                        // ambil detail
+                        const details = rawData?.detail || [];
+                        document.querySelector('#detailModal .modal-title').innerText =`Detail: ${seriesName} - ${monthKey}`;
+                        const tableId = 'detailTable';
+                        let html = `
+                            <table id="${tableId}" class="table table-striped table-bordered w-100">
+                                <thead>
+                                    <tr>
+                                        <th>NIP</th>
+                                        <th>Nama</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+                        details.forEach(row => {
+                            html += `
+                                <tr>
+                                    <td>${row.nik ?? ''}</td>
+                                    <td>${row.nama ?? ''}</td>
+                                </tr>
+                            `;
+                        });
+                        html += `
+                                </tbody>
+                            </table>
+                        `;
+                        document.getElementById('detailContent').innerHTML = html;
+                        // destroy datatable lama jika ada
+                        if ($.fn.DataTable.isDataTable('#' + tableId)) {
+                            $('#' + tableId).DataTable().destroy();
+                        }
+                        setTimeout(() => {
+                            $('#' + tableId).DataTable({
+                                order: [[1, 'asc']],
+                                dom:
+                                    "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
+                                    "<'row'<'col-sm-12'rt>>" +
+                                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                                buttons: [
+                                    'copy',
+                                    'csv',
+                                    'excel',
+                                    'pdf',
+                                    'print'
+                                ],
+                                lengthMenu: [
+                                    [10, 50, 100, 200, 500, -1],
+                                    [10, 50, 100, 200, 500, "All"]
+                                ]
+                            });
+                        }, 100);
+                        // tampilkan modal
+                        const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+                        modal.show();
+                    }
+                } : {}
             },
             series: series,
             // colors: generateColors(data.length),
@@ -1083,7 +1015,7 @@ $(document).ready(function() {
             dataLabels: {
                 // enabled: true,
                 style: {
-                    fontSize: '10px',
+                    // fontSize: '10px',
                     colors: ['#000'],
                 }
             },
@@ -1107,9 +1039,6 @@ $(document).ready(function() {
             },
             legend: { position: 'top' },
             fill: { opacity: 0.8 },
-            dataLabels: {
-                style: { colors: ['#000'] }
-            },
         };
         if (chartType === 'line') {
             options.stroke = {
@@ -1356,6 +1285,7 @@ $(document).ready(function() {
             legend: { position: 'top' },
             fill: { opacity: 0.8 },
             dataLabels: {
+                // enabled: true,
                 style: { colors: ['#000'] }
             },
             plotOptions: {
@@ -1366,9 +1296,6 @@ $(document).ready(function() {
                     borderRadiusApplication: 'end',
                 }
             },
-            // dataLabels: {
-            //     enabled: true
-            // },
         };
         if (chartType === 'line') {
             options.stroke = {
@@ -1376,168 +1303,6 @@ $(document).ready(function() {
                 width: 3
             };
             // options.markers = { size: 5 };
-        }
-        const chart = new ApexCharts(document.querySelector(`#${containerId}`), options);
-        chart.render();
-    }
-    // 
-    function render_chart_yoy(dataObj, containerId, chartType, height, selectedMonths = []) {
-        const parsed = Object.entries(dataObj).map(([date, val]) => {
-            const [year, month] = date.split('-');
-            return {
-                year,
-                month,
-                value: val.value || 0
-            };
-        });
-        let months = [...new Set(parsed.map(d => d.month))].sort();
-        if (selectedMonths.length > 0) {
-            months = months.filter(m => selectedMonths.includes(m));
-        }
-        const years = [...new Set(parsed.map(d => d.year))].sort();
-        const series = years.map(year => ({
-            name: year,
-            data: months.map(month => {
-                const found = parsed.find(d => d.year === year && d.month === month);
-                return found ? found.value : 0;
-            })
-        }));
-        const maxValue = Math.max(...series.flatMap(s => s.data)) + 5;
-        const monthNames = {
-            '01': 'Jan', '02': 'Feb', '03': 'Mar',
-            '04': 'Apr', '05': 'Mei', '06': 'Jun',
-            '07': 'Jul', '08': 'Agu', '09': 'Sep',
-            '10': 'Okt', '11': 'Nov', '12': 'Des'
-        };
-        const options = {
-            chart: {
-                type: chartType,
-                height: height,
-                zoom: { enabled: false },
-            },
-            series: series,
-            xaxis: {
-                categories: months.map(m => monthNames[m] || m),
-                // categories: months,
-                // title: { text: 'Bulan' }
-            },
-            yaxis: {
-                min: 0,
-                max: maxValue,
-                title: { text: 'Jumlah' }
-            },
-            legend: { position: 'top' },
-            fill: { opacity: 0.8 },
-            dataLabels: {
-                style: { colors: ['#000'] }
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '80%',
-                    borderRadius: 3,
-                }
-            },
-            // dataLabels: {
-            //     style: {
-            //         fontSize: '10px',
-            //         colors: ['#fff'],
-            //     }
-            // },
-            // fill: { opacity: 0.8 },
-        };
-        if (chartType === 'line') {
-            options.stroke = {
-                curve: 'smooth',
-                width: 3
-            };
-        }
-        const chart = new ApexCharts(document.querySelector(`#${containerId}`), options);
-        chart.render();
-    }
-    // 
-    function render_chart_yoy_gender(dataObj, containerId, chartType, height, selectedMonths = []) {
-        // Parse data
-        const parsed = Object.entries(dataObj).map(([date, val]) => {
-            const [year, month] = date.split('-');
-            return {
-                year,
-                month,
-                pria: val.pria || 0,
-                wanita: val.wanita || 0
-            };
-        });
-        // Ambil bulan unik
-        let months = [...new Set(parsed.map(d => d.month))].sort();
-        // Filter bulan (kalau ada)
-        if (selectedMonths.length > 0) {
-            months = months.filter(m => selectedMonths.includes(m));
-        }
-        // Ambil tahun unik
-        const years = [...new Set(parsed.map(d => d.year))].sort();
-        const genders = ['pria', 'wanita'];
-        const series = [];
-        // Build series: kombinasi gender + tahun
-        years.forEach(year => {
-            genders.forEach(gender => {
-                series.push({
-                    name: `${gender} ${year}`,
-                    data: months.map(month => {
-                        const found = parsed.find(d => d.year === year && d.month === month);
-                        return found ? found[gender] : 0;
-                    })
-                });
-            });
-        });
-        const maxValue = Math.max(...series.flatMap(s => s.data)) + 5;
-        // Mapping nama bulan (opsional biar rapi)
-        const monthNames = {
-            '01': 'Jan', '02': 'Feb', '03': 'Mar',
-            '04': 'Apr', '05': 'Mei', '06': 'Jun',
-            '07': 'Jul', '08': 'Agu', '09': 'Sep',
-            '10': 'Okt', '11': 'Nov', '12': 'Des'
-        };
-        const options = {
-            chart: {
-                type: chartType,
-                height: height,
-                zoom: { enabled: false },
-            },
-            series: series,
-            xaxis: {
-                categories: months.map(m => monthNames[m] || m),
-                // title: { text: 'Bulan' }
-            },
-            yaxis: {
-                min: 0,
-                max: maxValue,
-                title: { text: 'Jumlah' }
-            },
-            legend: { position: 'top' },
-            fill: { opacity: 0.8 },
-            dataLabels: {
-                style: { colors: ['#000'] }
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '80%',
-                    borderRadius: 3,
-                }
-            },
-            // dataLabels: {
-            //     style: {
-            //         fontSize: '10px',
-            //         colors: ['#000'],
-            //     }
-            // },
-            // fill: { opacity: 0.8 },
-        };
-        if (chartType === 'line') {
-            options.stroke = {
-                curve: 'smooth',
-                width: 3
-            };
         }
         const chart = new ApexCharts(document.querySelector(`#${containerId}`), options);
         chart.render();
@@ -1552,32 +1317,12 @@ $(document).ready(function() {
     // history
     render_chart_v1(@json($jumlah_karyawan), 'chart_jumlah_karyawan', '{{ $type }}', 300);
     render_chart_v1(@json($jumlah_karyawan_kelamin), 'chart_jumlah_karyawan_kelamin', '{{ $type }}', 300);
-    render_chart_v1(@json($jumlah_karyawan_perusahaan), 'chart_jumlah_karyawan_perusahaan', '{{ $type }}', 300);
-    render_chart_v1(@json($jumlah_karyawan_divisi), 'chart_jumlah_karyawan_divisi', '{{ $type }}', 300);
-    render_chart_v1(@json($jumlah_karyawan_dep), 'chart_jumlah_karyawan_dep', '{{ $type }}', 300);
-    render_chart_v1(@json($jumlah_karyawan_subdep), 'chart_jumlah_karyawan_subdep', '{{ $type }}', 700);
     render_chart_v1(@json($jumlah_karyawan_status), 'chart_jumlah_karyawan_status', '{{ $type }}', 300);
     render_chart_v1(@json($jumlah_karyawan_level), 'chart_jumlah_karyawan_level', '{{ $type }}', 300);
-    // // yoy
-    // render_chart_v1(@json($jumlah_karyawan), 'chart_jumlah_karyawan_yoy', 'line', 300);
-    // const dataObj = {
-    //     "2023-01": { value: 8 },
-    //     "2023-02": { value: 12 },
-    //     "2024-01": { value: 10 },
-    //     "2024-02": { value: 15 },
-    //     "2025-01": { value: 20 },
-    //     "2025-02": { value: 25 }
-    // };
-    // render_chart_yoy(dataObj, 'chart_yoy', 'bar', 300, ['01', '02']);
-    // // const dataObj = {
-    // //     "2023-01": { pria: 5, wanita: 3 },
-    // //     "2023-02": { pria: 7, wanita: 5 },
-    // //     "2024-01": { pria: 6, wanita: 4 },
-    // //     "2024-02": { pria: 9, wanita: 6 },
-    // //     "2025-01": { pria: 12, wanita: 8 },
-    // //     "2025-02": { pria: 14, wanita: 11 }
-    // // };
-    // // render_chart_yoy_gender(dataObj, 'chart_yoy_gender', 'bar', 300, ['01', '02']);
+    render_chart_v1(@json($jumlah_karyawan_perusahaan), 'chart_jumlah_karyawan_perusahaan', '{{ $type }}', 300);
+    // render_chart_v1(@json($jumlah_karyawan_divisi), 'chart_jumlah_karyawan_divisi', '{{ $type }}', 300);
+    // render_chart_v1(@json($jumlah_karyawan_dep), 'chart_jumlah_karyawan_dep', '{{ $type }}', 300);
+    // render_chart_v1(@json($jumlah_karyawan_subdep), 'chart_jumlah_karyawan_subdep', '{{ $type }}', 700);
 });
 </script>
 @endsection
