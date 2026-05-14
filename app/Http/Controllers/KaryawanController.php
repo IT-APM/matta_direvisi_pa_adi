@@ -391,13 +391,13 @@ class KaryawanController extends Controller
                 AND kode_level IN (".implode(',', $arr_select_level).")";
         // start
         if($id == 1){
-            // jumlah_karyawan
             $trx = DB::select("SELECT 
                 MIN(DATE(created_at)) AS tanggal_min,
                 MAX(DATE(created_at)) AS tanggal_max,
                 DATE_FORMAT(created_at, '%b %Y') AS label
                 FROM mtr_tbl_karyawan_history
                 WHERE ".$where0."
+                AND YEAR(created_at) = YEAR(CURDATE())
                 GROUP BY YEAR(created_at), MONTH(created_at)
                 ORDER BY YEAR(created_at), MONTH(created_at)
             ");
@@ -426,6 +426,7 @@ class KaryawanController extends Controller
                     ORDER BY YEAR(created_at), MONTH(created_at)
                 ");
             }
+            // jumlah_karyawan
             foreach ($trx as $_trx) {
                 $awal = $_trx->tanggal_min;
                 $akhir = $_trx->tanggal_max;
@@ -594,38 +595,38 @@ class KaryawanController extends Controller
                 }
             }
             // jumlah_karyawan_divisi
-            foreach ($trx as $_trx) {
-                $awal = $_trx->tanggal_min;
-                $akhir = $_trx->tanggal_max;
-                // 
-                $data = DB::select("SELECT COUNT(*) AS jumlah,`kode_divisi` FROM `mtr_tbl_karyawan_history` 
-                WHERE ".$where0." 
-                AND DATE(`created_at`)='".$akhir."' 
-                GROUP BY `kode_divisi`");
-                $_labels = DB::select("SELECT a.`id`,a.`nama`,b.`nama_singkat` FROM `mtr_tbl_divisi` AS a LEFT JOIN `mtr_tbl_perusahaan` AS b ON a.`kode_perusahaan`=b.`id` WHERE a.`id` IN (".implode(',', array_column($data, 'kode_divisi')).") ORDER BY a.`nama` ASC");
-                $labels = [];
-                foreach ($_labels as $item) {
-                    $labels[$item->id] = $item->nama_singkat.'-'.$item->nama;
-                }
-                foreach ($labels as $label) {
-                    $jumlah_karyawan_divisi[$_trx->label][$label] = [
-                        "jumlah" => 0,
-                        "detail" => []
-                    ];
-                }
-                foreach ($data as $item) {
-                    $key = $labels[$item->kode_divisi];
-                    $detail = DB::select("SELECT `nik`,`nama` FROM `mtr_tbl_karyawan_history` 
-                    WHERE ".$where0." 
-                    AND `kode_divisi`=".$item->kode_divisi."
-                    AND DATE(`created_at`)='".$akhir."'");
-                    $jumlah_karyawan_divisi[$_trx->label][$key] = [
-                        "jumlah" => (int) $item->jumlah,
-                        "detail" => $detail
-                    ];
-                }
-                // return response()->json( [ 'jumlah_karyawan_divisi' => $jumlah_karyawan_divisi ], 200 );
-            }
+            // foreach ($trx as $_trx) {
+            //     $awal = $_trx->tanggal_min;
+            //     $akhir = $_trx->tanggal_max;
+            //     // 
+            //     $data = DB::select("SELECT COUNT(*) AS jumlah,`kode_divisi` FROM `mtr_tbl_karyawan_history` 
+            //     WHERE ".$where0." 
+            //     AND DATE(`created_at`)='".$akhir."' 
+            //     GROUP BY `kode_divisi`");
+            //     $_labels = DB::select("SELECT a.`id`,a.`nama`,b.`nama_singkat` FROM `mtr_tbl_divisi` AS a LEFT JOIN `mtr_tbl_perusahaan` AS b ON a.`kode_perusahaan`=b.`id` WHERE a.`id` IN (".implode(',', array_column($data, 'kode_divisi')).") ORDER BY a.`nama` ASC");
+            //     $labels = [];
+            //     foreach ($_labels as $item) {
+            //         $labels[$item->id] = $item->nama_singkat.'-'.$item->nama;
+            //     }
+            //     foreach ($labels as $label) {
+            //         $jumlah_karyawan_divisi[$_trx->label][$label] = [
+            //             "jumlah" => 0,
+            //             "detail" => []
+            //         ];
+            //     }
+            //     foreach ($data as $item) {
+            //         $key = $labels[$item->kode_divisi];
+            //         $detail = DB::select("SELECT `nik`,`nama` FROM `mtr_tbl_karyawan_history` 
+            //         WHERE ".$where0." 
+            //         AND `kode_divisi`=".$item->kode_divisi."
+            //         AND DATE(`created_at`)='".$akhir."'");
+            //         $jumlah_karyawan_divisi[$_trx->label][$key] = [
+            //             "jumlah" => (int) $item->jumlah,
+            //             "detail" => $detail
+            //         ];
+            //     }
+            //     // return response()->json( [ 'jumlah_karyawan_divisi' => $jumlah_karyawan_divisi ], 200 );
+            // }
         // jumlah_karyawan_dep
         // start
         // if($id == 1){
