@@ -675,8 +675,8 @@ class TrxPenilaianController extends Controller
         $pdf::writeHTMLCell(0, 0, $x, $y+=40, $html, 0, 1, 0, true, '', true);
         $html = '<div style="text-align:center;"><table>
         <tr>
-            <td width="50%">Pihak Pertama<br/>a.n Direktur<p>&nbsp;</p><p>&nbsp;</p><b><u>'.strtoupper($hco->nama).'</u></b><br/>'.$hco->_jabatan->jabatan.'</td>
-            <td width="50%">Pihak Kedua<br/><p>&nbsp;</p><p>&nbsp;</p><b><u>'.strtoupper($karyawan->nama).'</u></b></td>
+            <td width="50%">Pihak Pertama<br/>a.n Direktur<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><b><u>'.strtoupper($hco->nama).'</u></b><br/>'.$hco->_jabatan->jabatan.'</td>
+            <td width="50%">Pihak Kedua<br/><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><b><u>'.strtoupper($karyawan->nama).'</u></b></td>
         </tr>
         </table></div>';
         $pdf::writeHTMLCell(0, 0, $x, $y+=15, $html, 0, 1, 0, true, '', true);
