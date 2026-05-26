@@ -82,7 +82,7 @@
     </div>
     <!--  -->
     <div class="row">
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-success">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -95,7 +95,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-primary">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -109,7 +109,7 @@
             </div>
         </div>
         @can('asm')
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-warning">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -123,7 +123,7 @@
             </div>
         </div>
         @endcan
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-warning">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -136,7 +136,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-success">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -149,7 +149,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-primary">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -162,7 +162,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-primary">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -176,7 +176,7 @@
             </div>
         </div>
         @can('asm')
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-warning">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -191,7 +191,7 @@
         </div>
         @endcan
         @can('spv')
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-success">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -206,7 +206,7 @@
         </div>
         @endcan
         @can('bpd')
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-success">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -220,7 +220,7 @@
             </div>
         </div>
         @endcan
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-primary">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -234,7 +234,7 @@
             </div>
         </div>
         @can('spv')
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-warning">
                 <div class="card-body">
                     <div class="media faq-widgets">
@@ -249,7 +249,7 @@
         </div>
         @endcan
         @can('notif_letter')
-        <div class="col-xl-4 col-sm-4">
+        <div class="col-xl-3 col-sm-3">
             <div class="card bg-warning">
                 <div class="card-body">
                     <div class="media faq-widgets">
