@@ -14,6 +14,7 @@ use App\Models\MtrUtility;
 use App\Models\Holiday;
 use App\Models\ToDoList;
 use App\Models\TrxBirthday;
+use App\Models\TrxFingePrint;
 // 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -58,6 +59,78 @@ class DataCleansingController extends Controller
         // dipindahkan ke C:\xampp\htdocs\matta\app\Http\Controllers\TrxBirthdayController.php
         // karena dijalankan setiap jam 7 pagi
         // $this->getBirthday();
+        $yesterday = Carbon::yesterday()->format('Y-m-d');
+        $start_date = $yesterday;
+        $end_date = $yesterday;
+        $trx = TrxFingePrint::select(
+            'trx_tbl_fp_data.id',
+            'trx_tbl_fp_data.id_nip',
+            'mtr_tbl_karyawan.nik',
+            'mtr_tbl_karyawan.nama',
+            'mtr_tbl_karyawan.wg_id',
+            DB::raw('DATE(trx_tbl_fp_data.waktu) as tanggal'),
+            DB::raw('MIN(trx_tbl_fp_data.waktu) as clock_in'),
+            DB::raw('CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.waktu) ELSE NULL END as clock_out')
+        )
+        ->leftJoin('mtr_tbl_karyawan', 'mtr_tbl_karyawan.id_fp', '=', 'trx_tbl_fp_data.id_nip')
+        ->whereBetween(DB::raw('DATE(trx_tbl_fp_data.waktu)'), [$start_date, $end_date])
+        ->where(['mtr_tbl_karyawan.wg_id'=>1])
+        ->groupBy(
+            'trx_tbl_fp_data.id_nip',
+            DB::raw('DATE(trx_tbl_fp_data.waktu)')
+        )
+        ->orderBy('tanggal')
+        ->orderBy('trx_tbl_fp_data.id_nip')
+        ->get();
+        foreach($trx as $_trx){
+            $att = Attendance::where(['att_date'=>$_trx->tanggal, 'att_nik'=>$_trx->nik, 'att_type'=>'Clock-in', 'att_data_src'=>'Regular', 'wg_id'=>1]);
+            $wg = DB::table('mtr_tbl_working_group')->where('id', 1)->first();
+            $time = Carbon::parse($_trx->clock_in)->format('H:i:s');
+            if(!$att->exists() && $time >= $wg->start_clockin && $time <= $wg->end_clockin){
+                $data = New Attendance;
+                $data->att_date = $_trx->tanggal;
+                $data->att_timestamp = $_trx->clock_in;
+                $data->att_nik = $_trx->nik;
+                $data->att_type = 'Clock-in';
+                $data->att_data_src = 'Regular';
+                $data->att_wd_ot_id = 0;
+                $data->att_status = 'Book-in';
+                $data->att_property = $this->getNikProperty($_trx->nik);
+                $data->wg_id = 1;
+                $data->id_fp_trx = $_trx->id;
+                $data->save();
+                // 
+                $_data = Attendance::where(['id'=>$data->id, 'att_data_src'=>'Regular', 'att_type'=>'Clock-in', 'att_wd_ot_id'=>0, 'wg_id'=>1]);
+                if($_data->exists()){
+                    if(Carbon::now()->greaterThan(Carbon::today()->setTime(9, 0, 0))){
+                        $_data->update(['att_status' => 'Late-in']);
+                    }else{
+                        $_data->update(['att_status' => 'Book-in']);
+                    }
+                }
+            }
+            $att = Attendance::where(['att_date'=>$_trx->tanggal, 'att_nik'=>$_trx->nik, 'att_type'=>'Clock-in', 'att_data_src'=>'Regular', 'wg_id'=>1]);
+            if($att->exists() && !empty($_trx->clock_out)){
+                $clockIn  = Carbon::parse($att->first()->att_timestamp);
+                $clockOut = Carbon::parse($_trx->clock_out);
+                $diffHours = $clockIn->diffInHours($clockOut);
+                $_att = Attendance::where(['att_date'=>$_trx->tanggal, 'att_nik'=>$_trx->nik, 'att_type'=>'Clock-out', 'att_data_src'=>'Regular', 'wg_id'=>1]);
+                if(!$_att->exists() && $diffHours >= 9){
+                    $data = New Attendance;
+                    $data->att_date = $_trx->tanggal;
+                    $data->att_timestamp = $_trx->clock_out;
+                    $data->att_nik = $_trx->nik;
+                    $data->att_type = 'Clock-out';
+                    $data->att_data_src = 'Regular';
+                    $data->att_wd_ot_id = 0;
+                    $data->att_status = 'Book-in';
+                    $data->att_property = $this->getNikProperty($_trx->nik);
+                    $data->wg_id = 1;
+                    $data->id_fp_trx = $_trx->id;
+                    $data->save();
+                }
+            }
+        }
         return response()->json( [ 'success' => true ], 200 );
     }
 
