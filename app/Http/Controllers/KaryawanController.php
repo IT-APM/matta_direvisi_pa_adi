@@ -55,6 +55,55 @@ class KaryawanController extends Controller
         $this->middleware('can:hc', ['except' => ['show', 'get_divisi', 'get_departemen', 'get_sub_departemen', 'update_profile']]);
     }
     
+    public function download_allphoto($id)
+    {
+        $karyawans = Karyawan::where(['is_aktif' => 1])->get();
+
+        // Setelah semua file di-copy, buat zip
+        $zipFileName = 'foto_karyawan_' . date('Ymd_His') . '.zip';
+        $tempDir     = public_path('temp');
+        $zipPath     = $tempDir . DIRECTORY_SEPARATOR . $zipFileName;
+
+        if (!is_dir($tempDir)) {
+            shell_exec('md "' . $tempDir . '"');
+        }
+
+        $zip    = new \ZipArchive();
+        $result = $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+
+        if ($result !== true) {
+            return back()->with('error', 'Gagal membuat zip, error code: ' . $result);
+        }
+
+        $totalAdded = 0;
+        foreach ($karyawans as $karyawan) {
+            $illegalChars = ['\\', '/', ':', '*', '?', '"', '<', '>', '|', '.', ','];
+            $nama         = str_replace($illegalChars, '', $karyawan->nama);
+            $nama         = trim(preg_replace('/\s+/', ' ', $nama));
+
+            // Path sumber
+            $sourcePath = public_path('assets\\images\\matta\\karyawan\\' . $karyawan->nik . '\\' . $karyawan->nik . '.jpg');
+
+            if (!file_exists($sourcePath)) {
+                \Log::warning("File sumber tidak ditemukan: {$sourcePath}");
+                continue;
+            }
+
+            // Langsung tambahkan ke zip tanpa folder, hanya filename
+            $fileName = $karyawan->nik . ' ' . $nama . '.jpg';
+            $zip->addFile($sourcePath, $fileName);
+            $totalAdded++;
+        }
+
+        $zip->close();
+
+        if (!file_exists($zipPath)) {
+            return back()->with('error', "File zip gagal dibuat. Total file: {$totalAdded}");
+        }
+
+        return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
+    }
+    
     public function upload_data($id)
     {
         if(Gate::allows('hc_nkp')){
@@ -1972,8 +2021,8 @@ class KaryawanController extends Controller
             return redirect( 'karyawan' )->with( 'msg', 'Data is deleted successfully.' );
          } catch (\Exception $e) {
             //   var_dump( $e->errorInfo );
-            Log::error($e->errorInfo);
-            Log::error($karyawan);
+            // Log::error($e->errorInfo);
+            // Log::error($karyawan);
             return redirect()->route('error_db');
          }
     }
