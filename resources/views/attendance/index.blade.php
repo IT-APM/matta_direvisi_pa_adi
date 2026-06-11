@@ -129,6 +129,7 @@
                                                 <th>Map</th>
                                                 <th>Status</th>
                                                 <th>Type</th>
+                                                <th>Source</th>
                                             </tr>
                                         </thead>
                                         @php $no = 0; @endphp
@@ -176,6 +177,7 @@
                                                         <span class="badge badge-warning">{{ $data->att_data_src }}</span>
                                                     @endif
                                                 </td>
+                                                <td>@if(!empty($data->id_fp_trx)) <span class="badge badge-primary">FINGER</span> @else <span class="badge badge-warning">MATTA</span> @endif</td>
                                             </tr>
                                         @endforeach
                                         </tbody>
@@ -201,6 +203,7 @@
                                                 <th>Departemen</th>
                                                 <th>Working Group</th>
                                                 <th>Type</th>
+                                                <th>Source</th>
                                             </tr>
                                         </thead>
                                         @php $no = 0; @endphp
@@ -233,6 +236,7 @@
                                                         <span class="badge badge-warning">{{ $data['att_data_src'] }}</span>
                                                     @endif
                                                 </td>
+                                                <td>@if(!empty($data->id_fp_trx)) <span class="badge badge-primary">FINGER</span> @else <span class="badge badge-warning">MATTA</span> @endif</td>
                                             </tr>
                                         @endforeach
                                         </tbody>
