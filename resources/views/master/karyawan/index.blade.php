@@ -35,8 +35,13 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    @if(Session::has('error'))
+                    <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                        <h6>{{ session('error') }}</h6>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
                     @if(Session::has('msg'))
-                    <!-- <div class="alert alert-success">{{Session::get('msg')}}</div> -->
                     <div class="alert alert-success dark alert-dismissible fade show" role="alert">
                         <h6>{{ session('msg') }}</h6>
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -46,6 +51,7 @@
                     <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | 
                     <a href="{{ route('karyawancopy.create') }}" class="btn btn-success" type="button"><i class="fa fa-copy" aria-hidden="true"></i> Copy data</a> | 
                     <a href="{{ route('karyawan.upload_data', 0) }}" class="btn btn-info" type="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload data</a>
+                    <a href="{{ route('karyawan.download_allphoto', 0) }}" class="btn btn-info" type="button"><i class="fa fa-download" aria-hidden="true"></i> Download Semua Foto</a>
                     <div class="collapse" id="collapse_filter">
                         <form class="m-4" action="{{ route('karyawan.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
