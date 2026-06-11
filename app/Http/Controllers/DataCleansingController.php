@@ -102,7 +102,8 @@ class DataCleansingController extends Controller
                 // 
                 $_data = Attendance::where(['id'=>$data->id, 'att_data_src'=>'Regular', 'att_type'=>'Clock-in', 'att_wd_ot_id'=>0, 'wg_id'=>1]);
                 if($_data->exists()){
-                    if(Carbon::now()->greaterThan(Carbon::today()->setTime(9, 0, 0))){
+                    // if(Carbon::now()->greaterThan(Carbon::today()->setTime(9, 0, 0))){
+                    if(Carbon::parse($_data->first()->att_timestamp)->format('H:i:s') > '09:00:00') {
                         $_data->update(['att_status' => 'Late-in']);
                     }else{
                         $_data->update(['att_status' => 'Book-in']);
