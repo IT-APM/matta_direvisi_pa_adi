@@ -69,8 +69,7 @@
                             <div class="col-md-4">
                                 <label class="form-label" for="jumlah_klaim">Nominal Klaim</label>
                                 {{-- <input min=0 type="number" name="jumlah_klaim" id="jumlah_klaim" class="form-control numbers" required="" value="{{$trxD->jumlah_klaim}}" > --}}
-                                <input type="text" name="jumlah_klaim_display" id="jumlah_klaim_display" class="form-control numbers" value="{{ number_format($trxD->jumlah_klaim, 0, '.', ',') }}" required="">
-                                <input type="hidden" name="jumlah_klaim" id="jumlah_klaim" value="{{ $trxD->jumlah_klaim }}">
+                                <input type="text" name="jumlah_klaim" id="jumlah_klaim" class="form-control numbers" value="{{ number_format($trxD->jumlah_klaim, 0, '.', ',') }}" required="">
                             </div>
                         </div>
                         <br />
@@ -88,15 +87,15 @@
 <script src="{{asset('assets/js/sweet-alert/sweetalert.min.js')}}"></script>
 <script src="{{asset('assets/js/sweet-alert/app.js')}}"></script>
 <script type="text/javascript">
-$(document).on('input', '#jumlah_klaim_display', function () {
-    // Hapus semua karakter selain angka
+// Format saat mengetik
+$(document).on('input', '#jumlah_klaim', function () {
     let value = $(this).val().replace(/\D/g, '');
-
-    // Set hidden input dengan value asli (tanpa pemisah)
-    $('#jumlah_klaim').val(value);
-
-    // Format dengan pemisah ribuan (koma)
     $(this).val(new Intl.NumberFormat('en-US').format(value));
+});
+
+// Hapus koma sebelum submit agar value yang terkirim murni angka
+$('#formAddNew').on('submit', function () {
+    $('#jumlah_klaim').val($('#jumlah_klaim').val().replace(/,/g, ''));
 });
 </script>
 @endsection
