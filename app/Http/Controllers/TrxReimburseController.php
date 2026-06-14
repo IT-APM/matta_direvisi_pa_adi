@@ -841,7 +841,7 @@ class TrxReimburseController extends Controller
         $id_hubungan = $request->id_hubungan;
         $nama_pasien = $request->nama_pasien;
         $tanggal = $request->tanggal;
-        $jumlah_klaim_akhir = $request->jumlah_klaim;
+        $jumlah_klaim_akhir = str_replace( ',', '', $request->jumlah_klaim );
         $jumlah_klaim_awal = $trxD->jumlah_klaim;
         // 
         $where = ['periode' => $periode, 'nik_karyawan' => $nik_karyawan];
