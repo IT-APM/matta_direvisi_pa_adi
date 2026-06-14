@@ -57,7 +57,8 @@ class KaryawanController extends Controller
     
     public function download_allphoto($id)
     {
-        $karyawans = Karyawan::where(['is_aktif' => 1])->get();
+        $karyawans     = Karyawan::where(['is_aktif' => 1])->get();
+        $karyawans_non = Karyawan::where(['is_aktif' => 0])->get();
 
         // Setelah semua file di-copy, buat zip
         $zipFileName = 'foto_karyawan_' . date('Ymd_His') . '.zip';
@@ -75,23 +76,46 @@ class KaryawanController extends Controller
             return back()->with('error', 'Gagal membuat zip, error code: ' . $result);
         }
 
+        // Buat folder dalam zip
+        $zip->addEmptyDir('foto_karyawan');
+        $zip->addEmptyDir('foto_karyawan/aktif');
+        $zip->addEmptyDir('foto_karyawan/non aktif');
+
         $totalAdded = 0;
+
+        // Karyawan aktif
         foreach ($karyawans as $karyawan) {
             $illegalChars = ['\\', '/', ':', '*', '?', '"', '<', '>', '|', '.', ','];
             $nama         = str_replace($illegalChars, '', $karyawan->nama);
             $nama         = trim(preg_replace('/\s+/', ' ', $nama));
 
-            // Path sumber
-            $sourcePath = public_path('assets\\images\\matta\\karyawan\\' . $karyawan->nik . '\\' . $karyawan->nik . '.jpg');
+            $sourcePath = public_path('assets/images/matta/karyawan/' . $karyawan->nik . '/' . $karyawan->nik . '.jpg');
 
             if (!file_exists($sourcePath)) {
                 \Log::warning("File sumber tidak ditemukan: {$sourcePath}");
                 continue;
             }
 
-            // Langsung tambahkan ke zip tanpa folder, hanya filename
             $fileName = $karyawan->nik . ' ' . $nama . '.jpg';
-            $zip->addFile($sourcePath, $fileName);
+            $zip->addFile($sourcePath, 'foto_karyawan/aktif/' . $fileName);
+            $totalAdded++;
+        }
+
+        // Karyawan non aktif
+        foreach ($karyawans_non as $karyawan) {
+            $illegalChars = ['\\', '/', ':', '*', '?', '"', '<', '>', '|', '.', ','];
+            $nama         = str_replace($illegalChars, '', $karyawan->nama);
+            $nama         = trim(preg_replace('/\s+/', ' ', $nama));
+
+            $sourcePath = public_path('assets/images/matta/karyawan/' . $karyawan->nik . '/' . $karyawan->nik . '.jpg');
+
+            if (!file_exists($sourcePath)) {
+                \Log::warning("File sumber tidak ditemukan: {$sourcePath}");
+                continue;
+            }
+
+            $fileName = $karyawan->nik . ' ' . $nama . '.jpg';
+            $zip->addFile($sourcePath, 'foto_karyawan/non aktif/' . $fileName);
             $totalAdded++;
         }
 
