@@ -15,6 +15,10 @@ class Attendance extends Model
         return $this->belongsTo('App\Models\Karyawan', 'att_nik', 'nik');
     }
 
+    public function _fp_trx(){
+        return $this->belongsTo('App\Models\TrxFingePrint', 'id_fp_trx', 'id');
+    }
+
     public function getCreatedAtAttribute()
     {
         return \Carbon\Carbon::parse($this->attributes['created_at']) ->format('d-m-Y H:i:s');
