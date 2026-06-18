@@ -128,6 +128,7 @@
                                                 <th>Address</th>
                                                 <th>Map</th>
                                                 <th>Status</th>
+                                                <th>Delay</th>
                                                 <th>Type</th>
                                                 <th>Source</th>
                                             </tr>
@@ -166,6 +167,23 @@
                                                         <span class="badge badge-warning">{{ $data->att_status }}</span>
                                                     @else
                                                         <span class="badge badge-danger">{{ $data->att_status }}</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($data->att_type == 'Clock-in' && $data->att_status == 'Late-in' && $data->att_data_src == 'Regular')
+                                                        @if($data->wg_id == 1)
+                                                            @php
+                                                            $clockin = App\Models\WorkingGroup::find(1)->clockin;
+                                                            $totalDetik = \Carbon\Carbon::createFromFormat('H:i:s', \Carbon\Carbon::parse($data->att_timestamp)->format('H:i:s'))->diffInSeconds(\Carbon\Carbon::createFromFormat('H:i:s', $clockin));
+                                                            @endphp
+                                                            {{ \Carbon\Carbon::createFromTime(floor($totalDetik / 3600), floor(($totalDetik % 3600) / 60), $totalDetik % 60)->format('H:i:s') }}
+                                                        @elseif($data->wg_id > 1)
+                                                            @php
+                                                            $clockin = App\Models\WorkingDay::find($data->att_wd_ot_id)->clockin;
+                                                            $totalDetik = \Carbon\Carbon::createFromFormat('H:i:s', \Carbon\Carbon::parse($data->att_timestamp)->format('H:i:s'))->diffInSeconds(\Carbon\Carbon::parse($clockin)->format('H:i:s'));
+                                                            @endphp
+                                                            {{ \Carbon\Carbon::createFromTime(floor($totalDetik / 3600), floor(($totalDetik % 3600) / 60), $totalDetik % 60)->format('H:i:s') }}
+                                                        @endif
                                                     @endif
                                                 </td>
                                                 <td>
