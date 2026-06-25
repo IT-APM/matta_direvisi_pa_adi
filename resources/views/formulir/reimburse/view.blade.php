@@ -155,7 +155,7 @@
                                 $info = App\Models\TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
                             @endphp
                             <tr>
-                                <td>Catatan Oleh HCO</td>
+                                <td>Catatan Oleh {{ App\Models\MtrUtility::find(51)->informasi }}</td>
                                 <td>@if(!empty($info)) {{ $info->keterangan }} @endif</td>
                             </tr>
                         </tbody>
