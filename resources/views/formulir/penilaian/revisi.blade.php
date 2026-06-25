@@ -498,7 +498,7 @@
                             @if(!empty($trx))
                                 <input type="hidden" id="logid_hco" name="logid_hco" value="{{ $trx->id }}">
                                 <div class="card-header">
-                                    <h5>Revisi HCO</h5>
+                                    <h5>Revisi {{ App\Models\MtrUtility::find(51)->informasi }}</h5>
                                 </div>
                                 <div class="card-body typography">
                                     {{-- Kesimpulan dan Rekomendasi --}}
