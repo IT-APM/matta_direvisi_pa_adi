@@ -435,7 +435,7 @@
                             </div>
                         </div>
                     @endif
-                    {{-- 6=Interview User and HCO Send --}}
+                    {{-- 6=Interview User and PC Send --}}
                     <div id="row_6">
                         <form action="{{ route('recruitment.interview_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                             @csrf
@@ -529,7 +529,7 @@
                             </div>
                         </form>
                     </div>
-                    {{-- 10=Interview HCO Send --}}
+                    {{-- 10=Interview PC Send --}}
                     <div id="row_10">
                         <form action="{{ route('recruitment.interview_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                             @csrf
@@ -585,16 +585,16 @@
                             <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
                             <input type="hidden" id="process" name="process" value={{ $process }}>
                             @if($process=='interview_user_hco_reschedule')
-                                <h5>Interview User and HCO Reschedule</h5>
-                                {{-- 6=Interview User and HCO Send --}}
+                                <h5>Interview User and {{ App\Models\MtrUtility::find(51)->informasi }} Reschedule</h5>
+                                {{-- 6=Interview User and PC Send --}}
                                 <input type="hidden" id="id_status" name="id_status" value="6">
                             @elseif($process=='interview_user_reschedule')
                                 <h5>Interview User Reschedule</h5>
                                 {{-- 8=Interview User Send --}}
                                 <input type="hidden" id="id_status" name="id_status" value="8">
                             @elseif($process=='interview_hco_reschedule')
-                                <h5>Interview HCO Reschedule</h5>
-                                {{-- 10=Interview HCO Send --}}
+                                <h5>Interview {{ App\Models\MtrUtility::find(51)->informasi }} Reschedule</h5>
+                                {{-- 10=Interview PC Send --}}
                                 <input type="hidden" id="id_status" name="id_status" value="10">
                             @endif
                             <h6>Before</h6>
@@ -880,13 +880,13 @@
                             <div class="row">
                                 <div class="col-12 col-md-12">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="catatan">Catatan HCO</label>
+                                        <label class="form-label" for="catatan">Catatan {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-12">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="lampiran">Lampiran HCO</label>
+                                        <label class="form-label" for="lampiran">Lampiran {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <input name="lampiran" id="lampiran" class="form-control" type="file">
                                         <label class="form-label">*Maksimal 5 MB dengan format pdf/image(jpg, jpeg, png)</label>
                                     </div>
@@ -899,7 +899,7 @@
                             </div>
                         </form>
                     </div>
-                    {{-- 13=Negotiation Deal by HCO --}}
+                    {{-- 13=Negotiation Deal by PC --}}
                     <div id="row_13">
                         @if(!empty($nego))
                         <form action="{{ route('recruitment.negotiation_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
@@ -924,13 +924,13 @@
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="catatan">Catatan HCO</label>
+                                        <label class="form-label" for="catatan">Catatan {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="lampiran">Lampiran HCO</label>
+                                        <label class="form-label" for="lampiran">Lampiran {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <input name="lampiran" id="lampiran" class="form-control" type="file">
                                         <label class="form-label">*Maksimal 5 MB dengan format pdf/image(jpg, jpeg, png)</label>
                                     </div>
@@ -944,7 +944,7 @@
                         </form>
                         @endif
                     </div>
-                    {{-- 14=Negotiation No Deal by HCO --}}
+                    {{-- 14=Negotiation No Deal by PC --}}
                     <div id="row_14">
                         @if(!empty($nego))
                         <form action="{{ route('recruitment.negotiation_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
@@ -956,13 +956,13 @@
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="catatan">Catatan HCO</label>
+                                        <label class="form-label" for="catatan">Catatan {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="lampiran">Lampiran HCO</label>
+                                        <label class="form-label" for="lampiran">Lampiran {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <input name="lampiran" id="lampiran" class="form-control" type="file">
                                         <label class="form-label">*Maksimal 5 MB dengan format pdf/image(jpg, jpeg, png)</label>
                                     </div>
@@ -1057,13 +1057,13 @@
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="catatan">Catatan HCO</label>
+                                        <label class="form-label" for="catatan">Catatan {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="lampiran">Lampiran HCO</label>
+                                        <label class="form-label" for="lampiran">Lampiran {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <input name="lampiran" id="lampiran" class="form-control" type="file">
                                         <label class="form-label">*Maksimal 5 MB dengan format pdf/image(jpg, jpeg, png)</label>
                                     </div>
@@ -1146,13 +1146,13 @@
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="catatan">Catatan HCO</label>
+                                        <label class="form-label" for="catatan">Catatan {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="lampiran">Lampiran HCO</label>
+                                        <label class="form-label" for="lampiran">Lampiran {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <input name="lampiran" id="lampiran" class="form-control" type="file">
                                         <label class="form-label">*Maksimal 5 MB dengan format pdf/image(jpg, jpeg, png)</label>
                                     </div>
@@ -1189,13 +1189,13 @@
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="catatan">Catatan HCO</label>
+                                        <label class="form-label" for="catatan">Catatan {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="col-12 mb-2">
-                                        <label class="form-label" for="lampiran">Lampiran HCO</label>
+                                        <label class="form-label" for="lampiran">Lampiran {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                         <input name="lampiran" id="lampiran" class="form-control" type="file">
                                         <label class="form-label">*Maksimal 5 MB dengan format pdf/image(jpg, jpeg, png)</label>
                                     </div>
@@ -1249,9 +1249,9 @@
                                                 <span class="f-light"><br/>{{ $catatan['psikotest'] }} ({{ \Carbon\Carbon::parse($catatan['check_in']) ->format('d-m-Y H:i:s') }} s/d {{ \Carbon\Carbon::parse($catatan['check_out']) ->format('d-m-Y H:i:s') }})</span>
                                             @endif
                                         @endif
-                                    {{-- 6=Interview User and HCO Send --}}
+                                    {{-- 6=Interview User and PC Send --}}
                                     {{-- 8=Interview User Send --}}
-                                    {{-- 10=Interview HCO Send --}}
+                                    {{-- 10=Interview PC Send --}}
                                     @elseif(in_array($_history->id_status, [6,8,10]))
                                         @if(!empty($catatan))
                                             @php
@@ -1329,13 +1329,13 @@
         });
         // 
         // 4=Psycotest Send
-        // 6=Interview User and HCO Send
+        // 6=Interview User and PC Send
         // 8=Interview User Send
-        // 10=Interview HCO Send
+        // 10=Interview PC Send
         // 16=Interpretation
         // 12=Negotiation Process
-        // 13=Negotiation Deal by HCO
-        // 14=Negotiation No Deal by HCO
+        // 13=Negotiation Deal by PC
+        // 14=Negotiation No Deal by PC
         // 15=Recruitment Done
         // 21=Re-Negotiation Process
         // 22=Psychotest and Interview Pass
@@ -1376,7 +1376,7 @@
                 $("#row_24").hide();
                 $("#row_25").hide();
             }
-            // 6=Interview User and HCO Send
+            // 6=Interview User and PC Send
             else if ($value == 6) {
                 $("#row_4").hide();
                 $("#row_6").show();
@@ -1409,7 +1409,7 @@
                 $("#row_24").hide();
                 $("#row_25").hide();
             }
-            // 10=Interview HCO Send
+            // 10=Interview PC Send
             else if ($value == 10) {
                 $("#row_4").hide();
                 $("#row_6").hide();
@@ -1460,7 +1460,7 @@
                 $("#row_24").hide();
                 $("#row_25").hide();
             }
-            // 13=Negotiation Deal by HCO
+            // 13=Negotiation Deal by PC
             else if ($value == 13) {
                 $("#row_4").hide();
                 $("#row_6").hide();
@@ -1477,7 +1477,7 @@
                 $("#row_24").hide();
                 $("#row_25").hide();
             }
-            // 14=Negotiation No Deal by HCO
+            // 14=Negotiation No Deal by PC
             else if ($value == 14) {
                 $("#row_4").hide();
                 $("#row_6").hide();
