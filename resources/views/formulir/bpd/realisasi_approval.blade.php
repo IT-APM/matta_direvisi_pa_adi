@@ -154,7 +154,7 @@
                     $total_l_idr_realisasi = 0;
                     $total_l_usd_realisasi = 0;
                     @endphp
-                    <!-- 18=Realisasi CA, 19=Realisasi Disetujui Admin, 22=Realisasi Disetujui PC, 24=Realisasi Disetujui L1, 26=Realisasi Disetujui L2, 28=Realisasi Disetujui HCO -->
+                    <!-- 18=Realisasi CA, 19=Realisasi Disetujui Admin, 22=Realisasi Disetujui PC, 24=Realisasi Disetujui L1, 26=Realisasi Disetujui L2, 28=Realisasi Disetujui PC -->
                     @if($trxMaster->status_id > 13)
                         <div class="row mb-3">
                             <div class="col-sm-2">
