@@ -162,6 +162,9 @@ class TrxRekomendasiController extends Controller
         // karyawan masih di hardcode dengan level minimal 4 = Assistant Manager
         // $nik_atasan = '01021403097';
         // $nik_atasan = auth()->user()->nik;
+        if (!auth()->check()) {
+            return redirect()->route('login-one');
+        }
         $nik_atasan = Crypt::decrypt($request->nik_atasan);
         $where = ['nik' => $nik_atasan];
         $pengaju = Karyawan::select('nik', 'nama')->where($where)->first();
