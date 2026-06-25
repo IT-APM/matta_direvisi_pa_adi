@@ -298,6 +298,7 @@ Route::get('recruitment/get_offering/download/{id}', [TrxRecruitmentController::
 Route::post('recruitment/pedoman_post', [ TrxRecruitmentController::class, 'pedoman_post'])->name('recruitment.pedoman_post');
 Route::resource('noattendance', NoAttendanceController::class)->middleware('can:hc');
 Route::resource('overtime', OvertimeController::class)->middleware('auth');
+Route::get('overtime/dashboard/{id}', [OvertimeController::class, 'dashboard'])->name('overtime.dashboard')->middleware('can:hc');
 Route::resource('working', WorkingDayController::class)->middleware('can:hc');
 Route::post('working/upload_jadwal/{id}', [WorkingDayController::class, 'upload_jadwal'])->name('working.upload_jadwal')->middleware('can:hc');
 Route::resource('wg', WorkingGroupController::class)->middleware('auth');
