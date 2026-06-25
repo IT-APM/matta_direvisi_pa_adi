@@ -168,7 +168,7 @@
                                         <th>Action</th>
                                         <!-- hco only -->
                                         @can('hc')
-                                            <th>HCO</th>
+                                            <th>{{ App\Models\MtrUtility::find(51)->informasi }}</th>
                                         @endcan
                                     </tr>
                                 </thead>
@@ -287,7 +287,7 @@
                                                         data-toggle="tooltip" title="PDF CA" target="_blank"><i
                                                             class="fa fa-file-pdf-o"></i></a>
                                                 @endif
-                                                <!-- 13 = CA Disetujui HCO -->
+                                                <!-- 13 = CA Disetujui PC -->
                                                 <!-- 15 = Perbaikan CA oleh Admin -->
                                                 <!-- 31 = Selesai Realisasi -->
                                                 @if ($data->status_id > 13 && $data->status_id <= 31 && $data->status_id != 14 && $data->status_id != 15)
@@ -380,7 +380,7 @@
                                                             data-toggle="tooltip" title="PDF CA" target="_blank"><i
                                                                 class="fa fa-file-pdf-o"></i></a>
                                                     @endif
-                                                    <!-- 13 = CA Disetujui HCO -->
+                                                    <!-- 13 = CA Disetujui PC -->
                                                     <!-- 15 = Perbaikan CA oleh Admin -->
                                                     <!-- 31 = Selesai Realisasi -->
                                                     @if ($data->status_id > 13 && $data->status_id <= 31 && $data->status_id != 14 && $data->status_id != 15)
