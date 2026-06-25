@@ -216,6 +216,7 @@
                             @can('hc')
                             <li><a href="{{ route('dashboard.survey_pora', 0) }}">Hasil Survey PORA</a></li>
                             <li><a href="{{ route('karyawan.dashboard', 0) }}">Infografis</a></li>
+                            <li><a href="{{ route('overtime.dashboard', 1) }}">Overtime</a></li>
                             <li><a href="{{ route('kebutuhan.dashboard', [
                                 'id'=>0, 'filter'=>'true', 'tahun'=>[now()->year],
                                 'type_direktorat'=>'bar', 'direktorat'=>$select_direktorat,
@@ -480,7 +481,7 @@
                                 <li><a href="{{ route('findim_divisi.index') }}">FinDim Division</a></li>
                                 <li><a href="{{ route('findim_project.index') }}">FinDim Project</a></li>
                                 <li><a href="{{ route('findim_subdepartemen.index') }}">FinDim Sub Department</a></li>
-                                <li><a href="{{ route('hcouser.index') }}">HCO Team</a></li>
+                                <li><a href="{{ route('hcouser.index') }}">{{ App\Models\MtrUtility::find(51)->informasi }} Team</a></li>
                                 <li><a href="{{ route('plafon.index') }}">Health Reimbursement<br />Limits</a></li>
                                 <li><a href="{{ route('iphoneuser.index') }}">iPhone Users</a></li>
                                 <li><a href="{{ route('pekerjaan_bidang.index') }}">Job Field</a></li>
