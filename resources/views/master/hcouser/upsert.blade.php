@@ -15,7 +15,7 @@
 
 @section('breadcrumb-items')
 <li class="breadcrumb-item">Data Master</li>
-<li class="breadcrumb-item">Karyawan HCO</li>
+<li class="breadcrumb-item">Karyawan {{ App\Models\MtrUtility::find(51)->informasi }}</li>
 <li class="breadcrumb-item active">Add</li>
 @endsection
 
