@@ -370,7 +370,7 @@ class TrxReimburseController extends Controller
         if($plafon->id > 1000){
             if($klaim_kesehatan > $trxM->sisa_plafon_1){
                 $error .= '<h5>Nominal klaim kesehatan melebihi plafon.
-                <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                <br/>Untuk informasi lebih lanjut dapat menghubungi '.MtrUtility::find(51)->informasi.'.
                 <br/>Terima kasih.</h5>';
                 return redirect()->back()->with('error', $error);
             }
@@ -384,7 +384,7 @@ class TrxReimburseController extends Controller
                 if($cekData['cek']){
                     $error .= '<h5>Klaim Kacamata-Frame sudah pernah diajukan di tanggal '.Carbon::parse($cekData['tanggal'])->format('d-m-Y').'.
                     <br/>Anda dapat mengajukan kembali dari tanggal '.Carbon::parse(strtotime("+2 years", strtotime($cekData['tanggal'])))->format('d-m-Y').'.
-                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi '.MtrUtility::find(51)->informasi.'.
                     <br/>Terima kasih.</h5>';
                     return redirect()->back()->with('error', $error);
                 }else{
@@ -401,7 +401,7 @@ class TrxReimburseController extends Controller
                 if($cekData['cek']){
                     $error .= '<h5>Klaim Kacamata-Lensa sudah pernah diajukan di tanggal '.Carbon::parse($cekData['tanggal'])->format('d-m-Y').'.
                     <br/>Anda dapat mengajukan kembali dari tanggal '.Carbon::parse(strtotime("+1 years", strtotime($cekData['tanggal'])))->format('d-m-Y').'.
-                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi '.MtrUtility::find(51)->informasi.'.
                     <br/>Terima kasih.</h5>';
                     return redirect()->back()->with('error', $error);
                 }else{
@@ -417,7 +417,7 @@ class TrxReimburseController extends Controller
                 if($cekData['cek']){
                     $error .= '<h5>Klaim Kehamilan sudah pernah diajukan.
                     <br/>Anda dapat mengajukan kembali tahun berikutnya.
-                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi '.MtrUtility::find(51)->informasi.'.
                     <br/>Terima kasih.</h5>';
                     return redirect()->back()->with('error', $error);
                 }else{
@@ -433,7 +433,7 @@ class TrxReimburseController extends Controller
                 if($cekData['cek']){
                     $error .= '<h5>Klaim Persalinan-Normal sudah pernah diajukan.
                     <br/>Anda dapat mengajukan kembali tahun berikutnya.
-                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi '.MtrUtility::find(51)->informasi.'.
                     <br/>Terima kasih.</h5>';
                     return redirect()->back()->with('error', $error);
                 }else{
@@ -449,7 +449,7 @@ class TrxReimburseController extends Controller
                 if($cekData['cek']){
                     $error .= '<h5>Klaim Persalinan-Caesar sudah pernah diajukan.
                     <br/>Anda dapat mengajukan kembali tahun berikutnya.
-                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi '.MtrUtility::find(51)->informasi.'.
                     <br/>Terima kasih.</h5>';
                     return redirect()->back()->with('error', $error);
                 }else{
@@ -860,7 +860,7 @@ class TrxReimburseController extends Controller
             if($plafon->id > 1000){
                 if($klaim_kesehatan_akhir > $trxM->sisa_plafon_1){
                     $error .= '<h5>Nominal klaim kesehatan melebihi plafon.
-                    <br/>Untuk informasi lebih lanjut dapat menghubungi HCO.
+                    <br/>Untuk informasi lebih lanjut dapat menghubungi '.MtrUtility::find(51)->informasi.'.
                     <br/>Terima kasih.</h5>';
                     return redirect()->back()->with('error', $error);
                 }
