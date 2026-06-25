@@ -3,7 +3,8 @@
 
 @section('css')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatable-extension.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatable-extension.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
 @endsection
 
 @section('style')
@@ -42,6 +43,14 @@
                                         <br/>From <input class="form-control" name="date_from" id="date_from" type="date" required="" value="{{ $date_from }}">
                                         To <input class="form-control" name="date_to" id="date_to" type="date" required="" value="{{ $date_to }}">
                                         {{-- <br/> --}}
+                                        <label class="form-label" for="att_nik">Karyawan</label>
+                                        <select class="form-select js-example-basic-single col-sm-12" id="att_nik" name="att_nik" required="">
+                                            <option selected="" disabled="" value="">Pilih...</option>
+                                            <option value="All">Semua</option>
+                                            @foreach ($att_nik_nama as $data)
+                                                <option value="{{ $data->att_nik }}">{{ $data->nama }} - {{ $data->att_nik }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="h6">Action</label>&nbsp;<input type="checkbox" onClick="toggle_att_type(this)" /> Check All
@@ -280,6 +289,8 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/vfs_fonts.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
+<script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
+<script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 <script type="text/javascript">
 function toggle_att_type(source) {
     checkboxes = document.getElementsByName('att_type[]');
