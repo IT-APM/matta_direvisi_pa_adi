@@ -146,7 +146,7 @@
                         <br />
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label" for="keterangan">Catatan HCO</label>
+                                <label class="form-label" for="keterangan">Catatan {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                 <textarea class="form-control" id="keterangan" name="keterangan" rows="4" >@if(!empty($keterangan)) {{ $keterangan->keterangan }} @endif</textarea>
                             </div>
                         </div>
