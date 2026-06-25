@@ -281,7 +281,7 @@
                                 <input id="bulan" name="bulan" required="" class="form-control numbers" type="number" min="1" oninput="validity.valid||(value='');" placeholder="Jumlah Bulan">
                             </div>
                             <div class="col-md-8" id="div_kes_rek_final">
-                                <label class="form-label" for="kes_rek_final">Kesimpulan dan Rekomendasi HCO</label>
+                                <label class="form-label" for="kes_rek_final">Kesimpulan dan Rekomendasi {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                 <textarea class="form-control" name="kes_rek_final" id="kes_rek_final" rows="3"></textarea>
                             </div>
                         </div>
