@@ -160,7 +160,7 @@
                             </table>
                         </div>
                     </div>
-                    <!-- 13=CA Disetujui HCO -->
+                    <!-- 13=CA Disetujui PC -->
                     @if($trxMaster->status_id == 13 || $trxMaster->status_id == 20)
                         <div class="row mb-3">
                             <div class="col-sm-2">
