@@ -699,11 +699,11 @@ class TrxBpdController extends Controller
                 // 
                 return view('formulir.bpd.view', compact('catatan', 'trxMaster', 'trxDetailInfo', 'trxDetailBiaya', 'kelompok', 'no_info', 'no_biaya', 'linkAction', 'nik', 'approve', 'reject', 'koordinator', 'coa', 'history', 'trxDetailBiayaPersonel', 'no_biaya_info'));
                 break;
-            // 14 = CA Ditolak HCO
+            // 14 = CA Ditolak PC
             case 'reject_hco':
                 $where = [ 'id_trx' => $id, 'id_status' => 14 ];
                 $catatan = TrxBpdLog::where($where)->orderBy('created_at','desc')->first()->keterangan;
-                // 14 = CA Ditolak HCO
+                // 14 = CA Ditolak PC
                 if($status_id <> 14){
                     return view('emails.bpd_ok');
                     break;
@@ -838,13 +838,13 @@ class TrxBpdController extends Controller
                 break;
             case 'approval_hco':
                 // 11 = CA Disetujui L2
-                // 13 = CA Disetujui HCO
+                // 13 = CA Disetujui PC
                 if($status_id <> 11 && $status_id <> 13){
                     return view('emails.bpd_ok');
                     break;
                 }
-                // 13 = CA Disetujui HCO
-                // 14 = CA Ditolak HCO
+                // 13 = CA Disetujui PC
+                // 14 = CA Ditolak PC
                 $approve = 13;
                 $reject = 14;
                 return view('formulir.bpd.view', compact('trxMaster', 'trxDetailInfo', 'trxDetailBiaya', 'kelompok', 'no_info', 'no_biaya', 'linkAction', 'nik', 'approve', 'reject', 'koordinator', 'coa', 'history', 'trxDetailBiayaPersonel', 'no_biaya_info'));
@@ -997,8 +997,8 @@ class TrxBpdController extends Controller
                 }
                 // hco
                 $where = ['id_trx' => $id, 'nik_pic' => $trxMaster->hco];
-                // 13 = CA Disetujui HCO
-                // 14 = CA Ditolak HCO
+                // 13 = CA Disetujui PC
+                // 14 = CA Ditolak PC
                 $bpdLog = TrxBpdLog::where($where)->whereIn('id_status', [13,14])->orderBy('id', 'desc')->first();
                 if (!empty($bpdLog)) {
                     if($bpdLog->id_status == 13){
@@ -1118,7 +1118,7 @@ class TrxBpdController extends Controller
                 $reject = 20;
                 return view('formulir.bpd.realisasi_review', compact('catatan', 'trxMaster', 'trxDetailInfo', 'trxDetailInfoRealisasi', 'trxDetailBiaya', 'trxDetailBiayaRealisasi', 'trxDetailBiayaPersonelRealisasi', 'kelompok', 'no_info', 'no_info_realisasi', 'no_biaya', 'no_biaya_realisasi', 'no_biaya_info_realisasi', 'linkAction', 'nik', 'approve', 'reject', 'koordinator', 'coa', 'history', 'trxDetailBiayaPersonel', 'no_biaya_info'));
                 break;
-            // 29 = Realisasi Ditolak HCO
+            // 29 = Realisasi Ditolak PC
             case 'reject_realisasi_hco':
                 if($status_id <> 29){
                     return view('emails.bpd_ok');
@@ -1229,8 +1229,8 @@ class TrxBpdController extends Controller
                     return view('emails.bpd_ok');
                     break;
                 }
-                // 28 = Realisasi Disetujui HCO
-                // 29 = Realisasi Ditolak HCO
+                // 28 = Realisasi Disetujui PC
+                // 29 = Realisasi Ditolak PC
                 $approve = 28;
                 $reject = 29;
                 return view('formulir.bpd.realisasi_approval', compact('trxMaster', 'trxDetailInfo', 'trxDetailInfoRealisasi', 'trxDetailBiaya', 'trxDetailBiayaRealisasi', 'trxDetailBiayaPersonelRealisasi', 'kelompok', 'no_info', 'no_info_realisasi', 'no_biaya', 'no_biaya_realisasi', 'no_biaya_info_realisasi', 'linkAction', 'nik', 'approve', 'reject', 'koordinator', 'coa', 'history', 'trxDetailBiayaPersonel', 'no_biaya_info'));
@@ -1324,8 +1324,8 @@ class TrxBpdController extends Controller
                 }
                 // hco
                 $where = ['id_trx' => $id, 'nik_pic' => $trxMaster->hco];
-                // 28 = Realisasi Disetujui HCO
-                // 29 = Realisasi Ditolak HCO
+                // 28 = Realisasi Disetujui PC
+                // 29 = Realisasi Ditolak PC
                 $bpdLog = TrxBpdLog::where($where)->whereIn('id_status', [28,29])->orderBy('id', 'desc')->first();
                 if (!empty($bpdLog)) {
                     if($bpdLog->id_status == 28){
@@ -1448,9 +1448,9 @@ class TrxBpdController extends Controller
                 // 
                 return view('formulir.bpd.reimburse_view', compact('catatan', 'trxMaster', 'trxDetailInfo', 'trxDetailBiaya', 'kelompok', 'no_info', 'no_biaya', 'linkAction', 'nik', 'approve', 'reject', 'koordinator', 'coa', 'history', 'trxDetailBiayaPersonel', 'no_biaya_info'));
                 break;
-            // 45 = Reimburse Ditolak HCO
+            // 45 = Reimburse Ditolak PC
             case 'reject_reimburse_hco':
-                // 45 = Reimburse Ditolak HCO
+                // 45 = Reimburse Ditolak PC
                 if($status_id <> 45){
                     return view('emails.bpd_ok');
                     break;
@@ -1550,13 +1550,13 @@ class TrxBpdController extends Controller
                 break;
             case 'reimburse_hco':
                 // 42 = Reimburse Disetujui L2
-                // 44 = Reimburse Disetujui HCO
+                // 44 = Reimburse Disetujui PC
                 if($status_id <> 42 && $status_id <> 44){
                     return view('emails.bpd_ok');
                     break;
                 }
-                // 44 = Reimburse Disetujui HCO
-                // 45 = Reimburse Ditolak HCO
+                // 44 = Reimburse Disetujui PC
+                // 45 = Reimburse Ditolak PC
                 $approve = 44;
                 $reject = 45;
                 return view('formulir.bpd.reimburse_view', compact('trxMaster', 'trxDetailInfo', 'trxDetailBiaya', 'kelompok', 'no_info', 'no_biaya', 'linkAction', 'nik', 'approve', 'reject', 'koordinator', 'coa', 'history', 'trxDetailBiayaPersonel', 'no_biaya_info'));
@@ -1643,8 +1643,8 @@ class TrxBpdController extends Controller
                 }
                 // hco
                 $where = ['id_trx' => $id, 'nik_pic' => $trxMaster->hco];
-                // 44 = Reimburse Disetujui HCO
-                // 45 = Reimburse Ditolak HCO
+                // 44 = Reimburse Disetujui PC
+                // 45 = Reimburse Ditolak PC
                 $bpdLog = TrxBpdLog::where($where)->whereIn('id_status', [44,45])->orderBy('id', 'desc')->first();
                 if (!empty($bpdLog)) {
                     if($bpdLog->id_status == 44){
@@ -2178,7 +2178,7 @@ class TrxBpdController extends Controller
                 $arr['id_trx'] = $id;
                 $arr['id_status'] = $status_id;
                 $arr['pic'] = $view;
-                // 14 = CA Ditolak HCO
+                // 14 = CA Ditolak PC
                 if($status_id == 14){
                     $view = 'reject_hco';
                     $arr['email_to'] = json_decode($trxMaster->admin_property, true)['email'];
@@ -2623,7 +2623,7 @@ class TrxBpdController extends Controller
                 $arr['id_trx'] = $id;
                 $arr['id_status'] = $status_id;
                 $arr['pic'] = $view;
-                // 29 = Realisasi Ditolak HCO
+                // 29 = Realisasi Ditolak PC
                 if($status_id == 29){
                     $view = 'reject_realisasi_hco';
                     $arr['email_to'] = json_decode($trxMaster->admin_property, true)['email'];
@@ -3049,7 +3049,7 @@ class TrxBpdController extends Controller
                 $arr['id_trx'] = $id;
                 $arr['id_status'] = $status_id;
                 $arr['pic'] = $view;
-                // 45 = Reimburse Ditolak HCO
+                // 45 = Reimburse Ditolak PC
                 if($status_id == 45){
                     $view = 'reject_reimburse_hco';
                     $arr['email_to'] = json_decode($trxMaster->admin_property, true)['email'];
