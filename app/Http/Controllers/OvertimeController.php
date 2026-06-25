@@ -29,6 +29,295 @@ class OvertimeController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function dashboard(Request $request, $id)
+    {
+        // nkp
+        if(Gate::allows('hc_nkp')){
+            return redirect()->route('error-403');
+        }
+        // initial
+        // $nominal_perusahaan_tahun = [];
+        $trx = $this->getOvertimeByGroup('perusahaan');
+        $nominal_perusahaan_tahun = $trx->groupBy(function ($item) {
+            return Carbon::createFromFormat('Y-m', $item->bulan)->format('Y');
+        })->map(function ($items, $tahun) {
+            $data = [];
+            foreach ($items as $item) {
+                if (!isset($data[$item->group_key])) {
+                    $data[$item->group_key] = [
+                        'jumlah' => 0,
+                        'detail' => [],
+                    ];
+                }
+                $data[$item->group_key]['jumlah'] += $item->nominal;
+                $data[$item->group_key]['detail'][] = [
+                    'nik'  => json_decode($item->ot_maker_property, true)['nik'],
+                    'nama' => json_decode($item->ot_maker_property, true)['nama'],
+                    'bulan' => Carbon::createFromFormat('Y-m', $item->bulan)->format('M Y'),
+                    'nominal' => $item->nominal,
+                ];
+            }
+            return [$tahun => $data];
+        })->values()->collapse()->toArray();
+        // $nominal_perusahaan_bulan = [];
+        $trx = $this->getOvertimeByGroup('perusahaan');
+        $nominal_perusahaan_bulan = $this->formatOvertimeGroup($trx);
+        // $nominal_status_bulan = [];
+        $trx = $this->getOvertimeByGroup('status_karyawan');
+        $nominal_status_bulan = $this->formatOvertimeGroup($trx);
+        // $nominal_divisi_bulan = [];
+        $trx = $this->getOvertimeByGroup('dep');
+        $nominal_divisi_bulan = $this->formatOvertimeGroup($trx);
+        // $jumlah_status_bulan = [];
+        $trx = Overtime::where('ot_length_rp_adj', '>', 0)
+        ->whereYear('ot_start_at', date('Y'))
+        ->select(
+            DB::raw('DATE_FORMAT(ot_start_at, "%Y-%m") as bulan'),
+            DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.status_karyawan")) as group_key'),
+            DB::raw('COUNT(DISTINCT JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.nik"))) as jumlah_karyawan')
+        )
+        ->groupBy(
+            DB::raw('DATE_FORMAT(ot_start_at, "%Y-%m")'),
+            DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.status_karyawan"))')
+        )
+        ->orderBy('bulan')
+        ->orderBy('group_key')
+        ->get();
+        // return response()->json( [ 'trx' => $trx ], 200 );
+        $jumlah_status_bulan = $trx->groupBy('bulan')->map(function ($items, $bulan) {
+            $bulanFormat = Carbon::createFromFormat('Y-m', $bulan)->format('M Y');
+            $data = [];
+            foreach ($items as $item) {
+                $data[$item->group_key] = [
+                    'jumlah' => $item->jumlah_karyawan,
+                    'detail' => [],
+                ];
+                // $data[$item->group_key]['detail'][] = [
+                //     'nik'  => json_decode($item->ot_maker_property, true)['nik'],
+                //     'nama' => json_decode($item->ot_maker_property, true)['nama'],
+                //     'bulan' => Carbon::createFromFormat('Y-m', $item->bulan)->format('M Y'),
+                //     'nominal' => $item->nominal,
+                // ];
+            }
+            return [$bulanFormat => $data];
+        })->values()->collapse()->toArray();
+        // $jumlah_perusahaan_status_bulan = [];
+        $trx = Overtime::where('ot_length_rp_adj', '>', 0)
+        ->whereYear('ot_start_at', date('Y'))
+        ->select(
+            DB::raw('DATE_FORMAT(ot_start_at, "%Y-%m") as bulan'),
+            DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.perusahaan")) as perusahaan'),
+            DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.status_karyawan")) as status_karyawan'),
+            DB::raw('COUNT(DISTINCT JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.nik"))) as jumlah_karyawan')
+        )
+        ->groupBy(
+            DB::raw('DATE_FORMAT(ot_start_at, "%Y-%m")'),
+            DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.perusahaan"))'),
+            DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.status_karyawan"))')
+        )
+        ->orderBy('bulan')
+        ->orderBy('perusahaan')
+        ->orderBy('status_karyawan')
+        ->get();
+        $jumlah_perusahaan_status_bulan = $trx->groupBy('bulan')->map(function ($items, $bulan) {
+            $bulanFormat = Carbon::createFromFormat('Y-m', $bulan)->format('M Y');
+            $data = [];
+            foreach ($items as $item) {
+                if (!isset($data[$item->perusahaan])) {
+                    $data[$item->perusahaan] = [];
+                }
+                $data[$item->perusahaan][$item->status_karyawan] = [
+                    'jumlah' => $item->jumlah_karyawan,
+                    'detail' => [],
+                ];
+            }
+            return [$bulanFormat => $data];
+        })->values()->collapse()->toArray();
+        // return response()->json( [ 'jumlah_perusahaan_status_bulan' => $jumlah_perusahaan_status_bulan ], 200 );
+        $lable = ['Data Over Time ', 'Nominal Overtime Per Perusahaan', 'Nominal Overtime per Status Karyawan', 'Nominal Overtime Per Divisi', 'Jumlah Karyawan Overtime Per Status Karyawan', 'Jumlah Karyawan Overtime Per Perusahaan Per Status Karyawan'];
+        // $bulan_tahun_dari = '';
+        // $bulan_tahun_sampai = '';
+        $bulan_tahun_dari = Carbon::now()->startOfYear()->format('Y-m');
+        $bulan_tahun_sampai = Carbon::now()->format('Y-m');
+        // start filter
+        if($request->filter == true && $id == 1){
+            $bulan_tahun_dari = $request->bulan_tahun_dari;
+            $bulan_tahun_sampai = $request->bulan_tahun_sampai;
+            // $nominal_perusahaan_tahun = [];
+            $trx = $this->getOvertimeByGroup('perusahaan', $bulan_tahun_dari, $bulan_tahun_sampai);
+            $nominal_perusahaan_tahun = $trx->groupBy(function ($item) {
+                return Carbon::createFromFormat('Y-m', $item->bulan)->format('Y');
+            })->map(function ($items, $tahun) {
+                $data = [];
+                foreach ($items as $item) {
+                    if (!isset($data[$item->group_key])) {
+                        $data[$item->group_key] = [
+                            'jumlah' => 0,
+                            'detail' => [],
+                        ];
+                    }
+                    $data[$item->group_key]['jumlah'] += $item->nominal;
+                }
+                return [$tahun => $data];
+            })->values()->collapse()->toArray();
+            // $nominal_perusahaan_bulan = [];
+            $trx = $this->getOvertimeByGroup('perusahaan', $bulan_tahun_dari, $bulan_tahun_sampai);
+            $nominal_perusahaan_bulan = $this->formatOvertimeGroup($trx);
+            // $nominal_status_bulan = [];
+            $trx = $this->getOvertimeByGroup('status_karyawan', $bulan_tahun_dari, $bulan_tahun_sampai);
+            $nominal_status_bulan = $this->formatOvertimeGroup($trx);
+            // $nominal_divisi_bulan = [];
+            $trx = $this->getOvertimeByGroup('dep', $bulan_tahun_dari, $bulan_tahun_sampai);
+            $nominal_divisi_bulan = $this->formatOvertimeGroup($trx);
+            // $jumlah_status_bulan = [];
+            $trx = Overtime::where('ot_length_rp_adj', '>', 0)
+            ->whereBetween('ot_start_at', [
+                Carbon::createFromFormat('Y-m', $bulan_tahun_dari)->startOfMonth(),
+                Carbon::createFromFormat('Y-m', $bulan_tahun_sampai)->endOfMonth(),
+            ])
+            ->select(
+                DB::raw('DATE_FORMAT(ot_start_at, "%Y-%m") as bulan'),
+                DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.status_karyawan")) as group_key'),
+                DB::raw('COUNT(DISTINCT JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.nik"))) as jumlah_karyawan')
+            )
+            ->groupBy(
+                DB::raw('DATE_FORMAT(ot_start_at, "%Y-%m")'),
+                DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.status_karyawan"))')
+            )
+            ->orderBy('bulan')
+            ->orderBy('group_key')
+            ->get();
+            $jumlah_status_bulan = $trx->groupBy('bulan')->map(function ($items, $bulan) {
+                $bulanFormat = Carbon::createFromFormat('Y-m', $bulan)->format('M Y');
+                $data = [];
+                foreach ($items as $item) {
+                    $data[$item->group_key] = [
+                        'jumlah' => $item->jumlah_karyawan,
+                        'detail' => [],
+                    ];
+                }
+                return [$bulanFormat => $data];
+            })->values()->collapse()->toArray();
+            // $jumlah_perusahaan_status_bulan = [];
+            $trx = Overtime::where('ot_length_rp_adj', '>', 0)
+            ->whereBetween('ot_start_at', [
+                Carbon::createFromFormat('Y-m', $bulan_tahun_dari)->startOfMonth(),
+                Carbon::createFromFormat('Y-m', $bulan_tahun_sampai)->endOfMonth(),
+            ])
+            ->select(
+                DB::raw('DATE_FORMAT(ot_start_at, "%Y-%m") as bulan'),
+                DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.perusahaan")) as perusahaan'),
+                DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.status_karyawan")) as status_karyawan'),
+                DB::raw('COUNT(DISTINCT JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.nik"))) as jumlah_karyawan')
+            )
+            ->groupBy(
+                DB::raw('DATE_FORMAT(ot_start_at, "%Y-%m")'),
+                DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.perusahaan"))'),
+                DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.status_karyawan"))')
+            )
+            ->orderBy('bulan')
+            ->orderBy('perusahaan')
+            ->orderBy('status_karyawan')
+            ->get();
+            $jumlah_perusahaan_status_bulan = $trx->groupBy('bulan')->map(function ($items, $bulan) {
+                $bulanFormat = Carbon::createFromFormat('Y-m', $bulan)->format('M Y');
+                $data = [];
+                foreach ($items as $item) {
+                    if (!isset($data[$item->perusahaan])) {
+                        $data[$item->perusahaan] = [];
+                    }
+                    $data[$item->perusahaan][$item->status_karyawan] = [
+                        'jumlah' => $item->jumlah_karyawan,
+                        'detail' => [],
+                    ];
+                }
+                return [$bulanFormat => $data];
+            })->values()->collapse()->toArray();
+        }
+        else{
+            // 
+        }
+        // end filter
+        return view('overtime.dashboard', compact('id', 'lable', 'bulan_tahun_dari', 'bulan_tahun_sampai', 'nominal_perusahaan_tahun', 'nominal_perusahaan_bulan', 'nominal_status_bulan', 'nominal_divisi_bulan', 'jumlah_status_bulan', 'jumlah_perusahaan_status_bulan'));
+    }
+
+    public function getOvertimeByGroup(string $groupKey, $dari = null, $sampai = null)
+    {
+        $maxNominal = MtrUtility::find(33)->informasi;
+        $query = Overtime::where('ot_length_rp_adj', '>', 0);
+        if ($dari && $sampai) {
+            $query->whereBetween('ot_start_at', [
+                Carbon::createFromFormat('Y-m', $dari)->startOfMonth(),
+                Carbon::createFromFormat('Y-m', $sampai)->endOfMonth(),
+            ]);
+        } else {
+            $dari   = date('Y') . '-01';
+            $sampai = date('Y') . '-12';
+            $query->whereBetween('ot_start_at', [
+                Carbon::createFromFormat('Y-m', $dari)->startOfMonth(),
+                Carbon::createFromFormat('Y-m', $sampai)->endOfMonth(),
+            ]);
+        }
+        return $query->select(
+                'ot_maker_by',
+                'ot_maker_property',
+                DB::raw('DATE_FORMAT(ot_start_at, "%Y-%m") as bulan'),
+                DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.' . $groupKey . '")) as group_key'),
+                // DB::raw('SUM(ot_length_rp_adj) as nominal')
+                // DB::raw('SUM(ROUND(ot_length_rp_adj, -3)) as nominal')
+                DB::raw('CASE WHEN SUM(ROUND(ot_length_rp_adj, -3)) > ' . $maxNominal . ' THEN ' . $maxNominal . ' ELSE SUM(ROUND(ot_length_rp_adj, -3)) END as nominal')
+                // DB::raw('ROUND(ot_length_rp_adj, -3) as nominal')
+            )
+            ->groupBy(
+                'ot_maker_by',
+                DB::raw('DATE_FORMAT(ot_start_at, "%Y-%m")'),
+                DB::raw('JSON_UNQUOTE(JSON_EXTRACT(ot_maker_property, "$.' . $groupKey . '"))')
+            )
+            ->orderBy('bulan')
+            ->orderBy('group_key')
+            ->get();
+    }
+
+    public function formatOvertimeGroup($trx)
+    {
+        return $trx->groupBy('bulan')->map(function ($items, $bulan) {
+            $bulanFormat = Carbon::createFromFormat('Y-m', $bulan)->format('M Y');
+            $data = [];
+            foreach ($items as $item) {
+                if (!isset($data[$item->group_key])) {
+                    $data[$item->group_key] = [
+                        'jumlah' => 0,
+                        'detail' => [],
+                    ];
+                }
+                $data[$item->group_key]['jumlah'] += $item->nominal;
+                $data[$item->group_key]['detail'][] = [
+                    'nik'  => json_decode($item->ot_maker_property, true)['nik'],
+                    'nama' => json_decode($item->ot_maker_property, true)['nama'],
+                    'bulan' => Carbon::createFromFormat('Y-m', $item->bulan)->format('M Y'),
+                    'nominal' => $item->nominal,
+                ];
+            }
+            return [$bulanFormat => $data];
+        })->values()->collapse()->toArray();
+    }
+
+    // public function formatOvertimeGroup($trx)
+    // {
+    //     return $trx->groupBy('bulan')->map(function ($items, $bulan) {
+    //         $bulanFormat = Carbon::createFromFormat('Y-m', $bulan)->format('M Y');
+
+    //         $data = [];
+    //         foreach ($items as $item) {
+    //             $data[$item->group_key] = [
+    //                 'jumlah' => $item->nominal,
+    //                 'detail' => [],
+    //             ];
+    //         }
+    //         return [$bulanFormat => $data];
+    //     })->values()->collapse()->toArray();
+    // }
+
 
     public function view(Request $request)
     {
