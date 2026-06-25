@@ -154,7 +154,7 @@
                 @if(!empty($rekomendasiLog))
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tr>
-                        <td align="center"><strong>CATATAN HCO</strong></td>
+                        <td align="center"><strong>CATATAN {{ App\Models\MtrUtility::find(51)->informasi }}</strong></td>
                     </tr>
                 </table>
                 <hr />
