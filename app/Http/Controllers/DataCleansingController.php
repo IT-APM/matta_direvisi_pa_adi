@@ -229,7 +229,7 @@ class DataCleansingController extends Controller
         $data->id_trx = $id_trx;
         // 6 = Selesai
         $data->id_status = 6;
-        // 23 = PIC HCO Formulir Cuti (Novia Rahmayanti Ikmal)
+        // 23 = PIC PC Formulir Cuti (Novia Rahmayanti Ikmal)
         $data->nik_pic = MtrUtility::find(23)->informasi;
         $data->save();
         // return ['created_at'=>$trx->created_at, 'created_at+1'=>date ("Y-m-d 00:00:00", strtotime("+1 days", strtotime($trx->created_at)))];
