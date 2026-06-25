@@ -24,7 +24,7 @@
         <div class="col-sm-12 col-xl-12">
             <div class="card">
                 <div class="card-body">
-                    <!-- 8=CA Ditolak PC, 10=CA Ditolak L1, 12=CA Ditolak L2, 14=CA Ditolak HCO -->
+                    <!-- 8=CA Ditolak PC, 10=CA Ditolak L1, 12=CA Ditolak L2, 14=CA Ditolak PC -->
                     @if($trxMaster->status_id == 8 || $trxMaster->status_id == 10 || $trxMaster->status_id == 12 || $trxMaster->status_id == 14)
                     <h5>Catatan Penolakan</h5>
                     <div class="row mb-3">
@@ -105,7 +105,7 @@
                             <a href="{{ asset('assets/bpd/'.$trxMaster->lampiran) }}" target="_blank"><i class="icon-file"></i>&nbsp;Download Lampiran</a>
                         </div>
                     </div>
-                    <!-- 4=CA Disetujui Admin, 7=CA Disetujui PC, 9=CA Disetujui L1, 11=CA Disetujui L2, 13=CA Disetujui HCO, 15=Perbaikan CA oleh Admin -->
+                    <!-- 4=CA Disetujui Admin, 7=CA Disetujui PC, 9=CA Disetujui L1, 11=CA Disetujui L2, 13=CA Disetujui PC, 15=Perbaikan CA oleh Admin -->
                     @if($trxMaster->status_id==4 || $trxMaster->status_id==7 || $trxMaster->status_id==9 || $trxMaster->status_id==11 || $trxMaster->status_id==13 || $trxMaster->status_id==15)
                         <div class="row mb-3">
                             <div class="table-responsive">
@@ -389,7 +389,7 @@
                             </div>
                         </div>
                     </form>
-                    <!-- 3=CA Diproses Admin, 8=CA Ditolak PC, 10=CA Ditolak L1, 12=CA Ditolak L2, 14=CA Ditolak HCO -->
+                    <!-- 3=CA Diproses Admin, 8=CA Ditolak PC, 10=CA Ditolak L1, 12=CA Ditolak L2, 14=CA Ditolak PC -->
                     @elseif($trxMaster->status_id == 3 || $trxMaster->status_id == 8 || $trxMaster->status_id == 10 || $trxMaster->status_id == 12 || $trxMaster->status_id == 14)
                     <form method="post" enctype="multipart/form-data" action="{{ $linkAction }}" target="_self"
                         class="needs-validation" novalidate=""
