@@ -33,6 +33,7 @@ class AttendanceController extends Controller
         $limit = 25000;
         $tahun = Carbon::parse(now())->format('Y');
         $bulan = Carbon::parse(now())->format('m');
+        $att_nik_nama = DB::table('trx_tbl_attendance as a')->select('a.att_nik', 'b.nama')->distinct()->leftJoin('mtr_tbl_karyawan as b', 'a.att_nik', '=', 'b.nik')->orderBy('b.nama')->get();
         $duration = array();
         // start default hc
         $att = array();
@@ -369,9 +370,9 @@ class AttendanceController extends Controller
         // end
         // return response()->json( [ 'att' => $att ], 200 );
         // $this->into_debug(['nomor'=>7, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
-        // dd($att);
+        // dd($att_nik_nama);
         // end filter
-        return view( 'attendance.index', compact( 'att', 'duration', 'att_type', 'att_status', 'att_data_src', 'perusahaan', 'wg_id', 'arr_att_type', 'arr_att_status', 'arr_att_data_src', 'date_from', 'date_to', 'arr_perusahaan', 'arr_wg_id' ) );
+        return view( 'attendance.index', compact( 'att_nik_nama', 'att', 'duration', 'att_type', 'att_status', 'att_data_src', 'perusahaan', 'wg_id', 'arr_att_type', 'arr_att_status', 'arr_att_data_src', 'date_from', 'date_to', 'arr_perusahaan', 'arr_wg_id' ) );
         // return view( 'attendance.index', compact( 'att', 'duration', 'att_type', 'att_status', 'att_data_src', 'wg_id', 'arr_att_type', 'arr_att_status', 'arr_att_data_src', 'date_from', 'date_to', 'arr_wg_id' ) );
     }
 
