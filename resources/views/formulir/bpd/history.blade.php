@@ -94,7 +94,7 @@
                                             <tr>
                                                 <td><img class="img-thumbnail" src="{{ asset('assets/images/matta/karyawan/'.$trxMaster->hco.'/'.$trxMaster->hco.'.jpg') }}" alt="user"></td>
                                                 <td class="img-content-box">
-                                                    <h6 class="m-10">HCO</h6>
+                                                    <h6 class="m-10">{{ App\Models\MtrUtility::find(51)->informasi }}</h6>
                                                     <span class="f-light m-10">{{ $hco_property['nama'] }} / {{ $hco_property['nik'] }}<br />{{ $hco_property['jabatan'] }}<br />{{ $hco_property['divisi'] }} / {{ $hco_property['dep'] }} / {{ $hco_property['sub_dep'] }}</span>
                                                 </td>
                                             </tr>
