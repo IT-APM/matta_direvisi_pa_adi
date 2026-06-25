@@ -44,7 +44,7 @@
                     <!-- 23 = Realisasi Ditolak PC -->
                     <!-- 25 = Realisasi Ditolak L1 -->
                     <!-- 27 = Realisasi Ditolak L2 -->
-                    <!-- 29 = Realisasi Ditolak HCO -->
+                    <!-- 29 = Realisasi Ditolak PC -->
                     @if($trxMaster->status_id == 23 || $trxMaster->status_id == 25 || $trxMaster->status_id == 27 || $trxMaster->status_id == 29)
                     <h5>Catatan Penolakan</h5>
                     <div class="row mb-3">
@@ -167,7 +167,7 @@
                     $total_l_idr_realisasi = 0;
                     $total_l_usd_realisasi = 0;
                     @endphp
-                    <!-- 18 = Realisasi CA, 21 = Perbaikan Realisasi oleh Pengaju, 23 = Realisasi Ditolak PC, 25 = Realisasi Ditolak L1, 27 = Realisasi Ditolak L2, 29 = Realisasi Ditolak HCO -->
+                    <!-- 18 = Realisasi CA, 21 = Perbaikan Realisasi oleh Pengaju, 23 = Realisasi Ditolak PC, 25 = Realisasi Ditolak L1, 27 = Realisasi Ditolak L2, 29 = Realisasi Ditolak PC -->
                     @if($trxMaster->status_id == 18 || $trxMaster->status_id == 21 || $trxMaster->status_id == 23 || $trxMaster->status_id == 25 || $trxMaster->status_id == 27 || $trxMaster->status_id == 29)
                         <div class="row mb-3">
                             <div class="col-sm-2">
