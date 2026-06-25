@@ -128,7 +128,7 @@ class TrxPenilaianController extends Controller
         // 2 Maret 2026 sampai dengan 31 Desember 2026
         $durasi = $trx->tanggal_terhitung;
         if(!empty($durasi)){
-            $durasi = Carbon::parse($durasi)->translatedFormat('j F Y').' sampai dengan '.Carbon::parse($durasi)->addMonths($trx->bulan)->endOfMonth()->translatedFormat('j F Y');
+            $durasi = Carbon::parse($durasi)->translatedFormat('j F Y').' sampai dengan '.Carbon::parse($durasi)->addMonths(($trx->bulan)-1)->endOfMonth()->translatedFormat('j F Y');
         }
         // payrol
         $payroll = $trx->gapok;
@@ -414,7 +414,7 @@ class TrxPenilaianController extends Controller
         $html = '<div style="text-align:justify;"><table>
         <tr>
             <td width="4%">1)</td>
-            <td width="96%">Pihak Kedua berkewajiban untuk memenuhi Jadwal Kerja yang berlaku yaitu Senin – Jumat pukul 08.30 – 17.30.</td>
+			<td width="96%">Pihak Kedua berkewajiban untuk memenuhi Jadwal Kerja yang berlaku yaitu Senin – Jumat pukul 08.30 – 17.30.</td>
         </tr>
         <tr>
             <td>&nbsp;</td>
@@ -1543,7 +1543,7 @@ class TrxPenilaianController extends Controller
                     '.$hco_timestamp.'</td>';
                 }
                 // ambil isian kesimpulan dan rekomendasi
-                $isian_kes_rek .= '<table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td>Kesimpulan dan Rekomendasi HCO:<br/>'.$penilaian->kes_rek_final.'</td></tr></table>';
+                $isian_kes_rek .= '<table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td>Kesimpulan dan Rekomendasi '.MtrUtility::find(51)->informasi.':<br/>'.$penilaian->kes_rek_final.'</td></tr></table>';
                 // nilai outsourcing
                 if($penilaian->id_tipe == 6){
                     $where = [ 'id_trx' => $id ];
