@@ -125,7 +125,7 @@
                                         <th>Timestamp Penilai 1</th>
                                         <th>Timestamp Penilai 2</th>
                                         <th>Timestamp Penilai 3</th>
-                                        <th>Timestamp HCO</th>
+                                        <th>Timestamp {{ App\Models\MtrUtility::find(51)->informasi }}</th>
                                         <th>Status</th>
                                         <th>Perpanjang</th>
                                     </tr>
