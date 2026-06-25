@@ -468,9 +468,9 @@ class TrxRecruitmentController extends Controller
         $where = ['is_join' => 0];
         $status_not_join = MtrJoin::where($where)->orderBy('nama', 'asc')->get();
         // 4=Psychotest Send
-        // 6=Interview User and HCO Send
+        // 6=Interview User and PC Send
         // 8=Interview User Send
-        // 10=Interview HCO Send
+        // 10=Interview PC Send
         // 25=Not Join
         $id_status = [4,6,8,10,25];
         $log_status = TrxRecruitmentLog::where(['id_identitas'=>$id])->pluck('id_status')->toArray();
@@ -490,9 +490,9 @@ class TrxRecruitmentController extends Controller
         // dd($log_status);
         // negosiasi dilakukan setelah interpretasi dan done any interview
         // 16=Interpretation
-        // 7=Interview User and HCO Done
+        // 7=Interview User and PC Done
         // 9=Interview User Done
-        // 11=Interview HCO Done
+        // 11=Interview PC Done
         if(in_array(16, $log_status) && (in_array(7, $log_status)||in_array(9, $log_status)||in_array(11, $log_status))){
             // 12=Negotiation Process
             // array_push($id_status, 12);
@@ -503,9 +503,9 @@ class TrxRecruitmentController extends Controller
         }
         // 22=Psychotest and Interview Pass
         if(in_array(22, $log_status)){
-            // 6=Interview User and HCO Send
+            // 6=Interview User and PC Send
             // 8=Interview User Send
-            // 10=Interview HCO Send
+            // 10=Interview PC Send
             // 23=Psychotest and Interview Not Pass
             $id_status = array_values(array_diff($id_status, [6,8,10,23]));
             // 12=Negotiation Process
@@ -516,22 +516,22 @@ class TrxRecruitmentController extends Controller
         if(in_array(12, $log_status)){
             $id_status = [];
             // $id_status = array_values(array_diff($id_status, [6,8,10,16]));
-            // 13=Negotiation Deal by HCO
-            // 14=Negotiation No Deal by HCO
+            // 13=Negotiation Deal by PC
+            // 14=Negotiation No Deal by PC
             // $id_status = [13,14];
         }
         $id_status = MtrRecruitmentStatus::whereIn('id', $id_status)->whereNotIn('id', $log_status)->orderBy('id', 'asc')->get();
         // 17=Negotiation Deal by Candidate
         // 18=Negotiation No Deal by Candidate
         if(in_array($trx->id_status, [17,18])){
-            // 13=Negotiation Deal by HCO
-            // 14=Negotiation No Deal by HCO
+            // 13=Negotiation Deal by PC
+            // 14=Negotiation No Deal by PC
             // 21=Re-Negotiation Process
             // 25=Not Join
             $id_status = [13,14,21, 25];
             $id_status = MtrRecruitmentStatus::whereIn('id', $id_status)->orderBy('id', 'asc')->get();
         }
-        // 14=Negotiation No Deal by HCO
+        // 14=Negotiation No Deal by PC
         // 20=COC and File Upload Done
         // 23=Psychotest and Interview Not Pass
         if(in_array($trx->id_status, [14,20,23])){
@@ -846,7 +846,7 @@ class TrxRecruitmentController extends Controller
         }
         $this->insertLog($arr);
         // end
-        // 13=Negotiation Deal by HCO
+        // 13=Negotiation Deal by PC
         // 19=COC and File Upload Send
         // jika 13 maka otomatis berlanjut ke 19
         if($id_status == 13){
@@ -904,13 +904,13 @@ class TrxRecruitmentController extends Controller
         elseif($id_status == 18){
             $info = 'Proses Negosiasi Tidak Disetujui Kandidat';
         }
-        // 13=Negotiation Deal by HCO
+        // 13=Negotiation Deal by PC
         elseif($id_status == 13){
-            $info = 'Proses Negosiasi Disetujui HCO';
+            $info = 'Proses Negosiasi Disetujui '.MtrUtility::find(51)->informasi;
         }
-        // 14=Negotiation No Deal by HCO
+        // 14=Negotiation No Deal by PC
         elseif($id_status == 14){
-            $info = 'Proses Negosiasi Tidak Disetujui HCO';
+            $info = 'Proses Negosiasi Tidak Disetujui '.MtrUtility::find(51)->informasi;
         }
         // 19=COC and File Upload Send
         elseif($id_status == 19){
@@ -942,7 +942,7 @@ class TrxRecruitmentController extends Controller
             $this->sendEmail($mailData);
             return view('recruitment.thank', compact('msg'));
         }
-        // 14=Negotiation No Deal by HCO
+        // 14=Negotiation No Deal by PC
         elseif($id_status == 14){
             // $msg = '<p>Hai '.$_trx->nama.',<br/>Mohon maaf, '.$info.'.
             // <br/>Terima kasih,</p>'.MtrUtility::find(47)->informasi;
@@ -1681,9 +1681,9 @@ class TrxRecruitmentController extends Controller
         if(!empty($id_interview)){
             $id_interview = Crypt::decrypt($request->id_interview);
         }
-        // 6=Interview User and HCO Send
+        // 6=Interview User and PC Send
         // 8=Interview User Send
-        // 10=Interview HCO Send
+        // 10=Interview PC Send
         $catatan = '';
         if($id_status == 6 || $id_status == 8 || $id_status == 10){
             $_trx = TrxRecruitmentIdentitas::find($id);
@@ -2095,8 +2095,8 @@ class TrxRecruitmentController extends Controller
         //     $_trx->id_status = $id_status;
         //     $_trx->update();
         // }
-        // 13=Negotiation Deal by HCO
-        // 14=Negotiation No Deal by HCO
+        // 13=Negotiation Deal by PC
+        // 14=Negotiation No Deal by PC
         // upload file Negotiation
         // elseif($id_status == 13 || $id_status == 14){
         //     $_trx = TrxRecruitmentIdentitas::find($id);
@@ -2139,12 +2139,12 @@ class TrxRecruitmentController extends Controller
             $namafile = $trx->id_identitas.'_'.now()->getTimestampMs().'.'.$extension;
             $file_interview->move('public/assets/recruitment/upload/', $namafile);
             $trx->file_interview = $namafile;
-            // 6=Interview User and HCO Send
-            // 7=Interview User and HCO Done
+            // 6=Interview User and PC Send
+            // 7=Interview User and PC Done
             // 8=Interview User Send
             // 9=Interview User Done
-            // 10=Interview HCO Send
-            // 11=Interview HCO Done
+            // 10=Interview PC Send
+            // 11=Interview PC Done
             $id_status = $trx->id_status;
             if($id_status == 6){
                 $trx->id_status = 7;
@@ -3169,7 +3169,7 @@ class TrxRecruitmentController extends Controller
             // 37=PIC Recruitment
             $nik = MtrUtility::find(37)->informasi;
             $pic_hco = Karyawan::where(['nik'=>$nik])->first()->nama.'/'.$nik;
-            // 11=Interview HCO Done
+            // 11=Interview PC Done
             // 22=Psychotest and Interview Pass
             $trx->id_status = 22;
             $trx->save();
@@ -3180,10 +3180,10 @@ class TrxRecruitmentController extends Controller
             // 5=Psychotest Done
             $arr = [$trx->id,5,$trx->nama,'','external','NA'];
             $this->insertLog($arr);
-            // 10=Interview HCO Send
+            // 10=Interview PC Send
             $arr = [$trx->id,10,$pic_hco,'','internal','NA'];
             $this->insertLog($arr);
-            // 11=Interview HCO Done
+            // 11=Interview PC Done
             $arr = [$trx->id,11,$pic_hco,'','internal','NA'];
             $this->insertLog($arr);
             // 22=Psychotest and Interview Pass
