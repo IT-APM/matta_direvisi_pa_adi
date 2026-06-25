@@ -550,7 +550,7 @@ class TrxPenilaianSkorController extends Controller
                 $pic_hco = explode(',', MtrUtility::find(28)->informasi);
                 // cek apakah karyawan 5=PT NASIO KARYA PRATAMA
                 if(Karyawan::where(['nik'=>$trx->nik_karyawan,'is_aktif'=>1,'kode_perusahaan'=>5])->exists()){
-                    // HCO NKP
+                    // PC NKP
                     foreach(explode(',', MtrUtility::find(49)->informasi) as $nkp){
                         array_push($pic_hco, $nkp);
                     }
@@ -592,7 +592,7 @@ class TrxPenilaianSkorController extends Controller
                 $pic_hco = explode(',', MtrUtility::find(28)->informasi);
                 // cek apakah karyawan 5=PT NASIO KARYA PRATAMA
                 if(Karyawan::where(['nik'=>$trx->nik_karyawan,'is_aktif'=>1,'kode_perusahaan'=>5])->exists()){
-                    // HCO NKP
+                    // PC NKP
                     foreach(explode(',', MtrUtility::find(49)->informasi) as $nkp){
                         array_push($pic_hco, $nkp);
                     }
