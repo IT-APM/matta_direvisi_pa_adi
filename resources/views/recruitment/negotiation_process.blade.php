@@ -170,7 +170,7 @@
                     <div class="row">
                         <div class="col-12 col-md-12">
                             <div class="col-12 mb-2">
-                                <label class="form-label" for="catatan">Catatan HCO</label>
+                                <label class="form-label" for="catatan">Catatan {{ App\Models\MtrUtility::find(51)->informasi }}</label>
                                 <textarea class="form-control" id="catatan" name="catatan" rows="4" >{{ $log->catatan }}</textarea>
                             </div>
                         </div>
