@@ -2926,7 +2926,7 @@ class TrxPayrollController extends Controller
                         $filename = (new OpenDataController)->encryptWithKey($nik).'_Surat Pemberitahuan Penyesuaian Upah_'.$nik.'_'.$bulan.'_'.$tahun.'.pdf';
                         $trx->filename = $filename;
                         // nomor surat
-                        // contoh: 009-LTR/SPU/ADM-APM/HCO/I/2025
+                        // contoh: 009-LTR/SPU/ADM-APM/PC/I/2025
                         // revisi 009-LTR/SPU/ADM-APM/PC/I/2025
                         $romawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
                         $hitung = TrxPayrollEmailLog::where(['tahun'=>$tahun, 'id_addsub'=>'0'])->count();
