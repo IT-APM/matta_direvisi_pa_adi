@@ -62,7 +62,7 @@
                                     <th>Project Coordinator / NIP</th>
                                     <th>Layer 1 / NIP</th>
                                     <th>Layer 2 / NIP</th>
-                                    <th>HCO / NIP</th>
+                                    <th>{{ App\Models\MtrUtility::find(51)->informasi }} / NIP</th>
                                     <th>Status</th>
                                     <th>Created at</th>
                                 </tr>
