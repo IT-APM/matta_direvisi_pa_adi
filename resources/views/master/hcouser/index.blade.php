@@ -18,12 +18,12 @@
 @endsection
 
 @section('breadcrumb-title')
-<h3>Karyawan HCO</h3>
+<h3>Karyawan {{ App\Models\MtrUtility::find(51)->informasi }}</h3>
 @endsection
 
 @section('breadcrumb-items')
 <li class="breadcrumb-item">Data Master</li>
-<li class="breadcrumb-item active">Karyawan HCO</li>
+<li class="breadcrumb-item active">Karyawan {{ App\Models\MtrUtility::find(51)->informasi }}</li>
 @endsection
 
 @section('content')
