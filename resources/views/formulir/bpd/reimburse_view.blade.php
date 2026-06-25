@@ -22,7 +22,7 @@
         <div class="col-sm-12 col-xl-12">
             <div class="card">
                 <div class="card-body">
-                    <!-- 39=Reimburse Ditolak PC, 41=Reimburse Ditolak L1, 43=Reimburse Ditolak L2, 45=Reimburse Ditolak HCO -->
+                    <!-- 39=Reimburse Ditolak PC, 41=Reimburse Ditolak L1, 43=Reimburse Ditolak L2, 45=Reimburse Ditolak PC -->
                     @if($trxMaster->status_id == 39 || $trxMaster->status_id == 41 || $trxMaster->status_id == 43 || $trxMaster->status_id == 45)
                     <h5>Catatan Penolakan</h5>
                     <div class="row mb-3">
@@ -183,7 +183,7 @@
                             </div>
                         </div>
                     </form>
-                    <!-- 34 = Reimburse Diproses Admin,  39 = Reimburse Ditolak PC, 41 = Reimburse Ditolak L1, 43 = Reimburse Ditolak L2, 45 = Reimburse Ditolak HCO -->
+                    <!-- 34 = Reimburse Diproses Admin,  39 = Reimburse Ditolak PC, 41 = Reimburse Ditolak L1, 43 = Reimburse Ditolak L2, 45 = Reimburse Ditolak PC -->
                     @elseif($trxMaster->status_id == 34 || $trxMaster->status_id == 39 || $trxMaster->status_id == 41 || $trxMaster->status_id == 43 || $trxMaster->status_id == 45)
                     <form method="post" enctype="multipart/form-data" action="{{ $linkAction }}" target="_self"
                         class="needs-validation" novalidate=""
@@ -331,7 +331,7 @@
                         </div>
                     </form>
                     @endif
-                    <!-- 35=Reimburse Disetujui Admin, 38=Reimburse Disetujui PC, 40=Reimburse Disetujui L1, 42=Reimburse Disetujui L2, 44=Reimburse Disetujui HCO, 46=Perbaikan Reimburse oleh Admin -->
+                    <!-- 35=Reimburse Disetujui Admin, 38=Reimburse Disetujui PC, 40=Reimburse Disetujui L1, 42=Reimburse Disetujui L2, 44=Reimburse Disetujui PC, 46=Perbaikan Reimburse oleh Admin -->
                     @if($trxMaster->status_id==35 || $trxMaster->status_id==38 || $trxMaster->status_id==40 || $trxMaster->status_id==42 || $trxMaster->status_id==44 || $trxMaster->status_id==46 && $trxMaster->status_id <> 37)
                         <div class="row mb-3">
                             <div class="table-responsive">
