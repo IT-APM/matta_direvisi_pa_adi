@@ -69,7 +69,7 @@
                 </table>
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="center"><strong>DIISI OLEH HCO</strong></td>
+                        <td align="center"><strong>DIISI OLEH {{ App\Models\MtrUtility::find(51)->informasi }}</strong></td>
                     </tr>
                 </table>
                 <hr />
@@ -181,7 +181,7 @@
                 <hr />
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="center"><strong>CATATAN OLEH HCO</strong></td>
+                        <td align="center"><strong>CATATAN OLEH {{ App\Models\MtrUtility::find(51)->informasi }}</strong></td>
                     </tr>
                 </table>
                 <hr />
