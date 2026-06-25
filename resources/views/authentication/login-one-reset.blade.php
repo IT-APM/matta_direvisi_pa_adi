@@ -42,7 +42,7 @@
                                         <select class="form-select" id="email" name="email" required="">
                                             <option selected="" disabled="" value="">Pilih...</option>
                                             <option value="own">Email Sendiri</option>
-                                            <option value="hco">Email HCO</option>
+                                            <option value="hco">Email {{ App\Models\MtrUtility::find(51)->informasi }}</option>
                                         </select>
                                     </div>
                                     <div class="form-group mt-2">
@@ -90,7 +90,7 @@
                                 <select class="form-select" id="email" name="email" required="">
                                     <option selected="" disabled="" value="">Pilih...</option>
                                     <option value="own">Email Sendiri</option>
-                                    <option value="hco">Email HCO</option>
+                                    <option value="hco">Email {{ App\Models\MtrUtility::find(51)->informasi }}</option>
                                 </select>
                             </div>
                             <div class="form-group mt-0">
