@@ -1107,7 +1107,7 @@ class TrxCutiController extends Controller
         else if ($status_cuti == 4 && $pic == 'nik_atasan') {
             ToDoList::where(['id_trx'=>$id, 'filename'=>'emails.cuti0'])->delete();
             // hco
-            // 23 = PIC HCO Formulir Cuti (Novia Rahmayanti Ikmal)
+            // 23 = PIC PC Formulir Cuti (Novia Rahmayanti Ikmal)
             $nik_hco = MtrUtility::find(23)->informasi;
             // start
             $karyawan = json_decode($trx->karyawan_property, true);
@@ -1162,7 +1162,7 @@ class TrxCutiController extends Controller
             $atasan = json_decode($trx->atasan_property, true);
             $mailData['title'] = 'Formulir Permohonan Cuti';
             $mailData['filename'] = 'emails.cuti_done';
-            $mailData['data'] = ['pesan' => '<strong>Formulir Permohonan Cuti anda telah ditolak HCO</strong>', 'nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'link' => route('cuti.show', [(new OpenDataController)->encryptWithKey($id), 'view' => (new OpenDataController)->encryptWithKey('pdf')]), 'id_trx' => $trx->id];
+            $mailData['data'] = ['pesan' => '<strong>Formulir Permohonan Cuti anda telah ditolak '.MtrUtility::find(51)->informasi.'</strong>', 'nama' => $karyawan['nama'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'atasan' => $atasan['nama'], 'link' => route('cuti.show', [(new OpenDataController)->encryptWithKey($id), 'view' => (new OpenDataController)->encryptWithKey('pdf')]), 'id_trx' => $trx->id];
             $mailData['to'] = $karyawan['email'];
             $ccEmails = explode(',', MtrUtility::find(11)->informasi);
             array_push($ccEmails, $atasan['email']);
