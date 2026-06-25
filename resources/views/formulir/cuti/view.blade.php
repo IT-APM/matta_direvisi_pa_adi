@@ -130,7 +130,7 @@
                                         @endphp
                                         @if(!empty($catatan))
                                         <tr>
-                                            <td>Catatan HCO</td>
+                                            <td>Catatan {{ App\Models\MtrUtility::find(51)->informasi }}</td>
                                             <td>{{ $catatan->keterangan }}</td>
                                         </tr>
                                         @endif
