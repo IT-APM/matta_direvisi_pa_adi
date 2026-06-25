@@ -429,7 +429,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 {{-- <td colspan="3">@if(!empty())25 {{ $bulan[$payroll->bulan - 1] }} {{ $payroll->tahun }}<br/>Transfer</td> --}}
                                                 <td colspan="3">@if(!empty($payroll->paid_at)){{ Carbon\Carbon::parse($payroll->paid_at)->format("d") }} {{ $bulan[Carbon\Carbon::parse($payroll->paid_at)->format("m") - 1] }} {{ Carbon\Carbon::parse($payroll->paid_at)->format("Y") }}@else &nbsp; @endif<br/>Transfer</td>
                                                 <td align="right"><br/><br/><br/><br/>PT Alita Praya Mitra - People & Culture<br/>{{ Carbon\Carbon::parse(now())->format("d-m-Y H:i:s") }}</td>
-                                                {{-- <td>Paraf HCO<br/><img width="50" src="{{ public_path('assets/images/matta/paraf_hco.png') }}" alt="Paraf HCO"><br/>{{ $pic_paraf }}</td> --}}
+                                                {{-- <td>Paraf {{ App\Models\MtrUtility::find(51)->informasi }}<br/><img width="50" src="{{ public_path('assets/images/matta/paraf_hco.png') }}" alt="Paraf {{ App\Models\MtrUtility::find(51)->informasi }}"><br/>{{ $pic_paraf }}</td> --}}
                                             </tr>
 				                        </table>
                                     </td>
