@@ -272,9 +272,9 @@
                         </div>
                         {{-- end --}}
                     </div>
+                    @can('hc')
                     <div class="card">
                         <div class="card-body">
-                            @can('hc')
                             <form action="{{ route('pelatihan.update', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trx->id)) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                             @method('PATCH')
                             @csrf
@@ -291,9 +291,9 @@
                             </div> --}}
                             <button class="btn btn-success mt-2 mb-2" type="submit">Update</button> | <a href="{{ route('pelatihan.index') }}" class="btn btn-warning mt-2 mb-2" type="button">Back</a>
                             </form>
-                            @endcan
                         </div>
                     </div>
+                    @endcan
                 </div>
                 <!--  -->
                 {{-- <div class="col-12">
