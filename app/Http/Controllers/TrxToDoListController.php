@@ -221,8 +221,8 @@ class TrxToDoListController extends Controller
         $where = ['nik' => auth()->user()->nik];
         $trxPenilaian = ToDoList::where($where)->whereIn('filename', ['emails.penilaian0', 'emails.penilaian0_outsourcing'])->orderBy('id', 'desc')->get();
         // reimburse0
-        $where = ['nik' => auth()->user()->nik, 'filename' => 'emails.reimburse0'];
-        $trxReimburse = ToDoList::where($where)->orderBy('id', 'desc')->get();
+        $where = ['nik' => auth()->user()->nik];
+        $trxReimburse = ToDoList::where($where)->whereIn('filename', ['emails.reimburse0', 'emails.reimburse_done'])->orderBy('id', 'desc')->get();
         // rekomendasi0
         $where = ['nik' => auth()->user()->nik, 'filename' => 'emails.rekomendasi0'];
         $trxRekomendasi = ToDoList::where($where)->orderBy('id', 'desc')->get();
@@ -329,8 +329,8 @@ class TrxToDoListController extends Controller
         }
         // reimburse0
         else if($filename == 'emails.reimburse0'){
-            $where = ['nik' => auth()->user()->nik, 'filename' => 'emails.reimburse0'];
-            $trx = ToDoList::where($where)->orderBy('id', 'desc')->get();
+            $where = ['nik' => auth()->user()->nik];
+            $trx = ToDoList::where($where)->whereIn('filename', ['emails.reimburse0', 'emails.reimburse_done'])->orderBy('id', 'desc')->get();
             return view('todolist.list', compact('no', 'trx'));
         }
         // cuti0
