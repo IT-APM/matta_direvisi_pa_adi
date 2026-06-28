@@ -61,7 +61,7 @@
                     </div>
                     <br/><br/>
                     <div class="table-responsive">
-                        <table class="display" id="_datatable">
+                        <table class="display nowrap" id="_datatable">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -73,6 +73,7 @@
                                     <th>NIP Layer 1 Pengaju</th>
                                     <th>Peserta</th>
                                     <th>Layer 1 Peserta</th>
+                                    <th>Approval</th>
                                     <th>Pelatihan</th>
                                     <th>Biaya</th>
                                     <th>Status Pengajuan</th>
@@ -93,18 +94,88 @@
                                         @endcan
                                     </td>
                                     <td>{{ $data->_pengaju->nama }}</td>
-                                    <td>{{ $data->_pengaju->nik }}</td>
+                                    <td>{{ $data->pengaju }}</td>
                                     <td>{{ $data->_atasan->nama }}</td>
-                                    <td>{{ $data->_atasan->nik }}</td>
+                                    <td>{{ $data->atasan_pengaju }}</td>
                                     <td>
                                         @foreach(explode(';', $data->peserta_property) as $value)
                                             {{ json_decode($value, true)['nama'] }} @if(!$loop->last) <br/> @endif
                                         @endforeach
                                     </td>
+                                    @php
+                                        $names = collect(explode(';', $data->atasan_peserta_property))->map(fn($v) => json_decode($v, true))->map(fn($v) => ['nama' => $v['nama'], 'nik' => $v['nik']])->unique('nik')->sortBy('nama')->values();
+                                    @endphp
                                     <td>
-                                        @foreach(explode(';', $data->atasan_peserta_property) as $value)
-                                            {{ json_decode($value, true)['nama'] }} @if(!$loop->last) <br/> @endif
+                                        @foreach($names as $nama)
+                                            {{ $nama['nama'] }} @if(!$loop->last) <br/> @endif
                                         @endforeach
+                                    </td>
+                                    <td>
+                                        <table style="border-collapse: collapse; width: 100%;">
+                                            <tr>
+                                                <th style="padding: 2px 4px;">Otoritas</th>
+                                                <th style="padding: 2px 4px;">Nama</th>
+                                                <th style="padding: 2px 4px;">Waktu</th>
+                                            </tr>
+                                            @php
+                                                // L1 Requestor (2,3)
+                                                $log = App\Models\TrxPelatihanLog::where(['id_trx'=>$data->id, 'nik_pic'=>$data->atasan_pengaju])->whereIn('id_status', [2,3])->orderBy('id', 'desc');
+                                            @endphp
+                                            <tr @if($log->exists()) class="bg-success" @else class="bg-danger" @endif>
+                                                <td style="padding: 2px 4px;">Layer 1 Pengaju</td>
+                                                <td style="padding: 2px 4px;">{{ $data->_atasan->nama }}</td>
+                                                <td style="padding: 2px 4px;">
+                                                    @if($log->exists())
+                                                        {{ $log->get()[0]->created_at }}
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            @foreach($names as $nama)
+                                            @php
+                                                // L1 Participants (5,6)
+                                                $log = App\Models\TrxPelatihanLog::where(['id_trx'=>$data->id, 'nik_pic'=>$nama['nik']])->whereIn('id_status', [5,6])->orderBy('id', 'desc');
+                                            @endphp
+                                            <tr @if($log->exists()) class="bg-success" @else class="bg-danger" @endif>
+                                                <td style="padding: 2px 4px;">Layer 1 Peserta</td>
+                                                <td style="padding: 2px 4px;">{{ $nama['nama'] }}</td>
+                                                <td style="padding: 2px 4px;">
+                                                    @if($log->exists())
+                                                        {{ $log->get()[0]->created_at }}
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                            @if(!empty($data->reviewer1))
+                                            @php
+                                                // Reviewer 1 (10,8)
+                                                $log = App\Models\TrxPelatihanLog::where(['id_trx'=>$data->id, 'nik_pic'=>$data->reviewer1])->whereIn('id_status', [10,8])->orderBy('id', 'desc');
+                                            @endphp
+                                            <tr @if($log->exists()) class="bg-success" @else class="bg-danger" @endif>
+                                                <td style="padding: 2px 4px;">Reviewer 1</td>
+                                                <td style="padding: 2px 4px;">{{ $data->_reviewer1->nama }}</td>
+                                                <td style="padding: 2px 4px;">
+                                                    @if($log->exists())
+                                                        {{ $log->get()[0]->created_at }}
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            @endif
+                                            @if(!empty($data->reviewer2))
+                                            @php
+                                                // Reviewer 2 (14,12)
+                                                $log = App\Models\TrxPelatihanLog::where(['id_trx'=>$data->id, 'nik_pic'=>$data->reviewer2])->whereIn('id_status', [14,12])->orderBy('id', 'desc');
+                                            @endphp
+                                            <tr @if($log->exists()) class="bg-success" @else class="bg-danger" @endif>
+                                                <td style="padding: 2px 4px;">Reviewer 2</td>
+                                                <td style="padding: 2px 4px;">{{ $data->_reviewer2->nama }}</td>
+                                                <td style="padding: 2px 4px;">
+                                                    @if($log->exists())
+                                                        {{ $log->get()[0]->created_at }}
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            @endif
+                                        </table>
                                     </td>
                                     <td>{{ $data->judul }}</td>
                                     <td>Rp.{{ number_format($data->biaya, 0) }}</td>
