@@ -18,6 +18,14 @@ class TrxPelatihan extends Model
         return $this->belongsTo('App\Models\Karyawan', 'atasan_pengaju', 'nik');
     }
 
+    public function _reviewer1(){
+        return $this->belongsTo('App\Models\Karyawan', 'reviewer1', 'nik');
+    }
+
+    public function _reviewer2(){
+        return $this->belongsTo('App\Models\Karyawan', 'reviewer2', 'nik');
+    }
+
     public function _anggaran(){
         return $this->belongsTo('App\Models\PelatihanAnggaran', 'anggaran', 'id');
     }
