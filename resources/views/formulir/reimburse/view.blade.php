@@ -70,19 +70,19 @@
                         @foreach ($history as $_history)
                         <li class="d-flex">
                             @if ($loop->first)
-                            <div class="activity-dot-success"></div>
+                                <div class="activity-dot-success"></div>
                             @elseif ($loop->last)
                             <div class="activity-dot-warning"></div>
                             @else
-                            <div class="activity-dot-primary"></div>
+                                <div class="activity-dot-primary"></div>
                             @endif
                             <div class="ms-3">
-                                <p class="d-flex justify-content-between mb-2"><span
-                                        class="date-content light-background">{{ $_history->created_at }}</span>
-                                </p>
-                                <h6>{{ $_history->_id_status->status }}<span class="dot-notification"></span>
-                                </h6>
-                                <p class="f-light">Oleh {{ $_history->_nik->nama }} / {{ $_history->nik_pic }}
+                                <p class="d-flex justify-content-between mb-2"><span class="date-content light-background">{{ $_history->created_at }}</span></p>
+                                <h6>{{ $_history->_id_status->status }}<span class="dot-notification"></span></h6>
+                                <p class="f-light">
+                                    Oleh {{ $_history->_nik->nama }} / {{ $_history->nik_pic }}
+                                    @if(!empty($_history->keterangan))<br/>Catatan {{ $_history->keterangan }}@endif
+                                    @if(!empty($_history->filename))<br/><a href="{{ asset('assets/reimburse/'.$_history->filename) }}" target="_blank">Lampiran</a>@endif
                                 </p>
                             </div>
                         </li>
