@@ -43,12 +43,12 @@
                                         <br/>From <input class="form-control" name="date_from" id="date_from" type="date" required="" value="{{ $date_from }}">
                                         To <input class="form-control" name="date_to" id="date_to" type="date" required="" value="{{ $date_to }}">
                                         {{-- <br/> --}}
-                                        <label class="form-label" for="att_nik">Karyawan</label>
-                                        <select class="form-select js-example-basic-single col-sm-12" id="att_nik" name="att_nik" required="">
+                                        <label class="h6 mt-2">Karyawan</label>
+                                        <select class="form-select js-example-basic-single col-sm-12" id="str_att_nik_nama" name="str_att_nik_nama" required="">
                                             <option selected="" disabled="" value="">Pilih...</option>
-                                            <option value="All">Semua</option>
+                                            <option value="">Semua</option>
                                             @foreach ($att_nik_nama as $data)
-                                                <option value="{{ $data->att_nik }}">{{ $data->nama }} - {{ $data->att_nik }}</option>
+                                                <option value="{{ $data->att_nik }}" @if($data->att_nik == $str_att_nik_nama) selected @endif>{{ $data->nama }} - {{ $data->att_nik }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -130,6 +130,7 @@
                                                 <th>Direktorat</th>
                                                 <th>Divisi</th>
                                                 <th>Departemen</th>
+                                                <th>Lokasi</th>
                                                 <th>Working Group</th>
                                                 <th>Action</th>
                                                 <th>Longitude</th>
@@ -155,6 +156,7 @@
                                                 <td>{{ $data->_att_nik->_divisi->nama }}</td>
                                                 <td>{{ $data->_att_nik->_departemen->nama }}</td>
                                                 <td>{{ $data->_att_nik->_subdepartemen->nama }}</td>
+                                                <td>{{ $data->_att_nik->alamat_kantor }}</td>
                                                 <td>{{ $data->_att_nik->_wg->wg_name }}</td>
                                                 <td>
                                                     @if($data->att_type == 'Clock-in')
@@ -228,6 +230,7 @@
                                                 <th>Direktorat</th>
                                                 <th>Divisi</th>
                                                 <th>Departemen</th>
+                                                <th>Lokasi</th>
                                                 <th>Working Group</th>
                                                 <th>Type</th>
                                                 {{-- <th>Source</th> --}}
@@ -253,6 +256,7 @@
                                                 <td>{{ $karyawan->_divisi->nama }}</td>
                                                 <td>{{ $karyawan->_departemen->nama }}</td>
                                                 <td>{{ $karyawan->_subdepartemen->nama }}</td>
+                                                <td>{{ $karyawan->alamat_kantor }}</td>
                                                 <td>{{ $karyawan->_wg->wg_name }}</td>
                                                 <td>
                                                     @if($data['att_data_src'] == 'Regular')
