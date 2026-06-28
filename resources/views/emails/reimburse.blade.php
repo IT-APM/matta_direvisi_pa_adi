@@ -19,17 +19,29 @@
                 </div>
             </div>
         </div>
+        <div class="col-sm-12 col-xl-12">
+            <div class="card">
+                @if (count($errors) > 0)
+                <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
+                    <h6>Upload image is ERROR</h6>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
+            </div>
+        </div>
         <!--  -->
-        <div class="col-sm-12 col-xl-6">
+        <div class="col-sm-12 col-xl-4">
             <div class="card">
                 <div class="card-header">
                     <h5>Diajukan Oleh</h5>
                 </div>
                 <div class="card-header">
-                    <a href="{{ asset('assets/images/matta/karyawan/'.$data['nik'].'/'.$data['nik'].'.jpg') }}"
-                        target="_blank"><img class="img-thumbnail" width="20%"
-                            src="{{ asset('assets/images/matta/karyawan/'.$data['nik'].'/'.$data['nik'].'.jpg') }}"
-                            alt="user"></a>
+                    <a href="{{ asset('assets/images/matta/karyawan/'.$data['nik'].'/'.$data['nik'].'.jpg') }}" target="_blank"><img class="img-thumbnail" width="20%" src="{{ asset('assets/images/matta/karyawan/'.$data['nik'].'/'.$data['nik'].'.jpg') }}" alt="user"></a>
                 </div>
                 <div class="card-body typography">
                     <table class="table table-striped">
@@ -56,7 +68,7 @@
             </div>
         </div>
         <!--  -->
-        <div class="col-sm-12 col-xl-6">
+        <div class="col-sm-12 col-xl-5">
             <div class="card">
                 <div class="card-header">
                     <h5>Resume</h5>
@@ -123,6 +135,10 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+        <!--  --><div class="col-sm-12 col-xl-3">
+            <div class="card">
                 <div class="card-header">
                     <h5>History</h5>
                 </div>
@@ -131,19 +147,19 @@
                         @foreach ($history as $_history)
                         <li class="d-flex">
                             @if ($loop->first)
-                            <div class="activity-dot-success"></div>
+                                <div class="activity-dot-success"></div>
                             @elseif ($loop->last)
-                            <div class="activity-dot-warning"></div>
+                                <div class="activity-dot-warning"></div>
                             @else
-                            <div class="activity-dot-primary"></div>
+                                <div class="activity-dot-primary"></div>
                             @endif
                             <div class="ms-3">
-                                <p class="d-flex justify-content-between mb-2"><span
-                                        class="date-content light-background">{{ $_history->created_at }}</span>
-                                </p>
-                                <h6>{{ $_history->_id_status->status }}<span class="dot-notification"></span>
-                                </h6>
-                                <p class="f-light">Oleh {{ $_history->_nik->nama }} / {{ $_history->nik_pic }}
+                                <p class="d-flex justify-content-between mb-2"><span class="date-content light-background">{{ $_history->created_at }}</span></p>
+                                <h6>{{ $_history->_id_status->status }}<span class="dot-notification"></span></h6>
+                                <p class="f-light">
+                                    Oleh {{ $_history->_nik->nama }} / {{ $_history->nik_pic }}
+                                    @if(!empty($_history->keterangan))<br/>Catatan {{ $_history->keterangan }}@endif
+                                    @if(!empty($_history->filename))<br/><a href="{{ asset('assets/reimburse/'.$_history->filename) }}" target="_blank">Lampiran</a>@endif
                                 </p>
                             </div>
                         </li>
@@ -203,11 +219,23 @@
                 <form id="myform" name="myform" method="post" enctype="multipart/form-data" action="{{ $linkAction }}" target="_self" onsubmit="return confirm('Are you sure want to submit this data?');">
                     @method('PATCH')
                     @csrf
-                    <h5>Catatan</h5>
-                    <textarea class="form-control" id="catatan" name="catatan" rows="4" ></textarea>
-                    <br/>
-                    <button type="submit" name="status_pengajuan" value="2" class="btn btn-success">Approve</button>
-                    <button type="submit" name="status_pengajuan" value="3" class="btn btn-danger">Reject</button>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Catatan</h5>
+                            <textarea class="form-control" id="catatan" name="catatan" rows="4"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Lampiran*</h5>
+                            <label class="form-label">Maksimal 2MB dengan format pdf atau gambar(jpg, jpeg dan png)</label>
+                            <input name="filename" id="filename" class="form-control" type="file">
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        @if(in_array(request('id_status'), [1,6]))<button type="submit" name="status_pengajuan" value="2" class="btn btn-success">Approve</button>@endif
+                        @if(in_array(request('id_status'), [1,2]))<button type="submit" name="status_pengajuan" value="6" class="btn btn-primary">Hold</button>@endif
+                        @if(in_array(request('id_status'), [2]))<button type="submit" name="status_pengajuan" value="7" class="btn btn-success">Paid</button>@endif
+                        @if(in_array(request('id_status'), [1,6]))<button type="submit" name="status_pengajuan" value="3" class="btn btn-danger">Reject</button>@endif
+                    </div>
                 </form>
                 </div>
             </div>
@@ -216,10 +244,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body typography text-center">
-                    <h6>Terima kasih untuk partisipasi dan kerjasamanya untuk melakukan review Formulir Reimbursement
-                        ini.</h6>
-                    <a href="https://alita.id/"><img src="{{ asset('assets/images/matta/Alita-New-Log.png') }}"
-                            height="40" alt="Alita" /></a><br />
+                    <h6>Terima kasih untuk partisipasi dan kerjasamanya untuk melakukan review Formulir Reimbursement ini.</h6>
+                    <a href="https://alita.id/"><img src="{{ asset('assets/images/matta/Alita-New-Log.png') }}" height="40" alt="Alita" /></a><br />
                     <h6>&reg; PT Alita Praya Mitra - 2021</h6>
                 </div>
             </div>
