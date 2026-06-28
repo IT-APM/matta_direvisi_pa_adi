@@ -463,7 +463,7 @@ class TrxReimburseController extends Controller
         // trx_tbl_reimburse_master
         $trxM->save();
         // trx_tbl_reimburse_log
-        $this->insertLog($trxM->id, 1, $nik_karyawan, 'store');
+        $this->insertLog($trxM->id, 1, $nik_karyawan, NULL, NULL);
         // trx_tbl_reimburse_detail
         for ($x = 0; $x < count($hubungan); $x++) {
             $trxD = new TrxReimburseDetail;
@@ -493,15 +493,12 @@ class TrxReimburseController extends Controller
         $karyawan = json_decode($trxM->karyawan_property, true);
         $mailData['title'] = 'Formulir Reimbursement';
         $mailData['filename'] = 'emails.reimburse0';
-        $mailData['data'] = ['nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval')]), 'id_trx' => $trxM->id];
         // ambil email pic hco untuk reimburse
-        $nik_pic = MtrUtility::find(12)->informasi;
-        $where = ['nik' => $nik_pic];
-        $toPicHco = Karyawan::where($where)->first();
-        // 
-        $mailData['to'] = $toPicHco->email;
-        // return response()->json( [ 'mailData' => $mailData ], 200 );
-        $todolist = ['id_trx' => $trxM->id, 'nik' => $nik_pic, 'id_status' => $trxM->status_pengajuan, 'pic' => 'pic'];
+        $nik_hco = MtrUtility::find(12)->informasi;
+        $email_hco = Karyawan::where('nik', $nik_hco)->value('email');
+        $mailData['to'] = $email_hco;
+        $mailData['data'] = ['email_to' => $mailData['to'], 'id_status' => 1, 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trxM->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'id_status' => 1]), 'id_trx' => $trxM->id];
+        $todolist = ['id_trx' => $trxM->id, 'nik' => $nik_hco, 'id_status' => $trxM->status_pengajuan, 'pic' => 'pic'];
         $this->insertToDoList($todolist, $mailData);
         $this->sendEmail($mailData);
         // finish
@@ -644,13 +641,14 @@ class TrxReimburseController extends Controller
         $trx = ToDoList::where($where)->delete();
     }
 
-    public function insertLog($id_trx, $id_status, $nik_pic, $keterangan)
+    public function insertLog($id_trx, $id_status, $nik_pic, $keterangan, $filename)
     {
         $data = new TrxReimburseLog;
         $data->id_trx = $id_trx;
         $data->id_status = $id_status;
         $data->nik_pic = $nik_pic;
         $data->keterangan = $keterangan;
+        $data->filename = $filename;
         $data->save();
     }
 
@@ -678,8 +676,9 @@ class TrxReimburseController extends Controller
         $where = ['id_trx' => $id];
         $history = TrxReimburseLog::where($where)->orderBy('created_at', 'desc')->get();
         // 
-        $where = ['id_trx' => $id];
-        $nReview = TrxReimburseLog::where($where)->whereIn('id_status', [2, 3])->count();
+        // $where = ['id_trx' => $id];
+        // $nReview = TrxReimburseLog::where($where)->whereIn('id_status', [2, 3])->count();
+        $nReview = ToDoList::where(['id_trx'=>$id, 'id_status'=>$request->id_status, 'nik'=>MtrUtility::find(12)->informasi])->whereIn('filename', ['emails.reimburse0','emails.reimburse_done'])->exists();
         // 
         $trxM = TrxReimburseMaster::find($id);
         $karyawan = json_decode($trxM->karyawan_property, true);
@@ -706,7 +705,8 @@ class TrxReimburseController extends Controller
         $view = (new OpenDataController)->decryptWithKey($request->view);
         switch ($view) {
             case 'approval':
-                if ($nReview == 0) {
+                // if ($nReview == 0) {
+                if ($nReview) {
                     return view('emails.reimburse', compact('trxM', 'trxD', 'data', 'lampiran', 'linkAction', 'history'));
                 } else {
                     return view('emails.reimburse_ok');
@@ -737,13 +737,25 @@ class TrxReimburseController extends Controller
                     $htmlReimburseLog .= '<td>Mengajukan<br/><img src="' . public_path('assets/images/matta/requested_new.png') . '" height="30" /><br/>' . $karyawan['nama'] . '<br/>' . $karyawan['jabatan'] . '<br/>' . $reimburseLog->created_at . '</td>';
                 }
                 // hco
-                // approve
+                // 6=Penangguhan Pengajuan
+                $where = ['id_trx' => $id, 'id_status' => 6];
+                $reimburseLog = TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
+                if (!empty($reimburseLog)) {
+                    $htmlReimburseLog .= '<td>Menangguhkan<br/><img src="' . public_path('assets/images/matta/hold.png') . '" height="30" /><br/>' . $reimburseLog->_nik->nama . '<br/>' . $reimburseLog->_nik->_jabatan->jabatan . '<br/>' . $reimburseLog->created_at . '</td>';
+                }
+                // 2=Disetujui dan Proses Pembayaran
                 $where = ['id_trx' => $id, 'id_status' => 2];
                 $reimburseLog = TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
                 if (!empty($reimburseLog)) {
                     $htmlReimburseLog .= '<td>Menyetujui<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $reimburseLog->_nik->nama . '<br/>' . $reimburseLog->_nik->_jabatan->jabatan . '<br/>' . $reimburseLog->created_at . '</td>';
                 }
-                // reject
+                // 7=Pembayaran Berhasil
+                $where = ['id_trx' => $id, 'id_status' => 7];
+                $reimburseLog = TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
+                if (!empty($reimburseLog)) {
+                    $htmlReimburseLog .= '<td>Pembayaran<br/><img src="' . public_path('assets/images/matta/approved_new.png') . '" height="30" /><br/>' . $reimburseLog->_nik->nama . '<br/>' . $reimburseLog->_nik->_jabatan->jabatan . '<br/>' . $reimburseLog->created_at . '</td>';
+                }
+                // 3=Ditolak
                 $where = ['id_trx' => $id, 'id_status' => 3];
                 $reimburseLog = TrxReimburseLog::where($where)->orderBy('id', 'desc')->first();
                 if (!empty($reimburseLog)) {
@@ -958,7 +970,7 @@ class TrxReimburseController extends Controller
             $trxD->delete();
         }
         // 
-        $this->insertLog($trxMId, 5, auth()->user()->nik, 'updateDetail');
+        $this->insertLog($trxMId, 5, auth()->user()->nik, NULL, NULL);
         // return response()->json( [ 'request' => $request->all(), 'id' => $id ], 200 );
         return redirect()->route('reimburse.edit', (new OpenDataController)->encryptWithKey($trxMId))->with( 'msg', 'Data is saved successfully.' );
     }
@@ -979,43 +991,76 @@ class TrxReimburseController extends Controller
         $catatan = $request->catatan;
         $trx->status_pengajuan = $status_pengajuan;
         $trx->update();
+        // upload file jika ada
+        $namafile = NULL;
+        $filename = $request->file('filename');
+        if ($filename){
+            $request->validate([
+                'filename' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            ]);
+            $extension = $filename->getClientOriginalExtension();
+            $namafile = $trx->nik_karyawan.'_'.time().'.'.$extension;
+            $filename->move('public/assets/reimburse/', $namafile);
+        }
         // check 7=Ekses
         $where = ['id_reimburse' => $id];
         $check_ekses = TrxReimburseDetail::where($where)->whereIn('id_layanan', [7])->exists();
         $this->deleteToDoList(['id_trx'=>$id, 'pic'=>'pic', 'filename'=>'emails.reimburse0']);
-        $this->insertLog($id, $status_pengajuan, MtrUtility::find(12)->informasi, $catatan);
-        if($request->status_pengajuan == 2){
+        $this->deleteToDoList(['id_trx'=>$id, 'pic'=>'pic', 'filename'=>'emails.reimburse_done']);
+        $this->insertLog($id, $status_pengajuan, MtrUtility::find(12)->informasi, $catatan, $namafile);
+        // 2=Disetujui dan Proses Pembayaran
+        // 3=Ditolak
+        // 6=Penangguhan Pengajuan
+        // 7=Pembayaran Berhasil
+        if(in_array($request->status_pengajuan, [2,3,6,7])){
             // start
             // parameter yang dipassing ke sendemail
+            // karyawan
             $karyawan = json_decode($trx->karyawan_property, true);
             $mailData['title'] = 'Formulir Reimbursement';
             $mailData['filename'] = 'emails.reimburse_done';
             $mailData['to'] = $karyawan['email'];
-            $mailData['data'] = ['status' => 'disetujui', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')]), 'id_trx' => $trx->id];
-            if($trx->plafon > 0){
-                // jika bukan Ekses
-                if(!$check_ekses){
-                    $this->sendEmail($mailData);
+            $mailData['data'] = ['email_to' => $mailData['to'], 'id_status' => $request->status_pengajuan, 'status' => ReimburseStatus::find($request->status_pengajuan)->status, 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf'), 'id_status' => $request->status_pengajuan]), 'id_trx' => $trx->id];
+            // if($trx->plafon > 0){
+            //     // jika bukan Ekses
+            //     if(!$check_ekses){
+            //         $this->sendEmail($mailData);
+            //     }
+            // }
+            // hco
+            if(in_array($request->status_pengajuan, [2,6])){
+                $nik_hco = MtrUtility::find(12)->informasi;
+                $email_hco = Karyawan::where('nik', $nik_hco)->value('email');
+                $mailData['to'] = $email_hco;
+                $mailData['data'] = ['email_to' => $mailData['to'], 'id_status' => $request->status_pengajuan, 'status' => ReimburseStatus::find($request->status_pengajuan)->status, 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('approval'), 'id_status' => $request->status_pengajuan]), 'id_trx' => $trx->id];
+                if($trx->plafon > 0){
+                    // jika bukan Ekses
+                    if(!$check_ekses){
+                        $todolist = ['id_trx' => $trx->id, 'nik' => $nik_hco, 'id_status' => $trx->status_pengajuan, 'pic' => 'pic'];
+                        $this->insertToDoList($todolist, $mailData);
+                        $this->sendEmail($mailData);
+                    }
                 }
             }
             // finish
         }
-        else if($request->status_pengajuan == 3){
-            // start
-            // parameter yang dipassing ke sendemail
-            $karyawan = json_decode($trx->karyawan_property, true);
-            $mailData['title'] = 'Formulir Reimbursement';
-            $mailData['filename'] = 'emails.reimburse_done';
-            $mailData['to'] = $karyawan['email'];
-            $mailData['data'] = ['status' => 'ditolak', 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf')]), 'id_trx' => $trx->id];
-            if($trx->plafon > 0){
-                // jika bukan Ekses
-                if(!$check_ekses){
-                    $this->sendEmail($mailData);
-                }
-            }
-            // finish
-        }
+        // 3=Ditolak
+        // else if($request->status_pengajuan == 3){
+        //     // start
+        //     // parameter yang dipassing ke sendemail
+        //     $karyawan = json_decode($trx->karyawan_property, true);
+        //     $mailData['title'] = 'Formulir Reimbursement';
+        //     $mailData['filename'] = 'emails.reimburse_done';
+        //     $mailData['to'] = $karyawan['email'];
+        //     $mailData['data'] = ['email_to' => $mailData['to'], 'id_status' => $request->status_pengajuan, 'status' => ReimburseStatus::find($request->status_pengajuan)->status, 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf'), 'id_status' => $request->status_pengajuan]), 'id_trx' => $trx->id];
+        //     if($trx->plafon > 0){
+        //         // jika bukan Ekses
+        //         if(!$check_ekses){
+        //             $this->sendEmail($mailData);
+        //         }
+        //     }
+        //     // finish
+        // }
         return view('emails.reimburse_ok');
     }
 
