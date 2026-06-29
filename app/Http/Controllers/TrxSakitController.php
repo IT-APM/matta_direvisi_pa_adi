@@ -73,6 +73,11 @@ class TrxSakitController extends Controller
             array_push($arr_status_sakit, $data->status_sakit);
         }
         $status_sakit = SakitStatus::whereIn('id', $arr_status_sakit)->orderBy('id', 'asc')->get();
+        // start dibatasi 30 hari terakhir dari created_at
+        $trx = $trx->filter(function ($item) {
+            return Carbon::parse($item->created_at)->gte(Carbon::now()->subDays(30));
+        });
+        // end
         // start filter
         if($request->filter == true){
             $_status_sakit = $request->input('status_sakit', []);
