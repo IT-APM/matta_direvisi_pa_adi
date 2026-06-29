@@ -68,7 +68,13 @@
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="{{ route('kebutuhan.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label class="h6">Tanggal</label>
+                                    <input class="form-control" name="tanggal_mulai" id="tanggal_mulai" type="date" required="" value="{{ $tanggal_mulai }}">
+                                    sampai
+                                    <input class="form-control" name="tanggal_akhir" id="tanggal_akhir" type="date" required="" value="{{ $tanggal_akhir }}">
+                                </div>
+                                <div class="col-sm-3">
                                     <label class="h6">{{ __('lang.Status Pengajuan') }}</label>&nbsp;<input type="checkbox" onClick="toggle_status_pengajuan(this)" /> {{ __('lang.Pilih Semua') }}
                                     <label class="d-block" for="status_pengajuan">
                                         @foreach ($status_pengajuan as $data)
@@ -76,7 +82,7 @@
                                         @endforeach
                                     </label>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="h6">{{ __('lang.Area Kerja') }}</label>&nbsp;<input type="checkbox" onClick="toggle_id_area(this)" /> {{ __('lang.Pilih Semua') }}
                                     <label class="d-block" for="id_area">
                                         @foreach ($id_area as $data)
@@ -84,7 +90,7 @@
                                         @endforeach
                                     </label>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="h6">{{ __('lang.Jenis Permintaan') }}</label>&nbsp;<input type="checkbox" onClick="toggle_id_jenis_permintaan(this)" /> {{ __('lang.Pilih Semua') }}
                                     <label class="d-block" for="id_jenis_permintaan">
                                         @foreach ($id_jenis_permintaan as $data)
