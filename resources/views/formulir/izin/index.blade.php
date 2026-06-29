@@ -45,8 +45,8 @@
                             <div class="row">
                                 <div class="col-sm-3">
                                     <label class="h6 mt-2">Tanggal Izin</label>
-                                    <br/>Dari <input class="form-control" name="date_from" id="date_from" type="date" required="" value="{{ $date_from }}">
-                                    Sampai <input class="form-control" name="date_to" id="date_to" type="date" required="" value="{{ $date_to }}">
+                                    <br/><input class="form-control" name="date_from" id="date_from" type="date" required="" value="{{ $date_from }}">
+                                    sampai <input class="form-control" name="date_to" id="date_to" type="date" required="" value="{{ $date_to }}">
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status(this)" /> Check All
