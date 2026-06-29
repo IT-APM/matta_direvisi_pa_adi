@@ -100,6 +100,11 @@ class TrxReimburseController extends Controller
         $status_pengajuan = ReimburseStatus::whereIn('id', $arr_status_pengajuan)->orderBy('id', 'asc')->get();
         $tahun = $arr_tahun;
         $nik_karyawan = Karyawan::whereIn('nik', $arr_nik_karyawan)->orderBy('nama', 'asc')->get();
+        // start dibatasi 30 hari terakhir dari created_at
+        $trx = $trx->filter(function ($item) {
+            return Carbon::parse($item->created_at)->gte(Carbon::now()->subDays(30));
+        });
+        // end
         $bulan_tahun_dari = '';
         $bulan_tahun_sampai = '';
         // start filter
