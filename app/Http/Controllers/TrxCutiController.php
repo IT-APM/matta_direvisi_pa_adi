@@ -166,6 +166,11 @@ class TrxCutiController extends Controller
         $tipe_cuti = CutiTipe::whereIn('id', $arr_tipe_cuti)->orderBy('created_at', 'asc')->get();
         $nik_karyawan = Karyawan::whereIn('nik', $arr_nik_karyawan)->orderBy('nama', 'asc')->get();
         $nik_atasan = Karyawan::whereIn('nik', $arr_nik_atasan)->orderBy('nama', 'asc')->get();
+        // start dibatasi 30 hari terakhir dari created_at
+        $trx = $trx->filter(function ($item) {
+            return Carbon::parse($item->created_at)->gte(Carbon::now()->subDays(30));
+        });
+        // end
         // start filter
         if($request->filter == true){
             $_status_cuti = $request->input('status_cuti', []);
