@@ -63,6 +63,30 @@
                                                 <input name="bulan_tahun_sampai" id="bulan_tahun_sampai" class="form-control digits" type="month" value="{{ $bulan_tahun_sampai }}">
                                             </div>
                                         </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
+                                            <label class="d-block" for="perusahaan">
+                                                @foreach ($perusahaan as $data)
+                                                <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" value="{{ $data }}" @if(in_array($data, $arr_perusahaan)) checked @endif> {{ $data }}<br/>
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_divisi(this)" /> Check All
+                                            <label class="d-block" for="divisi">
+                                                @foreach ($divisi as $data)
+                                                <input class="checkbox_animated" id="divisi[]" name="divisi[]" type="checkbox" value="{{ $data }}" @if(in_array($data, $arr_divisi)) checked @endif> {{ $data }}<br/>
+                                                @endforeach
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="h6">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_status_karyawan(this)" /> Check All
+                                            <label class="d-block" for="status_karyawan">
+                                                @foreach ($status_karyawan as $data)
+                                                <input class="checkbox_animated" id="status_karyawan[]" name="status_karyawan[]" type="checkbox" value="{{ $data }}" @if(in_array($data, $arr_status_karyawan)) checked @endif> {{ $data }}<br/>
+                                                @endforeach
+                                            </label>
+                                        </div>
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-sm-12">
@@ -136,6 +160,24 @@
 <script src="{{ asset('assets/js/chart/apex-chart/chart-custom.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script type="text/javascript">
+function toggle_perusahaan(source) {
+    checkboxes = document.getElementsByName('perusahaan[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_divisi(source) {
+    checkboxes = document.getElementsByName('divisi[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_status_karyawan(source) {
+    checkboxes = document.getElementsByName('status_karyawan[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
 // 
 function showDetail(el) {
     const key = el.dataset.key;
