@@ -73,8 +73,8 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="h6">Tanggal Izin Sakit</label>
-                                    <input class="form-control" name="date_from" id="date_from" type="date" required="" value="{{ $date_from }}">Dari
-                                    <br/><input class="form-control" name="date_to" id="date_to" type="date" required="" value="{{ $date_to }}">Sampai
+                                    <input class="form-control" name="date_from" id="date_from" type="date" required="" value="{{ $date_from }}">sampai
+                                    <br/><input class="form-control" name="date_to" id="date_to" type="date" required="" value="{{ $date_to }}">
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_sakit(this)" /> Check All
