@@ -139,10 +139,72 @@ class OvertimeController extends Controller
         // $bulan_tahun_sampai = '';
         $bulan_tahun_dari = Carbon::now()->startOfYear()->format('Y-m');
         $bulan_tahun_sampai = Carbon::now()->format('Y-m');
+        // 
+        $arr = Overtime::select('ot_maker_property')->where('ot_length_rp_adj', '>', 0)->get();
+        $arr_perusahaan = array();
+        $perusahaan = $arr->map(fn($item) => json_decode($item->ot_maker_property, true)['perusahaan'])
+        // ->map(fn($item) => strtoupper(str_replace('.', '', json_decode($item->ot_maker_property, true)['perusahaan'])))
+        ->filter()
+        ->unique()
+        ->sort()
+        ->values()->toArray();
+        // 
+        $arr_direktorat = array();
+        $direktorat = $arr->map(fn($item) => json_decode($item->ot_maker_property, true)['divisi'])
+        // ->map(fn($item) => strtoupper(str_replace('.', '', json_decode($item->ot_maker_property, true)['divisi'])))
+        ->filter()
+        ->unique()
+        ->sort()
+        ->values()->toArray();
+        // 
+        $arr_divisi = array();
+        $divisi = $arr->map(fn($item) => json_decode($item->ot_maker_property, true)['dep'])
+        // ->map(fn($item) => strtoupper(str_replace('.', '', json_decode($item->ot_maker_property, true)['dep'])))
+        ->filter()
+        ->unique()
+        ->sort()
+        ->values()->toArray();
+        // 
+        $arr_status_karyawan = array();
+        $status_karyawan = $arr->map(fn($item) => json_decode($item->ot_maker_property, true)['status_karyawan'])
+        // ->map(fn($item) => strtoupper(str_replace('.', '', json_decode($item->ot_maker_property, true)['status_karyawan'])))
+        ->filter()
+        ->unique()
+        ->sort()
+        ->values()->toArray();
+        // dd($perusahaan, $direktorat, $divisi, $status_karyawan);
         // start filter
         if($request->filter == true && $id == 1){
             $bulan_tahun_dari = $request->bulan_tahun_dari;
             $bulan_tahun_sampai = $request->bulan_tahun_sampai;
+            $_perusahaan = $request->input('perusahaan', []);
+            $_direktorat = $request->input('direktorat', []);
+            $_divisi = $request->input('divisi', []);
+            $_status_karyawan = $request->input('status_karyawan', []);
+            if(count($_perusahaan) > 0){
+                $arr_perusahaan = $_perusahaan;
+            }
+            else{
+                $arr_perusahaan = array();
+            }
+            if(count($_direktorat) > 0){
+                $arr_direktorat = $_direktorat;
+            }
+            else{
+                $arr_direktorat = array();
+            }
+            if(count($_divisi) > 0){
+                $arr_divisi = $_divisi;
+            }
+            else{
+                $arr_divisi = array();
+            }
+            if(count($_status_karyawan) > 0){
+                $arr_status_karyawan = $_status_karyawan;
+            }
+            else{
+                $arr_status_karyawan = array();
+            }
             // $nominal_perusahaan_tahun = [];
             $trx = $this->getOvertimeByGroup('perusahaan', $bulan_tahun_dari, $bulan_tahun_sampai);
             $nominal_perusahaan_tahun = $trx->groupBy(function ($item) {
@@ -238,7 +300,7 @@ class OvertimeController extends Controller
             // 
         }
         // end filter
-        return view('overtime.dashboard', compact('id', 'lable', 'bulan_tahun_dari', 'bulan_tahun_sampai', 'nominal_perusahaan_tahun', 'nominal_perusahaan_bulan', 'nominal_status_bulan', 'nominal_divisi_bulan', 'jumlah_status_bulan', 'jumlah_perusahaan_status_bulan'));
+        return view('overtime.dashboard', compact('id', 'lable', 'bulan_tahun_dari', 'bulan_tahun_sampai', 'nominal_perusahaan_tahun', 'nominal_perusahaan_bulan', 'nominal_status_bulan', 'nominal_divisi_bulan', 'jumlah_status_bulan', 'jumlah_perusahaan_status_bulan', 'perusahaan', 'arr_perusahaan', 'direktorat', 'arr_direktorat', 'divisi', 'arr_divisi', 'status_karyawan', 'arr_status_karyawan'));
     }
 
     public function getOvertimeByGroup(string $groupKey, $dari = null, $sampai = null)
