@@ -578,11 +578,20 @@ class TrxKebutuhanController extends Controller
             array_push($arr_id_area, $data->id_area);
             array_push($arr_id_jenis_permintaan, $data->id_jenis_permintaan);
         }
+        // start dibatasi 30 hari terakhir dari created_at
+        $trx = $trx->filter(function ($item) {
+            return Carbon::parse($item->created_at)->gte(Carbon::now()->subDays(30));
+        });
+        $tanggal_mulai = '';
+        $tanggal_akhir = '';
+        // end
         $status_pengajuan = KebutuhanStatus::whereIn('id', $arr_status_pengajuan)->orderBy('id', 'asc')->get();
         $id_area = Propinsi::whereIn('id', $arr_id_area)->orderBy('order_by', 'asc')->get();
         $id_jenis_permintaan = JenisPermintaan::whereIn('id', $arr_id_jenis_permintaan)->orderBy('id', 'asc')->get();
         // start filter
         if($request->filter == true){
+            $tanggal_mulai = $request->tanggal_mulai;
+            $tanggal_akhir = $request->tanggal_akhir;
             $_status_pengajuan = $request->input('status_pengajuan', []);
             $_id_area = $request->input('id_area', []);
             $_id_jenis_permintaan = $request->input('id_jenis_permintaan', []);
@@ -605,13 +614,13 @@ class TrxKebutuhanController extends Controller
                 $arr_id_jenis_permintaan = array();
             }
             // return response()->json(['trx' => $request->input('status_pengajuan', [])]);
-            $trx = TrxKebutuhanMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('id_area', $arr_id_area)->whereIn('id_jenis_permintaan', $arr_id_jenis_permintaan)->orderBy('id', 'desc')->get();
+            $trx = TrxKebutuhanMaster::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('id_area', $arr_id_area)->whereIn('id_jenis_permintaan', $arr_id_jenis_permintaan)->orderBy('id', 'desc')->get();
             if(Gate::allows('hc_nkp')){
-                $trx = TrxKebutuhanMaster::whereIn('pengaju',$arr_nik_nkp)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('id_area', $arr_id_area)->whereIn('id_jenis_permintaan', $arr_id_jenis_permintaan)->orderBy('id', 'desc')->get();
+                $trx = TrxKebutuhanMaster::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('pengaju',$arr_nik_nkp)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('id_area', $arr_id_area)->whereIn('id_jenis_permintaan', $arr_id_jenis_permintaan)->orderBy('id', 'desc')->get();
             }
             if(auth()->user()->userrole == 'nhc'){
                 $where = ['pengaju' => auth()->user()->nik];
-                $trx = TrxKebutuhanMaster::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('id_area', $arr_id_area)->whereIn('id_jenis_permintaan', $arr_id_jenis_permintaan)->where($where)->orderBy('id', 'desc')->get();
+                $trx = TrxKebutuhanMaster::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('id_area', $arr_id_area)->whereIn('id_jenis_permintaan', $arr_id_jenis_permintaan)->where($where)->orderBy('id', 'desc')->get();
                 // 
                 $arr_id = [];
                 foreach($trx as $_trx){
@@ -631,7 +640,7 @@ class TrxKebutuhanController extends Controller
             $arr_id_jenis_permintaan = array();
         }
         // end filter
-        return view('formulir.kebutuhan.index', compact('trx', 'no', 'status_pengajuan', 'id_area', 'id_jenis_permintaan', 'arr_status_pengajuan', 'arr_id_area', 'arr_id_jenis_permintaan', 'karyawan'));
+        return view('formulir.kebutuhan.index', compact('trx', 'no', 'status_pengajuan', 'id_area', 'id_jenis_permintaan', 'arr_status_pengajuan', 'arr_id_area', 'arr_id_jenis_permintaan', 'karyawan', 'tanggal_mulai', 'tanggal_akhir'));
     }
 
     /**
