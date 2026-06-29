@@ -33,7 +33,12 @@ class AttendanceController extends Controller
         $limit = 25000;
         $tahun = Carbon::parse(now())->format('Y');
         $bulan = Carbon::parse(now())->format('m');
+        $arr_nik_nkp = new Karyawan();
+        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $att_nik_nama = DB::table('trx_tbl_attendance as a')->select('a.att_nik', 'b.nama')->distinct()->leftJoin('mtr_tbl_karyawan as b', 'a.att_nik', '=', 'b.nik')->orderBy('b.nama')->get();
+        if(Gate::allows('hc_nkp')){
+            $att_nik_nama = DB::table('trx_tbl_attendance as a')->select('a.att_nik', 'b.nama')->distinct()->leftJoin('mtr_tbl_karyawan as b', 'a.att_nik', '=', 'b.nik')->whereIn('a.att_nik',$arr_nik_nkp)->orderBy('b.nama')->get();
+        }
         $duration = array();
         // start default hc
         $att = array();
@@ -125,8 +130,6 @@ class AttendanceController extends Controller
         // start filter
         // if($request->filter == true || $request->download == true){
         if($request->filter == true){
-            $arr_nik_nkp = new Karyawan();
-            $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
             // $this->into_debug(['nomor'=>1, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
             $date_from = $request->date_from;
             $date_to = $request->date_to;
