@@ -1021,14 +1021,15 @@ class TrxReimburseController extends Controller
             $mailData['filename'] = 'emails.reimburse_done';
             $mailData['to'] = $karyawan['email'];
             $mailData['data'] = ['email_to' => $mailData['to'], 'id_status' => $request->status_pengajuan, 'status' => ReimburseStatus::find($request->status_pengajuan)->status, 'nama' => $karyawan['nama'].'/'.$karyawan['nik'], 'jabatan' => $karyawan['jabatan'], 'unit_kerja' => $karyawan['divisi'] . '/' . $karyawan['dep'] . '/' . $karyawan['sub_dep'], 'link' => route('reimburse.show', [(new OpenDataController)->encryptWithKey($trx->id), 'view' => (new OpenDataController)->encryptWithKey('pdf'), 'id_status' => $request->status_pengajuan]), 'id_trx' => $trx->id];
-            // if($trx->plafon > 0){
-            //     // jika bukan Ekses
-            //     if(!$check_ekses){
-            //         $this->sendEmail($mailData);
-            //     }
-            // }
+            if($trx->plafon > 0){
+                // jika bukan Ekses
+                if(!$check_ekses){
+                    $this->sendEmail($mailData);
+                }
+            }
             // hco
-            if(in_array($request->status_pengajuan, [2,6])){
+            // 6=Penangguhan Pengajuan
+            if(in_array($request->status_pengajuan, [6])){
                 $nik_hco = MtrUtility::find(12)->informasi;
                 $email_hco = Karyawan::where('nik', $nik_hco)->value('email');
                 $mailData['to'] = $email_hco;
