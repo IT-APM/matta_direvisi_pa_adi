@@ -862,23 +862,23 @@ class TrxPenilaianController extends Controller
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no = 0;
-        $trx = TrxPenilaian::orderBy('id', 'desc')->where('created_at', '>=', Carbon::now()->subDays(30))->get();
+        $trx = TrxPenilaian::where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get();
         if(Gate::allows('hc_nkp')){
-            $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get();
         }
         if(auth()->user()->userrole == 'nhc'){
             // nik_karyawan
             $where = ['nik_karyawan' => auth()->user()->nik];
-            $trx = TrxPenilaian::where($where)->orderBy('id', 'desc')->where('created_at', '>=', Carbon::now()->subDays(30))->get();
+            $trx = TrxPenilaian::where($where)->where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get();
             // nik_penilai_1
             $where = ['nik_penilai_1' => auth()->user()->nik];
-            $trx = $trx->concat(TrxPenilaian::where($where)->orderBy('id', 'desc')->where('created_at', '>=', Carbon::now()->subDays(30))->get());
+            $trx = $trx->concat(TrxPenilaian::where($where)->where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get());
             // nik_penilai_2
             $where = ['nik_penilai_2' => auth()->user()->nik];
-            $trx = $trx->concat(TrxPenilaian::where($where)->orderBy('id', 'desc')->where('created_at', '>=', Carbon::now()->subDays(30))->get());
+            $trx = $trx->concat(TrxPenilaian::where($where)->where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get());
             // nik_penilai_3
             $where = ['nik_penilai_3' => auth()->user()->nik];
-            $trx = $trx->concat(TrxPenilaian::where($where)->orderBy('id', 'desc')->where('created_at', '>=', Carbon::now()->subDays(30))->get());
+            $trx = $trx->concat(TrxPenilaian::where($where)->where('created_at', '>=', Carbon::now()->subDays(30))->orderBy('id', 'desc')->get());
         }
         // foreach ($trx as $value) {
         //     $trxM = TrxPenilaian::find( $value->id );
