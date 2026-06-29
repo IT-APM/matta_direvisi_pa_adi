@@ -23,7 +23,7 @@
 
 @section('breadcrumb-items')
 <li class="breadcrumb-item">To Do List</li>
-<!-- <li class="breadcrumb-item active">Permohonan Cuti</li> -->
+<li class="breadcrumb-item active">@if(!empty($trx[0])){{ $trx[0]->title }} @else NA @endif</li>
 @endsection
 
 @section('content')
@@ -49,6 +49,9 @@
                                     <th>Nama</th>
                                     <th>Jabatan</th>
                                     <th>Unit Kerja</th>
+                                    @if(request('filename') == 'emails.reimburse0')
+                                        <th>Status</th>
+                                    @endif
                                     <th>Created at</th>
                                     <th>Action</th>
                                 </tr>
@@ -62,6 +65,9 @@
                                     <td>{{ $data->nama }}</td>
                                     <td>{{ $data->jabatan }}</td>
                                     <td>{{ $data->unit_kerja }}</td>
+                                    @if(request('filename') == 'emails.reimburse0')
+                                        <td>{{ App\Models\ReimburseStatus::find($data->id_status)->status }}</td>
+                                    @endif
                                     <td>{{ $data->created_at }}</td>
                                     <td>
                                         <a href="{{ $data->link }}" data-toggle="tooltip" title="Detail" target="_blank"><i class="icon-eye"></i></a>
