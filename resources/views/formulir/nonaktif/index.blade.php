@@ -49,63 +49,47 @@
                             <form class="mt-2" action="{{ route('nonaktif.index') }}" method="get" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        <label class="h6" for="nama">Karyawan</label>
-                                        <input name="nama" id="nama" class="form-control" type="text"
-                                            value="{{ $nama }}">
+                                        <label class="h6">Tanggal</label>
+                                        <input class="form-control" name="tanggal_mulai" id="tanggal_mulai" type="date" required="" value="{{ $tanggal_mulai }}">
+                                        sampai
+                                        <input class="form-control" name="tanggal_akhir" id="tanggal_akhir" type="date" required="" value="{{ $tanggal_akhir }}">
+                                        <label class="h6 mt-2" for="nama">Karyawan</label>
+                                        <input name="nama" id="nama" class="form-control" type="text" value="{{ $nama }}">
                                         @if (auth()->user()->userrole == 'hc')
                                             <label class="h6 mt-2" for="atasan">Layer 1</label>
-                                            <input name="atasan" id="atasan" class="form-control" type="text"
-                                                value="{{ $atasan }}">
+                                            <input name="atasan" id="atasan" class="form-control" type="text" value="{{ $atasan }}">
                                         @endif
-                                        <label class="h6 mt-2">Perusahaan</label>&nbsp;<input type="checkbox"
-                                            onClick="toggle_perusahaan(this)" /> Check All
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
                                         <label class="d-block" for="perusahaan"></label>
                                         @foreach ($perusahaan as $data)
-                                            <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>
-                                            {{ $data->nama }}<br />
+                                            <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>{{ $data->nama }}<br/>
                                         @endforeach
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="h6">Status Perpanjangan</label>&nbsp;<input type="checkbox"
-                                            onClick="toggle_perpanjangan(this)" /> Check All
+                                        <label class="h6 mt-2">Status Perpanjangan</label>&nbsp;<input type="checkbox" onClick="toggle_perpanjangan(this)" /> Check All
                                         <label class="d-block" for="perpanjangan"></label>
                                         @foreach ($perpanjangan as $data)
-                                            <input class="checkbox_animated" id="perpanjangan[]" name="perpanjangan[]"
-                                                type="checkbox" value="{{ $data->id }}"
-                                                @if (in_array($data->id, $arr_perpanjangan)) checked @endif>
-                                            {{ $data->informasi }}<br />
+                                            <input class="checkbox_animated" id="perpanjangan[]" name="perpanjangan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_perpanjangan)) checked @endif>{{ $data->informasi }}<br/>
                                         @endforeach
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="h6">Status Formulir</label>&nbsp;<input type="checkbox"
-                                            onClick="toggle_status(this)" /> Check All
+                                        <label class="h6">Status Formulir</label>&nbsp;<input type="checkbox" onClick="toggle_status(this)" /> Check All
                                         <label class="d-block" for="status"></label>
                                         @foreach ($status as $data)
-                                            <input class="checkbox_animated" id="status[]" name="status[]" type="checkbox"
-                                                value="{{ $data->id }}"
-                                                @if (in_array($data->id, $arr_status)) checked @endif>
-                                            {{ $data->status }}<br />
+                                            <input class="checkbox_animated" id="status[]" name="status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_status)) checked @endif>{{ $data->status }}<br/>
                                         @endforeach
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="h6">Alasan Non Aktif</label>&nbsp;<input type="checkbox"
-                                            onClick="toggle_alasan(this)" /> Check All
+                                        <label class="h6">Alasan Non Aktif</label>&nbsp;<input type="checkbox" onClick="toggle_alasan(this)" /> Check All
                                         <label class="d-block" for="alasan"></label>
                                         @foreach ($alasan as $data)
-                                            <input class="checkbox_animated" id="alasan[]" name="alasan[]"
-                                                type="checkbox" value="{{ $data->id }}"
-                                                @if (in_array($data->id, $arr_alasan)) checked @endif>
-                                            {{ $data->alasan }}<br />
+                                            <input class="checkbox_animated" id="alasan[]" name="alasan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_alasan)) checked @endif>{{ $data->alasan }}<br/>
                                         @endforeach
                                     </div>
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-sm-12">
-                                        <button class="btn btn-warning" id="filter" name="filter" value="true"
-                                            type="submit"><i class="fa fa-search" aria-hidden="true"></i>
-                                            Filter</button> | <button class="btn btn-info" id="reset" name="reset"
-                                            value="true" type="submit"><i class="fa fa-refresh"
-                                                aria-hidden="true"></i> Reset</button>
+                                        <button class="btn btn-warning" id="filter" name="filter" value="true" type="submit"><i class="fa fa-search" aria-hidden="true"></i>Filter</button> | <button class="btn btn-info" id="reset" name="reset" value="true" type="submit"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
                                     </div>
                                 </div>
                             </form>
@@ -208,7 +192,7 @@
                                                     $not_yet = App\Models\TrxNonaktifDetail::where($where)->whereNotIn('kepada', $arr)->orderBy('id', 'desc')->get();
                                                 @endphp
                                                 @foreach ($not_yet as $_not_yet)
-                                                    {{ $_not_yet->_kepada->nama }}<br />
+                                                    {{ $_not_yet->_kepada->nama }}<br/>
                                                 @endforeach
                                             </td>
                                             <td>{{ $data->_status->status }}</td>
