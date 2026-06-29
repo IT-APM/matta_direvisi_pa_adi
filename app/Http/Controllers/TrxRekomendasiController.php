@@ -98,8 +98,17 @@ class TrxRekomendasiController extends Controller
         $status_rekomendasi = RekomendasiStatus::whereIn('id', $arr_status_rekomendasi)->orderBy('id', 'asc')->get();
         $nik_karyawan = Karyawan::whereIn('nik', $arr_nik_karyawan)->orderBy('nama', 'asc')->get();
         $nik_atasan = Karyawan::whereIn('nik', $arr_nik_atasan)->orderBy('nama', 'asc')->get();
+        // start dibatasi 30 hari terakhir dari created_at
+        $trx = $trx->filter(function ($item) {
+            return Carbon::parse($item->created_at)->gte(Carbon::now()->subDays(30));
+        });
+        $tanggal_mulai = '';
+        $tanggal_akhir = '';
+        // end
         // start filter
         if($request->filter == true){
+            $tanggal_mulai = $request->tanggal_mulai;
+            $tanggal_akhir = $request->tanggal_akhir;
             $_status_rekomendasi = $request->input('status_rekomendasi', []);
             $_nik_karyawan = $request->input('nik_karyawan', []);
             $_nik_atasan = $request->input('nik_atasan', []);
@@ -121,14 +130,14 @@ class TrxRekomendasiController extends Controller
             // else{
             //     $arr_nik_atasan = array();
             // }
-            $trx = TrxRekomendasiMaster::whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->orderBy('id', 'desc')->get();
+            $trx = TrxRekomendasiMaster::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->orderBy('id', 'desc')->get();
             if(Gate::allows('hc_nkp')){
-                $trx = TrxRekomendasiMaster::whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->orderBy('id', 'desc')->get();
+                $trx = TrxRekomendasiMaster::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('nik_karyawan',$arr_nik_nkp)->whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->orderBy('id', 'desc')->get();
             }
             if(auth()->user()->userrole == 'nhc'){
                 // $where = ['nik_atasan' => auth()->user()->nik];
                 // $trx = TrxRekomendasiMaster::whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->where($where)->orderBy('id', 'desc')->get();
-                $trx = TrxRekomendasiMaster::where(function($query) {$query->where('nik_karyawan', [auth()->user()->nik])->orWhere('nik_atasan', [auth()->user()->nik])->orWhere('nik_reviewer1', [auth()->user()->nik])->orWhere('nik_reviewer2', [auth()->user()->nik])->orWhere('nik_reviewer3', [auth()->user()->nik]);})->whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->orderBy('id', 'desc')->get();
+                $trx = TrxRekomendasiMaster::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->where(function($query) {$query->where('nik_karyawan', [auth()->user()->nik])->orWhere('nik_atasan', [auth()->user()->nik])->orWhere('nik_reviewer1', [auth()->user()->nik])->orWhere('nik_reviewer2', [auth()->user()->nik])->orWhere('nik_reviewer3', [auth()->user()->nik]);})->whereIn('status_rekomendasi', $arr_status_rekomendasi)->whereIn('nik_karyawan', $arr_nik_karyawan)->whereIn('nik_atasan', $arr_nik_atasan)->orderBy('id', 'desc')->get();
                 // 
                 $arr_id = [];
                 foreach($trx as $_trx){
@@ -148,7 +157,7 @@ class TrxRekomendasiController extends Controller
             $arr_nik_atasan = array();
         }
         // end filter
-        return view('formulir.rekomendasi.index', compact('layer1', 'trx', 'no', 'status_rekomendasi', 'nik_karyawan', 'nik_atasan','arr_status_rekomendasi', 'arr_nik_karyawan', 'arr_nik_atasan'));
+        return view('formulir.rekomendasi.index', compact('layer1', 'trx', 'no', 'status_rekomendasi', 'nik_karyawan', 'nik_atasan','arr_status_rekomendasi', 'arr_nik_karyawan', 'arr_nik_atasan', 'tanggal_mulai', 'tanggal_akhir'));
     }
 
     /**
