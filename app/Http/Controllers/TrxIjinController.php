@@ -176,6 +176,11 @@ class TrxIjinController extends Controller
         $status = IjinStatus::whereIn('id', $arr_status)->orderBy('id', 'asc')->get();
         $tipe = IjinTipe::whereIn('id', $arr_tipe)->orderBy('id', 'asc')->get();
         // $karyawan = Karyawan::whereIn('nik', $arr_karyawan)->orderBy('nama', 'asc')->get();
+        // start dibatasi 30 hari terakhir dari created_at
+        $trx = $trx->filter(function ($item) {
+            return Carbon::parse($item->created_at)->gte(Carbon::now()->subDays(30));
+        });
+        // end
         $date_from = '';
         $date_to = '';
         // start filter
