@@ -282,8 +282,17 @@ class TrxPelatihanController extends Controller
         $status_pengajuan = PelatihanStatus::whereIn('id', $arr_status_pengajuan)->orderBy('id', 'asc')->get();
         $pengaju = Karyawan::whereIn('nik', $arr_pengaju)->orderBy('nama', 'asc')->get();
         $atasan_pengaju = Karyawan::whereIn('nik', $arr_atasan_pengaju)->orderBy('nama', 'asc')->get();
+        // start dibatasi 30 hari terakhir dari created_at
+        $trx = $trx->filter(function ($item) {
+            return Carbon::parse($item->created_at)->gte(Carbon::now()->subDays(30));
+        });
+        $tanggal_mulai = '';
+        $tanggal_akhir = '';
+        // end
         // start filter
         if($request->filter == true){
+            $tanggal_mulai = $request->tanggal_mulai;
+            $tanggal_akhir = $request->tanggal_akhir;
             $_status_pengajuan = $request->input('status_pengajuan', []);
             $_pengaju = $request->input('pengaju', []);
             $_atasan_pengaju = $request->input('atasan_pengaju', []);
@@ -305,13 +314,13 @@ class TrxPelatihanController extends Controller
             // else{
             //     $arr_atasan_pengaju = array();
             // }
-            $trx = TrxPelatihan::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('pengaju', $arr_pengaju)->whereIn('atasan_pengaju', $arr_atasan_pengaju)->orderBy('id', 'desc')->get();
+            $trx = TrxPelatihan::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('pengaju', $arr_pengaju)->whereIn('atasan_pengaju', $arr_atasan_pengaju)->orderBy('id', 'desc')->get();
             if(Gate::allows('hc_nkp')){
-                $trx = TrxPelatihan::whereIn('pengaju',$arr_nik_nkp)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('pengaju', $arr_pengaju)->whereIn('atasan_pengaju', $arr_atasan_pengaju)->orderBy('id', 'desc')->get();
+                $trx = TrxPelatihan::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('pengaju',$arr_nik_nkp)->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('pengaju', $arr_pengaju)->whereIn('atasan_pengaju', $arr_atasan_pengaju)->orderBy('id', 'desc')->get();
             }
             if(auth()->user()->userrole == 'nhc'){
 				$where = ['pengaju' => auth()->user()->nik];
-                $trx = TrxPelatihan::whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('pengaju', $arr_pengaju)->whereIn('atasan_pengaju', $arr_atasan_pengaju)->where($where)->orderBy('id', 'desc')->get();
+                $trx = TrxPelatihan::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('status_pengajuan', $arr_status_pengajuan)->whereIn('pengaju', $arr_pengaju)->whereIn('atasan_pengaju', $arr_atasan_pengaju)->where($where)->orderBy('id', 'desc')->get();
                 // 
                 $arr_id = [];
                 foreach($trx as $_trx){
@@ -331,7 +340,7 @@ class TrxPelatihanController extends Controller
             $arr_atasan_pengaju = array();
         }
         // end filter
-        return view('formulir.pelatihan.index', compact('trx', 'no', 'status_pengajuan', 'pengaju', 'atasan_pengaju','arr_status_pengajuan', 'arr_pengaju', 'arr_atasan_pengaju'));
+        return view('formulir.pelatihan.index', compact('trx', 'no', 'status_pengajuan', 'pengaju', 'atasan_pengaju','arr_status_pengajuan', 'arr_pengaju', 'arr_atasan_pengaju', 'tanggal_mulai', 'tanggal_akhir'));
         // return view('formulir.pelatihan.index', compact('trx', 'no'));
     }
 
