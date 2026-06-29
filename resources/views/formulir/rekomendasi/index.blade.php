@@ -60,6 +60,12 @@
                         <form class="mt-2" action="{{ route('rekomendasi.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-sm-3">
+                                    <label class="h6">Tanggal</label>
+                                    <input class="form-control" name="tanggal_mulai" id="tanggal_mulai" type="date" required="" value="{{ $tanggal_mulai }}">
+                                    sampai
+                                    <input class="form-control" name="tanggal_akhir" id="tanggal_akhir" type="date" required="" value="{{ $tanggal_akhir }}">
+                                </div>
+                                <div class="col-sm-3">
                                     <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_rekomendasi(this)" /> Check All
                                     <label class="d-block" for="status_rekomendasi">
                                         @foreach ($status_rekomendasi as $data)
