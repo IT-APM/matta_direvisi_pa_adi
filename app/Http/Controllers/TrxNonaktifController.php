@@ -105,8 +105,17 @@ class TrxNonaktifController extends Controller
         }
         $status = NonaktifStatus::whereIn('id', $arr_status)->orderBy('id', 'asc')->get();
         $alasan = NonaktifAlasan::whereIn('id', $arr_alasan)->orderBy('id', 'asc')->get();
+        // start dibatasi 30 hari terakhir dari created_at
+        $trx = $trx->filter(function ($item) {
+            return Carbon::parse($item->created_at)->gte(Carbon::now()->subDays(30));
+        });
+        $tanggal_mulai = '';
+        $tanggal_akhir = '';
+        // end
         // start filter
         if($request->filter == true){
+            $tanggal_mulai = $request->tanggal_mulai;
+            $tanggal_akhir = $request->tanggal_akhir;
             $nama = $request->nama;
             $atasan = $request->atasan;
             $_status = $request->input('status', []);
@@ -140,9 +149,9 @@ class TrxNonaktifController extends Controller
             $_nama = Karyawan::select('nik')->where('nama','LIKE','%'.$nama.'%')->get();
             $_atasan = Karyawan::select('nik')->where('nama','LIKE','%'.$atasan.'%')->get();
             $nik_karyawan = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get()->toArray();
-            $trx = TrxNonaktifMaster::whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_nama)->whereIn('atasan', $_atasan)->whereIn('status', $arr_status)->whereIn('alasan', $arr_alasan)->orderBy('id', 'desc')->get();
+            $trx = TrxNonaktifMaster::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_nama)->whereIn('atasan', $_atasan)->whereIn('status', $arr_status)->whereIn('alasan', $arr_alasan)->orderBy('id', 'desc')->get();
             if(Gate::allows('hc_nkp')){
-                $trx = TrxNonaktifMaster::whereIn('pengaju',$arr_nik_nkp)->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_nama)->whereIn('atasan', $_atasan)->whereIn('status', $arr_status)->whereIn('alasan', $arr_alasan)->orderBy('id', 'desc')->get();
+                $trx = TrxNonaktifMaster::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('pengaju',$arr_nik_nkp)->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_nama)->whereIn('atasan', $_atasan)->whereIn('status', $arr_status)->whereIn('alasan', $arr_alasan)->orderBy('id', 'desc')->get();
             }
             foreach ($trx as $_trx) {
                 $where = ['nik_karyawan' => $_trx->pengaju];
@@ -153,7 +162,7 @@ class TrxNonaktifController extends Controller
             }
             if(auth()->user()->userrole == 'nhc'){
                 $where = ['pengaju' => auth()->user()->nik];
-                $trx = TrxNonaktifMaster::whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_nama)->whereIn('atasan', $_atasan)->whereIn('status', $arr_status)->whereIn('alasan', $arr_alasan)->where($where)->orderBy('id', 'desc')->get();
+                $trx = TrxNonaktifMaster::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('pengaju', $nik_karyawan)->whereIn('pengaju', $_nama)->whereIn('atasan', $_atasan)->whereIn('status', $arr_status)->whereIn('alasan', $arr_alasan)->where($where)->orderBy('id', 'desc')->get();
                 // 
                 $arr_id = [];
                 foreach($trx as $_trx){
@@ -181,7 +190,7 @@ class TrxNonaktifController extends Controller
             $arr_perpanjangan = array();
         }
         // end filter
-        return view( 'formulir.nonaktif.index', compact( 'trx', 'no', 'status', 'alasan', 'arr_status', 'arr_alasan', 'nama', 'atasan', 'perusahaan', 'arr_perusahaan', 'perpanjangan', 'arr_perpanjangan'));
+        return view( 'formulir.nonaktif.index', compact( 'trx', 'no', 'status', 'alasan', 'arr_status', 'arr_alasan', 'nama', 'atasan', 'perusahaan', 'arr_perusahaan', 'perpanjangan', 'arr_perpanjangan', 'tanggal_mulai', 'tanggal_akhir'));
     }
 
     /**
