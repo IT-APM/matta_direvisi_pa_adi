@@ -1817,7 +1817,7 @@ class TrxPenilaianController extends Controller
         // 4=Done by HC (180)
         // 8=Done by HC (360)
         $check2 = TrxPenilaian::where(['id'=>$id, 'is_perpanjang'=>1])->whereIn('id_status', [4,8])->exists();
-        $no_kontrak = TrxPenilaian::where(['is_perpanjang'=>1])->whereIn('id_status', [4,8])->whereYear('tanggal_kontrak', now()->year)->orderBy('no_kontrak', 'desc')->first()->no_kontrak;
+        $no_kontrak = TrxPenilaian::where(['is_perpanjang'=>1])->whereIn('id_status', [4,8])->whereYear('tanggal_kontrak', now()->year)->orderByRaw('no_kontrak*1 DESC')->first()->no_kontrak;
         if(empty($no_kontrak)){
             $no_kontrak = 1;
         }else{
