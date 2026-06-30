@@ -74,7 +74,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div>
+                                    {{-- <div>
                                         <label class="h6 mt-2" for="nik">Karyawan</label>
                                         <select class="form-select js-example-basic-single col-sm-12" id="nik" name="nik" required="">
                                             <option selected="" disabled="" value="">Pilih...</option>
@@ -84,10 +84,18 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             @endforeach
                                         </select>
                                         <div class="invalid-feedback txt-danger">Field is required.</div>
+                                    </div> --}}
+                                    <label class="h6 mt-2">Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_nik(this)" />&nbsp;Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                        <label class="d-block" for="nik">
+                                            @foreach ($karyawan as $data)
+                                            <input class="checkbox_animated" id="nik[]" name="nik[]" type="checkbox" value="{{ $data->nik }}" @if(in_array($data->nik, $_arr_nik)) checked @endif>{{ $data->nama }} - {{ $data->nik }}<br/>
+                                            @endforeach
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
-                                    <label class="h6 mt-2">Status</label>&nbsp;<input type="checkbox" onClick="status_karyawan(this)" />&nbsp;Check All
+                                    <label class="h6 mt-2">Status</label>&nbsp;<input type="checkbox" onClick="toggle_status_karyawan(this)" />&nbsp;Check All
                                     <label class="d-block" for="status_karyawan">
                                         @foreach ($status_karyawan as $data)
                                         <input class="checkbox_animated" id="status_karyawan[]" name="status_karyawan[]" type="checkbox" value="{{ $data->status_karyawan }}" @if(in_array($data->status_karyawan, $_arr_status_karyawan)) checked @endif> {{ $data->status_karyawan }}<br/>
@@ -95,13 +103,13 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     </label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="h6 mt-2">Level</label>&nbsp;<input type="checkbox" onClick="level(this)" />&nbsp;Check All
+                                    <label class="h6 mt-2">Level</label>&nbsp;<input type="checkbox" onClick="toggle_level(this)" />&nbsp;Check All
                                     <label class="d-block" for="level">
                                         @foreach ($level as $data)
                                         <input class="checkbox_animated" id="level[]" name="level[]" type="checkbox" value="{{ $data->level }}" @if(in_array($data->level, $_arr_level)) checked @endif> {{ $data->level }}<br/>
                                         @endforeach
                                     </label>
-                                    {{-- <label class="h6 mt-2">Jabatan</label>&nbsp;<input type="checkbox" onClick="jabatan(this)" />&nbsp;Check All
+                                    {{-- <label class="h6 mt-2">Jabatan</label>&nbsp;<input type="checkbox" onClick="toggle_jabatan(this)" />&nbsp;Check All
                                     <label class="d-block" for="jabatan">
                                         @foreach ($jabatan as $data)
                                         <input class="checkbox_animated" id="jabatan[]" name="jabatan[]" type="checkbox" value="{{ $data->jabatan }}" @if(in_array($data->jabatan, $_arr_jabatan)) checked @endif> {{ $data->jabatan }}<br/>
@@ -111,25 +119,25 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                 {{-- <div class="col-sm-4">
                                     <label class="h6">Findim</label>
                                     <br/>
-                                    <label class="form-label">Divisi</label>&nbsp;<input type="checkbox" onClick="findim_divisi(this)" />&nbsp;Check All
+                                    <label class="form-label">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_findim_divisi(this)" />&nbsp;Check All
                                     <label class="d-block" for="findim_divisi">
                                         @foreach ($findim_divisi as $data)
                                         <input class="checkbox_animated" id="findim_divisi[]" name="findim_divisi[]" type="checkbox" value="{{ $data->divisi_id }}/{{ $data->divisi_desc }}" @if(in_array($data->divisi_id.'/'.$data->divisi_desc, $_arr_findim_divisi)) checked @endif> {{ $data->divisi_id }}/{{ $data->divisi_desc }}<br/>
                                         @endforeach
                                     </label>
-                                    <label class="form-label">Departemen</label>&nbsp;<input type="checkbox" onClick="findim_departemen(this)" />&nbsp;Check All
+                                    <label class="form-label">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_findim_departemen(this)" />&nbsp;Check All
                                     <label class="d-block" for="findim_departemen">
                                         @foreach ($findim_departemen as $data)
                                         <input class="checkbox_animated" id="findim_departemen[]" name="findim_departemen[]" type="checkbox" value="{{ $data->departemen_id }}/{{ $data->departemen_desc }}" @if(in_array($data->departemen_id.'/'.$data->departemen_desc, $_arr_findim_departemen)) checked @endif> {{ $data->departemen_id }}/{{ $data->departemen_desc }}<br/>
                                         @endforeach
                                     </label>
-                                    <label class="form-label">Sub Departemen</label>&nbsp;<input type="checkbox" onClick="findim_subdepartemen(this)" />&nbsp;Check All
+                                    <label class="form-label">Sub Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_findim_subdepartemen(this)" />&nbsp;Check All
                                     <label class="d-block" for="findim_subdepartemen">
                                         @foreach ($findim_subdepartemen as $data)
                                         <input class="checkbox_animated" id="findim_subdepartemen[]" name="findim_subdepartemen[]" type="checkbox" value="{{ $data->subdepartemen_id }}/{{ $data->subdepartemen_desc }}" @if(in_array($data->subdepartemen_id.'/'.$data->subdepartemen_desc, $_arr_findim_subdepartemen)) checked @endif> {{ $data->subdepartemen_id }}/{{ $data->subdepartemen_desc }}<br/>
                                         @endforeach
                                     </label>
-                                    <label class="form-label">Project</label>&nbsp;<input type="checkbox" onClick="findim_project(this)" />&nbsp;Check All
+                                    <label class="form-label">Project</label>&nbsp;<input type="checkbox" onClick="toggle_findim_project(this)" />&nbsp;Check All
                                     <label class="d-block" for="findim_project">
                                         @foreach ($findim_project as $data)
                                         <input class="checkbox_animated" id="findim_project[]" name="findim_project[]" type="checkbox" value="{{ $data->project_id }}/{{ $data->project_desc }}" @if(in_array($data->project_id.'/'.$data->project_desc, $_arr_findim_project)) checked @endif> {{ $data->project_id }}/{{ $data->project_desc }}<br/>
@@ -137,19 +145,19 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     </label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="h6">Direktorat</label>&nbsp;<input type="checkbox" onClick="divisi(this)" />&nbsp;Check All
+                                    <label class="h6">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi(this)" />&nbsp;Check All
                                     <label class="d-block" for="divisi">
                                         @foreach ($divisi as $data)
                                         <input class="checkbox_animated" id="divisi[]" name="divisi[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_divisi)) checked @endif> {{ $data->nama }}<br/>
                                         @endforeach
                                     </label>
-                                    <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="departemen(this)" />&nbsp;Check All
+                                    <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_departemen(this)" />&nbsp;Check All
                                     <label class="d-block" for="departemen">
                                         @foreach ($departemen as $data)
                                         <input class="checkbox_animated" id="departemen[]" name="departemen[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_departemen)) checked @endif> {{ $data->nama }}<br/>
                                         @endforeach
                                     </label>
-                                    <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="subdepartemen(this)" />&nbsp;Check All
+                                    <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_subdepartemen(this)" />&nbsp;Check All
                                     <label class="d-block" for="subdepartemen">
                                         @foreach ($subdepartemen as $data)
                                         <input class="checkbox_animated" id="subdepartemen[]" name="subdepartemen[]" type="checkbox" value="{{ $data->nama }}" @if(in_array($data->nama, $_arr_subdepartemen)) checked @endif> {{ $data->nama }}<br/>
@@ -1288,62 +1296,68 @@ $('#_datatable6').DataTable( {
     },
 });
 // 
-function findim_subdepartemen(source) {
+function toggle_findim_subdepartemen(source) {
     checkboxes = document.getElementsByName('findim_subdepartemen[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
 }
-function findim_departemen(source) {
+function toggle_findim_departemen(source) {
     checkboxes = document.getElementsByName('findim_departemen[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
 }
-function findim_divisi(source) {
+function toggle_findim_divisi(source) {
     checkboxes = document.getElementsByName('findim_divisi[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
 }
-function findim_project(source) {
+function toggle_findim_project(source) {
     checkboxes = document.getElementsByName('findim_project[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
 }
-function divisi(source) {
+function toggle_divisi(source) {
     checkboxes = document.getElementsByName('divisi[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
 }
-function departemen(source) {
+function toggle_departemen(source) {
     checkboxes = document.getElementsByName('departemen[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
 }
-function subdepartemen(source) {
+function toggle_subdepartemen(source) {
     checkboxes = document.getElementsByName('subdepartemen[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
 }
-function status_karyawan(source) {
+function toggle_status_karyawan(source) {
     checkboxes = document.getElementsByName('status_karyawan[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
 }
-function jabatan(source) {
+function toggle_jabatan(source) {
     checkboxes = document.getElementsByName('jabatan[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
 }
-function level(source) {
+function toggle_level(source) {
     checkboxes = document.getElementsByName('level[]');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function toggle_nik(source) {
+    checkboxes = document.getElementsByName('nik[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
