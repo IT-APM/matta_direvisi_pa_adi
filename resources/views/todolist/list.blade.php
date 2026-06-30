@@ -48,6 +48,9 @@
                                     <th>Formulir</th>
                                     <th>Nama</th>
                                     <th>Jabatan</th>
+                                    @if(request('filename') == 'emails.penilaian0')
+                                        <th>Perusahaan</th>
+                                    @endif
                                     <th>Unit Kerja</th>
                                     @if(request('filename') == 'emails.reimburse0')
                                         <th>Status</th>
@@ -64,6 +67,9 @@
                                     <td>{{ $data->title }}</td>
                                     <td>{{ $data->nama }}</td>
                                     <td>{{ $data->jabatan }}</td>
+                                    @if(request('filename') == 'emails.penilaian0')
+                                        <td>{{ json_decode(App\Models\TrxPenilaian::find($data->id_trx)->karyawan_property, true)['perusahaan'] }}</td>
+                                    @endif
                                     <td>{{ $data->unit_kerja }}</td>
                                     @if(request('filename') == 'emails.reimburse0')
                                         <td>{{ App\Models\ReimburseStatus::find($data->id_status)->status }}</td>
