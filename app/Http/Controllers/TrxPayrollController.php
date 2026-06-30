@@ -937,7 +937,8 @@ class TrxPayrollController extends Controller
         if($request->filter == true){
             $bulan_tahun_dari = $request->bulan_tahun_dari;
             $bulan_tahun_sampai = $request->bulan_tahun_sampai;
-            $_arr_nik = [$request->nik];
+            // $_arr_nik = [$request->nik];
+            $_arr_nik = $request->input('nik', []);
             $_arr_findim_subdepartemen = $request->input('findim_subdepartemen', []);
             $_arr_findim_departemen = $request->input('findim_departemen', []);
             $_arr_findim_divisi = $request->input('findim_divisi', []);
@@ -2525,7 +2526,8 @@ class TrxPayrollController extends Controller
         if($request->filter == true){
             $bulan_tahun_dari = $request->bulan_tahun_dari;
             $bulan_tahun_sampai = $request->bulan_tahun_sampai;
-            $_arr_nik = [$request->nik];
+            // $_arr_nik = [$request->nik];
+            $_arr_nik = $request->input('nik', []);
             $_arr_findim_subdepartemen = $request->input('findim_subdepartemen', []);
             $_arr_findim_departemen = $request->input('findim_departemen', []);
             $_arr_findim_divisi = $request->input('findim_divisi', []);
