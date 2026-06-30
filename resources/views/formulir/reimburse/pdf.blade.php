@@ -53,7 +53,7 @@
                     </tr>
                     @foreach ($trxD as $value)
                     <tr>
-                        <td>{{ $value->nama_pasien }}</td>
+                        <td>{{ html_entity_decode($value->nama_pasien) }}</td>
                         <td>{{ $value->_id_hubungan->hubungan }}</td>
                         <td>{{ $value->_id_layanan->layanan }}</td>
                         <td>{{ date("d-m-Y", strtotime($value->tanggal)) }}</td>
