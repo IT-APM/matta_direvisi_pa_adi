@@ -67,12 +67,14 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_rekomendasi(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="status_rekomendasi">
                                         @foreach ($status_rekomendasi as $data)
                                         <input class="checkbox_animated" id="status_rekomendasi[]" name="status_rekomendasi[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_status_rekomendasi)) checked @endif> {{ $data->status_pengajuan }}<br/>
                                         @endforeach
                                     </label>
-                                    <!-- <label class="h6">Nama Pengaju</label>&nbsp;<input type="checkbox" onClick="toggle_nik_atasan(this)" /> Check All
+                                    </div>
+                                    {{-- <label class="h6">Nama Pengaju</label>&nbsp;<input type="checkbox" onClick="toggle_nik_atasan(this)" /> Check All
                                     <label class="d-block" for="nik_atasan">
                                         @foreach ($nik_atasan as $data)
                                         <input class="checkbox_animated" id="nik_atasan[]" name="nik_atasan[]" type="checkbox" value="{{ $data->nik }}" @if(in_array($data->nik, $arr_nik_atasan)) checked @endif> {{ $data->nama }}<br/>
@@ -83,7 +85,7 @@
                                         @foreach ($nik_karyawan as $data)
                                         <input class="checkbox_animated" id="nik_karyawan[]" name="nik_karyawan[]" type="checkbox" value="{{ $data->nik }}" @if(in_array($data->nik, $arr_nik_karyawan)) checked @endif> {{ $data->nama }}<br/>
                                         @endforeach
-                                    </label> -->
+                                    </label> --}}
                                 </div>
                             </div>
                             <div class="row">
