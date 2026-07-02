@@ -78,11 +78,13 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="h6">Status Pengajuan</label>&nbsp;<input type="checkbox" onClick="toggle_status_sakit(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="status_sakit">
                                         @foreach ($status_sakit as $data)
                                         <input class="checkbox_animated" id="status_sakit[]" name="status_sakit[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_status_sakit)) checked @endif> {{ $data->status_sakit }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
