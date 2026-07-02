@@ -47,35 +47,42 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">Aktif/Non Aktif</label>&nbsp;<input type="checkbox" onClick="toggle_is_aktif(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="is_aktif">
                                         @foreach ($is_aktif as $data)
                                             <input class="checkbox_animated" id="is_aktif[]" name="is_aktif[]" type="checkbox" value="{{ $data['id'] }}" @if (in_array($data['id'], $arr_is_aktif)) checked @endif>
                                             {{ $data['is_aktif'] }}<br />
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">Tipe</label>&nbsp;<input type="checkbox" onClick="toggle_tipe(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="tipe">
                                         @foreach ($tipe as $data)
                                             <input class="checkbox_animated" id="tipe[]" name="tipe[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_tipe)) checked @endif>
                                             {{ $data->tipe }}<br />
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row mt-2">
                                 <div class="col-sm-3">
                                     <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="kode_perusahaan">
                                         @foreach ($perusahaan as $data)
                                             <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan()" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>
                                             {{ $data->nama }}<br />
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="kode_divisi">
                                         <div id="div_kode_divisi">
                                             @foreach ($divisi as $data)
@@ -84,9 +91,11 @@
                                             @endforeach
                                         </div>
                                     </label>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="kode_departemen">
                                         <div id="div_kode_departemen">
                                             @foreach ($departemen as $data)
@@ -95,9 +104,11 @@
                                             @endforeach
                                         </div>
                                     </label>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="kode_sub_departemen">
                                         <div id="div_kode_sub_departemen">
                                             @foreach ($sub_departemen as $data)
@@ -106,6 +117,7 @@
                                             @endforeach
                                         </div>
                                     </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row mt-2">
