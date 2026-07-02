@@ -39,14 +39,16 @@
                             <div class="row mt-2">
                                 <div class="col-sm-4">
                                     <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_tahun">Tahun</label>&nbsp;<input type="checkbox" onClick="toggle_tahun(this)" id="all_tahun" name="all_tahun"/> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <div class="collapse" id="box_tahun">
                                         @foreach ($select_tahun as $_data)
                                             <input class="checkbox_animated" id="tahun[]" name="tahun[]" type="checkbox" value="{{ $_data }}" @if (in_array($_data, $arr_select_tahun)) checked @endif>
                                             {{ $_data }}<br/>
                                         @endforeach
-                                    </div><br/>
+                                    </div></div><br/>
                                     @php $type_status_kerja = request()->get('type_status_kerja'); @endphp
                                     <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_status_kerja">Status Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_status_kerja(this)" id="all_status_kerja" name="all_status_kerja"/> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <div class="collapse" id="box_status_kerja">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="type_status_kerja" id="type_status_kerja" value="bar" {{ is_null($type_status_kerja) || $type_status_kerja === 'bar' ? 'checked' : '' }}>
@@ -62,10 +64,11 @@
                                                 {{ $_data }}<br/>
                                             @endforeach
                                         </label>
-                                    </div><br/>
+                                    </div></div><br/>
                                     @php $type_area = request()->get('type_area'); @endphp
                                     <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_area">Area Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_area(this)" id="all_area" name="all_area"/> Check All
-                                        <div class="collapse" id="box_area">
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                    <div class="collapse" id="box_area">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="type_area" id="type_area" value="bar" {{ is_null($type_area) || $type_area === 'bar' ? 'checked' : '' }}>
                                             <label class="form-check-label">Bar</label>
@@ -80,11 +83,12 @@
                                                 {{ $_data }}<br/>
                                             @endforeach
                                         </label>
-                                    </div><br/>
+                                    </div></div><br/>
                                 </div>
                                 <div class="col-sm-4">
                                     @php $type_direktorat = request()->get('type_direktorat'); @endphp
                                     <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_direktorat">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_direktorat(this)" id="all_direktorat" name="all_direktorat"/> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <div class="collapse" id="box_direktorat">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="type_direktorat" id="type_direktorat" value="bar" {{ is_null($type_direktorat) || $type_direktorat === 'bar' ? 'checked' : '' }}>
@@ -100,9 +104,10 @@
                                                 {{ $_data }}<br/>
                                             @endforeach
                                         </label>
-                                    </div><br/>
+                                    </div></div><br/>
                                     @php $type_divisi = request()->get('type_divisi'); @endphp
                                     <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_divisi">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_divisi(this)" id="all_divisi" name="all_divisi"/> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <div class="collapse" id="box_divisi">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="type_divisi" id="type_divisi" value="bar" {{ is_null($type_divisi) || $type_divisi === 'bar' ? 'checked' : '' }}>
@@ -118,11 +123,12 @@
                                                 {{ $_data }}<br/>
                                             @endforeach
                                         </label>
-                                    </div><br/>
+                                    </div></div><br/>
                                 </div>
                                 <div class="col-sm-4">
                                     @php $type_departemen = request()->get('type_departemen'); @endphp
                                     <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_departemen">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_departemen(this)" id="all_departemen" name="all_departemen"/> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <div class="collapse" id="box_departemen">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="type_departemen" id="type_departemen" value="bar" {{ is_null($type_departemen) || $type_departemen === 'bar' ? 'checked' : '' }}>
@@ -138,7 +144,7 @@
                                                 {{ $_data }}<br/>
                                             @endforeach
                                         </label>
-                                    </div><br/>
+                                    </div></div><br/>
                                 </div>
                             </div>
                             @php
