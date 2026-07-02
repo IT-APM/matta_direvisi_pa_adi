@@ -52,78 +52,106 @@
                                 <form id="form0" name="form0" class="mt-2" action="{{ route('karyawan.dashboard', 0) }}" method="get" enctype="multipart/form-data">
                                     <div class="row mt-2">
                                         <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_kelamin_form0">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin('form0')" id="all_kelamin" name="all_kelamin"/> Check All
-                                            <div class="collapse" id="box_select_kelamin_form0">
+                                            <label class="h6">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin(this)" /> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                            <label class="d-block" for="select_kelamin">
+                                            {{-- <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_kelamin_form0">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin('form0')" id="all_kelamin" name="all_kelamin"/> Check All
+                                            <div class="collapse" id="box_select_kelamin_form0"> --}}
                                                 @foreach ($select_kelamin as $data)
                                                     <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br/>
                                                 @endforeach
+                                            </label>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_status_form0">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status('form0')" id="all_status" name="all_status"/> Check All
-                                            <div class="collapse" id="box_select_status_form0">
+                                        {{-- </div>
+                                        <div class="col-sm-3"> --}}
+                                            <label class="h6">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status(this)" /> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                            <label class="d-block" for="select_status">
+                                            {{-- <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_status_form0">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status('form0')" id="all_status" name="all_status"/> Check All
+                                            <div class="collapse" id="box_select_status_form0"> --}}
                                                 @foreach ($select_status as $data)
                                                     <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br/>
                                                 @endforeach
+                                            </label>
                                             </div>
                                         </div>
                                         <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_level_form0">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level('form0')" id="all_level" name="all_level"/> Check All
-                                            <div class="collapse" id="box_select_level_form0">
+                                            <label class="h6">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level(this)" /> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                            <label class="d-block" for="select_level">
+                                            {{-- <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_level_form0">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level('form0')" id="all_level" name="all_level"/> Check All
+                                            <div class="collapse" id="box_select_level_form0"> --}}
                                                 @foreach ($select_level as $data)
                                                     <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br/>
                                                 @endforeach
+                                            </label>
                                             </div>
                                         </div>
                                         <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_generasi">Generasi</label>&nbsp;<input type="checkbox" onClick="toggle_select_generasi('form0')" id="all_generasi" name="all_generasi"/> Check All
-                                            <div class="collapse" id="box_select_generasi">
+                                            <label class="h6">Generasi</label>&nbsp;<input type="checkbox" onClick="toggle_select_generasi(this)" /> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                            <label class="d-block" for="select_generasi">
+                                            {{-- <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_generasi">Generasi</label>&nbsp;<input type="checkbox" onClick="toggle_select_generasi('form0')" id="all_generasi" name="all_generasi"/> Check All
+                                            <div class="collapse" id="box_select_generasi"> --}}
                                                 @foreach ($select_generasi as $data)
                                                     <input class="checkbox_animated" id="select_generasi[]" name="select_generasi[]" type="checkbox" value="{{ $data['id'] }}" @if (in_array($data['id'], $arr_select_generasi)) checked @endif>{{ $data['data'] }}<br/>
                                                 @endforeach
+                                            </label>
                                             </div>
                                         </div>
                                         <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_pendidikan">Pendidikan</label>&nbsp;<input type="checkbox" onClick="toggle_select_pendidikan('form0')" id="all_pendidikan" name="all_pendidikan"/> Check All
-                                            <div class="collapse" id="box_select_pendidikan">
+                                            <label class="h6">Pendidikan</label>&nbsp;<input type="checkbox" onClick="toggle_select_pendidikan(this)" /> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                            <label class="d-block" for="select_pendidikan">
+                                            {{-- <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_pendidikan">Pendidikan</label>&nbsp;<input type="checkbox" onClick="toggle_select_pendidikan('form0')" id="all_pendidikan" name="all_pendidikan"/> Check All
+                                            <div class="collapse" id="box_select_pendidikan"> --}}
                                                 @foreach ($select_pendidikan as $data)
                                                     <input class="checkbox_animated" id="select_pendidikan[]" name="select_pendidikan[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_pendidikan)) checked @endif>{{ $data->jenjang }}<br/>
                                                 @endforeach
+                                            </label>
                                             </div>
                                         </div>
+                                        {{-- <div class="col-sm-3">&nbsp;</div>
                                         <div class="col-sm-3">&nbsp;</div>
-                                        <div class="col-sm-3">&nbsp;</div>
-                                        <div class="col-sm-3">&nbsp;</div>
+                                        <div class="col-sm-3">&nbsp;</div> --}}
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_perusahaan_form0">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan('form0')" id="all_perusahaan" name="all_perusahaan"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="box_perusahaan_form0">
                                                 @foreach ($perusahaan as $data)
                                                     <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan('form0')" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
                                             </div>
+                                            </div>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_divisi">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi('form0')" id="all_divisi" name="all_divisi"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="div_kode_divisi">
                                                 @foreach ($divisi as $data)
                                                     <input class="checkbox_animated" id="kode_divisi[]" name="kode_divisi[]" type="checkbox" onClick="get_kode_divisi('form0')" value="{{ $data->id }}" @if (in_array($data->id, $arr_divisi)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
                                             </div>
+                                            </div>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_departemen">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen('form0')" id="all_departemen" name="all_departemen"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="div_kode_departemen">
                                                 @foreach ($departemen as $data)
                                                     <input class="checkbox_animated" id="kode_departemen[]" name="kode_departemen[]" type="checkbox" onClick="get_kode_departemen('form0')" value="{{ $data->id }}" @if (in_array($data->id, $arr_departemen)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
                                             </div>
+                                            </div>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_sub_departemen">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen('form0')" id="all_sub_departemen" name="all_sub_departemen"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="div_kode_sub_departemen">
                                                 @foreach ($sub_departemen as $data)
                                                     <input class="checkbox_animated" id="kode_sub_departemen[]" name="kode_sub_departemen[]" type="checkbox" onClick="get_kode_sub_departemen('form0')" value="{{ $data->id }}" @if (in_array($data->id, $arr_sub_departemen)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
+                                            </div>
                                             </div>
                                         </div>
                                     </div>
@@ -207,59 +235,79 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_kelamin_form1">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin('form1')" id="all_kelamin" name="all_kelamin"/> Check All
-                                            <div class="collapse" id="box_select_kelamin_form1">
+                                            <label class="h6">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin(this)" /> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                            <label class="d-block" for="select_kelamin">
+                                            {{-- <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_kelamin_form1">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin('form1')" id="all_kelamin" name="all_kelamin"/> Check All
+                                            <div class="collapse" id="box_select_kelamin_form1"> --}}
                                                 @foreach ($select_kelamin as $data)
                                                     <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br/>
                                                 @endforeach
+                                            </label>
                                             </div>
                                         </div>
                                         <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_status_form1">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status('form1')" id="all_status" name="all_status"/> Check All
-                                            <div class="collapse" id="box_select_status_form1">
+                                            <label class="h6">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status(this)" /> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                            <label class="d-block" for="select_status">
+                                            {{-- <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_status_form1">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status('form1')" id="all_status" name="all_status"/> Check All
+                                            <div class="collapse" id="box_select_status_form1"> --}}
                                                 @foreach ($select_status as $data)
                                                     <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br/>
                                                 @endforeach
                                             </div>
+                                            </label>
                                         </div>
                                         <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_level_form1">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level('form1')" id="all_level" name="all_level"/> Check All
-                                            <div class="collapse" id="box_select_level_form1">
+                                            <label class="h6">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level(this)" /> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                            <label class="d-block" for="select_level">
+                                            {{-- <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_level_form1">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level('form1')" id="all_level" name="all_level"/> Check All
+                                            <div class="collapse" id="box_select_level_form1"> --}}
                                                 @foreach ($select_level as $data)
                                                     <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br/>
                                                 @endforeach
+                                            </label>
                                             </div>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_perusahaan_form1">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan('form1')" id="all_perusahaan" name="all_perusahaan"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="box_perusahaan_form1">
                                                 @foreach ($perusahaan as $data)
                                                     <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan('form1')" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
                                             </div>
+                                            </div>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_divisi">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi('form1')" id="all_divisi" name="all_divisi"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="div_kode_divisi">
                                                 @foreach ($divisi as $data)
                                                     <input class="checkbox_animated" id="kode_divisi[]" name="kode_divisi[]" type="checkbox" onClick="get_kode_divisi('form1')" value="{{ $data->id }}" @if (in_array($data->id, $arr_divisi)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
                                             </div>
+                                            </div>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_departemen">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen('form1')" id="all_departemen" name="all_departemen"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="div_kode_departemen">
                                                 @foreach ($departemen as $data)
                                                     <input class="checkbox_animated" id="kode_departemen[]" name="kode_departemen[]" type="checkbox" onClick="get_kode_departemen('form1')" value="{{ $data->id }}" @if (in_array($data->id, $arr_departemen)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
                                             </div>
+                                            </div>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_sub_departemen">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen('form1')" id="all_sub_departemen" name="all_sub_departemen"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="div_kode_sub_departemen">
                                                 @foreach ($sub_departemen as $data)
                                                     <input class="checkbox_animated" id="kode_sub_departemen[]" name="kode_sub_departemen[]" type="checkbox" onClick="get_kode_sub_departemen('form1')" value="{{ $data->id }}" @if (in_array($data->id, $arr_sub_departemen)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
+                                            </div>
                                             </div>
                                         </div>
                                     </div>
@@ -284,8 +332,8 @@
                                             <div>
                                                 <input min="1" type="number" class="form-control digits" name="tahun_sampai" id="tahun_sampai" @if($tahun_sampai>0) value="{{ $tahun_sampai }}" @endif>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-3">
+                                        {{-- </div>
+                                        <div class="col-sm-3"> --}}
                                             <label class="h6">Periode</label>
                                             <div>
                                                 <select class="form-select" name="select_periode" id="select_periode">
@@ -314,62 +362,82 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_kelamin_form2">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin('form2')" id="all_kelamin" name="all_kelamin"/> Check All
-                                            <div class="collapse" id="box_select_kelamin_form2">
+                                            <label class="h6">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin(this)" /> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                            <label class="d-block" for="select_kelamin">
+                                            {{-- <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_kelamin_form2">Jenis Kelamin</label>&nbsp;<input type="checkbox" onClick="toggle_select_kelamin('form2')" id="all_kelamin" name="all_kelamin"/> Check All
+                                            <div class="collapse" id="box_select_kelamin_form2"> --}}
                                                 @foreach ($select_kelamin as $data)
                                                     <input class="checkbox_animated" id="select_kelamin[]" name="select_kelamin[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_kelamin)) checked @endif>{{ $data->kelamin }}<br/>
                                                 @endforeach
+                                            </label>
                                             </div>
                                         </div>
                                         <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_status_form2">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status('form2')" id="all_status" name="all_status"/> Check All
-                                            <div class="collapse" id="box_select_status_form2">
+                                            <label class="h6">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status(this)" /> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                            <label class="d-block" for="select_status">
+                                            {{-- <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_status_form2">Status Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_select_status('form2')" id="all_status" name="all_status"/> Check All
+                                            <div class="collapse" id="box_select_status_form2"> --}}
                                                 @foreach ($select_status as $data)
                                                     <input class="checkbox_animated" id="select_status[]" name="select_status[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_status)) checked @endif>{{ $data->status_karyawan }}<br/>
                                                 @endforeach
+                                            </label>
                                             </div>
                                         </div>
                                         <div class="col-sm-3">
-                                            <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_level_form2">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level('form2')" id="all_level" name="all_level"/> Check All
-                                            <div class="collapse" id="box_select_level_form2">
+                                            <label class="h6">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level(this)" /> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                                            <label class="d-block" for="select_level">
+                                            {{-- <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_select_level_form2">Level</label>&nbsp;<input type="checkbox" onClick="toggle_select_level('form2')" id="all_level" name="all_level"/> Check All
+                                            <div class="collapse" id="box_select_level_form2"> --}}
                                                 @foreach ($select_level as $data)
                                                     <input class="checkbox_animated" id="select_level[]" name="select_level[]" type="checkbox" value="{{ $data->id }}" @if (in_array($data->id, $arr_select_level)) checked @endif>{{ $data->level }}<br/>
                                                 @endforeach
+                                            </label>
                                             </div>
                                         </div>
+                                        {{-- <div class="col-sm-3">&nbsp;</div>
                                         <div class="col-sm-3">&nbsp;</div>
-                                        <div class="col-sm-3">&nbsp;</div>
-                                        <div class="col-sm-3">&nbsp;</div>
+                                        <div class="col-sm-3">&nbsp;</div> --}}
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#box_perusahaan_form2">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan('form2')" id="all_perusahaan" name="all_perusahaan"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="box_perusahaan_form2">
                                                 @foreach ($perusahaan as $data)
                                                     <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" onClick="get_kode_perusahaan('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_perusahaan)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
                                             </div>
+                                            </div>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_divisi">Direktorat</label>&nbsp;<input type="checkbox" onClick="toggle_divisi('form2')" id="all_divisi" name="all_divisi"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="div_kode_divisi">
                                                 @foreach ($divisi as $data)
                                                     <input class="checkbox_animated" id="kode_divisi[]" name="kode_divisi[]" type="checkbox" onClick="get_kode_divisi('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_divisi)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
                                             </div>
+                                            </div>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_departemen">Divisi</label>&nbsp;<input type="checkbox" onClick="toggle_kode_departemen('form2')" id="all_departemen" name="all_departemen"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="div_kode_departemen">
                                                 @foreach ($departemen as $data)
                                                     <input class="checkbox_animated" id="kode_departemen[]" name="kode_departemen[]" type="checkbox" onClick="get_kode_departemen('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_departemen)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
                                             </div>
+                                            </div>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="h6" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#div_kode_sub_departemen">Departemen</label>&nbsp;<input type="checkbox" onClick="toggle_kode_sub_departemen('form2')" id="all_sub_departemen" name="all_sub_departemen"/> Check All
+                                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                             <div class="collapse" id="div_kode_sub_departemen">
                                                 @foreach ($sub_departemen as $data)
                                                     <input class="checkbox_animated" id="kode_sub_departemen[]" name="kode_sub_departemen[]" type="checkbox" onClick="get_kode_sub_departemen('form2')" value="{{ $data->id }}" @if (in_array($data->id, $arr_sub_departemen)) checked @endif>{{ $data->nama }}<br/>
                                                 @endforeach
+                                            </div>
                                             </div>
                                         </div>
                                     </div>
@@ -614,15 +682,22 @@ $('#tahun_dari').datepicker({
 });
 // 
 function toggle_select_kelamin(source) {
-    let form = $("#" + source);
-    let isChecked = form.find("input[name='all_kelamin']").prop('checked');
-    form.find('input[name="select_kelamin[]"]').prop('checked', isChecked);
-
+    // let form = $("#" + source);
+    // let isChecked = form.find("input[name='all_kelamin']").prop('checked');
+    // form.find('input[name="select_kelamin[]"]').prop('checked', isChecked);
+    checkboxes = document.getElementsByName('select_kelamin[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
 }
 function toggle_select_status(source) {
-    let form = $("#" + source);
-    let isChecked = form.find("input[name='all_status']").prop('checked');
-    form.find('input[name="select_status[]"]').prop('checked', isChecked);
+    // let form = $("#" + source);
+    // let isChecked = form.find("input[name='all_status']").prop('checked');
+    // form.find('input[name="select_status[]"]').prop('checked', isChecked);
+    checkboxes = document.getElementsByName('select_status[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
 }
 function toggle_perusahaan(source) {
     let form = $("#" + source);
@@ -648,19 +723,31 @@ function toggle_kode_sub_departemen(source) {
     form.find('input[name="kode_sub_departemen[]"]').prop('checked', isChecked);
 }
 function toggle_select_level(source) {
-    let form = $("#" + source);
-    let isChecked = form.find("input[name='all_level']").prop('checked');
-    form.find('input[name="select_level[]"]').prop('checked', isChecked);
+    // let form = $("#" + source);
+    // let isChecked = form.find("input[name='all_level']").prop('checked');
+    // form.find('input[name="select_level[]"]').prop('checked', isChecked);
+    checkboxes = document.getElementsByName('select_level[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
 }
 function toggle_select_pendidikan(source) {
-    let form = $("#" + source);
-    let isChecked = form.find("input[name='all_pendidikan']").prop('checked');
-    form.find('input[name="select_pendidikan[]"]').prop('checked', isChecked);
+    // let form = $("#" + source);
+    // let isChecked = form.find("input[name='all_pendidikan']").prop('checked');
+    // form.find('input[name="select_pendidikan[]"]').prop('checked', isChecked);
+    checkboxes = document.getElementsByName('select_pendidikan[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
 }
 function toggle_select_generasi(source) {
-    let form = $("#" + source);
-    let isChecked = form.find("input[name='all_generasi']").prop('checked');
-    form.find('input[name="select_generasi[]"]').prop('checked', isChecked);
+    // let form = $("#" + source);
+    // let isChecked = form.find("input[name='all_generasi']").prop('checked');
+    // form.find('input[name="select_generasi[]"]').prop('checked', isChecked);
+    checkboxes = document.getElementsByName('select_generasi[]');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
 }
 // 
 $(document).ready(function() {
