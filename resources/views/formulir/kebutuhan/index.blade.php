@@ -76,27 +76,33 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">{{ __('lang.Status Pengajuan') }}</label>&nbsp;<input type="checkbox" onClick="toggle_status_pengajuan(this)" /> {{ __('lang.Pilih Semua') }}
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="status_pengajuan">
                                         @foreach ($status_pengajuan as $data)
                                         <input class="checkbox_animated" id="status_pengajuan[]" name="status_pengajuan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_status_pengajuan)) checked @endif> {{ $data->status_pengajuan }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">{{ __('lang.Area Kerja') }}</label>&nbsp;<input type="checkbox" onClick="toggle_id_area(this)" /> {{ __('lang.Pilih Semua') }}
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="id_area">
                                         @foreach ($id_area as $data)
                                         <input class="checkbox_animated" id="id_area[]" name="id_area[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_id_area)) checked @endif> {{ $data->propinsi }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">{{ __('lang.Jenis Permintaan') }}</label>&nbsp;<input type="checkbox" onClick="toggle_id_jenis_permintaan(this)" /> {{ __('lang.Pilih Semua') }}
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="id_jenis_permintaan">
                                         @foreach ($id_jenis_permintaan as $data)
                                         <input class="checkbox_animated" id="id_jenis_permintaan[]" name="id_jenis_permintaan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_id_jenis_permintaan)) checked @endif> {{ $data->jenis }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
