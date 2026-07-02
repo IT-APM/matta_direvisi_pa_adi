@@ -57,35 +57,43 @@
                             <div class="row">
                                 <div class="col-sm-3">
                                     <label class="h6">Status</label>&nbsp;<input type="checkbox" onClick="toggle_aktif_non(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="aktif_non">
                                         @foreach($aktif_non as $key => $value)
                                         <input class="checkbox_animated" id="aktif_non[]" name="aktif_non[]" type="checkbox" value="{{ $key }}" @if(in_array($key, $arr_aktif_non)) checked @endif> {{ $value }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">Jenis Pelatihan</label>&nbsp;<input type="checkbox" onClick="toggle_jenis(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="jenis">
                                         @foreach($jenis as $data)
                                         <input class="checkbox_animated" id="jenis[]" name="jenis[]" type="checkbox" value="{{ $data->jenis }}" @if(in_array($data->jenis, $arr_jenis)) checked @endif> {{ $data->jenis }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">Mode Pelatihan</label>&nbsp;<input type="checkbox" onClick="toggle_int_ext(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="int_ext">
                                         @foreach($int_ext as $key => $value)
                                         <input class="checkbox_animated" id="int_ext[]" name="int_ext[]" type="checkbox" value="{{ $key }}" @if(in_array($key, $arr_int_ext)) checked @endif> {{ $value }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">KTA</label>&nbsp;<input type="checkbox" onClick="toggle_kta(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="kta">
                                         @foreach($kta as $key => $value)
                                         <input class="checkbox_animated" id="kta[]" name="kta[]" type="checkbox" value="{{ $key }}" @if(in_array($key, $arr_kta)) checked @endif> {{ $value }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
