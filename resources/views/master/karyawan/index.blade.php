@@ -68,37 +68,47 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="h6">Aktif/Non Aktif</label>&nbsp;<input type="checkbox" onClick="toggle_is_aktif(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="is_aktif">
                                         @foreach ($is_aktif as $data)
                                         <input class="checkbox_animated" id="is_aktif[]" name="is_aktif[]" type="checkbox" value="{{ $data['id'] }}" @if(in_array($data['id'], $arr_is_aktif)) checked @endif> {{ $data['is_aktif'] }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                     <label class="h6">Status Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_kode_status(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="kode_status">
                                         @foreach ($kode_status as $data)
                                         <input class="checkbox_animated" id="kode_status[]" name="kode_status[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_kode_status)) checked @endif> {{ $data->status_karyawan }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                     <label class="h6">Grup Kerja</label>&nbsp;<input type="checkbox" onClick="toggle_wg_id(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="wg_id">
                                         @foreach ($wg_id as $data)
                                         <input class="checkbox_animated" id="wg_id[]" name="wg_id[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_wg_id)) checked @endif> {{ $data->wg_name }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="h6">Perusahaan</label>&nbsp;<input type="checkbox" onClick="toggle_kode_perusahaan(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="kode_perusahaan">
                                         @foreach ($kode_perusahaan as $data)
                                         <input class="checkbox_animated" id="kode_perusahaan[]" name="kode_perusahaan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_kode_perusahaan)) checked @endif> {{ $data->nama }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                     <label class="h6">Level</label>&nbsp;<input type="checkbox" onClick="toggle_kode_level(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="kode_level">
                                         @foreach ($kode_level as $data)
                                         <input class="checkbox_animated" id="kode_level[]" name="kode_level[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_kode_level)) checked @endif> {{ $data->level }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
