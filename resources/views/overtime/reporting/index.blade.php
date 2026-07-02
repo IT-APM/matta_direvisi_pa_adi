@@ -61,19 +61,23 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">Status</label>&nbsp;<input type="checkbox" onClick="toggle_ot_approver_status(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="ot_approver_status">
                                         @foreach ($ot_approver_status as $data)
                                         <input class="checkbox_animated" id="ot_approver_status[]" name="ot_approver_status[]" type="checkbox" value="{{ $data }}" @if(in_array($data, $arr_ot_approver_status)) checked @endif> {{ $data }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="h6">Company</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="perusahaan">
                                         @foreach ($perusahaan as $data)
                                         <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_perusahaan)) checked @endif> {{ $data->nama }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
