@@ -44,7 +44,7 @@
                                         To <input class="form-control" name="date_to" id="date_to" type="date" required="" value="{{ $date_to }}">
                                         {{-- <br/> --}}
                                         <label class="h6 mt-2">Karyawan</label>
-                                        <select class="form-select js-example-basic-single col-sm-12" id="str_att_nik_nama" name="str_att_nik_nama" required="">
+                                        <select class="form-select js-example-basic-single col-sm-12" id="str_att_nik_nama" name="str_att_nik_nama">
                                             <option selected="" disabled="" value="">Pilih...</option>
                                             <option value="">Semua</option>
                                             @foreach ($att_nik_nama as $data)
@@ -54,31 +54,39 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="h6">Action</label>&nbsp;<input type="checkbox" onClick="toggle_att_type(this)" /> Check All
+                                        <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                         <label class="d-block" for="att_type">
                                             @foreach ($att_type as $data)
                                             <input class="checkbox_animated" id="att_type[]" name="att_type[]" type="checkbox" value="{{ $data }}" @if(in_array($data, $arr_att_type)) checked @endif> {{ $data }}<br/>
                                             @endforeach
                                         </label>
+                                        </div>
                                         <label class="h6">Status</label>&nbsp;<input type="checkbox" onClick="toggle_att_status(this)" /> Check All
+                                        <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                         <label class="d-block" for="att_status">
                                             @foreach ($att_status as $data)
                                             <input class="checkbox_animated" id="att_status[]" name="att_status[]" type="checkbox" value="{{ $data }}" @if(in_array($data, $arr_att_status)) checked @endif> {{ $data }}<br/>
                                             @endforeach
                                         </label>
+                                        </div>
                                         <label class="h6">Type</label>&nbsp;<input type="checkbox" onClick="toggle_att_data_src(this)" /> Check All
+                                        <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                         <label class="d-block" for="att_data_src">
                                             @foreach ($att_data_src as $data)
                                             <input class="checkbox_animated" id="att_data_src[]" name="att_data_src[]" type="checkbox" value="{{ $data }}" @if(in_array($data, $arr_att_data_src)) checked @endif> {{ $data }}<br/>
                                             @endforeach
                                         </label>
+                                        </div>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="h6">Working Group</label>&nbsp;<input type="checkbox" onClick="toggle_wg_id(this)" /> Check All
+                                        <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                         <label class="d-block" for="wg_id">
                                             @foreach ($wg_id as $data)
                                             <input class="checkbox_animated" id="wg_id[]" name="wg_id[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_wg_id)) checked @endif> {{ $data->wg_name }}<br/>
                                             @endforeach
                                         </label>
+                                        </div>
                                         {{-- <label class="h6">Company</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
                                         <label class="d-block" for="perusahaan">
                                             @foreach ($perusahaan as $data)
@@ -94,11 +102,13 @@
                                             @endforeach
                                         </label> --}}
                                         <label class="h6">Company</label>&nbsp;<input type="checkbox" onClick="toggle_perusahaan(this)" /> Check All
+                                        <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                         <label class="d-block" for="perusahaan">
                                             @foreach ($perusahaan as $data)
                                             <input class="checkbox_animated" id="perusahaan[]" name="perusahaan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_perusahaan)) checked @endif> {{ $data->nama }}<br/>
                                             @endforeach
                                         </label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -184,17 +194,49 @@
                                                     @if($data->att_type == 'Clock-in' && $data->att_status == 'Late-in' && $data->att_data_src == 'Regular')
                                                         @if($data->wg_id == 1)
                                                             @php
-                                                            $clockin = App\Models\WorkingGroup::find(1)->clockin;
+                                                            // $clockin = App\Models\WorkingGroup::find(1)->clockin;
+                                                            $clockin = '09:00:00';
                                                             $totalDetik = \Carbon\Carbon::createFromFormat('H:i:s', \Carbon\Carbon::parse($data->att_timestamp)->format('H:i:s'))->diffInSeconds(\Carbon\Carbon::createFromFormat('H:i:s', $clockin));
                                                             @endphp
                                                             {{ \Carbon\Carbon::createFromTime(floor($totalDetik / 3600), floor(($totalDetik % 3600) / 60), $totalDetik % 60)->format('H:i:s') }}
                                                         @elseif($data->wg_id > 1)
                                                             @php
-                                                            $clockin = App\Models\WorkingDay::find($data->att_wd_ot_id)->clockin;
+                                                            $clockin = App\Models\WorkingDay::find($data->att_wd_ot_id)?->clockin;
                                                             $totalDetik = \Carbon\Carbon::createFromFormat('H:i:s', \Carbon\Carbon::parse($data->att_timestamp)->format('H:i:s'))->diffInSeconds(\Carbon\Carbon::parse($clockin)->format('H:i:s'));
                                                             @endphp
                                                             {{ \Carbon\Carbon::createFromTime(floor($totalDetik / 3600), floor(($totalDetik % 3600) / 60), $totalDetik % 60)->format('H:i:s') }}
                                                         @endif
+                                                    @elseif($data->att_type == 'Clock-out' && $data->att_status == 'Early-out' && $data->att_data_src == 'Regular' && $data->wg_id == 1)
+                                                        @php
+                                                        // $selisih = App\Models\Attendance::select(
+                                                        //     DB::raw("
+                                                        //         TIMEDIFF(
+                                                        //             MAX(CASE WHEN att_type = 'Clock-out' THEN att_timestamp END),
+                                                        //             MAX(CASE WHEN att_type = 'Clock-in'  THEN att_timestamp END)
+                                                        //         ) as selisih_waktu
+                                                        //     ")
+                                                        // )
+                                                        // ->where(['att_nik'=>$data->att_nik, 'att_date'=>$data->att_date])
+                                                        // ->whereIn('att_type', ['Clock-in', 'Clock-out'])
+                                                        // ->groupBy('att_nik', 'att_date')
+                                                        // ->first()?->selisih_waktu;
+                                                        $selisih = App\Models\Attendance::select(
+                                                            DB::raw("
+                                                                TIMEDIFF(
+                                                                    '09:00:00',
+                                                                    TIMEDIFF(
+                                                                        MAX(CASE WHEN att_type = 'Clock-out' THEN att_timestamp END),
+                                                                        MAX(CASE WHEN att_type = 'Clock-in'  THEN att_timestamp END)
+                                                                    )
+                                                                ) as selisih_waktu
+                                                            ")
+                                                        )
+                                                        ->where(['att_nik' => $data->att_nik, 'att_date' => $data->att_date])
+                                                        ->whereIn('att_type', ['Clock-in', 'Clock-out'])
+                                                        ->groupBy('att_nik', 'att_date')
+                                                        ->first()?->selisih_waktu;
+                                                        @endphp
+                                                        {{ $selisih }}
                                                     @endif
                                                 </td>
                                                 <td>
