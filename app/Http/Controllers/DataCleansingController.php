@@ -15,6 +15,8 @@ use App\Models\Holiday;
 use App\Models\ToDoList;
 use App\Models\TrxBirthday;
 use App\Models\TrxFingePrint;
+use App\Models\TrxFingePrintMatta;
+use App\Models\WorkingGroup;
 // 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -59,11 +61,14 @@ class DataCleansingController extends Controller
         // dipindahkan ke C:\xampp\htdocs\matta\app\Http\Controllers\TrxBirthdayController.php
         // karena dijalankan setiap jam 7 pagi
         // $this->getBirthday();
-        $yesterday = Carbon::yesterday()->format('Y-m-d');
-        $start_date = $yesterday;
-        $end_date = $yesterday;
+        // $yesterday = Carbon::yesterday()->format('Y-m-d');
+        // $start_date = $yesterday;
+        // $end_date = $yesterday;
+        $start_date = '2026-05-04';
+        $end_date = '2026-07-06';
         $trx = TrxFingePrint::select(
-            'trx_tbl_fp_data.id',
+            DB::raw('MIN(trx_tbl_fp_data.id) as id_clock_in'),
+            DB::raw('CAST(CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.id) ELSE NULL END AS UNSIGNED) as id_clock_out'),
             'trx_tbl_fp_data.id_nip',
             'mtr_tbl_karyawan.nik',
             'mtr_tbl_karyawan.nama',
@@ -74,62 +79,132 @@ class DataCleansingController extends Controller
         )
         ->leftJoin('mtr_tbl_karyawan', 'mtr_tbl_karyawan.id_fp', '=', 'trx_tbl_fp_data.id_nip')
         ->whereBetween(DB::raw('DATE(trx_tbl_fp_data.waktu)'), [$start_date, $end_date])
-        ->where(['mtr_tbl_karyawan.wg_id'=>1])
-        ->groupBy(
-            'trx_tbl_fp_data.id_nip',
-            DB::raw('DATE(trx_tbl_fp_data.waktu)')
-        )
+        ->where(['mtr_tbl_karyawan.wg_id' => 1])
+        ->groupBy('trx_tbl_fp_data.id_nip', DB::raw('DATE(trx_tbl_fp_data.waktu)'))
         ->orderBy('tanggal')
         ->orderBy('trx_tbl_fp_data.id_nip')
         ->get();
+        $wg = WorkingGroup::find(1);
+        $start_clock_time = Carbon::parse($wg->start_clockin)->format('H:i:s');
+        // return response()->json( [ 'start_date' => $start_date, 'end_date' => $end_date, 'trx' => $trx ], 200 );
         foreach($trx as $_trx){
-            $att = Attendance::where(['att_date'=>$_trx->tanggal, 'att_nik'=>$_trx->nik, 'att_type'=>'Clock-in', 'att_data_src'=>'Regular', 'wg_id'=>1]);
-            $wg = DB::table('mtr_tbl_working_group')->where('id', 1)->first();
-            $time = Carbon::parse($_trx->clock_in)->format('H:i:s');
-            if(!$att->exists() && $time >= $wg->start_clockin && $time <= $wg->end_clockin){
+            // CLOCK-IN
+            $ci_fp = $_trx->clock_in;
+            $clock_in = $ci_fp;
+            $att_in = Attendance::where(['att_date'=>$_trx->tanggal, 'att_nik'=>$_trx->nik, 'att_type'=>'Clock-in', 'att_data_src'=>'Regular', 'wg_id'=>1]);
+            // $data = [];
+            // cek apakah ada ci matta, jika ada
+            // contoh 
+            // $nik = '01031908799';
+            // if($att_in->exists() && $_trx->nik == $nik){
+            if($att_in->exists()){
+                $ci_matta = $att_in->orderBy('id', 'asc')->first()->att_timestamp;
+                $clock_in = $ci_matta;
+                // jika ci fp lebih awal dari ci matta maka gunakan ci fp
+                if($ci_fp < $ci_matta){
+                    $clock_in = $ci_fp;
+                    $clock_in_time = Carbon::parse($clock_in)->format('H:i:s');
+                    // jika clock_in_time lebih awal dari start_clock_time maka ganti time-nya dengan start_clock_time
+                    if ($clock_in_time < $start_clock_time) {
+                        $clock_in = Carbon::parse($clock_in)->format('Y-m-d').' '.$start_clock_time;
+                    }
+                    // kemudian ci matta dicopy ke TrxFingePrintMatta sebagai log
+                    $data = $att_in->orderBy('id', 'asc')->first()->toArray();
+                    $data['att_ref_address'] = 'edit';
+                    $data['created_at'] = Carbon::createFromFormat('d-m-Y H:i:s', $data['created_at'])->format('Y-m-d H:i:s');
+                    $data['updated_at'] = Carbon::createFromFormat('d-m-Y H:i:s', $data['updated_at'])->format('Y-m-d H:i:s');
+                    $data['id_fp_trx'] = $_trx->id_clock_in;
+                    TrxFingePrintMatta::insert($data);
+                    // kemudian update Attendance
+                    // $data = [];
+                    $data = $att_in->orderBy('id', 'asc')->first()->toArray();
+                    $data['att_timestamp'] = $clock_in;
+                    $data['att_long'] = NULL;
+                    $data['att_lat'] = NULL;
+                    $data['att_address'] = NULL;
+                    $data['att_status'] = 'Book-in';
+                    if(Carbon::parse($clock_in)->format('H:i:s') > '09:00:00'){
+                        $data['att_status'] = 'Late-in';
+                    }
+                    $data['created_at'] = $clock_in;
+                    $data['updated_at'] = $clock_in;
+                    $data['id_fp_trx'] = $_trx->id_clock_in;
+                    Attendance::where('id', $data['id'])->update($data);
+                    // dd($data);
+                }else{
+                    // maka gunakan ci matta (do nothing)
+                    // kemudian ci matta dicopy ke TrxFingePrintMatta sebagai log
+                    // $data = [];
+                    $data = $att_in->orderBy('id', 'asc')->first()->toArray();
+                    $data['att_ref_address'] = 'copy';
+                    $data['created_at'] = Carbon::createFromFormat('d-m-Y H:i:s', $data['created_at'])->format('Y-m-d H:i:s');
+                    $data['updated_at'] = Carbon::createFromFormat('d-m-Y H:i:s', $data['updated_at'])->format('Y-m-d H:i:s');
+                    $data['id_fp_trx'] = $_trx->id_clock_in;
+                    TrxFingePrintMatta::insert($data);
+                }
+                // return response()->json( [ 'clock_in' => $clock_in, 'trx' => $trx->where('nik', $nik), 'att' => $att_in->get() ], 200 );
+            }
+            // jika tidak ada ci matta maka $clock_in = $ci_fp;
+            else{
+                $clock_in_time = Carbon::parse($clock_in)->format('H:i:s');
+                // jika clock_in_time lebih awal dari start_clock_time maka ganti time-nya dengan start_clock_time
+                if ($clock_in_time < $start_clock_time) {
+                    $clock_in = Carbon::parse($clock_in)->format('Y-m-d').' '.$start_clock_time;
+                }
                 $data = New Attendance;
                 $data->att_date = $_trx->tanggal;
-                $data->att_timestamp = $_trx->clock_in;
+                $data->att_timestamp = $clock_in;
                 $data->att_nik = $_trx->nik;
                 $data->att_type = 'Clock-in';
                 $data->att_data_src = 'Regular';
                 $data->att_wd_ot_id = 0;
                 $data->att_status = 'Book-in';
+                if(Carbon::parse($clock_in)->format('H:i:s') > '09:00:00'){
+                    $data->att_status = 'Late-in';
+                }
                 $data->att_property = $this->getNikProperty($_trx->nik);
                 $data->wg_id = 1;
-                $data->id_fp_trx = $_trx->id;
+                $data->id_fp_trx = $_trx->id_clock_in;
                 $data->save();
-                // 
-                $_data = Attendance::where(['id'=>$data->id, 'att_data_src'=>'Regular', 'att_type'=>'Clock-in', 'att_wd_ot_id'=>0, 'wg_id'=>1]);
-                if($_data->exists()){
-                    // if(Carbon::now()->greaterThan(Carbon::today()->setTime(9, 0, 0))){
-                    if(Carbon::parse($_data->first()->att_timestamp)->format('H:i:s') > '09:00:00') {
-                        $_data->update(['att_status' => 'Late-in']);
-                    }else{
-                        $_data->update(['att_status' => 'Book-in']);
-                    }
-                }
             }
-            $att = Attendance::where(['att_date'=>$_trx->tanggal, 'att_nik'=>$_trx->nik, 'att_type'=>'Clock-in', 'att_data_src'=>'Regular', 'wg_id'=>1]);
-            if($att->exists() && !empty($_trx->clock_out)){
-                $clockIn  = Carbon::parse($att->first()->att_timestamp);
-                $clockOut = Carbon::parse($_trx->clock_out);
+            // CLOCK-OUT
+            $att_out = Attendance::where(['att_date'=>$_trx->tanggal, 'att_nik'=>$_trx->nik, 'att_type'=>'Clock-out', 'att_data_src'=>'Regular', 'wg_id'=>1]);
+            // $data = [];
+            // jika ada co matta maka gunakan co matta
+            // kemudian dicopy ke TrxFingePrintMatta sebagai log
+            if($att_out->exists()){
+                $data = $att_out->orderBy('id', 'asc')->first()->toArray();
+                $data['att_ref_address'] = 'copy';
+                $data['created_at'] = Carbon::createFromFormat('d-m-Y H:i:s', $data['created_at'])->format('Y-m-d H:i:s');
+                $data['updated_at'] = Carbon::createFromFormat('d-m-Y H:i:s', $data['updated_at'])->format('Y-m-d H:i:s');
+                $data['id_fp_trx'] = $_trx->id_clock_out;
+                TrxFingePrintMatta::insert($data);
+            }
+            // jika tidak ada co matta dan ada co fp maka gunakan co fp
+            if(!$att_out->exists() && !empty($_trx->clock_out)){
+                // ambil ci matta
+                $att_in = Attendance::where(['att_date'=>$_trx->tanggal, 'att_nik'=>$_trx->nik, 'att_type'=>'Clock-in', 'att_data_src'=>'Regular', 'wg_id'=>1]);
+                $clock_in = $att_in->orderBy('id', 'asc')->first()->att_timestamp;
+                $clock_out = $_trx->clock_out;
+                // check apakah durasi 9 jam
+                $clockIn = Carbon::parse($clock_in);
+                $clockOut = Carbon::parse($clock_out);
                 $diffHours = $clockIn->diffInHours($clockOut);
-                $_att = Attendance::where(['att_date'=>$_trx->tanggal, 'att_nik'=>$_trx->nik, 'att_type'=>'Clock-out', 'att_data_src'=>'Regular', 'wg_id'=>1]);
-                if(!$_att->exists() && $diffHours >= 9){
-                    $data = New Attendance;
-                    $data->att_date = $_trx->tanggal;
-                    $data->att_timestamp = $_trx->clock_out;
-                    $data->att_nik = $_trx->nik;
-                    $data->att_type = 'Clock-out';
-                    $data->att_data_src = 'Regular';
-                    $data->att_wd_ot_id = 0;
-                    $data->att_status = 'Book-in';
-                    $data->att_property = $this->getNikProperty($_trx->nik);
-                    $data->wg_id = 1;
-                    $data->id_fp_trx = $_trx->id;
-                    $data->save();
+                $data = New Attendance;
+                $data->att_date = $_trx->tanggal;
+                $data->att_timestamp = $_trx->clock_out;
+                $data->att_nik = $_trx->nik;
+                $data->att_type = 'Clock-out';
+                $data->att_data_src = 'Regular';
+                $data->att_wd_ot_id = 0;
+                $data->att_status = 'Book-out';
+                if($diffHours < 9){
+                    $data->att_status = 'Early-out';
                 }
+                $data->att_property = $this->getNikProperty($_trx->nik);
+                $data->wg_id = 1;
+                $data->id_fp_trx = $_trx->id_clock_out;
+                $data->save();
             }
         }
         return response()->json( [ 'success' => true ], 200 );
