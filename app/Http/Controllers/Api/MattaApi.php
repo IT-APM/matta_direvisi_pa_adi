@@ -63,6 +63,9 @@ class MattaApi extends Controller
         $data->att_data_src = $request->att_data_src;
         $data->att_wd_ot_id = $request->att_wd_ot_id;
         $data->att_status = $request->att_status;
+        if($data->att_type == 'Clock-out'){
+            $data->att_status = 'Book-out';
+        }
         $data->att_property = $this->getNikProperty($request->att_nik);
         $data->wg_id = Karyawan::where(['nik' => $request->att_nik, 'is_aktif' => 1])->first()->wg_id;
         $data->save();
