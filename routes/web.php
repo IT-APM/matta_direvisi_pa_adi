@@ -244,6 +244,7 @@ Route::get('feeds/image/remove', [ FeedController::class, 'RemoveImage'])->name(
 // 
 Route::resource('attendance', AttendanceController::class)->middleware('auth');
 Route::resource('attendance_download', AttendanceDownloadController::class)->middleware('can:hc');
+Route::get('attendance/source/{id}', [AttendanceController::class, 'attendance_source'])->name('attendance.source')->middleware('can:hc');
 Route::resource('recap_attendance', RecapAttendanceController::class)->middleware('auth');
 Route::resource('reminder_sp', ReminderSpController::class)->middleware('can:hc');
 Route::get('reminder_sp/reminder_sp/{id}', [ReminderSpController::class, 'reminder_sp'])->name('reminder_sp.reminder_sp');
