@@ -61,11 +61,11 @@ class DataCleansingController extends Controller
         // dipindahkan ke C:\xampp\htdocs\matta\app\Http\Controllers\TrxBirthdayController.php
         // karena dijalankan setiap jam 7 pagi
         // $this->getBirthday();
-        // $yesterday = Carbon::yesterday()->format('Y-m-d');
-        // $start_date = $yesterday;
-        // $end_date = $yesterday;
-        $start_date = '2026-05-04';
-        $end_date = '2026-07-06';
+        $yesterday = Carbon::yesterday()->format('Y-m-d');
+        $start_date = $yesterday;
+        $end_date = $yesterday;
+        // $start_date = '2026-05-04';
+        // $end_date = '2026-07-06';
         $trx = TrxFingePrint::select(
             DB::raw('MIN(trx_tbl_fp_data.id) as id_clock_in'),
             DB::raw('CAST(CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.id) ELSE NULL END AS UNSIGNED) as id_clock_out'),
@@ -126,6 +126,7 @@ class DataCleansingController extends Controller
                     if(Carbon::parse($clock_in)->format('H:i:s') > '09:00:00'){
                         $data['att_status'] = 'Late-in';
                     }
+                    $data['att_ref_address'] = 'edit';
                     $data['created_at'] = $clock_in;
                     $data['updated_at'] = $clock_in;
                     $data['id_fp_trx'] = $_trx->id_clock_in;
@@ -164,6 +165,7 @@ class DataCleansingController extends Controller
                 }
                 $data->att_property = $this->getNikProperty($_trx->nik);
                 $data->wg_id = 1;
+                $data->att_ref_address = 'copy';
                 $data->id_fp_trx = $_trx->id_clock_in;
                 $data->save();
             }
@@ -203,6 +205,7 @@ class DataCleansingController extends Controller
                 }
                 $data->att_property = $this->getNikProperty($_trx->nik);
                 $data->wg_id = 1;
+                $data->att_ref_address = 'copy';
                 $data->id_fp_trx = $_trx->id_clock_out;
                 $data->save();
             }
