@@ -6,6 +6,8 @@ use App\Models\Holiday;
 use App\Models\TrxCuti;
 use App\Models\TrxSakit;
 use App\Models\Attendance;
+use App\Models\TrxFingePrint;
+use App\Models\TrxFingePrintMatta;
 use App\Models\Karyawan;
 use App\Models\Perusahaan;
 use App\Models\WorkingGroup;
@@ -22,6 +24,70 @@ use Illuminate\Support\Facades\Gate;
 
 class AttendanceController extends Controller
 {
+
+    public function attendance_source(Request $request, $id)
+    {
+        $fp = DB::table('trx_tbl_fp_data as a')->select('b.nik', 'b.nama')->join('mtr_tbl_karyawan as b', 'a.id_nip', '=', 'b.id_fp')->groupBy('a.id_nip');
+        $matta = DB::table('trx_tbl_fp_data_matta as a')->select('b.nik', 'b.nama')->join('mtr_tbl_karyawan as b', 'a.att_nik', '=', 'b.nik')->groupBy('a.att_nik');
+        $att_nik_nama = $fp->union($matta)->orderBy('nama')->get()->unique('nik')->values();
+        $trx_fp = [];
+        $trx_matta = [];
+        $date_from = '';
+        $date_to = '';
+        $str_att_nik_nama = '';
+        if($request->filter == true){
+            $date_from = $request->date_from;
+            $date_to = $request->date_to;
+            $str_att_nik_nama = $request->str_att_nik_nama;
+            // $date_from = '2026-07-06';
+            // $date_to = '2026-07-06';
+            // $str_att_nik_nama = '01032510885';
+            $trx_fp = TrxFingePrint::select(
+                DB::raw('MIN(trx_tbl_fp_data.id) as id_clock_in'),
+                DB::raw('CAST(CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.id) ELSE NULL END AS UNSIGNED) as id_clock_out'),
+                'trx_tbl_fp_data.id_nip',
+                'mtr_tbl_karyawan.nik',
+                'mtr_tbl_karyawan.nama',
+                'mtr_tbl_karyawan.wg_id',
+                DB::raw('DATE(trx_tbl_fp_data.waktu) as tanggal'),
+                DB::raw('MIN(trx_tbl_fp_data.waktu) as clock_in'),
+                DB::raw('CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.waktu) ELSE NULL END as clock_out')
+            )
+            ->leftJoin('mtr_tbl_karyawan', 'mtr_tbl_karyawan.id_fp', '=', 'trx_tbl_fp_data.id_nip')
+            ->whereBetween(DB::raw('DATE(trx_tbl_fp_data.waktu)'), [$date_from, $date_to])
+            // ->where(['mtr_tbl_karyawan.wg_id' => 1, 'mtr_tbl_karyawan.nik' => $str_att_nik_nama])
+            ->where('mtr_tbl_karyawan.wg_id', 1)
+            ->when(!empty($str_att_nik_nama), fn($q) => $q->where('mtr_tbl_karyawan.nik', $str_att_nik_nama))
+            ->groupBy('trx_tbl_fp_data.id_nip', DB::raw('DATE(trx_tbl_fp_data.waktu)'))
+            ->orderBy('tanggal', 'desc')
+            ->orderBy('mtr_tbl_karyawan.nama')
+            ->get();
+            // 
+            $trx_matta = TrxFingePrintMatta::select(
+                DB::raw("MIN(CASE WHEN att_type = 'Clock-in'  THEN trx_tbl_fp_data_matta.id END) as id_clock_in"),
+                DB::raw("MIN(CASE WHEN att_type = 'Clock-out' THEN trx_tbl_fp_data_matta.id END) as id_clock_out"),
+                'mtr_tbl_karyawan.id_fp as id_nip',
+                'mtr_tbl_karyawan.nik',
+                'mtr_tbl_karyawan.nama',
+                'mtr_tbl_karyawan.wg_id',
+                'trx_tbl_fp_data_matta.att_date as tanggal',
+                DB::raw("MIN(CASE WHEN att_type = 'Clock-in'  THEN att_timestamp END) as clock_in"),
+                DB::raw("MIN(CASE WHEN att_type = 'Clock-out' THEN att_timestamp END) as clock_out"),
+            )
+            ->leftJoin('mtr_tbl_karyawan', 'mtr_tbl_karyawan.nik', '=', 'trx_tbl_fp_data_matta.att_nik')
+            ->whereIn('att_type', ['Clock-in', 'Clock-out'])
+            ->whereBetween(DB::raw('trx_tbl_fp_data_matta.att_date'), [$date_from, $date_to])
+            // ->where(['mtr_tbl_karyawan.nik' => $str_att_nik_nama])
+            ->when(!empty($str_att_nik_nama), fn($q) => $q->where('mtr_tbl_karyawan.nik', $str_att_nik_nama))
+            ->groupBy('trx_tbl_fp_data_matta.att_nik', 'trx_tbl_fp_data_matta.att_date')
+            ->orderBy('tanggal', 'desc')
+            ->orderBy('mtr_tbl_karyawan.nama')
+            ->get();
+        }
+        // return response()->json( [ 'trx_fp' => $trx_fp, 'trx_matta' => $trx_matta ], 200 );
+        return view('attendance.source', compact( 'str_att_nik_nama', 'att_nik_nama', 'trx_fp', 'trx_matta', 'date_from', 'date_to'));
+    }
+
     /**
      * Display a listing of the resource.
      *
