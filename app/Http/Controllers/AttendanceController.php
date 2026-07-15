@@ -42,25 +42,48 @@ class AttendanceController extends Controller
             // $date_from = '2026-07-06';
             // $date_to = '2026-07-06';
             // $str_att_nik_nama = '01032510885';
+            // $trx_fp = TrxFingePrint::select(
+            //     DB::raw('MIN(trx_tbl_fp_data.id) as id_clock_in'),
+            //     DB::raw('CAST(CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.id) ELSE NULL END AS UNSIGNED) as id_clock_out'),
+            //     'trx_tbl_fp_data.id_nip',
+            //     'mtr_tbl_karyawan.nik',
+            //     'mtr_tbl_karyawan.nama',
+            //     'mtr_tbl_karyawan.wg_id',
+            //     DB::raw('DATE(trx_tbl_fp_data.waktu) as tanggal'),
+            //     DB::raw('MIN(trx_tbl_fp_data.waktu) as clock_in'),
+            //     DB::raw('CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.waktu) ELSE NULL END as clock_out')
+            // )
+            // ->leftJoin('mtr_tbl_karyawan', 'mtr_tbl_karyawan.id_fp', '=', 'trx_tbl_fp_data.id_nip')
+            // ->whereBetween(DB::raw('DATE(trx_tbl_fp_data.waktu)'), [$date_from, $date_to])
+            // // ->where(['mtr_tbl_karyawan.wg_id' => 1, 'mtr_tbl_karyawan.nik' => $str_att_nik_nama])
+            // ->where('mtr_tbl_karyawan.wg_id', 1)
+            // ->when(!empty($str_att_nik_nama), fn($q) => $q->where('mtr_tbl_karyawan.nik', $str_att_nik_nama))
+            // ->groupBy('trx_tbl_fp_data.id_nip', DB::raw('DATE(trx_tbl_fp_data.waktu)'))
+            // ->orderBy('tanggal', 'desc')
+            // ->orderBy('mtr_tbl_karyawan.nama')
+            // ->get();
+            // 
             $trx_fp = TrxFingePrint::select(
-                DB::raw('MIN(trx_tbl_fp_data.id) as id_clock_in'),
-                DB::raw('CAST(CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.id) ELSE NULL END AS UNSIGNED) as id_clock_out'),
-                'trx_tbl_fp_data.id_nip',
+                // DB::raw('MIN(trx_tbl_fp_data.id) as id_clock_in'),
+                // DB::raw('CAST(CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.id) ELSE NULL END AS UNSIGNED) as id_clock_out'),
+                // 'trx_tbl_fp_data.id_nip',
                 'mtr_tbl_karyawan.nik',
                 'mtr_tbl_karyawan.nama',
-                'mtr_tbl_karyawan.wg_id',
-                DB::raw('DATE(trx_tbl_fp_data.waktu) as tanggal'),
-                DB::raw('MIN(trx_tbl_fp_data.waktu) as clock_in'),
-                DB::raw('CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.waktu) ELSE NULL END as clock_out')
+                // 'mtr_tbl_karyawan.wg_id',
+                'trx_tbl_fp_data.waktu as waktu',
+                'trx_tbl_fp_data.id_mesin as id_mesin',
+                // DB::raw('DATE(trx_tbl_fp_data.waktu) as tanggal'),
+                // DB::raw('MIN(trx_tbl_fp_data.waktu) as clock_in'),
+                // DB::raw('CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.waktu) ELSE NULL END as clock_out')
             )
             ->leftJoin('mtr_tbl_karyawan', 'mtr_tbl_karyawan.id_fp', '=', 'trx_tbl_fp_data.id_nip')
             ->whereBetween(DB::raw('DATE(trx_tbl_fp_data.waktu)'), [$date_from, $date_to])
             // ->where(['mtr_tbl_karyawan.wg_id' => 1, 'mtr_tbl_karyawan.nik' => $str_att_nik_nama])
             ->where('mtr_tbl_karyawan.wg_id', 1)
             ->when(!empty($str_att_nik_nama), fn($q) => $q->where('mtr_tbl_karyawan.nik', $str_att_nik_nama))
-            ->groupBy('trx_tbl_fp_data.id_nip', DB::raw('DATE(trx_tbl_fp_data.waktu)'))
-            ->orderBy('tanggal', 'desc')
+            // ->groupBy('trx_tbl_fp_data.id_nip', DB::raw('DATE(trx_tbl_fp_data.waktu)'))
             ->orderBy('mtr_tbl_karyawan.nama')
+            ->orderBy('waktu', 'desc')
             ->get();
             // 
             $trx_matta = TrxFingePrintMatta::select(
