@@ -161,7 +161,12 @@
                     @if(!empty($trxM->id_jurusan_pendidikan))
                     <tr>
                         <td>Jurusan</td>
-                        <td>: {{ $trxM->_jurusan_pendidikan->jurusan }} ({{ $trxM->_jurusan_pendidikan->_kelompok->kelompok }})</td>
+                        <td>: 
+                        @if($trxM->id_jurusan_pendidikan <> '0')
+                            @foreach (explode(',', $trxM->id_jurusan_pendidikan) as $index => $value){{ $index+1 }}. {{ App\Models\PendidikanJurusan::find($value)->jurusan }} @if (!$loop->last) <br/>&nbsp; @endif @endforeach
+                        @endif
+                        </td>
+                        {{-- <td>: {{ $trxM->_jurusan_pendidikan->jurusan }} ({{ $trxM->_jurusan_pendidikan->_kelompok->kelompok }})</td> --}}
                     </tr>
                     @endif
                     @if(!empty($trxM->nilai_ipk))
@@ -185,24 +190,34 @@
                     <hr/>
                     <tr>
                         <td>Training yang seharusnya sudah diikuti</td>
-                        <td><ol>
+                        <td>: 
+                        @if(!empty($trxM->id_pelatihan))
+                            @foreach ($pelatihan as $index => $value){{ $index+1 }}. {{ $value->sub_pelatihan }} @if (!$loop->last) <br/>&nbsp; @endif @endforeach
+                        @endif
+                        </td>
+                        {{-- <td><ol>
                         @if(!empty($trxM->id_pelatihan))
                             @foreach ($pelatihan as $value)
                             <li>{{ $value->sub_pelatihan }}</li>
                             @endforeach
                         @endif
-                        </ol></td>
+                        </ol></td> --}}
                     </tr>
                     <hr/>
                     <tr>
                         <td>Kursus/sertifikasi yang seharusnya sudah diperoleh</td>
-                        <td><ol>
+                        <td>: 
+                        @if(!empty($trxM->id_sertifikasi))
+                            @foreach ($sertifikasi as $index => $value){{ $index+1 }}. {{ $value->sub_sertifikasi }} @if (!$loop->last) <br/>&nbsp; @endif @endforeach
+                        @endif
+                        </td>
+                        {{-- <td><ol>
                         @if(!empty($trxM->id_sertifikasi))
                             @foreach ($sertifikasi as $value)
                             <li>{{ $value->sub_sertifikasi }}</li>
                             @endforeach
                         @endif
-                        </ol></td>
+                        </ol></td> --}}
                     </tr>
                 </table>
                 <hr />
@@ -215,24 +230,34 @@
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
                         <td width="30%">Ketrampilan yang harus sudah dipunyai</td>
-                        <td width="70%"><ol>
+                        <td width="70%">: 
+                        @if(!empty($trxM->id_keterampilan))
+                            @foreach ($keterampilan as $index => $value){{ $index+1 }}. {{ $value->sub_keterampilan }} @if (!$loop->last) <br/>&nbsp; @endif @endforeach
+                        @endif
+                        </td>
+                        {{-- <td width="70%"><ol>
                         @if(!empty($trxM->id_keterampilan))
                             @foreach ($keterampilan as $value)
                             <li>{{ $value->sub_keterampilan }}</li>
                             @endforeach
                         @endif
-                        </ol></td>
+                        </ol></td> --}}
                     </tr>
                     <hr/>
                     <tr>
                         <td>Kepribadian dasar yang harus dimiliki</td>
-                        <td><ol>
+                        <td>: 
+                        @if(!empty($trxM->id_kepribadian))
+                            @foreach ($kepribadian as $index => $value){{ $index+1 }}. {{ $value->sub_kepribadian }} @if (!$loop->last) <br/>&nbsp; @endif @endforeach
+                        @endif
+                        </td>
+                        {{-- <td><ol>
                         @if(!empty($trxM->id_kepribadian))
                             @foreach ($kepribadian as $value)
                             <li>{{ $value->sub_kepribadian }}</li>
                             @endforeach
                         @endif
-                        </ol></td>
+                        </ol></td> --}}
                     </tr>
                 </table>
                 <hr />
