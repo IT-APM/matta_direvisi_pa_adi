@@ -195,8 +195,15 @@
                                     </select>
                                 </div>
                                 <div class="col-md-12 mt-2" id="div_jurusan_pendidikan">
-                                    <label class="form-label" for="id_jurusan_pendidikan">Jurusan</label>
+                                    {{-- <label class="form-label" for="id_jurusan_pendidikan">Jurusan</label>
                                     <select class="form-select col-sm-12 js-example-basic-single" id="id_jurusan_pendidikan" name="id_jurusan_pendidikan" >
+                                        <option selected="" disabled="" value="">Pilih...</option>
+                                        @foreach ($jurusan_pendidikan as $data)
+                                        <option value="{{ $data->id }}">{{ $data->jurusan }} ({{ $data->_kelompok->kelompok }})</option>
+                                        @endforeach
+                                    </select> --}}
+                                    <label class="form-label" for="id_jurusan_pendidikan[]">Jurusan</label>
+                                    <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_jurusan_pendidikan[]" name="id_jurusan_pendidikan[]" placeholder="Pilih...">
                                         <option selected="" disabled="" value="">Pilih...</option>
                                         @foreach ($jurusan_pendidikan as $data)
                                         <option value="{{ $data->id }}">{{ $data->jurusan }} ({{ $data->_kelompok->kelompok }})</option>
