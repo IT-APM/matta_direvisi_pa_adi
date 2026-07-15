@@ -248,7 +248,7 @@
                                                         <span class="badge badge-warning">{{ $data->att_data_src }}</span>
                                                     @endif
                                                 </td>
-                                                <td>@if(!empty($data->id_fp_trx)) <span class="badge badge-primary">FINGER-{{ $data->_fp_trx->id_mesin }}</span> @else <span class="badge badge-warning">MATTA</span> @endif</td>
+                                                <td>@if(!empty($data->id_fp_trx)) @if($data->_fp_trx->id_mesin == 1) <span class="badge badge-primary">FINGER-{{ $data->_fp_trx->id_mesin }}</span> @else <span class="badge badge-info">FINGER-{{ $data->_fp_trx->id_mesin }}</span> @endif @else <span class="badge badge-warning">MATTA</span> @endif</td>
                                             </tr>
                                         @endforeach
                                         </tbody>
