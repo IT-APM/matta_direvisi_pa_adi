@@ -747,7 +747,10 @@ class TrxKebutuhanController extends Controller
         $id_jenjang_pendidikan = $request->id_jenjang_pendidikan;
         $trxM->id_jenjang_pendidikan = $id_jenjang_pendidikan;
         // 
-        $trxM->id_jurusan_pendidikan = $request->id_jurusan_pendidikan;
+        // $trxM->id_jurusan_pendidikan = $request->id_jurusan_pendidikan;
+        if($request->has('id_jurusan_pendidikan')){
+            $trxM->id_jurusan_pendidikan = implode(',', $request->id_jurusan_pendidikan);
+        }
         $trxM->nilai_ipk = $request->nilai_ipk;
         $trxM->umur_minimum = $request->umur_minimum;
         $trxM->umur_maksimum = $request->umur_maksimum;
