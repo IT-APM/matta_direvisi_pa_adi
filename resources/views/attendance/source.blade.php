@@ -70,8 +70,10 @@
                                         <th>No</th>
                                         <th>Nama</th>
                                         <th>NIP</th>
-                                        <th>Clock In</th>
-                                        <th>Clock Out</th>
+                                        <th>Waktu</th>
+                                        <th>Mesin</th>
+                                        {{-- <th>Clock In</th>
+                                        <th>Clock Out</th> --}}
                                     </tr>
                                 </thead>
                                 @php $no = 0; @endphp
@@ -81,8 +83,11 @@
                                             <td>{{ ++$no }}</td>
                                             <td>{{ $data->nama }}</td>
                                             <td>{{ $data->nik }}</td>
-                                            <td>{{ $data->clock_in ? Carbon\Carbon::parse($data->clock_in)->format('d-m-Y H:i:s') : '' }}</td>
-                                            <td>{{ $data->clock_out ? Carbon\Carbon::parse($data->clock_out)->format('d-m-Y H:i:s') : '' }}</td>
+                                            <td>{{ $data->waktu ? Carbon\Carbon::parse($data->waktu)->format('d-m-Y H:i:s') : '' }}</td>
+                                            {{-- <td>@if(!empty($data->id_mesin)) FINGER-{{ $data->id_mesin }} @endif</td> --}}
+                                            <td>@if($data->id_mesin == 1) <span class="badge badge-primary">FINGER-{{ $data->id_mesin }}</span> @else <span class="badge badge-info">FINGER-{{ $data->id_mesin }}</span> @endif</td>
+                                            {{-- <td>{{ $data->clock_in ? Carbon\Carbon::parse($data->clock_in)->format('d-m-Y H:i:s') : '' }}</td>
+                                            <td>{{ $data->clock_out ? Carbon\Carbon::parse($data->clock_out)->format('d-m-Y H:i:s') : '' }}</td> --}}
                                         </tr>
                                     @endforeach
                                 </tbody>
