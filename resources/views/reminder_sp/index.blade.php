@@ -109,7 +109,7 @@
                                         }
                                     }
                                     @endphp
-                                    <tr>
+                                    <tr @if(App\Models\Karyawan::where('nik', $data->nik)->where('is_aktif', false)->exists()) class="bg-danger" @endif>
                                         <td><input id="reminder_sp[]" name="reminder_sp[]" type="checkbox" value="{{ $data->id }}"></td>
                                         <td>{{ ++$no }}</td>
                                         <td>{{ $type }} {{ $teguran_ke }}</td>
