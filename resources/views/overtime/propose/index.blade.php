@@ -39,6 +39,30 @@
                     {{-- <a href="{{ route('overtime.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> |  --}}
                     <button class="btn btn-primary" type="button" onclick="PilihKaryawan()"><i class="fa fa-plus" aria-hidden="true"></i> Add new</button> |
                     @endcan
+                    {{--  --}}
+                    <div class="modal fade" id="modalPilihKaryawan" tabindex="-1" aria-labelledby="modalPilihKaryawanLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalPilihKaryawanLabel">
+                                        <i class="fa fa-exclamation-triangle me-2 text-warning"></i> Pesan
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {{-- isi form atau pesan di sini --}}
+                                    <p>Pastikan anda telah melakukan absensi harian melalui Matta sebelum mengajukan lembur. Silahkan mengganti dengan hari lain jika anda terlewat melakukan absensi harian di Matta</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times me-1"></i> Batal</button>
+                                    <button type="button" class="btn btn-primary" onclick="konfirmasiPilih()">
+                                        <i class="fa fa-check me-1"></i> Konfirmasi
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{--  --}}
                     <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
                     <div class="collapse" id="collapse_filter">
                         <form class="mt-2" action="{{ route('overtime.index') }}" method="get" enctype="multipart/form-data">
@@ -156,9 +180,18 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
 <script type="text/javascript">
 function PilihKaryawan() {
+    const modal = new bootstrap.Modal(document.getElementById('modalPilihKaryawan'));
+    modal.show();
+}
+// 
+function konfirmasiPilih() {
+    // proses setelah konfirmasi
+    // alert('Karyawan berhasil ditambahkan!');
+    bootstrap.Modal.getInstance(document.getElementById('modalPilihKaryawan')).hide();
     var ot_maker_by = "{{ Crypt::encrypt(auth()->user()->nik) }}";
     location.href = "{{ route('overtime.create') }}"+"?ot_maker_by="+ot_maker_by;
 }
+// 
 function toggle_ot_approver_status(source) {
     checkboxes = document.getElementsByName('ot_approver_status[]');
     for(var i=0, n=checkboxes.length;i<n;i++) {
