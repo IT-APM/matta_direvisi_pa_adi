@@ -459,6 +459,7 @@
                                                     <th>Diubah Oleh</th>
                                                     <th>Perubahan Data</th>
                                                     <th>Waktu Perubahan</th>
+                                                    <th>Sumber</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -490,6 +491,9 @@
                                                         </table>
                                                     </td>
                                                     <td>{{ $data->created_at }}</td>
+                                                    <td>
+                                                        @if($data->from_flag == 1) Data Master Employee @elseif($data->from_flag == 2) Penilaian Karyawan @endif
+                                                    </td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>
