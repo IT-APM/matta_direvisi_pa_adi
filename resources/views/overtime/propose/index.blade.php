@@ -51,7 +51,7 @@
                                 </div>
                                 <div class="modal-body">
                                     {{-- isi form atau pesan di sini --}}
-                                    <p>Pastikan anda telah melakukan absensi harian melalui Matta sebelum mengajukan lembur. Silahkan mengganti dengan hari lain jika anda terlewat melakukan absensi harian di Matta</p>
+                                    {{ App\Models\MtrUtility::find(52)->informasi }}
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times me-1"></i> Batal</button>
