@@ -281,6 +281,10 @@ class TrxRecruitmentController extends Controller
         // $trx = TrxKebutuhanMaster::whereIn('id', $id_trx)->orderBy('id', 'desc')->get();
         // terposting adalah pengajuan yang statusnya 9=Approved by L2 to HC dan bukan 7=Magang
         $trx = TrxKebutuhanMaster::whereIn('id', $id_trx)->whereNotIn('id_status_kerja', [7])->orderBy('id', 'desc')->get();
+        // kecuali, refer to "C:\alita\matta\data_master\Backdoor Add Employee_280726.xlsx"
+        if(!empty(array_intersect($id_trx, [10290,10289,10287,10286,10285,10284,10283,10282,10281,10280]))){
+            $trx = TrxKebutuhanMaster::whereIn('id', $id_trx)->orderBy('id', 'desc')->get();
+        }
         $pengaju = array();
         $id_pekerjaan = array();
         $id_status_kerja = array();
