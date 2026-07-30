@@ -74,9 +74,9 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    {{-- <div>
+                                    <div>
                                         <label class="h6 mt-2" for="nik">Karyawan</label>
-                                        <select class="form-select js-example-basic-single col-sm-12" id="nik" name="nik" required="">
+                                        <select class="form-select js-example-basic-single col-sm-12" id="nik[]" name="nik[]" required="">
                                             <option selected="" disabled="" value="">Pilih...</option>
                                             <option value="0" @if(in_array('0', $_arr_nik)) selected @endif>Semua Karyawan</option>
                                             @foreach ($karyawan as $data)
@@ -84,15 +84,15 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             @endforeach
                                         </select>
                                         <div class="invalid-feedback txt-danger">Field is required.</div>
-                                    </div> --}}
-                                    <label class="h6 mt-2">Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_nik(this)" />&nbsp;Check All
+                                    </div>
+                                    {{-- <label class="h6 mt-2">Karyawan</label>&nbsp;<input type="checkbox" onClick="toggle_nik(this)" />&nbsp;Check All
                                     <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                         <label class="d-block" for="nik">
                                             @foreach ($karyawan as $data)
                                             <input class="checkbox_animated" id="nik[]" name="nik[]" type="checkbox" value="{{ $data->nik }}" @if(in_array($data->nik, $_arr_nik)) checked @endif>{{ $data->nama }} - {{ $data->nik }}<br/>
                                             @endforeach
                                         </label>
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <div class="col-sm-2">
                                     <label class="h6 mt-2">Status</label>&nbsp;<input type="checkbox" onClick="toggle_status_karyawan(this)" />&nbsp;Check All
