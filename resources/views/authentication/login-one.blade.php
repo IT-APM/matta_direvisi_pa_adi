@@ -112,13 +112,13 @@
     </div>
 </div> --}}
 <div class="modal fade bd-example-modal-lg" id="showPDP" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
                 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <img src="{{ asset('assets/images/matta/uu_pdp.png') }}" class="img-fluid d-flex" alt="Pengumuman">
+            <div class="modal-body p-0 d-flex align-items-center justify-content-center" style="overflow:hidden;">
+                <img src="{{ asset('assets/images/matta/uu_pdp_v2.png') }}" alt="Pengumuman" style="width:100%; height:100%; object-fit:contain;">
             </div>
             <div class="modal-footer">
                 <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Tutup</button>
@@ -127,6 +127,21 @@
     </div>
 </div>
 <div class="modal fade bd-example-modal-lg" id="showTrust" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 d-flex align-items-center justify-content-center" style="overflow:hidden;">
+                <img src="{{ asset('assets/images/login/trust2.jpg') }}" alt="Pengumuman" style="width:100%; height:100%; object-fit:contain;">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{-- <div class="modal fade bd-example-modal-lg" id="showTrust" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -140,7 +155,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 @endsection
 
 @section('script')
