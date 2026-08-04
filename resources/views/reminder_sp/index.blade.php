@@ -14,17 +14,37 @@
         color: black;
         background: white;
     }
-
+/* css untuk table izin */
+    .tbl-laporan {
+        border-collapse: collapse;
+        margin: 5px;
+        width: 100%;
+    }
+    .tbl-laporan th,
+    .tbl-laporan td {
+        border: 1px solid #dee2e6;
+        padding: 6px 10px;
+        text-align: center;
+        vertical-align: middle;
+    }
+    .tbl-laporan thead th {
+        background-color: #f0f7f3;
+        color: #0B3D2E;
+        font-weight: 600;
+    }
+    .tbl-laporan tbody tr:hover {
+        background-color: #f0faf4;
+    }
 </style>
 @endsection
 
 @section('breadcrumb-title')
-<h3>Reminder & Warning Letter</h3>
+<h3>Pengingat Absensi & Surat Peringatan</h3>
 @endsection
 
 @section('breadcrumb-items')
 <li class="breadcrumb-item">Data</li>
-<li class="breadcrumb-item active">Reminder & Warning Letter</li>
+<li class="breadcrumb-item active">Pengingat Absensi & Surat Peringatan</li>
 @endsection
 
 @section('content')
@@ -70,6 +90,7 @@
                                         <th>Jumlah Hari Kerja</th>
                                         <th>Jumlah Kehadiran</th>
                                         <th>Persentase Kehadiran</th>
+                                        <th>Keterlambatan</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -81,9 +102,13 @@
                                     $layer1 = App\Models\Karyawan::where($where)->first();
                                     // check history
                                     $teguran_ke = 'Pertama';
-                                    $type = 'Reminder';
+                                    $type = 'Pengingat Absensi';
+                                    // terlambat
+                                    if(!empty($data->terlambat)){
+                                        $type = 'Pengingat Keterlambatan';
+                                    }
                                     // check nik yang sama pada 1 bulan sebelumnya
-                                    $where = ['nik' => $data->nik, 'date_from' => Carbon\Carbon::parse($data->date_from)->modify('-1 month')->format('Y-m-d')];
+                                    $where = ['nik' => $data->nik, 'date_from' => \Carbon\Carbon::parse($data->date_from)->modify('-1 month')->format('Y-m-d')];
                                     $trxSend = App\Models\TrxReminderSpSend::where($where)->orderBy( 'id', 'desc' )->first();
                                     if(!empty($trxSend)){
                                         if($trxSend->type == 'reminder'){
@@ -97,15 +122,19 @@
                                                 $teguran_ke = 'Kelima';
                                             }elseif($trxSend->number == 5){
                                                 $teguran_ke = 'Pertama';
-                                                $type = 'Warning';
+                                                $type = 'Surat Peringatan';
                                             }
                                         }elseif($trxSend->type == 'warning'){
-                                            $type = 'Warning';
+                                            $type = 'Surat Peringatan';
                                             if($trxSend->number == 1){
                                                 $teguran_ke = 'Kedua';
                                             }elseif($trxSend->number == 2){
                                                 $teguran_ke = 'Ketiga';
                                             }
+                                        }elseif($trxSend->type == 'late'){
+                                            $type = 'Pengingat Keterlambatan';
+                                            $arr = ['Pertama', 'Kedua', 'Ketiga', 'Keempat', 'Kelima', 'Keenam', 'Ketujuh', 'Kedelapan', 'Kesembilan', 'Kesepuluh', 'Kesebelas', 'Keduabelas'];
+                                            $teguran_ke = $arr[$trxSend->number];
                                         }
                                     }
                                     @endphp
@@ -113,8 +142,8 @@
                                         <td><input id="reminder_sp[]" name="reminder_sp[]" type="checkbox" value="{{ $data->id }}"></td>
                                         <td>{{ ++$no }}</td>
                                         <td>{{ $type }} {{ $teguran_ke }}</td>
-                                        <td>{{ Carbon\Carbon::parse($data->date_from) ->format('d-m-Y') }}</td>
-                                        <td>{{ Carbon\Carbon::parse($data->date_to) ->format('d-m-Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($data->date_from) ->format('d-m-Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($data->date_to) ->format('d-m-Y') }}</td>
                                         <td>{{ $nik_property['wg_name'] }}</td>
                                         <td>{{ $data->nik }}</td>
                                         <td>{{ $nik_property['nama'] }}</td>
@@ -129,6 +158,53 @@
                                         <td>{{ $data->arr_base }}</td>
                                         <td>{{ $data->arr_clock }}</td>
                                         <td>{{ round($data->persentase) }} %</td>
+                                        <td>
+                                            @php
+                                            if(!empty($data->terlambat)){
+                                                $html = '<table class="tbl-laporan text-dark">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Hari</th>
+                                                        <th>Tanggal</th>
+                                                        <th>Jam Kerja</th>
+                                                        <th>Clock-in</th>
+                                                        <th>Keterlambatan</th>
+                                                        <th>Izin</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>';
+                                                $terlambat = json_decode($data->terlambat, true);
+                                                $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                                                $_no = 0;
+                                                foreach ($terlambat as $_terlambat){
+                                                    $str_izin = '';
+                                                    if(!empty($_terlambat['izin'])){
+                                                        $izin = $_terlambat['izin'][0];
+                                                        $str_izin .= App\Models\IjinTipe::find($izin['tipe'])->tipe;
+                                                        if($izin['tipe'] == 2){
+                                                            $str_izin .= ' Jam '.$izin['jam_awal'].' s/d '.$izin['jam_akhir'];
+                                                        }
+                                                    }
+                                                    $clockin = $_terlambat['clockin'];
+                                                    if($nik_property['wg_id'] > 1){
+                                                        $clockin = \Carbon\Carbon::parse($_terlambat['clockin']) ->format('H:i:s');
+                                                    }
+                                                    $html .= '<tr>
+                                                        <th>'.++$_no.'</th>
+                                                        <td>'.$hari[\Carbon\Carbon::parse($_terlambat['tanggal'])->dayOfWeek].'</td>
+                                                        <td>'.\Carbon\Carbon::parse($_terlambat['tanggal']) ->format('d-m-Y').'</td>
+                                                        <td>'.$clockin.'</td>
+                                                        <td>'.\Carbon\Carbon::parse($_terlambat['att_timestamp']) ->format('H:i:s').'</td>
+                                                        <td>'.$_terlambat['durasi'].'</td>
+                                                        <td>'.$str_izin.'</td>
+                                                    </tr>';
+                                                }
+                                                $html .= '</tbody></table>';
+                                                echo $html;
+                                            }
+                                            @endphp
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
