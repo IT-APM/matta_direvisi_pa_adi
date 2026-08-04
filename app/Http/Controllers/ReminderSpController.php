@@ -16,6 +16,8 @@ use App\Models\Karyawan;
 use App\Models\WorkingDay;
 use App\Models\WorkingGroup;
 use App\Models\Level;
+use App\Models\Attendance;
+use App\Models\TrxIjin;
 
 class ReminderSpController extends Controller
 {
@@ -40,7 +42,7 @@ class ReminderSpController extends Controller
             // pengecualian karena pada tanggal ini terjadi suspend domain alita.id
             $arr_date = array_values(array_diff($arr_date, ['2024-09-23']));
             // dd($arr_date);
-            $trx = [];
+            // $trx = [];
             foreach ($karyawan as $_karyawan) {
                 $nik = $_karyawan->nik;
                 $arr_base = [];
@@ -98,10 +100,42 @@ class ReminderSpController extends Controller
                     $persentase = count($arr_clock) / count($arr_base);
                 }
                 $nik_property = $this->getNikProperty($nik);
+                // tangkap jika ada keterlambatan
+                $terlambat = [];
+                foreach ($arr_clock as $att_date) {
+                    $data = Attendance::where(['att_date'=>$att_date, 'att_nik'=>$nik, 'att_data_src'=>'Regular', 'att_type'=>'Clock-in', 'att_status'=>'Late-in']);
+                    if($data->exists()){
+                        // cek apakah ada izin
+                        // 2=Approve by L1
+                        // 4=Done by P&C
+                        // 6=Approve by L2
+                        $izin = TrxIjin::where(['tanggal'=>$att_date, 'karyawan'=>$nik])->whereIn('status', [2,4,6])->get();
+                        // 
+                        $data = $data->get()[0];
+                        if($data->wg_id == 1){
+                            $clockin = '09:00:00';
+                            $totalDetik = Carbon::createFromFormat('H:i:s', Carbon::parse($data->att_timestamp)->format('H:i:s'))->diffInSeconds(Carbon::createFromFormat('H:i:s', $clockin));
+                            $durasi = Carbon::createFromTime(floor($totalDetik / 3600), floor(($totalDetik % 3600) / 60), $totalDetik % 60)->format('H:i:s');
+                            array_push($terlambat, ['id_attendance'=>$data->id, 'tanggal'=>$att_date, 'clockin'=>$clockin, 'att_timestamp'=>$data->att_timestamp, 'durasi'=>$durasi, 'izin'=>$izin]);
+                        }
+                        elseif($data->wg_id > 1){
+                            $clockin = WorkingDay::find($data->att_wd_ot_id)?->clockin;
+                            $totalDetik = Carbon::createFromFormat('H:i:s', Carbon::parse($data->att_timestamp)->format('H:i:s'))->diffInSeconds(Carbon::parse($clockin)->format('H:i:s'));
+                            $durasi = Carbon::createFromTime(floor($totalDetik / 3600), floor(($totalDetik % 3600) / 60), $totalDetik % 60)->format('H:i:s');
+                            array_push($terlambat, ['id_attendance'=>$data->id, 'tanggal'=>$att_date, 'clockin'=>$clockin, 'att_timestamp'=>$data->att_timestamp, 'durasi'=>$durasi, 'izin'=>$izin]);
+                        }
+                    }
+                }
+                // maksimal 3 (tiga) kali dalam satu bulan
+                if(count($terlambat) > 3){
+                    $remindersp = ['date_from' => $date_from, 'date_to' => $date_to, 'nik' => $nik, 'nik_property' => $nik_property, 'arr_base' => count($arr_base), 'arr_clock' => count($arr_clock), 'persentase' => $persentase * 100, 'terlambat' => $terlambat];
+                    // array_push($trx, $remindersp);
+                    $this->insertTrxReminderSp($remindersp);
+                }
                 // tangkap jika kurang dari 80% dan ada hari kehadirannya
                 if(round($persentase*100) < MtrReminderSp::find(1)->isi && count($arr_base) > 0){
                     $remindersp = ['date_from' => $date_from, 'date_to' => $date_to, 'nik' => $nik, 'nik_property' => $nik_property, 'arr_base' => count($arr_base), 'arr_clock' => count($arr_clock), 'persentase' => $persentase * 100];
-                    array_push($trx, $remindersp);
+                    // array_push($trx, $remindersp);
                     $this->insertTrxReminderSp($remindersp);
                 }
             }
@@ -122,6 +156,9 @@ class ReminderSpController extends Controller
         $data->arr_base = $trx['arr_base'];
         $data->arr_clock = $trx['arr_clock'];
         $data->persentase = $trx['persentase'];
+        if(!empty($trx['terlambat'])){
+            $data->terlambat = json_encode($trx['terlambat']);
+        }
         $data->save();
     }
 
@@ -137,6 +174,7 @@ class ReminderSpController extends Controller
         $data->arr_base = $trx['arr_base'];
         $data->arr_clock = $trx['arr_clock'];
         $data->persentase = $trx['persentase'];
+        $data->terlambat = $trx['terlambat'];
         $data->body_email = $body_email;
         $data->save();
     }
@@ -216,6 +254,10 @@ class ReminderSpController extends Controller
                             $teguran_ke = 'Pertama';
                             $number = 1;
                             $type = 'reminder';
+                            // terlambat
+                            if(!empty($trx->terlambat)){
+                                $type = 'late';
+                            }
                             $history_email = '';
                             // check nik yang sama pada 1 bulan sebelumnya
                             $where = ['nik' => $trx->nik, 'date_from' => Carbon::parse($trx->date_from)->modify('-1 month')->format('Y-m-d')];
@@ -249,15 +291,24 @@ class ReminderSpController extends Controller
                                         $teguran_ke = 'Ketiga';
                                         $number = 3;
                                     }
+                                }elseif($trxSend->type == 'late'){
+                                    $type = 'late';
+                                    $arr = ['Pertama', 'Kedua', 'Ketiga', 'Keempat', 'Kelima', 'Keenam', 'Ketujuh', 'Kedelapan', 'Kesembilan', 'Kesepuluh', 'Kesebelas', 'Keduabelas'];
+                                    $teguran_ke = $arr[$trxSend->number];
+                                    $number = $trxSend->number + 1;
                                 }
                             }
                             // start
                             // parameter yang dipassing ke sendemail
-                            $mailData['title'] = 'Surat Pemberitahuan '.$teguran_ke;
+                            // $mailData['title'] = 'Surat Pemberitahuan '.$teguran_ke;
+                            $mailData['title'] = 'Pengingat Absensi '.$teguran_ke;
                             $mailData['filename'] = 'emails.reminder1';
                             if($type == 'warning'){
                                 $mailData['title'] = 'Surat Peringatan '.$teguran_ke;
                                 $mailData['filename'] = 'emails.warning1';
+                            }elseif($type == 'late'){
+                                $mailData['title'] = 'Pengingat Keterlambatan Absensi '.$teguran_ke;
+                                $mailData['filename'] = 'emails.late1';
                             }
                             $mailData['to'] = $nik_property['email'];
                             $data = ['trx' => $trx, 'teguran_ke' => $teguran_ke, 'history_email' => $history_email, 'datetime' => Carbon::now()];
@@ -267,13 +318,13 @@ class ReminderSpController extends Controller
                             // cc email ke layer1
                             $layer1 = Karyawan::where($where)->first();
                             array_push($ccEmails, $layer1->email);
-                            if($type == 'reminder'){
-                                if(in_array($number, [4, 5])){
+                            if($type == 'reminder' && $type == 'late'){
+                                if(in_array($number, [4, 5, 6, 7, 8, 9, 10, 11, 12])){
                                     // cc email ke layer2
                                     $where = ['nik' => $nik_property['layer2']];
                                     $layer2 = Karyawan::where($where)->first();
                                     array_push($ccEmails, $layer2->email);
-                                    if(in_array($number, [5])){
+                                    if(in_array($number, [5, 6, 7, 8, 9, 10, 11, 12])){
                                         // cc email head of cs
                                         array_push($ccEmails, MtrReminderSp::find(3)->isi);
                                     }
@@ -287,6 +338,8 @@ class ReminderSpController extends Controller
                                 array_push($ccEmails, MtrReminderSp::find(3)->isi);
 
                             }
+                            // $_terlambat = json_decode($data['trx']->terlambat, true);
+                            // return response()->json(['response'=>true, 'mailData'=>$_terlambat]);
                             Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
                             // end
                             $this->insertTrxReminderSpSend($trx, $number, $type, view($mailData['filename'], compact('data')));
