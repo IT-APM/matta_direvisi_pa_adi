@@ -43,6 +43,7 @@
                         @can('hc')
                             <a href="{{ route('penilaian.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> |
                             <a href="{{ route('penilaian_auto.index') }}" class="btn btn-success" type="button"><i class="fa fa-plus-circle" aria-hidden="true"></i> Auto</a> |
+                            <a href="{{ route('penilaian.kontrak_dok', 0) }}" class="btn btn-primary" type="button"><i class="fa fa-file-text-o" aria-hidden="true"></i> Kontrak</a> |
                             <a href="{{ route('penilaian_reminder.index') }}" class="btn btn-info" type="button"><i class="fa fa-repeat" aria-hidden="true"></i> Reminder</a> |
                         @endcan
                         <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button>
