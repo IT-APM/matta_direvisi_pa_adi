@@ -317,7 +317,7 @@ class ReminderSpController extends Controller
                                 $mailData['title'] = 'Surat Peringatan '.$teguran_ke;
                                 $mailData['filename'] = 'emails.warning1';
                             }elseif($type == 'late'){
-                                $mailData['title'] = 'Pengingat Keterlambatan Absensi '.$teguran_ke;
+                                $mailData['title'] = 'Pengingat Keterlambatan '.$teguran_ke;
                                 $mailData['filename'] = 'emails.late1';
                             }
                             $mailData['to'] = $nik_property['email'];
@@ -346,7 +346,6 @@ class ReminderSpController extends Controller
                                 array_push($ccEmails, $layer2->email);
                                 // cc email head of cs
                                 array_push($ccEmails, MtrReminderSp::find(3)->isi);
-
                             }
                             // $_terlambat = json_decode($data['trx']->terlambat, true);
                             // return response()->json(['response'=>true, 'mailData'=>$_terlambat]);
