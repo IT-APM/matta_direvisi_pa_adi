@@ -316,6 +316,7 @@ Route::resource('penilaian', TrxPenilaianController::class)->middleware('auth');
 Route::get('revisi_penilaian/{id}', [ TrxPenilaianController::class, 'revisi'])->name('revisi_penilaian')->middleware('auth');
 Route::post('revisi_penilaian_save', [ TrxPenilaianController::class, 'revisi_save'])->name('revisi_penilaian_save')->middleware('can:hc');
 Route::get('penilaian/kontrak/{id}', [ TrxPenilaianController::class, 'kontrak'])->name('penilaian.kontrak')->middleware('can:hc');
+Route::get('penilaian/kontrak_dok/{id}', [ TrxPenilaianController::class, 'kontrak_dok'])->name('penilaian.kontrak_dok')->middleware('can:hc');
 Route::post('penilaian/kontrak_update', [TrxPenilaianController::class, 'kontrak_update'])->name('penilaian.kontrak_update')->middleware('can:hc');
 Route::resource('penilaian_auto', TrxPenilaianAutoController::class)->middleware('can:hc');
 Route::resource('penilaian_reminder', TrxPenilaianReminderController::class)->middleware('can:hc');
