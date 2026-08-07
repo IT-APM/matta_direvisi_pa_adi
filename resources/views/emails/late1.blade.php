@@ -42,6 +42,10 @@
         <div>
             <div>
                 @php
+                $str_jam_kerja = 'Toleransi Jam kerja';
+                if($nik_property['wg_id'] > 1){
+                    $str_jam_kerja = 'Jam kerja';
+                }
                 if(!empty($data['trx']->terlambat)){
                     $html = '<table class="tbl-laporan">
                     <thead>
@@ -49,7 +53,7 @@
                             <th>No</th>
                             <th>Hari</th>
                             <th>Tanggal</th>
-                            <th>Jam Kerja</th>
+                            <th>'.$str_jam_kerja.'</th>
                             <th>Clock-in</th>
                             <th>Keterlambatan</th>
                             <th>Izin</th>
