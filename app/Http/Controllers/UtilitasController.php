@@ -185,6 +185,9 @@ class UtilitasController extends Controller
         $utilitas = MtrUtility::find(47);
         $utilitas->informasi = $request->_47;
         $utilitas->update();
+        $utilitas = MtrUtility::find(53);
+        $utilitas->informasi = $request->_53;
+        $utilitas->update();
         return redirect('utilitas')->with('msg', 'Data is saved successfully.');
     }
     
