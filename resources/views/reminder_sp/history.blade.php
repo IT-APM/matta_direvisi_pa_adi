@@ -142,13 +142,9 @@
                                 // check history
                                 $teguran_ke = 'Pertama';
                                 $type = 'Pengingat Absensi';
-                                // terlambat
-                                if(!empty($data->terlambat)){
-                                    $type = 'Pengingat Keterlambatan';
-                                }
                                 // check nik yang sama pada 1 bulan sebelumnya
                                 $where = ['nik' => $data->nik, 'date_from' => Carbon\Carbon::parse($data->date_from)->modify('-1 month')->format('Y-m-d')];
-                                $trxSend = App\Models\TrxReminderSpSend::where($where)->orderBy( 'id', 'desc' )->first();
+                                $trxSend = App\Models\TrxReminderSpSend::where($where)->whereNull('terlambat')->orderBy( 'date_from', 'desc' )->first();
                                 if(!empty($trxSend)){
                                     if($trxSend->type == 'reminder'){
                                         if($trxSend->number == 1){
@@ -170,10 +166,22 @@
                                         }elseif($trxSend->number == 2){
                                             $teguran_ke = 'Ketiga';
                                         }
-                                    }elseif($trxSend->type == 'late'){
-                                        $type = 'Pengingat Keterlambatan';
-                                        $arr = ['Pertama', 'Kedua', 'Ketiga', 'Keempat', 'Kelima', 'Keenam', 'Ketujuh', 'Kedelapan', 'Kesembilan', 'Kesepuluh', 'Kesebelas', 'Keduabelas'];
-                                        $teguran_ke = $arr[$trxSend->number];
+                                    }
+                                }
+                                // terlambat
+                                if(!empty($data->terlambat)){
+                                    $type = 'Pengingat Keterlambatan';
+                                    // check history
+                                    $teguran_ke = 'Pertama';
+                                    // check nik yang sama pada 1 bulan sebelumnya
+                                    $where = ['nik' => $data->nik, 'date_from' => Carbon\Carbon::parse($data->date_from)->modify('-1 month')->format('Y-m-d')];
+                                    $trxSend = App\Models\TrxReminderSpSend::where($where)->whereNotNull('terlambat')->orderBy( 'date_from', 'desc' )->first();
+                                    if(!empty($trxSend)){
+                                        if($trxSend->type == 'late'){
+                                            $type = 'Pengingat Keterlambatan';
+                                            $arr = ['Pertama', 'Kedua', 'Ketiga', 'Keempat', 'Kelima', 'Keenam', 'Ketujuh', 'Kedelapan', 'Kesembilan', 'Kesepuluh', 'Kesebelas', 'Keduabelas'];
+                                            $teguran_ke = $arr[$trxSend->number];
+                                        }
                                     }
                                 }
                                 @endphp
@@ -198,6 +206,10 @@
                                     <td>{{ round($data->persentase) }} %</td>
                                     <td>
                                         @php
+                                        $str_jam_kerja = 'Toleransi Jam kerja';
+                                        if($nik_property['wg_id'] > 1){
+                                            $str_jam_kerja = 'Jam kerja';
+                                        }
                                         if(!empty($data->terlambat)){
                                             $html = '<table class="tbl-laporan">
                                             <thead>
@@ -205,7 +217,7 @@
                                                     <th>No</th>
                                                     <th>Hari</th>
                                                     <th>Tanggal</th>
-                                                    <th>Jam Kerja</th>
+                                                    <th>'.$str_jam_kerja.'</th>
                                                     <th>Clock-in</th>
                                                     <th>Keterlambatan</th>
                                                     <th>Izin</th>
