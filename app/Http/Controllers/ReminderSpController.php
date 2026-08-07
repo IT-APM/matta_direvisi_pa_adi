@@ -209,9 +209,9 @@ class ReminderSpController extends Controller
         // end uji coba
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
-        $trx = TrxReminderSp::orderBy( 'persentase', 'asc' )->get();
+        $trx = TrxReminderSp::orderBy( 'date_from', 'asc' )->get();
         if(Gate::allows('hc_nkp')){
-            $trx = TrxReminderSp::whereIn('nik',$arr_nik_nkp)->orderBy( 'persentase', 'asc' )->get();
+            $trx = TrxReminderSp::whereIn('nik',$arr_nik_nkp)->orderBy( 'date_from', 'asc' )->get();
         }
         return view( 'reminder_sp.index', compact( 'trx' ) );
     }
@@ -254,14 +254,10 @@ class ReminderSpController extends Controller
                             $teguran_ke = 'Pertama';
                             $number = 1;
                             $type = 'reminder';
-                            // terlambat
-                            if(!empty($trx->terlambat)){
-                                $type = 'late';
-                            }
                             $history_email = '';
                             // check nik yang sama pada 1 bulan sebelumnya
                             $where = ['nik' => $trx->nik, 'date_from' => Carbon::parse($trx->date_from)->modify('-1 month')->format('Y-m-d')];
-                            $trxSend = TrxReminderSpSend::where($where)->orderBy( 'id', 'desc' )->first();
+                            $trxSend = TrxReminderSpSend::where($where)->whereNull('terlambat')->orderBy( 'date_from', 'desc' )->first();
                             if(!empty($trxSend)){
                                 $history_email = $trxSend->body_email;
                                 if($trxSend->type == 'reminder'){
@@ -291,11 +287,25 @@ class ReminderSpController extends Controller
                                         $teguran_ke = 'Ketiga';
                                         $number = 3;
                                     }
-                                }elseif($trxSend->type == 'late'){
-                                    $type = 'late';
-                                    $arr = ['Pertama', 'Kedua', 'Ketiga', 'Keempat', 'Kelima', 'Keenam', 'Ketujuh', 'Kedelapan', 'Kesembilan', 'Kesepuluh', 'Kesebelas', 'Keduabelas'];
-                                    $teguran_ke = $arr[$trxSend->number];
-                                    $number = $trxSend->number + 1;
+                                }
+                            }
+                            // terlambat
+                            if(!empty($trx->terlambat)){
+                                $type = 'late';
+                                // check history
+                                $teguran_ke = 'Pertama';
+                                $number = 1;
+                                $history_email = '';
+                                // check nik yang sama pada 1 bulan sebelumnya
+                                $where = ['nik' => $trx->nik, 'date_from' => Carbon::parse($trx->date_from)->modify('-1 month')->format('Y-m-d')];
+                                $trxSend = TrxReminderSpSend::where($where)->whereNotNull('terlambat')->orderBy( 'date_from', 'desc' )->first();
+                                if(!empty($trxSend)){
+                                    $history_email = $trxSend->body_email;
+                                    if($trxSend->type == 'late'){
+                                        $arr = ['Pertama', 'Kedua', 'Ketiga', 'Keempat', 'Kelima', 'Keenam', 'Ketujuh', 'Kedelapan', 'Kesembilan', 'Kesepuluh', 'Kesebelas', 'Keduabelas'];
+                                        $teguran_ke = $arr[$trxSend->number];
+                                        $number = $trxSend->number + 1;
+                                    }
                                 }
                             }
                             // start
