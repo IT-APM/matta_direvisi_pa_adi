@@ -60,6 +60,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>No Kontrak</th>
+                                        <th>PDF</th>
                                         <th>NIP</th>
                                         <th>Nama</th>
                                         <th>Direktorat</th>
@@ -71,7 +72,13 @@
                                         <th>Tanggal selesai kontrak</th>
                                         <th>Durasi (bulan)</th>
                                         <th>Tanggal kontrak</th>
-                                        <th>Gaji (Rp.)</th>
+                                        <th>Gapok (Rp.)</th>
+                                        <th>T. Makan (Rp.)</th>
+                                        <th>T. Transportasi (Rp.)</th>
+                                        <th>T. Jabatan (Rp.)</th>
+                                        <th>T. Telekomunikasi (Rp.)</th>
+                                        <th>T. Lainnya (Rp.)</th>
+                                        <th>Total (Rp.)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -91,9 +98,11 @@
                                         <tr>
                                             <td>{{ ++$no }}</td>
                                             <td>
-                                                {{ $no_kontrak }}<br/>
+                                                {{ $no_kontrak }}
+                                            </td>
+                                            <td>
                                                 <a href="{{ route('penilaian.kontrak', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'header'=>true]) }}" data-toggle="tooltip" title="Kontrak PKWT-Header" target="_blank"><i class="fa fa-file-pdf-o text-success"></i></a>
-                                                    <a href="{{ route('penilaian.kontrak', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'header'=>false]) }}" data-toggle="tooltip" title="Kontrak PKWT" target="_blank"><i class="fa fa-file-pdf-o text-warning"></i></a>
+                                                <a href="{{ route('penilaian.kontrak', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'header'=>false]) }}" data-toggle="tooltip" title="Kontrak PKWT" target="_blank"><i class="fa fa-file-pdf-o text-warning"></i></a>
                                             </td>
                                             <td>{{ $data->nik_karyawan }}</td>
                                             <td>{{ $data->nama }}</td>
@@ -106,32 +115,13 @@
                                             <td>{{ \Carbon\Carbon::parse($data->tanggal_terhitung)->addMonths($data->bulan - 1)->endOfMonth()->format('d-m-Y') }}</td>
                                             <td>{{ $data->bulan }}</td>
                                             <td>{{ \Carbon\Carbon::parse($data->tanggal_kontrak)->format('d-m-Y') }}</td>
-                                            <td>
-                                                <table class="tbl-laporan">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Gapok</th>
-                                                        <th>T Makan</th>
-                                                        <th>T Transportasi</th>
-                                                        <th>T Jabatan</th>
-                                                        <th>T Telekomunikasi</th>
-                                                        <th>T Lainnya</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td class="text-end">{{ number_format($data->gapok, 0, ',', '.') }}</td>
-                                                        <td class="text-end">{{ number_format($data->t_makan, 0, ',', '.') }}</td>
-                                                        <td class="text-end">{{ number_format($data->t_transportasi, 0, ',', '.') }}</td>
-                                                        <td class="text-end">{{ number_format($data->t_jabatan, 0, ',', '.') }}</td>
-                                                        <td class="text-end">{{ number_format($data->t_telekomunikasi, 0, ',', '.') }}</td>
-                                                        <td class="text-end">{{ number_format($data->t_lain, 0, ',', '.') }}</td>
-                                                        <td class="text-end">{{ number_format($total, 0, ',', '.') }}</td>
-                                                    </tr>
-                                                </tbody>
-                                                </table>
-                                            </td>
+                                            <td class="text-end">{{ number_format($data->gapok, 0, ',', '.') }}</td>
+                                            <td class="text-end">{{ number_format($data->t_makan, 0, ',', '.') }}</td>
+                                            <td class="text-end">{{ number_format($data->t_transportasi, 0, ',', '.') }}</td>
+                                            <td class="text-end">{{ number_format($data->t_jabatan, 0, ',', '.') }}</td>
+                                            <td class="text-end">{{ number_format($data->t_telekomunikasi, 0, ',', '.') }}</td>
+                                            <td class="text-end">{{ number_format($data->t_lain, 0, ',', '.') }}</td>
+                                            <td class="text-end">{{ number_format($total, 0, ',', '.') }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
