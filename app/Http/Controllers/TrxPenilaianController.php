@@ -65,6 +65,17 @@ class TrxPenilaianController extends Controller
         $trx->update();
         return redirect()->to($request->back_url)->with( 'msg', 'Data is saved successfully.' );
     }
+    
+    public function kontrak_dok(Request $request, $id)
+    {
+        $trx = TrxPenilaian::from('trx_tbl_penilaian as a')->select('a.*', 'b.nama')
+        ->leftJoin('mtr_tbl_karyawan as b', 'b.nik', '=', 'a.nik_karyawan')
+        ->whereNotNull('a.no_kontrak')
+        ->orderBy('b.nama', 'asc')
+        ->get();
+        return view( 'formulir.penilaian.kontrak_dok', compact( 'trx'));
+    }
+
     // http://localhost/matta/penilaian/kontrak/0
     public function kontrak(Request $request, $id)
     {
