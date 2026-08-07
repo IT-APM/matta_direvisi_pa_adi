@@ -95,18 +95,20 @@
                                 </thead>
                                 <tbody>
                                     @php $no = 0; @endphp
-                                    @foreach ($trx as $data)
+                                    @foreach ($trx as $_data)
                                     @php
-                                    $nik_property = json_decode($data->nik_property, true);
+                                    $nik_property = json_decode($_data->nik_property, true);
                                     $where = ['nik' => $nik_property['layer1']];
                                     $layer1 = App\Models\Karyawan::where($where)->first();
                                     // check history
                                     $teguran_ke = 'Pertama';
                                     $type = 'Pengingat Absensi';
+                                    $history_email = '';
                                     // check nik yang sama pada 1 bulan sebelumnya
-                                    $where = ['nik' => $data->nik, 'date_from' => \Carbon\Carbon::parse($data->date_from)->modify('-1 month')->format('Y-m-d')];
+                                    $where = ['nik' => $_data->nik, 'date_from' => Carbon\Carbon::parse($_data->date_from)->modify('-1 month')->format('Y-m-d')];
                                     $trxSend = App\Models\TrxReminderSpSend::where($where)->whereNull('terlambat')->orderBy( 'date_from', 'desc' )->first();
                                     if(!empty($trxSend)){
+                                        $history_email = $trxSend->body_email;
                                         if($trxSend->type == 'reminder'){
                                             if($trxSend->number == 1){
                                                 $teguran_ke = 'Kedua';
@@ -130,14 +132,16 @@
                                         }
                                     }
                                     // terlambat
-                                    if(!empty($data->terlambat)){
+                                    if(!empty($_data->terlambat)){
+                                        // check history
                                         $type = 'Pengingat Keterlambatan';
                                         $teguran_ke = 'Pertama';
-                                        // check history
+                                        $history_email = '';
                                         // check nik yang sama pada 1 bulan sebelumnya
-                                        $where = ['nik' => $data->nik, 'date_from' => \Carbon\Carbon::parse($data->date_from)->modify('-1 month')->format('Y-m-d')];
+                                        $where = ['nik' => $_data->nik, 'date_from' => Carbon\Carbon::parse($_data->date_from)->modify('-1 month')->format('Y-m-d')];
                                         $trxSend = App\Models\TrxReminderSpSend::where($where)->whereNotNull('terlambat')->orderBy( 'date_from', 'desc' )->first();
                                         if(!empty($trxSend)){
+                                            $history_email = $trxSend->body_email;
                                             if($trxSend->type == 'late'){
                                                 $type = 'Pengingat Keterlambatan';
                                                 $arr = ['Pertama', 'Kedua', 'Ketiga', 'Keempat', 'Kelima', 'Keenam', 'Ketujuh', 'Kedelapan', 'Kesembilan', 'Kesepuluh', 'Kesebelas', 'Keduabelas'];
@@ -145,15 +149,52 @@
                                             }
                                         }
                                     }
+                                    $mailData['title'] = $type.' '.$teguran_ke;
+                                    $mailData['filename'] = 'emails.reminder1';
+                                    if($type == 'Surat Peringatan'){
+                                        $mailData['filename'] = 'emails.warning1';
+                                    }elseif($type == 'Pengingat Keterlambatan'){
+                                        $mailData['filename'] = 'emails.late1';
+                                    }
+                                    $mailData['to'] = $nik_property['email'];
+                                    $data = ['trx' => $_data, 'teguran_ke' => $teguran_ke, 'history_email' => $history_email, 'datetime' => Carbon\Carbon::now()];
+                                    // $mailData['data'] = $_data;
+                                    $body = view($mailData['filename'], compact('data'));
+                                    $ccEmails = explode(',', App\Models\MtrUtility::find(11)->informasi);
+                                    $where = ['nik' => $nik_property['layer1']];
+                                    // cc email ke layer1
+                                    $layer1 = App\Models\Karyawan::where($where)->first();
+                                    array_push($ccEmails, $layer1->email);
+                                    if($type == 'Pengingat Absensi' && $type == 'Pengingat Keterlambatan'){
+                                        if(in_array($number, [4, 5, 6, 7, 8, 9, 10, 11, 12])){
+                                            // cc email ke layer2
+                                            $where = ['nik' => $nik_property['layer2']];
+                                            $layer2 = App\Models\Karyawan::where($where)->first();
+                                            array_push($ccEmails, $layer2->email);
+                                            if(in_array($number, [5, 6, 7, 8, 9, 10, 11, 12])){
+                                                // cc email head of cs
+                                                array_push($ccEmails, App\Models\MtrReminderSp::find(3)->isi);
+                                            }
+                                        }
+                                    }elseif($type == 'Surat Peringatan'){
+                                        // cc email ke layer2
+                                        $where = ['nik' => $nik_property['layer2']];
+                                        $layer2 = App\Models\Karyawan::where($where)->first();
+                                        array_push($ccEmails, $layer2->email);
+                                        // cc email head of cs
+                                        array_push($ccEmails, App\Models\MtrReminderSp::find(3)->isi);
+                                    }
                                     @endphp
-                                    <tr @if(App\Models\Karyawan::where('nik', $data->nik)->where('is_aktif', false)->exists()) class="bg-danger" @endif>
-                                        <td><input id="reminder_sp[]" name="reminder_sp[]" type="checkbox" value="{{ $data->id }}"></td>
+                                    <tr @if(App\Models\Karyawan::where('nik', $_data->nik)->where('is_aktif', false)->exists()) class="bg-danger" @endif>
+                                        <td><input id="reminder_sp[]" name="reminder_sp[]" type="checkbox" value="{{ $_data->id }}"></td>
                                         <td>{{ ++$no }}</td>
-                                        <td>{{ $type }} {{ $teguran_ke }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($data->date_from) ->format('d-m-Y') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($data->date_to) ->format('d-m-Y') }}</td>
+                                        <td>
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#modalDetail" class="text-primary" onclick="preview_email(this)" data-subject="{{ $mailData['title'] }}" data-to="{{ $nik_property['email'] }}" data-cc="{{ implode(',', $ccEmails) }}" data-body="{{ base64_encode($body) }}">{{ $type }} {{ $teguran_ke }}</a>
+                                        </td>
+                                        <td>{{ Carbon\Carbon::parse($_data->date_from) ->format('d-m-Y') }}</td>
+                                        <td>{{ Carbon\Carbon::parse($_data->date_to) ->format('d-m-Y') }}</td>
                                         <td>{{ $nik_property['wg_name'] }}</td>
-                                        <td>{{ $data->nik }}</td>
+                                        <td>{{ $_data->nik }}</td>
                                         <td>{{ $nik_property['nama'] }}</td>
                                         <td>{{ $nik_property['level'] }}</td>
                                         <td>{{ $nik_property['perusahaan'] }}</td>
@@ -163,16 +204,16 @@
                                         <td>{{ $nik_property['email'] }}</td>
                                         <td>{{ $layer1->nama }}</td>
                                         <td>{{ $layer1->email }}</td>
-                                        <td>{{ $data->arr_base }}</td>
-                                        <td>{{ $data->arr_clock }}</td>
-                                        <td>{{ round($data->persentase) }} %</td>
+                                        <td>{{ $_data->arr_base }}</td>
+                                        <td>{{ $_data->arr_clock }}</td>
+                                        <td>{{ round($_data->persentase) }} %</td>
                                         <td>
                                             @php
                                             $str_jam_kerja = 'Toleransi Jam kerja';
                                             if($nik_property['wg_id'] > 1){
                                                 $str_jam_kerja = 'Jam kerja';
                                             }
-                                            if(!empty($data->terlambat)){
+                                            if(!empty($_data->terlambat)){
                                                 $html = '<table class="tbl-laporan text-dark">
                                                 <thead>
                                                     <tr>
@@ -186,7 +227,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>';
-                                                $terlambat = json_decode($data->terlambat, true);
+                                                $terlambat = json_decode($_data->terlambat, true);
                                                 $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                                                 $_no = 0;
                                                 foreach ($terlambat as $_terlambat){
@@ -200,14 +241,14 @@
                                                     }
                                                     $clockin = $_terlambat['clockin'];
                                                     if($nik_property['wg_id'] > 1){
-                                                        $clockin = \Carbon\Carbon::parse($_terlambat['clockin']) ->format('H:i:s');
+                                                        $clockin = Carbon\Carbon::parse($_terlambat['clockin']) ->format('H:i:s');
                                                     }
                                                     $html .= '<tr>
                                                         <th>'.++$_no.'</th>
-                                                        <td>'.$hari[\Carbon\Carbon::parse($_terlambat['tanggal'])->dayOfWeek].'</td>
-                                                        <td>'.\Carbon\Carbon::parse($_terlambat['tanggal']) ->format('d-m-Y').'</td>
+                                                        <td>'.$hari[Carbon\Carbon::parse($_terlambat['tanggal'])->dayOfWeek].'</td>
+                                                        <td>'.Carbon\Carbon::parse($_terlambat['tanggal']) ->format('d-m-Y').'</td>
                                                         <td>'.$clockin.'</td>
-                                                        <td>'.\Carbon\Carbon::parse($_terlambat['att_timestamp']) ->format('H:i:s').'</td>
+                                                        <td>'.Carbon\Carbon::parse($_terlambat['att_timestamp']) ->format('H:i:s').'</td>
                                                         <td>'.$_terlambat['durasi'].'</td>
                                                         <td>'.$str_izin.'</td>
                                                     </tr>';
@@ -228,6 +269,43 @@
         </div>
     </div>
 </div>
+{{-- start --}}
+<div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Email Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="tbl-laporan text-dark">
+                    <tbody>
+                        <tr>
+                            <td class="text-start align-top">Subject</td>
+                            <td class="text-start align-top" id="modal-subject"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-start align-top">To</td>
+                            <td class="text-start align-top" id="modal-to"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-start align-top">Cc</td>
+                            <td class="text-start align-top" id="modal-cc"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-start align-top">Body</td>
+                            <td class="text-start align-top" id="modal-body"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{-- end --}}
 @endsection
 
 @section('script')
@@ -241,6 +319,12 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
 <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
 <script type="text/javascript">
+    function preview_email(str) {
+        document.getElementById('modal-subject').innerHTML = str.getAttribute('data-subject');
+        document.getElementById('modal-to').innerHTML = str.getAttribute('data-to');
+        document.getElementById('modal-cc').innerHTML = str.getAttribute('data-cc');
+        document.getElementById('modal-body').innerHTML = atob(str.getAttribute('data-body'));
+    }
     $('#_datatable').DataTable({
         // dom: 'lBfrtip',
         dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
