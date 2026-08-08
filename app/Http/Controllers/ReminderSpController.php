@@ -216,7 +216,8 @@ class ReminderSpController extends Controller
         // check apakah ada karyawan non aktif jika ada maka delete
         foreach($trx as $key => $item) {
             if(Karyawan::where(['nik'=>$item->nik, 'is_aktif'=>0])->exists()){
-                TrxReminderSp::find($item->id)->delete();
+                // TrxReminderSp::find($item->id)->delete();
+                $item->delete();
                 $trx->forget($key);
             }
         }
