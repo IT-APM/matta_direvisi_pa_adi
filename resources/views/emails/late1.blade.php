@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Pengingat Keterlambatan Absensi</title>
+    <title>Pengingat Keterlambatan</title>
     <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36,7 +36,7 @@
         <img src="https://matta-reborn.alita.id/matta/assets/images/matta/sudah_absen_hari_ini_v21.png" alt="img" width="720" height="509">
     </div>
     <div style="text-align:center;background-color:red;color:white;">
-        <p style="padding:5px;">Pengingat Keterlambatan Absensi {{ $data['teguran_ke'] }}</p>
+        <p style="padding:5px;">Pengingat Keterlambatan {{ $data['teguran_ke'] }}</p>
     </div>
     <div>
         <div>
@@ -94,7 +94,7 @@
                 <p>Bersama ini Kami sampaikan bahwa terdapat keterlambatan kehadiran dan absensi dari Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }} sebanyak {{ count($terlambat) }} kali untuk periode {{ \Carbon\Carbon::parse($data['trx']->date_from)->format('d-m-Y') }} sd {{ \Carbon\Carbon::parse($data['trx']->date_to)->format('d-m-Y') }} yaitu pada tanggal:</p>
                 <p>{!! $html !!}</p>
                 <p>Mohon untuk meningkatkan kehadiran tepat waktu di tempat kerja.</p>
-                <p>Informasi ini adalah sebagai Pengingat Keterlambatan Absensi {{ $data['teguran_ke'] }} untuk Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }}. Kami harap dapat melakukan hadir tepat waktu di tempat kerja setiap hari ke depannya.</p>
+                <p>Informasi ini adalah sebagai Pengingat Keterlambatan {{ $data['teguran_ke'] }} untuk Bapak/Ibu/Sdr/i. {{ $nik_property['nama'] }}. Kami harap dapat melakukan hadir tepat waktu di tempat kerja setiap hari ke depannya.</p>
                 <p>Demikian kami sampaikan.<br/>Terima kasih atas perhatiannya.</p>
                 {{-- <p>Best Regards,<br/>Human Capital & Organization<br/><a href="https://alita.id/" target="_blank">www.alita.id</a><br/><strong>"Passion - Integrity - Excellent"</strong></p> --}}
                 @include('emails.footer0')
