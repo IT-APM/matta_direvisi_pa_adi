@@ -103,6 +103,7 @@
                                     // check history
                                     $teguran_ke = 'Pertama';
                                     $type = 'Pengingat Absensi';
+                                    $_type = 'reminder';
                                     $history_email = '';
                                     // check nik yang sama pada 1 bulan sebelumnya
                                     $where = ['nik' => $_data->nik, 'date_from' => Carbon\Carbon::parse($_data->date_from)->modify('-1 month')->format('Y-m-d')];
@@ -121,9 +122,11 @@
                                             }elseif($trxSend->number == 5){
                                                 $teguran_ke = 'Pertama';
                                                 $type = 'Surat Peringatan';
+                                                $_type = 'warning';
                                             }
                                         }elseif($trxSend->type == 'warning'){
                                             $type = 'Surat Peringatan';
+                                            $_type = 'warning';
                                             if($trxSend->number == 1){
                                                 $teguran_ke = 'Kedua';
                                             }elseif($trxSend->number == 2){
@@ -135,6 +138,7 @@
                                     if(!empty($_data->terlambat)){
                                         // check history
                                         $type = 'Pengingat Keterlambatan';
+                                        $_type = 'late';
                                         $teguran_ke = 'Pertama';
                                         $history_email = '';
                                         // check nik yang sama pada 1 bulan sebelumnya
@@ -143,7 +147,6 @@
                                         if(!empty($trxSend)){
                                             $history_email = $trxSend->body_email;
                                             if($trxSend->type == 'late'){
-                                                $type = 'Pengingat Keterlambatan';
                                                 $arr = ['Pertama', 'Kedua', 'Ketiga', 'Keempat', 'Kelima', 'Keenam', 'Ketujuh', 'Kedelapan', 'Kesembilan', 'Kesepuluh', 'Kesebelas', 'Keduabelas'];
                                                 $teguran_ke = $arr[$trxSend->number];
                                             }
@@ -151,9 +154,9 @@
                                     }
                                     $mailData['title'] = $type.' '.$teguran_ke;
                                     $mailData['filename'] = 'emails.reminder1';
-                                    if($type == 'Surat Peringatan'){
+                                    if($_type == 'warning'){
                                         $mailData['filename'] = 'emails.warning1';
-                                    }elseif($type == 'Pengingat Keterlambatan'){
+                                    }elseif($_type == 'late'){
                                         $mailData['filename'] = 'emails.late1';
                                     }
                                     $mailData['to'] = $nik_property['email'];
@@ -165,7 +168,7 @@
                                     // cc email ke layer1
                                     $layer1 = App\Models\Karyawan::where($where)->first();
                                     array_push($ccEmails, $layer1->email);
-                                    if($type == 'Pengingat Absensi' && $type == 'Pengingat Keterlambatan'){
+                                    if($_type == 'reminder' && $_type == 'late'){
                                         if(in_array($number, [4, 5, 6, 7, 8, 9, 10, 11, 12])){
                                             // cc email ke layer2
                                             $where = ['nik' => $nik_property['layer2']];
@@ -176,7 +179,7 @@
                                                 array_push($ccEmails, App\Models\MtrReminderSp::find(3)->isi);
                                             }
                                         }
-                                    }elseif($type == 'Surat Peringatan'){
+                                    }elseif($_type == 'warning'){
                                         // cc email ke layer2
                                         $where = ['nik' => $nik_property['layer2']];
                                         $layer2 = App\Models\Karyawan::where($where)->first();
