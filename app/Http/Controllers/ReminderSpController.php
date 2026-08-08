@@ -213,6 +213,13 @@ class ReminderSpController extends Controller
         if(Gate::allows('hc_nkp')){
             $trx = TrxReminderSp::whereIn('nik',$arr_nik_nkp)->orderBy( 'date_from', 'asc' )->get();
         }
+        // check apakah ada karyawan non aktif jika ada maka delete
+        foreach($trx as $key => $item) {
+            if(Karyawan::where(['nik'=>$item->nik, 'is_aktif'=>0])->exists()){
+                TrxReminderSp::find($item->id)->delete();
+                $trx->forget($key);
+            }
+        }
         return view( 'reminder_sp.index', compact( 'trx' ) );
     }
 
@@ -590,8 +597,7 @@ class ReminderSpController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $trx = TrxReminderSp::find( $id );
+        $trx = TrxReminderSp::find($id);
         $trx->delete();
     }
 }
