@@ -103,7 +103,7 @@ class TrxBpdController extends Controller
             array_push($arr_luar_dalam, $data->luar_dalam);
             array_push($arr_status_id, $data->status_id);
         }
-        $luar_dalam = array('ca_dalam' => 'CA Dalam Negeri','ca_luar' => 'CA Luar Negeri','reimburse' => 'Reimbursement');
+        $luar_dalam = array('ca_dalam' => 'CA Dalam Negeri','ca_luar' => 'CA Luar Negeri','reimburse' => 'Reimbursement Dalam Negeri','reimburse_luar' => 'Reimbursement Luar Negeri');
         $status_id = BpdStatus::select('id','status')->whereIn('id', $arr_status_id)->orderBy('id', 'asc')->get();
         // start filter
         if($request->filter == true){
@@ -228,7 +228,7 @@ class TrxBpdController extends Controller
         $data = ['status'=>$status, 'luar_dalam'=>$new, 'is_leader'=>$is_leader, 'pengaju_property'=>$pengaju_property, 'atasan_property'=>$atasan_property, 'kelompok'=>$kelompok, 'periode'=>$periode, 'mgt'=>$mgt];
         // return response()->json( [ 'success' => true, 'data' => $data ], 200 );
         // jika jenis BPD adalah reimburse
-        if($new == 'reimburse'){
+        if(in_array($new, ['reimburse', 'reimburse_luar'])){
             return view( 'formulir.bpd.reimburse', compact('data', 'area', 'negara'));
         }
         // jika selain reimburse
@@ -312,7 +312,7 @@ class TrxBpdController extends Controller
         $where = ['nik' => $pengaju];
         $is_bod = BpdNikBod::where($where)->exists();
         // dd($is_dua, $pengaju, $data);
-        if($new <> 'reimburse' && $status == 'insert' && $is_dua >= 2 && !$is_bod){
+        if(!in_array($new, ['reimburse', 'reimburse_luar']) && $status == 'insert' && $is_dua >= 2 && !$is_bod){
             return redirect('bpd')->with('error', 'ERROR: Pengajuan CA tidak dapat dilakukan karena CA sebelumnya belum selesai direalisasikan.');
         }
         foreach($data as $_id => $value){
@@ -365,7 +365,7 @@ class TrxBpdController extends Controller
             $where = ['id_trx' => $id_trx, 'jenis' => 'coa'];
             $_result = TrxBpdDetailBiaya::where($where)->whereIn('id_coa', [1,2,76,89])->delete();
         }
-        if($new == 'reimburse'){
+        if(in_array($new, ['reimburse', 'reimburse_luar'])){
             // 33 = Pengajuan Reimburse
             $status_id = 33;
             if($status == 'update'){
@@ -403,19 +403,16 @@ class TrxBpdController extends Controller
         $trx->lampiran = $namafile;
         // 
         // CA Dalam Negeri
-        if($new == 'ca_dalam'){
-            $trx->is_ca = 1;
-            $trx->luar_dalam = 'ca_dalam';
-        }
         // CA Luar Negeri
-        else if($new == 'ca_luar'){
+        if(in_array($new, ['ca_dalam', 'ca_luar'])){
             $trx->is_ca = 1;
-            $trx->luar_dalam = 'ca_luar';
+            $trx->luar_dalam = $new;
         }
-        // Reimbursement
-        else if($new == 'reimburse'){
+        // Reimbursement Dalam Negeri
+        // Reimbursement Luar Negeri
+        else if(in_array($new, ['reimburse', 'reimburse_luar'])){
             $trx->is_ca = 0;
-            $trx->luar_dalam = 'reimburse';
+            $trx->luar_dalam = $new;
         }
         if($status == 'insert'){
             $trx->save();
@@ -448,14 +445,14 @@ class TrxBpdController extends Controller
         }
         // 
         $jenis = 'ca';
-        if($new == 'reimburse'){
+        if(in_array($new, ['reimburse', 'reimburse_luar'])){
             $jenis = 'reimburse';
         }
         $bpd_info = ['id_trx'=>$trx->id, 'luar_dalam'=>$trx->luar_dalam, 'jenis'=>$jenis, 'tanggal_mulai'=>$tanggal_mulai, 'tanggal_akhir'=>$tanggal_akhir, 'tujuan1'=>$tujuan1, 'tujuan2'=>$tujuan2];
         // return response()->json( [ 'success' => true, 'request' => $request->all(), 'bpd_info' => $bpd_info ], 200 );
         $this->insertBpdInfo($bpd_info);
         // insertBpdBiaya bukan member atau reimburse pertama kali oleh pengaju
-        if($is_leader<>2 || $new == 'reimburse'){
+        if($is_leader<>2 || in_array($new, ['reimburse', 'reimburse_luar'])){
             $biaya = $request->input('biaya', []);
             $satuan = $request->input('satuan', []);
             $nominal = array();
@@ -468,7 +465,7 @@ class TrxBpdController extends Controller
             $jenis = 'ca';
             $bpd_biaya = ['jenis'=>$jenis, 'id'=>$trx->id, 'biaya'=>$biaya, 'satuan'=>$satuan, 'nominal'=>$nominal];
             // jika pengajuan reimburse
-            if($new == 'reimburse'){
+            if(in_array($new, ['reimburse', 'reimburse_luar'])){
                 $lampiran = array();
                 foreach($data as $_id => $value){
                     if(str_starts_with($_id, 'lampiran_')){
@@ -481,7 +478,7 @@ class TrxBpdController extends Controller
             $this->insertBpdBiaya($bpd_biaya);
         }
         $view = 'detail';
-        if($new == 'reimburse'){
+        if(in_array($new, ['reimburse', 'reimburse_luar'])){
             $view = 'reimburse';
         }
         // kirim email ke admin
@@ -523,7 +520,7 @@ class TrxBpdController extends Controller
     public function show(Request $request, $id)
     {
         $id = Crypt::decrypt($id);
-        //
+        // dd($request->all(), $id);
         $area = Propinsi::whereNotIn('id', [0, 1])->orderBy('id', 'asc')->get();
         $negara = Negara::orderBy('negara', 'asc')->get();
         // 
@@ -578,7 +575,7 @@ class TrxBpdController extends Controller
         }
         // 
         $where = ['id_trx' => $id, 'jenis' => 'ca'];
-        if($luar_dalam == 'reimburse'){
+        if(in_array($luar_dalam, ['reimburse', 'reimburse_luar'])){
             $where = ['id_trx' => $id, 'jenis' => 'reimburse'];
         }
         $trxDetailInfo = TrxBpdDetailInfo::where($where)->orderBy('id', 'asc')->get();
@@ -858,7 +855,7 @@ class TrxBpdController extends Controller
             case 'pdf_draft':
                 if(count($trxDetailBiaya)==0){
                     $where = ['id_trx' => $id, 'jenis' => 'ca'];
-                    if($luar_dalam == 'reimburse'){
+                    if(in_array($luar_dalam, ['reimburse', 'reimburse_luar'])){
                         $where = ['id_trx' => $id, 'jenis' => 'reimburse'];
                     }
                     $trxDetailBiaya = TrxBpdDetailBiaya::where($where)->orderBy('id', 'asc')->get();
@@ -877,7 +874,7 @@ class TrxBpdController extends Controller
                 $bpdLog = TrxBpdLog::where($where)->whereIn('id_status', [2,6])->orderBy('id', 'desc')->first();
                 // 33 = Pengajuan Reimburse
                 // 37 = Perbaikan Reimburse oleh Pengaju
-                if($luar_dalam == 'reimburse'){
+                if(in_array($luar_dalam, ['reimburse', 'reimburse_luar'])){
                     $bpdLog = TrxBpdLog::where($where)->whereIn('id_status', [33,37])->orderBy('id', 'desc')->first();
                 }
                 if (!empty($bpdLog)) {
@@ -1484,6 +1481,7 @@ class TrxBpdController extends Controller
                 }
                 $where = ['id_trx' => $id, 'jenis' => 'reimburse'];
                 $trxDetailBiaya = TrxBpdDetailBiaya::where($where)->orderBy('id', 'asc')->get();
+                // dd($trxDetailBiaya);
                 return view('formulir.bpd.reimburse_view', compact('trxMaster', 'trxDetailInfo', 'trxDetailBiaya', 'kelompok', 'no_info', 'no_biaya', 'linkAction', 'nik', 'approve', 'reject', 'koordinator', 'coa', 'history', 'trxDetailBiayaPersonel', 'no_biaya_info'));
                 break;
             // pengajuan reimburse
@@ -2920,9 +2918,9 @@ class TrxBpdController extends Controller
                 }
                 // tidak ada untuk reimburse
                 // jika project dan ca luar negeri
-                // else if($trxMaster->luar_dalam == 'ca_luar'){
-                //     // NA
-                // }
+                else if($trxMaster->luar_dalam == 'reimburse_luar'){
+                    // NA
+                }
             }
             // non project
             else if($is_project == 0){
@@ -2932,13 +2930,13 @@ class TrxBpdController extends Controller
                     $trxDetailInfo = TrxBpdDetailInfo::where($where)->orderBy('id', 'asc')->get();
                     $this->insertBpdUangSaku($trxDetailInfo, $is_project, $trxMaster->luar_dalam, $kelompok_id, $project_id, $id, 'coa');
                 }
-                // tidak ada untuk reimburse
-                // jika non project dan ca luar negeri
-                // else if($trxMaster->luar_dalam == 'ca_luar'){
-                //     $where = ['id_trx'=>$id, 'luar_dalam'=>$trxMaster->luar_dalam, 'jenis'=>'ca', 'is_approve'=>1];
-                //     $trxDetailInfo = TrxBpdDetailInfo::where($where)->orderBy('id', 'asc')->get();
-                //     $this->insertBpdUangSaku($trxDetailInfo, $is_project, $trxMaster->luar_dalam, $kelompok_id, $project_id, $id, 'coa');
-                // }
+                // refer to cm 372
+                // jika non project dan reimburse luar negeri
+                else if($trxMaster->luar_dalam == 'reimburse_luar'){
+                    $where = ['id_trx'=>$id, 'luar_dalam'=>$trxMaster->luar_dalam, 'jenis'=>'reimburse', 'is_approve'=>1];
+                    $trxDetailInfo = TrxBpdDetailInfo::where($where)->orderBy('id', 'asc')->get();
+                    $this->insertBpdUangSaku($trxDetailInfo, $is_project, $trxMaster->luar_dalam, $kelompok_id, $project_id, $id, 'coa');
+                }
             }
             // 
             $email_info = ['pengaju_property'=>$trxMaster->pengaju_property, 'atasan_property'=>$trxMaster->atasan_property, 'luar_dalam'=>$trxMaster->luar_dalam, 'email_to'=>$email_to, 'id'=>Crypt::encrypt($trxMaster->id), 'view'=>$view];
@@ -3161,11 +3159,12 @@ class TrxBpdController extends Controller
 
     public function insertBpdUangSaku($trxDetailInfo, $is_project, $luar_dalam, $kelompok_id, $project_id, $id, $jenis)
     {
+        // dd($trxDetailInfo, $is_project, $luar_dalam, $kelompok_id, $project_id, $id, $jenis);
         $is_approve = 1;
         // project
         if($is_project == 1){
             // ca_dalam
-            if($luar_dalam == 'ca_dalam' || $luar_dalam == 'reimburse'){
+            if(in_array($luar_dalam, ['ca_dalam', 'reimburse'])){
                 foreach ($trxDetailInfo as $data){
                     // $hari = Carbon::parse($data->tanggal_mulai)->diffInDays(Carbon::parse($data->tanggal_akhir))+1;
                     $hari = $data->hari;
@@ -3248,14 +3247,14 @@ class TrxBpdController extends Controller
                 }
             }
             // ca_luar
-            else if($luar_dalam == 'ca_luar'){
-                // NA
-            }
+            // else if($luar_dalam == 'ca_luar'){
+            //     // NA
+            // }
         }
         // non project
         else if($is_project == 0){
             // 
-            if($luar_dalam == 'ca_dalam' || $luar_dalam == 'reimburse'){
+            if(in_array($luar_dalam, ['ca_dalam', 'reimburse'])){
                 foreach ($trxDetailInfo as $data){
                     $hari = Carbon::parse($data->tanggal_mulai)->diffInDays(Carbon::parse($data->tanggal_akhir))+1;
                     $uang_saku = BpdNonProyekBiayaDalamNegeri::find(1);
@@ -3292,7 +3291,9 @@ class TrxBpdController extends Controller
                 }
             }
             // ca_luar
-            else if($luar_dalam == 'ca_luar'){
+            // reimburse_luar
+            else if(in_array($luar_dalam, ['ca_luar', 'reimburse_luar'])){
+                // dd($trxDetailInfo);
                 foreach ($trxDetailInfo as $data){
                     $hari = Carbon::parse($data->tanggal_mulai)->diffInDays(Carbon::parse($data->tanggal_akhir))+1;
                     $where = ['id_negara'=>$data->tujuan1, 'id_biaya'=>1];
@@ -3495,14 +3496,16 @@ class TrxBpdController extends Controller
         }else if($data['luar_dalam'] == 'ca_luar'){
             $mailData['title'] = 'Cash Advance Luar Negeri';
         }else if($data['luar_dalam'] == 'reimburse'){
-            $mailData['title'] = 'Reimbursement Perjalanan Dinas';
+            $mailData['title'] = 'Reimbursement Dalam Negeri';
+        }else if($data['luar_dalam'] == 'reimburse_luar'){
+            $mailData['title'] = 'Reimbursement Luar Negeri';
         }else if($data['luar_dalam'] == 'realisasi_ca_dalam'){
             $mailData['title'] = 'Realisasi Cash Advance Dalam Negeri';
         }else if($data['luar_dalam'] == 'realisasi_ca_luar'){
             $mailData['title'] = 'Realisasi Cash Advance Luar Negeri';
         }
         $mailData['filename'] = 'emails.bpd0';
-        if($data['view'] =='approval_done' || $data['view'] =='realisasi_done' || $data['view'] =='reimburse_done'){
+        if(in_array($data['view'], ['approval_done', 'realisasi_done', 'reimburse_done'])){
             $mailData['filename'] = 'emails.bpd_done';
         }
         // foreach ($data['email_to'] as $email){
@@ -3512,15 +3515,15 @@ class TrxBpdController extends Controller
             $mailData['to'] = $data['email_to'][$x]['email_to'];
             $todolist = ['id_trx' => $data['email_to'][$x]['id_trx'], 'nik' => $data['email_to'][$x]['nik_to'], 'id_status' => $data['email_to'][$x]['id_status'], 'pic' => $data['email_to'][$x]['pic']];
             // jika sudah diapprove oleh hco maka tidak dibuatkan todolist
-            if($data['luar_dalam'] == 'ca_dalam' || $data['luar_dalam'] == 'ca_luar'){
+            if(in_array($data['luar_dalam'], ['ca_dalam', 'ca_luar'])){
                 if($data['view']<>'approval_done'){
                     $this->insertToDoList($todolist, $mailData);
                 }
-            }else if($data['luar_dalam'] == 'realisasi_ca_dalam' || $data['luar_dalam'] == 'realisasi_ca_luar'){
+            }else if(in_array($data['luar_dalam'], ['realisasi_ca_dalam', 'realisasi_ca_luar'])){
                 if($data['view']<>'realisasi_done'){
                     $this->insertToDoList($todolist, $mailData);
                 }
-            }else if($data['luar_dalam'] == 'reimburse'){
+            }else if(in_array($data['luar_dalam'], ['reimburse', 'reimburse_luar'])){
                 if($data['view']<>'reimburse_done'){
                     $this->insertToDoList($todolist, $mailData);
                 }
