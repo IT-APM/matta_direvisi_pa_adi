@@ -9,9 +9,10 @@
 
 @section('breadcrumb-title')
 <h3>
-    @if ($trxMaster->luar_dalam == 'ca_dalam') Cash Advance Dalam Negeri
-    @elseif ($trxMaster->luar_dalam == 'ca_luar') Cash Advance Luar Negeri
-    @elseif ($trxMaster->luar_dalam == 'reimburse') Reimbursement
+    @if ($trxMaster->luar_dalam == 'ca_dalam') Cash Advance Perjalanan Dinas Dalam Negeri
+    @elseif ($trxMaster->luar_dalam == 'ca_luar') Cash Advance Perjalanan Dinas Luar Negeri
+    @elseif ($trxMaster->luar_dalam == 'reimburse') Reimbursement Perjalanan Dinas Dalam Negeri
+    @elseif ($trxMaster->luar_dalam == 'reimburse_luar') Reimbursement Perjalanan Dinas Luar Negeri
     @endif
 </h3>
 @endsection
