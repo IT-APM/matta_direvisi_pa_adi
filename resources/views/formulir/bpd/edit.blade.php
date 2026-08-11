@@ -13,7 +13,8 @@
 <h3>
     @if ($trxMaster->luar_dalam == 'ca_dalam') Cash Advance Perjalanan Dinas Dalam Negeri
     @elseif ($trxMaster->luar_dalam == 'ca_luar') Cash Advance Perjalanan Dinas Luar Negeri
-    @elseif ($trxMaster->luar_dalam == 'reimburse') Reimbursement
+    @elseif ($trxMaster->luar_dalam == 'reimburse') Reimbursement Perjalanan Dinas Dalam Negeri
+    @elseif ($trxMaster->luar_dalam == 'reimburse_luar') Reimbursement Perjalanan Dinas Luar Negeri
     @endif
 </h3>
 @endsection
@@ -119,11 +120,9 @@
                                         @foreach ($trxDetailInfo as $data)
                                         <tr>
                                             <td>{{ ++$no_info }}</td>
-                                            @if($trxMaster->luar_dalam=='ca_dalam')
+                                            @if(in_array($trxMaster->luar_dalam, ['ca_dalam', 'reimburse']))
                                             <td>{{ $data->_tujuan1_dalam->propinsi }} - {{ $data->_tujuan2_dalam->kota }}</td>
-                                            @elseif($trxMaster->luar_dalam=='reimburse')
-                                            <td>{{ $data->_tujuan1_dalam->propinsi }} - {{ $data->_tujuan2_dalam->kota }}</td>
-                                            @elseif($trxMaster->luar_dalam=='ca_luar')
+                                            @elseif(in_array($trxMaster->luar_dalam, ['ca_luar', 'reimburse_luar']))
                                             <td>{{ $data->_tujuan1_luar->negara }}</td>
                                             @endif
                                             <td>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d-m-Y') }}</td>
@@ -196,11 +195,9 @@
                                         <tr>
                                             <td>{{ ++$no_biaya_info }}</td>
                                             <td>{{ $kode_coa[0] }}</td>
-                                            @if ($trxMaster->luar_dalam == 'ca_dalam')
+                                            @if (in_array($trxMaster->luar_dalam, ['ca_dalam', 'reimburse']))
                                             <td>{{ $kode_coa[1] }} @if(!empty($data->id_info)) ({{ $data->_info->_tujuan1_dalam->propinsi }}) @endif</td>
-                                            @elseif ($trxMaster->luar_dalam == 'reimburse')
-                                            <td>{{ $kode_coa[1] }} @if(!empty($data->id_info)) ({{ $data->_info->_tujuan1_dalam->propinsi }}) @endif</td>
-                                            @elseif ($trxMaster->luar_dalam == 'ca_luar')
+                                            @elseif (in_array($trxMaster->luar_dalam, ['ca_luar', 'reimburse_luar']))
                                             <td>{{ $kode_coa[1] }} @if(!empty($data->id_info)) ({{ $data->_info->_tujuan1_luar->negara }}) @endif</td>
                                             @endif
                                             <td>{{ $data->jumlah }}</td>
