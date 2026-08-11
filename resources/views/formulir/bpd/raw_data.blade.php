@@ -122,9 +122,9 @@
                                                 @foreach ($trxDetailInfo as $data_info)
                                                 <tr>
                                                     <td>{{ $data_info->jenis }}</td>
-                                                    @if($data->luar_dalam=='ca_dalam' || $data->luar_dalam=='reimburse')
+                                                    @if(in_array($data->luar_dalam, ['ca_dalam''reimburse']))
                                                     <td>{{ $data_info->_tujuan1_dalam->propinsi }} - {{ $data_info->_tujuan2_dalam->kota }}</td>
-                                                    @elseif($data->luar_dalam=='ca_luar')
+                                                    @elseif(in_array($data->luar_dalam, ['ca_luar''reimburse_luar']))
                                                     <td>{{ $data_info->_tujuan1_luar->negara }}</td>
                                                     @endif
                                                     <td>{{ \Carbon\Carbon::parse($data_info->tanggal_mulai)->format('d-m-Y') }}</td>
@@ -159,9 +159,9 @@
                                             @endphp
                                             <tr>
                                                 <td>{{ $kode_coa[0] }}</td>
-                                                @if ($data->luar_dalam == 'ca_dalam' || $data->luar_dalam=='reimburse')
+                                                @if(in_array($data->luar_dalam, ['ca_dalam''reimburse']))
                                                 <td>{{ $kode_coa[1] }} @if(!empty($biaya_personel->id_info)) ({{ $biaya_personel->_info->_tujuan1_dalam->propinsi }}) @endif</td>
-                                                @elseif ($data->luar_dalam == 'ca_luar')
+                                                @elseif(in_array($data->luar_dalam, ['ca_luar''reimburse_luar']))
                                                 <td>{{ $kode_coa[1] }} @if(!empty($biaya_personel->id_info)) ({{ $biaya_personel->_info->_tujuan1_luar->negara }}) @endif</td>
                                                 @endif
                                                 <td>{{ $biaya_personel->jumlah }}</td>
@@ -196,9 +196,9 @@
                                             @endphp
                                             <tr>
                                                 <td>{{ $kode_coa[0] }}</td>
-                                                @if ($data->luar_dalam == 'ca_dalam' || $data->luar_dalam=='reimburse')
+                                                @if(in_array($data->luar_dalam, ['ca_dalam''reimburse']))
                                                 <td>{{ $kode_coa[1] }} @if(!empty($biaya_lain->id_info)) ({{ $biaya_lain->_info->_tujuan1_dalam->propinsi }}) @endif</td>
-                                                @elseif ($data->luar_dalam == 'ca_luar')
+                                                @elseif(in_array($data->luar_dalam, ['ca_luar''reimburse_luar']))
                                                 <td>{{ $kode_coa[1] }} @if(!empty($biaya_lain->id_info)) ({{ $biaya_lain->_info->_tujuan1_luar->negara }}) @endif</td>
                                                 @endif
                                                 <td>{{ $biaya_lain->jumlah }}</td>
