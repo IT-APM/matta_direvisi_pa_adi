@@ -120,9 +120,7 @@
                             <input class="form-control" value="Project: {{ $data['kelompok']['project'] }} / Corporate: {{ $data['kelompok']['nonproject'] }}">
                         </div>
                     </div>
-                    <form action="{{ route('bpd.store') }}" method="post" enctype="multipart/form-data"
-                        class="needs-validation" novalidate=""
-                        onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form action="{{ route('bpd.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @csrf
                         <input type="hidden" id="new" name="new" value="{{ $data['luar_dalam'] }}">
                         <input type="hidden" id="mgt" name="mgt" value="{{ $data['mgt'] }}">
@@ -352,11 +350,11 @@
             cols += '<th scrope="row">' + counter_info + '</th>';
             // ca_dalam
             @if ($data['luar_dalam'] == 'ca_dalam')
-            cols += '<td><select onchange="getData(' + counter_info + ');" class="form-select js-example-basic-single col-sm-12" id="tujuan1_' + counter_info + '" name="tujuan1_' + counter_info + '" required=""><option selected="" disabled="" value="">Pilih...</option>@foreach ($area as $_data)<option value="{{ $_data->id }}">{{ $_data->propinsi }}</option>@endforeach</select></td>';
-            cols += '<td><select class="form-select js-example-basic-single col-sm-12" id="tujuan2_' + counter_info + '" name="tujuan2_' + counter_info + '" required=""></select></td>';
+            cols += '<td><select onchange="getData(' + counter_info + ');" class="form-select js-example-basic-single col-sm-12" id="tujuan1_' + counter_info + '" name="tujuan1_' + counter_info + '" required=""><option selected="" disabled="" value="">Pilih...</option>@foreach ($area as $_data)<option value="{{ $_data->id }}">{{ $_data->propinsi }}</option>@endforeach</select><div class="invalid-feedback txt-danger">Field is required.</div></td>';
+            cols += '<td><select class="form-select js-example-basic-single col-sm-12" id="tujuan2_' + counter_info + '" name="tujuan2_' + counter_info + '" required=""></select><div class="invalid-feedback txt-danger">Field is required.</div></td>';
             // ca_luar
             @elseif ($data['luar_dalam'] == 'ca_luar')
-            cols += '<td><select class="form-select js-example-basic-single col-sm-12" id="tujuan1_' + counter_info + '" name="tujuan1_' + counter_info + '" required=""><option selected="" disabled="" value="">Pilih...</option>@foreach ($negara as $_data)<option value="{{ $_data->id }}">{{ $_data->negara }}</option> @endforeach</select></td>';
+            cols += '<td><select class="form-select js-example-basic-single col-sm-12" id="tujuan1_' + counter_info + '" name="tujuan1_' + counter_info + '" required=""><option selected="" disabled="" value="">Pilih...</option>@foreach ($negara as $_data)<option value="{{ $_data->id }}">{{ $_data->negara }}</option> @endforeach</select><div class="invalid-feedback txt-danger">Field is required.</div></td>';
             @endif
             cols += '<td><input class="form-control" type="date" name="tanggal_mulai[]" id="tanggal_mulai[]" placeholder="Tanggal dari" required=""></td>';
             cols += '<td><input class="form-control" type="date" name="tanggal_akhir[]" id="tanggal_akhir[]" placeholder="Tanggal sampai" required=""></td>';
@@ -365,6 +363,12 @@
             newRow.append(cols);
             // Insert the row inside a table
             $("#table_info").append(newRow);
+            @if ($data['luar_dalam'] == 'ca_dalam')
+            $('#tujuan1_' + counter_info).select2();
+            $('#tujuan2_' + counter_info).select2();
+            @elseif ($data['luar_dalam'] == 'ca_luar')
+            $('#tujuan1_' + counter_info).select2();
+            @endif
             // Increase counter_info after each row insertion
             counter_info++;
             // if (counter_info > 6) {
