@@ -11,7 +11,9 @@
 
 @section('breadcrumb-title')
 <h3>
-    Reimbursement
+    @if ($data['luar_dalam'] == 'reimburse') Reimbursement Dalam Negeri
+    @elseif ($data['luar_dalam'] == 'reimburse_luar') Reimbursement Luar Negeri
+    @endif
 </h3>
 @endsection
 
@@ -118,9 +120,7 @@
                             <input class="form-control" value="Project: {{ $data['kelompok']['project'] }} / Corporate: {{ $data['kelompok']['nonproject'] }}">
                         </div>
                     </div>
-                    <form action="{{ route('bpd.store') }}" method="post" enctype="multipart/form-data"
-                        class="needs-validation" novalidate=""
-                        onsubmit="return confirm('Are you sure want to submit this data?');">
+                    <form action="{{ route('bpd.store') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="" onsubmit="return confirm('Are you sure want to submit this data?');">
                         @csrf
                         <input type="hidden" id="new" name="new" value="{{ $data['luar_dalam'] }}">
                         <input type="hidden" id="mgt" name="mgt" value="{{ $data['mgt'] }}">
@@ -136,7 +136,9 @@
                                         <tr>
                                             <th scope="col">#</th>
                                             <th scope="col">Tujuan</th>
+                                            @if ($data['luar_dalam'] == 'reimburse')
                                             <th scope="col">&nbsp;</th>
+                                            @endif
                                             <th scope="col">Tanggal dari</th>
                                             <th scope="col">Tanggal sampai</th>
                                             <th scope="col"></th>
@@ -147,8 +149,13 @@
                                         @foreach ($trxDetailInfo as $_data)
                                         <tr>
                                             <td>#</td>
+                                            @if($trxMaster->luar_dalam=='reimburse')
                                             <td>{{ $_data->_tujuan1_dalam->propinsi }} ({{ \Carbon\Carbon::parse($_data->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($_data->tanggal_akhir))+1 }} Hari)</td>
                                             <td>{{ $_data->_tujuan2_dalam->kota }}</td>
+                                            @elseif($trxMaster->luar_dalam=='reimburse_luar')
+                                            <td>{{ $_data->_tujuan1_luar->negara }} ({{ \Carbon\Carbon::parse($_data->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($_data->tanggal_akhir))+1 }} Hari)</td>
+                                            <td>&nbsp;</td>
+                                            @endif
                                             <td>{{ \Carbon\Carbon::parse($_data->tanggal_mulai)->format('d-m-Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($_data->tanggal_akhir)->format('d-m-Y') }}</td>
                                             <td><a onclick="return confirm('Are you sure want to delete this data?')" href="{{ route('bpd.delete_info', [Crypt::encrypt($trxMaster->id), 'id_data'=>$_data->id, 'view'=>'reject_reimburse_pa']) }}" class="btn btn-danger"><i class="fa fa-trash"></i></a></td>
@@ -157,6 +164,7 @@
                                         @else
                                         <tr>
                                             <th scrope="row">1</th>
+                                            @if ($data['luar_dalam'] == 'reimburse')
                                             <td>
                                                 <select onchange="getData(1);" class="form-select js-example-basic-single col-sm-12" id="tujuan1_1" name="tujuan1_1" required="">
                                                     <option selected="" disabled="" value="">Pilih...</option>
@@ -170,6 +178,17 @@
                                                 <select class="form-select js-example-basic-single col-sm-12" id="tujuan2_1" name="tujuan2_1" required=""></select>
                                                 <div class="invalid-feedback txt-danger">Field is required.</div>
                                             </td>
+                                            @elseif ($data['luar_dalam'] == 'reimburse_luar')
+                                            <td>
+                                                <select class="form-select js-example-basic-single col-sm-12" id="tujuan1_1" name="tujuan1_1" required="">
+                                                    <option selected="" disabled="" value="">Pilih...</option>
+                                                    @foreach ($negara as $_data)
+                                                    <option value="{{ $_data->id }}">{{ $_data->negara }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="invalid-feedback txt-danger">Field is required.</div>
+                                            </td>
+                                            @endif
                                             <td><input class="form-control" type="date" name="tanggal_mulai[]" id="tanggal_mulai[]" placeholder="Tanggal dari" required=""></td>
                                             <td><input class="form-control" type="date" name="tanggal_akhir[]" id="tanggal_akhir[]" placeholder="Tanggal sampai" required=""></td>
                                             <td>&nbsp;</td>
@@ -326,10 +345,14 @@
             var cols = '';
             // Table columns
             cols += '<th scrope="row">' + counter_info + '</th>';
-            // ca_dalam
-            cols += '<td><select onchange="getData(' + counter_info + ');" class="form-select js-example-basic-single col-sm-12" id="tujuan1_' + counter_info + '" name="tujuan1_' + counter_info + '" required=""><option selected="" disabled="" value="">Pilih...</option>@foreach ($area as $_data)<option value="{{ $_data->id }}">{{ $_data->propinsi }}</option>@endforeach</select></td>';
-            cols += '<td><select class="form-select js-example-basic-single col-sm-12" id="tujuan2_' + counter_info + '" name="tujuan2_' + counter_info + '" required=""></select></td>';
-            // ca_luar
+            // reimburse
+            @if ($data['luar_dalam'] == 'reimburse')
+            cols += '<td><select onchange="getData(' + counter_info + ');" class="form-select js-example-basic-single col-sm-12" id="tujuan1_' + counter_info + '" name="tujuan1_' + counter_info + '" required=""><option selected="" disabled="" value="">Pilih...</option>@foreach ($area as $_data)<option value="{{ $_data->id }}">{{ $_data->propinsi }}</option>@endforeach</select><div class="invalid-feedback txt-danger">Field is required.</div></td>';
+            cols += '<td><select class="form-select js-example-basic-single col-sm-12" id="tujuan2_' + counter_info + '" name="tujuan2_' + counter_info + '" required=""></select><div class="invalid-feedback txt-danger">Field is required.</div></td>';
+            // reimburse_luar
+            @elseif ($data['luar_dalam'] == 'reimburse_luar')
+            cols += '<td><select class="form-select js-example-basic-single col-sm-12" id="tujuan1_' + counter_info + '" name="tujuan1_' + counter_info + '" required=""><option selected="" disabled="" value="">Pilih...</option>@foreach ($negara as $_data)<option value="{{ $_data->id }}">{{ $_data->negara }}</option> @endforeach</select><div class="invalid-feedback txt-danger">Field is required.</div></td>';
+            @endif
             cols += '<td><input class="form-control" type="date" name="tanggal_mulai[]" id="tanggal_mulai[]" placeholder="Tanggal dari" required=""></td>';
             cols += '<td><input class="form-control" type="date" name="tanggal_akhir[]" id="tanggal_akhir[]" placeholder="Tanggal sampai" required=""></td>';
             cols += '<td><button class="btn btn-danger" id ="deleteRowinfo"><i class="fa fa-trash"></i></button></td>';
@@ -337,6 +360,12 @@
             newRow.append(cols);
             // Insert the row inside a table
             $("#table_info").append(newRow);
+            @if ($data['luar_dalam'] == 'reimburse')
+            $('#tujuan1_' + counter_info).select2();
+            $('#tujuan2_' + counter_info).select2();
+            @elseif ($data['luar_dalam'] == 'reimburse_luar')
+            $('#tujuan1_' + counter_info).select2();
+            @endif
             // Increase counter_info after each row insertion
             counter_info++;
             // if (counter_info > 6) {
