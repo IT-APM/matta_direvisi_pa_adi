@@ -33,7 +33,8 @@ $koordinator_property = json_decode($trxMaster->koordinator_property, true);
 						<td align="center"><strong>
 						@if ($trxMaster->luar_dalam == 'ca_dalam') CASH ADVANCE PERJALANAN DINAS DALAM NEGERI
 						@elseif ($trxMaster->luar_dalam == 'ca_luar') CASH ADVANCE PERJALANAN DINAS LUAR NEGERI
-						@elseif ($trxMaster->luar_dalam == 'reimburse') REIMBURSEMENT PERJALANAN DINAS
+						@elseif ($trxMaster->luar_dalam == 'reimburse') REIMBURSEMENT PERJALANAN DINAS DALAM NEGERI
+						@elseif ($trxMaster->luar_dalam == 'reimburse_luar') REIMBURSEMENT PERJALANAN DINAS LUAR NEGERI
 						@endif
 						</strong></td>
 					</tr>
@@ -138,9 +139,9 @@ $koordinator_property = json_decode($trxMaster->koordinator_property, true);
 					@foreach ($trxDetailInfo as $data)
 					<tr align="center">
 						<td>{{ ++$no_info }}</td>
-						@if ($trxMaster->luar_dalam == 'ca_dalam' || $trxMaster->luar_dalam == 'reimburse')
+						@if (in_array($trxMaster->luar_dalam, ['ca_dalam', 'reimburse']))
 						<td align="left">{{ $data->_tujuan1_dalam->propinsi }} - {{ $data->_tujuan2_dalam->kota }}</td>
-						@elseif ($trxMaster->luar_dalam == 'ca_luar')
+						@elseif (in_array($trxMaster->luar_dalam, ['ca_luar', 'reimburse_luar']))
 						<td align="left">{{ $data->_tujuan1_luar->negara }}</td>
 						@endif
 						<td>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d-m-Y') }}</td>
@@ -187,9 +188,9 @@ $koordinator_property = json_decode($trxMaster->koordinator_property, true);
 					<tr align="center">
 						<td>{{ ++$no_biaya_info }}</td>
 						<td>{{ $kode_coa[0] }}</td>
-						@if ($trxMaster->luar_dalam == 'ca_dalam' || $trxMaster->luar_dalam == 'reimburse')
+						@if (in_array($trxMaster->luar_dalam, ['ca_dalam', 'reimburse']))
 						<td align="left">{{ $kode_coa[1] }} @if(!empty($data->id_info)) ({{ $data->_info->_tujuan1_dalam->propinsi }}) @endif</td>
-						@elseif ($trxMaster->luar_dalam == 'ca_luar')
+						@elseif (in_array($trxMaster->luar_dalam, ['ca_luar', 'reimburse_luar']))
 						<td align="left">{{ $kode_coa[1] }} @if(!empty($data->id_info)) ({{ $data->_info->_tujuan1_luar->negara }}) @endif</td>
 						@endif
 						<td>{{ $data->jumlah }}</td>
