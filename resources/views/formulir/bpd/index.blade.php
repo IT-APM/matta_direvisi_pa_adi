@@ -63,7 +63,8 @@
                                         <option selected="" disabled="" value="">Pilih...</option>
                                         <option value="1">CA Dalam Negeri</option>
                                         <option value="2">CA Luar Negeri</option>
-                                        <option value="3">Reimbursement</option>
+                                        <option value="3">Reimbursement Dalam Negeri</option>
+                                        <option value="4">Reimbursement Luar Negeri</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-3">
@@ -172,7 +173,9 @@
                                                 @elseif ($data->is_ca == 1 && $data->luar_dalam == 'ca_luar')
                                                     CA Luar Negeri
                                                 @elseif ($data->is_ca == 0 && $data->luar_dalam == 'reimburse')
-                                                    Reimbursement
+                                                    Reimbursement Dalam Negeri
+                                                @elseif ($data->is_ca == 0 && $data->luar_dalam == 'reimburse_luar')
+                                                    Reimbursement Luar Negeri
                                                 @endif
                                             </td>
                                             <td>{{ $data->periode }}</td>
@@ -387,6 +390,8 @@
                 location.href = "{{ route('bpd.create', ['new' => 'ca_luar']) }}" + "&mgt=" + mgt;
             } else if (document.getElementById("jenis").value == 3) {
                 location.href = "{{ route('bpd.create', ['new' => 'reimburse']) }}" + "&mgt=" + mgt;
+            } else if (document.getElementById("jenis").value == 4) {
+                location.href = "{{ route('bpd.create', ['new' => 'reimburse_luar']) }}" + "&mgt=" + mgt;
             } else {
                 alert('Pilih Jenis Perjalanan Dinas!');
             }
