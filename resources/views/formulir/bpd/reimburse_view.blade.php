@@ -11,7 +11,9 @@
 
 @section('breadcrumb-title')
 <h3>
-    Reimbursement
+    @if ($trxMaster->luar_dalam == 'reimburse') Reimbursement Perjalanan Dinas Dalam Negeri
+    @elseif ($trxMaster->luar_dalam == 'reimburse_luar') Reimbursement Perjalanan Dinas Luar Negeri
+    @endif
 </h3>
 @endsection
 
@@ -122,7 +124,11 @@
                                     @foreach ($trxDetailInfo as $data)
                                     <tr>
                                         <td>{{ ++$no_info }}</td>
+                                        @if($trxMaster->luar_dalam=='reimburse')
                                         <td>{{ $data->_tujuan1_dalam->propinsi }} - {{ $data->_tujuan2_dalam->kota }}</td>
+                                        @elseif($trxMaster->luar_dalam=='reimburse_luar')
+                                        <td>{{ $data->_tujuan1_luar->negara }}</td>
+                                        @endif
                                         <td>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d-m-Y') }}</td>
                                         <td>{{ \Carbon\Carbon::parse($data->tanggal_akhir)->format('d-m-Y') }}</td>
                                         <td>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($data->tanggal_akhir))+1 }}</td>
@@ -209,7 +215,11 @@
                                         @foreach ($trxDetailInfo as $data)
                                         <tr>
                                             <td>{{ ++$no_info }}</td>
+                                            @if($trxMaster->luar_dalam=='reimburse')
                                             <td>{{ $data->_tujuan1_dalam->propinsi }} - {{ $data->_tujuan2_dalam->kota }}</td>
+                                            @elseif($trxMaster->luar_dalam=='reimburse_luar')
+                                            <td>{{ $data->_tujuan1_luar->negara }}</td>
+                                            @endif
                                             <td>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d-m-Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($data->tanggal_akhir)->format('d-m-Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($data->tanggal_akhir))+1 }}</td>
@@ -350,7 +360,11 @@
                                         @foreach ($trxDetailInfo as $data)
                                         <tr>
                                             <td>{{ ++$no_info }}</td>
+                                            @if($trxMaster->luar_dalam=='reimburse')
                                             <td>{{ $data->_tujuan1_dalam->propinsi }} - {{ $data->_tujuan2_dalam->kota }}</td>
+                                            @elseif($trxMaster->luar_dalam=='reimburse_luar')
+                                            <td>{{ $data->_tujuan1_luar->negara }}</td>
+                                            @endif
                                             <td>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d-m-Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($data->tanggal_akhir)->format('d-m-Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($data->tanggal_akhir))+1 }}</td>
@@ -417,7 +431,11 @@
                                             <td>{{ ++$no_biaya_info }}</td>
                                             <td>@if(!empty($data->lampiran))<a href="{{ asset('assets/bpd/'.$data->lampiran) }}" target="_blank"><i class="icon-file"></i>&nbsp;</a>@endif</td>
                                             <td>{{ $kode_coa[0] }}</td>
+                                            @if ($trxMaster->luar_dalam == 'reimburse')
                                             <td>{{ $kode_coa[1] }} @if(!empty($data->id_info)) ({{ $data->_info->_tujuan1_dalam->propinsi }}) @endif</td>
+                                            @elseif ($trxMaster->luar_dalam == 'reimburse_luar')
+                                            <td>{{ $kode_coa[1] }} @if(!empty($data->id_info)) ({{ $data->_info->_tujuan1_luar->negara }}) @endif</td>
+                                            @endif
                                             <td>{{ $data->jumlah }}</td>
                                             <td>{{ number_format($data->nominal, 0) }}</td>
                                             <td>{{ $data->satuan }}</td>
