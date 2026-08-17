@@ -10,6 +10,7 @@ use App\Http\Controllers\KaryawanPendidikanController;
 use App\Http\Controllers\KaryawanPelatihanController;
 use App\Http\Controllers\KaryawanSertifikasiController;
 use App\Http\Controllers\KaryawanAnakController;
+use App\Http\Controllers\KaryawanPerubahanController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\MtrJoinController;
 use App\Http\Controllers\DivisiController;
@@ -204,6 +205,7 @@ Route::get('survey_pora/mobile/{id}', [TrxToDoListController::class, 'survey_mob
 Route::post('survey_mobile_post', [ TrxToDoListController::class, 'survey_mobile_post' ])->name('survey_mobile_post');
 // 
 Route::resource('karyawan', KaryawanController::class);
+Route::resource('karyawanperubahan', KaryawanPerubahanController::class);
 Route::resource('karyawanpendidikan', KaryawanPendidikanController::class)->middleware('auth');
 Route::resource('karyawanpelatihan', KaryawanPelatihanController::class)->middleware('auth');
 Route::resource('karyawansertifikasi', KaryawanSertifikasiController::class)->middleware('auth');
@@ -221,6 +223,8 @@ Route::get('karyawan/get_sub_departemen', [KaryawanController::class, 'get_sub_d
 Route::post('karyawan/image/store', [ KaryawanController::class, 'ImageUploadStore' ])->name('upload.image.store');
 Route::get('karyawan/upload_data/{id}', [KaryawanController::class, 'upload_data'])->name('karyawan.upload_data')->middleware('can:hc');
 Route::get('karyawan/download_allphoto/{id}', [KaryawanController::class, 'download_allphoto'])->name('karyawan.download_allphoto')->middleware('can:hc');
+Route::get('karyawan/bulanan/{id}', [KaryawanController::class, 'bulanan'])->name('karyawan.bulanan')->middleware('can:hc');
+Route::post('karyawan/bulanan_update', [KaryawanController::class, 'bulanan_update'])->name('karyawan.bulanan_update')->middleware('can:hc');
 Route::post('karyawan/upload_data/xlsx/{id}', [KaryawanController::class, 'upload_data_xlsx'])->name('karyawan.upload_data_xlsx')->middleware('can:hc');
 // 
 Route::resource('perusahaan', PerusahaanController::class)->middleware('can:hc');
