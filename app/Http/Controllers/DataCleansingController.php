@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\Karyawan;
+use App\Models\KaryawanBulanan;
 use App\Models\TrxPenilaian;
 use App\Models\TrxPenilaianAuto;
 use App\Models\TrxNonaktifAuto;
@@ -35,6 +36,12 @@ class DataCleansingController extends Controller
      */
     public function index()
     {
+        // dijalankan hanya di tanggal 01 setiap bulannya
+        if(explode('-', Carbon::now()->format('Y-m-d'))[2] == '01'){
+            $this->PerubahanDataKaryawanBulanan();
+        }
+        // $data = $this->PerubahanDataKaryawanBulanan();
+        // return response()->json( [ 'success' => true, 'layer1' => $data ], 200 );
         // dijalankan sendiri karena lama
         // $this->CleansingToDoList();
         $filename = ['emails.penilaian0', 'emails.penilaian0_outsourcing'];
@@ -211,6 +218,34 @@ class DataCleansingController extends Controller
             }
         }
         return response()->json( [ 'success' => true ], 200 );
+    }
+
+    public function PerubahanDataKaryawanBulanan()
+    {
+        $trx = Karyawan::select(
+            DB::raw('COUNT(*) as total'),
+            'layer1'
+        )
+        ->where('is_aktif', 1)
+        ->whereNotNull('layer1')
+        ->whereRaw("TRIM(layer1) <> ''")
+        ->groupBy('layer1')
+        ->get();
+        foreach($trx as $data){
+            $_trx = Karyawan::where(['is_aktif'=>1, 'layer1'=>$data->layer1])->orderBy('nama', 'asc')->get();
+            foreach($_trx as $_data){
+                $insert = new KaryawanBulanan;
+                $insert->tanggal = Carbon::now()->format('Y-m-d');
+                $insert->nik = $_data->nik;
+                $insert->nik_property = $this->getNikProperty($_data->nik);
+                $insert->layer1 = $_data->layer1;
+                $insert->layer1_property = $this->getNikProperty($_data->layer1);
+                $insert->layer2 = $_data->layer2;
+                $insert->layer2_property = $this->getNikProperty($_data->layer2);
+                $insert->save();
+            }
+        }
+        return $trx;
     }
 
     public function CleansingToDoList()
