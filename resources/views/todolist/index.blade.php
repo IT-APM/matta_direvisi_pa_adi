@@ -263,6 +263,19 @@
             </div>
         </div>
         @endcan
+        <div class="col-xl-3 col-sm-3">
+            <div class="card bg-warning">
+                <div class="card-body">
+                    <div class="media faq-widgets">
+                        <div class="media-body text-center">
+                            <a href="{{ route('todolist.show', [0, 'filename' => 'emails.karyawan_bulanan0']) }}" style="color: #FFFFFF;">
+                                <h5><span @if (count($karyawan_bulanan)>0) class="badge bg-danger" @else class="badge bg-warning" @endif>{{ count($karyawan_bulanan) }}</span><br/><i class="fa fa-file-text-o"></i> CONFIRMATION</h5>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!--  -->
 </div>
