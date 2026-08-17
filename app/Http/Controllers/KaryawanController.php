@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Karyawan;
+use App\Models\KaryawanBulanan;
 use App\Models\KaryawanLog;
 use App\Models\KaryawanPendidikan;
 use App\Models\KaryawanPelatihan;
@@ -31,6 +32,8 @@ use App\Models\KaryawanGrade;
 use App\Models\TrxPenilaian;
 use App\Models\PendidikanJenjang;
 // 
+use App\Models\ToDoList;
+use App\Models\ToDoListLog;
 use App\Models\MtrUtility;
 use App\Mail\MattaRebornMail;
 use Illuminate\Support\Facades\Mail;
@@ -53,6 +56,244 @@ class KaryawanController extends Controller
     public function __construct()
     {
         $this->middleware('can:hc', ['except' => ['show', 'get_divisi', 'get_departemen', 'get_sub_departemen', 'update_profile']]);
+    }
+    
+    public function bulanan(Request $request, $id)
+    {
+        // return response()->json( [ 'id' => $id, 'request' => $request->all() ], 200 );
+        if($id == 0){
+            $trx = KaryawanBulanan::where(['is_berubah'=>0])->orderBy('id', 'asc');
+            $layer1 = $trx->groupBy('layer1')->get();
+            $karyawan = $trx->get();
+            $layer1 = $layer1->sortBy(function ($data) {
+                $layer1_property = json_decode($data->layer1_property, true);
+                return $layer1_property['nama'] ?? '';
+            })->values();
+            // 
+            $perusahaan = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.perusahaan')) as perusahaan")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.perusahaan'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.perusahaan')) ASC")
+            ->get()->pluck('perusahaan')->toArray();
+            $arr_perusahaan = [];
+            $divisi = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.divisi')) as divisi")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.divisi'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.divisi')) ASC")
+            ->get()->pluck('divisi')->toArray();
+            $arr_divisi = [];
+            $dep = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.dep')) as dep")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.dep'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.dep')) ASC")
+            ->get()->pluck('dep')->toArray();
+            $arr_dep = [];
+            $sub_dep = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.sub_dep')) as sub_dep")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.sub_dep'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.sub_dep')) ASC")
+            ->get()->pluck('sub_dep')->toArray();
+            $arr_sub_dep = [];
+            $level = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.level')) as level")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.level'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.level')) ASC")
+            ->get()->pluck('level')->toArray();
+            $arr_level = [];
+            $status_karyawan = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.status_karyawan')) as status_karyawan")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.status_karyawan'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.status_karyawan')) ASC")
+            ->get()->pluck('status_karyawan')->toArray();
+            $arr_status_karyawan = [];
+            // return response()->json( [ 'perusahaan' => $perusahaan, 'divisi' => $divisi, 'dep' => $dep, 'sub_dep' => $sub_dep, 'level' => $level, 'status_karyawan' => $status_karyawan  ], 200 );
+            if($request->filter == true){
+                $_perusahaan = $request->input('perusahaan', []);
+                if(count($_perusahaan) > 0){
+                    $arr_perusahaan = array_intersect_key($perusahaan, array_flip($_perusahaan));
+                }
+                else{
+                    $arr_perusahaan = [];
+                }
+                $_divisi = $request->input('divisi', []);
+                if(count($_divisi) > 0){
+                    $arr_divisi = array_intersect_key($divisi, array_flip($_divisi));
+                }
+                else{
+                    $arr_divisi = [];
+                }
+                $_dep = $request->input('dep', []);
+                if(count($_dep) > 0){
+                    $arr_dep = array_intersect_key($dep, array_flip($_dep));
+                }
+                else{
+                    $arr_dep = [];
+                }
+                $_sub_dep = $request->input('sub_dep', []);
+                if(count($_sub_dep) > 0){
+                    $arr_sub_dep = array_intersect_key($sub_dep, array_flip($_sub_dep));
+                }
+                else{
+                    $arr_sub_dep = [];
+                }
+                $trx = KaryawanBulanan::where('is_berubah', 0)
+                ->whereIn(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.perusahaan'))"), $arr_perusahaan)
+                ->whereIn(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.divisi'))"), $arr_divisi)
+                ->whereIn(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.dep'))"), $arr_dep)
+                ->whereIn(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(layer1_property, '$.sub_dep'))"), $arr_sub_dep)
+                ->orderBy('id', 'asc');
+                $layer1 = $trx->groupBy('layer1')->get();
+                $karyawan = $trx->get();
+                $layer1 = $layer1->sortBy(function ($data) {
+                    $layer1_property = json_decode($data->layer1_property, true);
+                    return $layer1_property['nama'] ?? '';
+                })->values();
+            }
+            return view('master.karyawan.bulanan', compact('karyawan', 'layer1', 'perusahaan', 'arr_perusahaan', 'divisi', 'arr_divisi', 'dep', 'arr_dep', 'sub_dep', 'arr_sub_dep', 'level', 'arr_level', 'status_karyawan', 'arr_status_karyawan'));
+        }
+        // histori
+        elseif($id == 1){
+            $trx = KaryawanBulanan::where(['is_berubah'=>3])->orderBy('id', 'asc')->get();
+            $trx = $trx->sortBy(function ($data) {
+                $nik_property = json_decode($data->nik_property, true);
+                return $nik_property['nama'] ?? '';
+            })->values();
+            // 
+            $perusahaan = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.perusahaan')) as perusahaan")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.perusahaan'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.perusahaan')) ASC")
+            ->get()->pluck('perusahaan')->toArray();
+            $arr_perusahaan = [];
+            $divisi = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.divisi')) as divisi")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.divisi'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.divisi')) ASC")
+            ->get()->pluck('divisi')->toArray();
+            $arr_divisi = [];
+            $dep = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.dep')) as dep")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.dep'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.dep')) ASC")
+            ->get()->pluck('dep')->toArray();
+            $arr_dep = [];
+            $sub_dep = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.sub_dep')) as sub_dep")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.sub_dep'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.sub_dep')) ASC")
+            ->get()->pluck('sub_dep')->toArray();
+            $arr_sub_dep = [];
+            $level = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.level')) as level")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.level'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.level')) ASC")
+            ->get()->pluck('level')->toArray();
+            $arr_level = [];
+            $status_karyawan = KaryawanBulanan::selectRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.status_karyawan')) as status_karyawan")
+            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.status_karyawan'))")
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.status_karyawan')) ASC")
+            ->get()->pluck('status_karyawan')->toArray();
+            $arr_status_karyawan = [];
+            // return response()->json( [ 'perusahaan' => $perusahaan, 'divisi' => $divisi, 'dep' => $dep, 'sub_dep' => $sub_dep, 'level' => $level, 'status_karyawan' => $status_karyawan  ], 200 );
+            if($request->filter == true){
+                $_perusahaan = $request->input('perusahaan', []);
+                if(count($_perusahaan) > 0){
+                    $arr_perusahaan = array_intersect_key($perusahaan, array_flip($_perusahaan));
+                }
+                else{
+                    $arr_perusahaan = [];
+                }
+                $_divisi = $request->input('divisi', []);
+                if(count($_divisi) > 0){
+                    $arr_divisi = array_intersect_key($divisi, array_flip($_divisi));
+                }
+                else{
+                    $arr_divisi = [];
+                }
+                $_dep = $request->input('dep', []);
+                if(count($_dep) > 0){
+                    $arr_dep = array_intersect_key($dep, array_flip($_dep));
+                }
+                else{
+                    $arr_dep = [];
+                }
+                $_sub_dep = $request->input('sub_dep', []);
+                if(count($_sub_dep) > 0){
+                    $arr_sub_dep = array_intersect_key($sub_dep, array_flip($_sub_dep));
+                }
+                else{
+                    $arr_sub_dep = [];
+                }
+                $trx = KaryawanBulanan::where('is_berubah', 3)
+                ->whereIn(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.perusahaan'))"), $arr_perusahaan)
+                ->whereIn(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.divisi'))"), $arr_divisi)
+                ->whereIn(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.dep'))"), $arr_dep)
+                ->whereIn(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(nik_property, '$.sub_dep'))"), $arr_sub_dep)
+                ->orderBy('id', 'asc')->get();
+                $trx = $trx->sortBy(function ($data) {
+                    $nik_property = json_decode($data->nik_property, true);
+                    return $nik_property['nama'] ?? '';
+                })->values();
+            }
+            return view('master.karyawan.bulanan_histori', compact('trx', 'perusahaan', 'arr_perusahaan', 'divisi', 'arr_divisi', 'dep', 'arr_dep', 'sub_dep', 'arr_sub_dep', 'level', 'arr_level', 'status_karyawan', 'arr_status_karyawan'));
+        }else{
+            return redirect()->route('error-403');
+        }
+    }
+    
+    public function bulanan_update(Request $request)
+    {
+        $submit = $request->all();
+        // return response()->json( [ 'submit' => $submit ], 200 );
+        foreach($submit as $_id => $value){
+            if(str_starts_with($_id, 'submit')){
+                if(empty($request->data_id)){
+                    if($value == 'execute'){
+                        return redirect( 'karyawan/bulanan/0' )->with( 'error', 'No Data is executed.' );
+                    }else if($value == 'delete'){
+                        return redirect( 'karyawan/bulanan/0' )->with( 'error', 'No Data is deleted.' );
+                    }
+                }else{
+                    $data_id = $request->data_id;
+                    $cc_layer2 = $request->cc_layer2;
+                    if($value == 'execute'){
+                        $arr = [];
+                        foreach($data_id as $_data_id){
+                            $_data_id = intval($_data_id);
+                            $trx = KaryawanBulanan::find($_data_id);
+                            $layer1_property = json_decode($trx->layer1_property, true);
+                            $layer2_property = json_decode($trx->layer2_property, true);
+                            // start
+                            // parameter yang dipassing ke sendemail
+                            $mailData['title'] = 'Konfirmasi Data Karyawan';
+                            $mailData['filename'] = 'emails.karyawan_bulanan0';
+                            $mailData['to'] = $layer1_property['email'];
+                            $karyawan = KaryawanBulanan::where(['layer1'=>$trx->layer1])->get();
+                            $karyawan = $karyawan->sortBy(function ($data) {
+                                $nik_property = json_decode($data->nik_property, true);
+                                return $nik_property['nama'] ?? '';
+                            })->values();
+                            $mailData['data'] = ['karyawan' => $karyawan, 'data' => $trx, 'nama'=>$layer1_property['nama'].'/'.$layer1_property['nik'], 'jabatan'=>$layer1_property['jabatan'], 'unit_kerja'=>$layer1_property['divisi'].'/'.$layer1_property['dep'].'/'.$layer1_property['sub_dep'], 'link'=> route('karyawanperubahan.show', [Crypt::encrypt($_data_id), 'nik'=>$layer1_property['nik'], 'pic'=>'layer1', 'filename'=>$mailData['filename']]) ];
+                            // cc email ke hco
+                            $ccEmails = explode(',', MtrUtility::find(11)->informasi);
+                            // cc email ke layer2 jika dicheck
+                            if(!empty($cc_layer2) && array_key_exists($_data_id, $cc_layer2)){
+                                array_push($ccEmails, $layer2_property['email']);
+                            }
+                            // array_push($arr, ['body'=>$mailData, 'cc'=>$ccEmails]);
+                            Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
+                            // end
+                            $todolist = ['id_trx' => $_data_id, 'nik' => $layer1_property['nik'], 'id_status' => 1, 'pic' => 'layer1'];
+                            $this->insertToDoList($todolist, $mailData);
+                            // is_berubah=1 jika sudah diemail
+                            KaryawanBulanan::where('layer1', $trx->layer1)->update(['is_berubah' => 1]);
+                        }
+                        // return response()->json( [ 'arr' => $arr ], 200 );
+                        return redirect( 'karyawan/bulanan/0' )->with( 'msg', 'Data is executed successfully.' );
+                    }else if($value == 'delete'){
+                        foreach($data_id as $_data_id){
+                            $this->bulanan_delete($_data_id);
+                        }
+                        return redirect( 'karyawan/bulanan/0' )->with( 'msg', 'Data is deleted successfully.' );
+                    }
+                }
+            }
+        }
+    }
+    
+    public function bulanan_delete($id)
+    {
+        $trx = KaryawanBulanan::find($id);
+        KaryawanBulanan::where('layer1', $trx->layer1)->delete();
     }
     
     public function download_allphoto($id)
@@ -2049,5 +2290,49 @@ class KaryawanController extends Controller
             // Log::error($karyawan);
             return redirect()->route('error_db');
          }
+    }
+
+    public function insertToDoList($todolist, $mailData)
+    {
+        $data = New ToDoList;
+        $data->id_trx = $todolist['id_trx'];
+        $data->id_status = $todolist['id_status'];
+        $data->nik = $todolist['nik'];
+        $data->pic = $todolist['pic'];
+        $data->title = $mailData['title'];
+        $data->nama = $mailData['data']['nama'];
+        $data->jabatan = $mailData['data']['jabatan'];
+        $data->unit_kerja = $mailData['data']['unit_kerja'];
+        $data->link = $mailData['data']['link'];
+        $data->filename = $mailData['filename'];
+        $data->email = $mailData['to'];
+        $data->save();
+        $this->insertToDoListLog($todolist, $mailData);
+    }
+
+    public function insertToDoListLog($todolist, $mailData)
+    {
+        $data = New ToDoListLog;
+        $data->id_trx = $todolist['id_trx'];
+        $data->id_status = $todolist['id_status'];
+        $data->nik = $todolist['nik'];
+        $data->pic = $todolist['pic'];
+        $data->title = $mailData['title'];
+        $data->nama = $mailData['data']['nama'];
+        $data->jabatan = $mailData['data']['jabatan'];
+        $data->unit_kerja = $mailData['data']['unit_kerja'];
+        $data->link = $mailData['data']['link'];
+        $data->filename = $mailData['filename'];
+        $data->email = $mailData['to'];
+        $data->save();
+    }
+
+    public function deleteToDoList($where)
+    {
+        // $trx = ToDoList::where($where)->first();
+        // if (!empty($trx)) {
+        //     $trx->delete();
+        // }
+        $trx = ToDoList::where($where)->delete();
     }
 }
