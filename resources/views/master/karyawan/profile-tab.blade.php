@@ -325,6 +325,12 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="id_fp">ID Finger Print</label>
+                                            <input id="id_fp" name="id_fp" min="0" class="form-control numbers" type="number" @if ($status=='edit' ) value="{{ $karyawan->id_fp }}" @endif>
+                                        </div>
+                                    </div>
                                 </p>
                             </div>
                             <div class="tab-pane fade" id="pills-emp_salary" role="tabpanel" aria-labelledby="pills-emp_salary-tab">
