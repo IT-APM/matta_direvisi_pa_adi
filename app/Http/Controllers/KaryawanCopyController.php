@@ -110,6 +110,7 @@ class KaryawanCopyController extends Controller
         $karyawan->findim_departemen = $_karyawan->findim_departemen;
         $karyawan->findim_subdepartemen = $_karyawan->findim_subdepartemen;
         $karyawan->id_grade = $_karyawan->id_grade;
+        $karyawan->id_fp = $_karyawan->id_fp;
         // 
         $karyawan->created_by = auth()->user()->nik;
         $karyawan->updated_by = auth()->user()->nik;
