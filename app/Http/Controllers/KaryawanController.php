@@ -1897,6 +1897,7 @@ class KaryawanController extends Controller
         $karyawan->findim_departemen = $request->findim_departemen;
         $karyawan->findim_subdepartemen = $request->findim_subdepartemen;
         $karyawan->id_grade = $request->id_grade;
+        $karyawan->id_fp = $request->id_fp;
         $karyawan->created_by = auth()->user()->nik;
         $karyawan->save();
         // 
@@ -2082,6 +2083,7 @@ class KaryawanController extends Controller
         $karyawan->findim_departemen = $request->findim_departemen;
         $karyawan->findim_subdepartemen = $request->findim_subdepartemen;
         $karyawan->id_grade = $request->id_grade;
+        $karyawan->id_fp = $request->id_fp;
         $karyawan->updated_by = auth()->user()->nik;
         $getOriginal = $karyawan->getOriginal();
         $karyawan->update();
