@@ -68,11 +68,13 @@ class DataCleansingController extends Controller
         // dipindahkan ke C:\xampp\htdocs\matta\app\Http\Controllers\TrxBirthdayController.php
         // karena dijalankan setiap jam 7 pagi
         // $this->getBirthday();
+        // start rekon data finger print
+        // $yesterday = Carbon::now()->subDays(3)->format('Y-m-d');
         $yesterday = Carbon::yesterday()->format('Y-m-d');
         $start_date = $yesterday;
         $end_date = $yesterday;
-        // $start_date = '2026-05-04';
-        // $end_date = '2026-07-06';
+        // $start_date = '2026-06-01';
+        // $end_date = '2026-08-18';
         $trx = TrxFingePrint::select(
             DB::raw('MIN(trx_tbl_fp_data.id) as id_clock_in'),
             DB::raw('CAST(CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.id) ELSE NULL END AS UNSIGNED) as id_clock_out'),
@@ -87,10 +89,12 @@ class DataCleansingController extends Controller
         ->leftJoin('mtr_tbl_karyawan', 'mtr_tbl_karyawan.id_fp', '=', 'trx_tbl_fp_data.id_nip')
         ->whereBetween(DB::raw('DATE(trx_tbl_fp_data.waktu)'), [$start_date, $end_date])
         ->where(['mtr_tbl_karyawan.wg_id' => 1])
+        // ->whereIn('trx_tbl_fp_data.id_nip', [421,422,424,414,425,415,420,423,426,416,428,417,429,418,412,419,411,427,409])
         ->groupBy('trx_tbl_fp_data.id_nip', DB::raw('DATE(trx_tbl_fp_data.waktu)'))
         ->orderBy('tanggal')
         ->orderBy('trx_tbl_fp_data.id_nip')
         ->get();
+        // dd($trx, $start_date);
         $wg = WorkingGroup::find(1);
         $start_clock_time = Carbon::parse($wg->start_clockin)->format('H:i:s');
         // return response()->json( [ 'start_date' => $start_date, 'end_date' => $end_date, 'trx' => $trx ], 200 );
@@ -217,6 +221,7 @@ class DataCleansingController extends Controller
                 $data->save();
             }
         }
+        // end rekon
         return response()->json( [ 'success' => true ], 200 );
     }
 
