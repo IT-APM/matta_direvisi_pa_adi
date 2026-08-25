@@ -128,6 +128,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 @if(!empty($data->filename) && $data->id_addsub == 0)
                                                 <a href="{{ route('payroll.review', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'pic' => (new App\Http\Controllers\OpenDataController)->encryptWithKey($nik_reviewer), 'id_status' => 1 ]) }}</td>" target="_blank"><i class="fa fa-link"></i></a>
                                                 @endif
+                                            </td>
                                             <td>
                                                 @if(!empty($data->filename) && $data->id_addsub == 0)
                                                 <a href="{{ asset('assets/penyesuaian_upah').'/'.$data->filename }}" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
@@ -161,6 +162,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <th>NIP</th>
                                             <th>Subject</th>
                                             {{-- <th>Email</th> --}}
+                                            <th>PDF</th>
                                             <th>Created_at</th>
                                         </tr>
                                     </thead>
@@ -182,6 +184,11 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                             <td>{{ $data->nik }}</td>
                                             <td>{{ $email['subject'] }}</td>
                                             {{-- <td>{!! $email['body'] !!}</td> --}}
+                                            <td>
+                                                @if(!empty($data->filename) && $data->id_addsub == 0)
+                                                <a href="{{ asset('assets/penyesuaian_upah').'/'.$data->filename }}" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                                @endif
+                                            </td>
                                             <td>{{ $data->created_at }}</td>
                                         </tr>
                                         @endforeach
