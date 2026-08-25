@@ -50,8 +50,9 @@
                     <a href="{{ route('karyawan.create') }}" class="btn btn-primary" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Add new</a> | 
                     <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_filter" aria-expanded="false" aria-controls="collapse_filter"><i class="fa fa-search" aria-hidden="true"></i> Filter</button> | 
                     <a href="{{ route('karyawancopy.create') }}" class="btn btn-success" type="button"><i class="fa fa-copy" aria-hidden="true"></i> Copy data</a> | 
-                    <a href="{{ route('karyawan.upload_data', 0) }}" class="btn btn-info" type="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload data</a>
-                    <a href="{{ route('karyawan.download_allphoto', 0) }}" class="btn btn-info" type="button"><i class="fa fa-download" aria-hidden="true"></i> Download Semua Foto</a>
+                    <a href="{{ route('karyawan.upload_data', 0) }}" class="btn btn-info" type="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload data</a> | 
+                    <a href="{{ route('karyawan.download_allphoto', 0) }}" class="btn btn-info" type="button"><i class="fa fa-download" aria-hidden="true"></i> Semua Foto</a> | 
+                    <a href="{{ route('karyawan.bulanan', 0) }}" class="btn btn-outline-primary" type="button"><i class="fa fa-users" aria-hidden="true"></i> Perubahan bulanan</a>
                     <div class="collapse" id="collapse_filter">
                         <form class="m-4" action="{{ route('karyawan.index') }}" method="get" enctype="multipart/form-data">
                             <div class="row">
@@ -241,16 +242,7 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
 <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
-<!--  -->
-<!-- <script src="{{ asset('assets/datatable/js/jquery-3.5.1.js') }}"></script>
-<script src="{{ asset('assets/datatable/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('assets/datatable/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('assets/datatable/js/jszip.min.js') }}"></script>
-<script src="{{ asset('assets/datatable/js/pdfmake.min.js') }}"></script>
-<script src="{{ asset('assets/datatable/js/vfs_fonts.js') }}"></script>
-<script src="{{ asset('assets/datatable/js/buttons.html5.min.js') }}"></script>
-<script src="{{ asset('assets/datatable/js/buttons.print.min.js') }}"></script> -->
-<!-- https://stackoverflow.com/questions/49516213/datatables-buttons-not-centered-on-narrow-screen -->
+{{--  --}}
 <script type="text/javascript">
 function toggle_is_aktif(source) {
     checkboxes = document.getElementsByName('is_aktif[]');
