@@ -134,7 +134,8 @@ class DataCleansingController extends Controller
                     $data['att_lat'] = NULL;
                     $data['att_address'] = NULL;
                     $data['att_status'] = 'Book-in';
-                    if(Carbon::parse($clock_in)->format('H:i:s') > '09:00:00'){
+                    // refer to cm 559
+                    if(Carbon::parse($clock_in)->format('H:i:s') > '09:01:00'){
                         $data['att_status'] = 'Late-in';
                     }
                     $data['att_ref_address'] = 'edit';
@@ -171,7 +172,8 @@ class DataCleansingController extends Controller
                 $data->att_data_src = 'Regular';
                 $data->att_wd_ot_id = 0;
                 $data->att_status = 'Book-in';
-                if(Carbon::parse($clock_in)->format('H:i:s') > '09:00:00'){
+                // refer to cm 559
+                if(Carbon::parse($clock_in)->format('H:i:s') > '09:01:00'){
                     $data->att_status = 'Late-in';
                 }
                 $data->att_property = $this->getNikProperty($_trx->nik);
