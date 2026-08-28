@@ -28,7 +28,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                 <div class="col-sm-6">
                     <div class="card">
                         <div class="card-body typography">
-                            <h5>Email</h5>
+                            <h5>Kandidat</h5>
                             <form action="{{ route('recruitment.update', Crypt::encrypt($trx->id)) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                             @method('PATCH')
                             @csrf
@@ -38,11 +38,15 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                 <tbody>
                                     <tr>
                                         <td width="30%">Nama</td>
-                                        <td width="70%">{{ $trx->nama }}</td>
+                                        <td width="70%"><input type="text" class="form-control" name="nama" id="nama" placeholder="Nama" required="" value="{{$trx->nama}}"></td>
                                     </tr>
                                     <tr>
                                         <td><label for="email" class="form-label">Email Aktif<span class="text-danger">*</span></label></td>
                                         <td><input type="email" class="form-control" name="email" id="email" placeholder="email@email.com" required="" value="{{$trx->email}}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="telepon" class="form-label">Telepon<span class="text-danger">*</span></label></td>
+                                        <td><input type="text" class="form-control" name="telepon" id="telepon" placeholder="Telepon" required="" value="{{$trx->telepon}}"></td>
                                     </tr>
                                 </tbody>
                             </table>
