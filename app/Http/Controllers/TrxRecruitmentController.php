@@ -3273,7 +3273,9 @@ class TrxRecruitmentController extends Controller
         $type = $request->type;
         $back_url = $request->back_url;
         $trx = TrxRecruitmentIdentitas::find($id);
+        $trx->nama = $request->nama;
         $trx->email = $request->email;
+        $trx->telepon = $request->telepon;
         $trx->update();
         // dd($id, $type, $back_url, $trx);
         // return redirect('recruitment/applicant_list/0')->with('msg', 'Data is saved successfully.');
