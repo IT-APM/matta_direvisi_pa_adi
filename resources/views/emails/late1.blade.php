@@ -73,7 +73,9 @@
                             }
                         }
                         $clockin = $_terlambat['clockin'];
-                        if($nik_property['wg_id'] > 1){
+                        $att_property = json_decode(App\Models\Attendance::find($_terlambat['id_attendance'])->att_property, true);
+                        // if($nik_property['wg_id'] > 1){
+                        if($att_property['wg_id'] > 1){
                             $clockin = \Carbon\Carbon::parse($_terlambat['clockin']) ->format('H:i:s');
                         }
                         $html .= '<tr>
