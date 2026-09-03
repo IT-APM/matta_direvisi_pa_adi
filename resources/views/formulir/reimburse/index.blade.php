@@ -182,8 +182,21 @@
                                     <th>No</th>
                                     <th>#ID</th>
                                     <th>Action</th>
-                                    <th>Nama Karyawan</th>
-                                    <th>NIP Karyawan</th>
+                                    <th>Nama</th>
+                                    <th>NIP</th>
+                                    @can('hc')
+                                    <th>Findim Sub Departemen</th>
+                                    <th>Findim Departemen</th>
+                                    <th>Findim Divisi</th>
+                                    <th>Project</th>
+                                    <th>Direktorat</th>
+                                    <th>Divisi</th>
+                                    <th>Departemen</th>
+                                    <th>Status Karyawan</th>
+                                    <th>Status Aktif</th>
+                                    <th>Jabatan</th>
+                                    <th>Level</th>
+                                    @endcan
                                     <th>Tahun</th>
                                     {{-- <th>Nominal Klaim</th> --}}
                                     <th>Klaim Kesehatan</th>
@@ -205,6 +218,20 @@
                                     </td>
                                     <td>{{ $data->_nik->nama }}</td>
                                     <td>{{ $data->_nik->nik }}</td>
+                                    @can('hc')
+                                    @php $karyawan_property = json_decode($data->karyawan_property, true); @endphp
+                                    <td>{{ $karyawan_property['findim_subdepartemen'] }}</td>
+                                    <td>{{ $karyawan_property['findim_departemen'] }}</td>
+                                    <td>{{ $karyawan_property['findim_divisi'] }}</td>
+                                    <td>{{ $karyawan_property['findim_project'] }}</td>
+                                    <td>{{ $karyawan_property['divisi'] }}</td>
+                                    <td>{{ $karyawan_property['dep'] }}</td>
+                                    <td>{{ $karyawan_property['sub_dep'] }}</td>
+                                    <td>{{ $karyawan_property['status_karyawan'] }}</td>
+                                    <td>@if(App\Models\Karyawan::where(['nik'=>$data->nik_karyawan, 'is_aktif'=>1])->exists()) Aktif @else Non Aktif @endif</td>
+                                    <td>{{ $karyawan_property['jabatan'] }}</td>
+                                    <td>{{ $karyawan_property['level'] }}</td>
+                                    @endcan
                                     <td>{{ $data->periode }}</td>
                                     {{-- <td>Rp. {{ number_format($data->klaim_kesehatan + $data->klaim_non_kesehatan, 0) }}</td> --}}
                                     <td>Rp. {{ number_format($data->klaim_kesehatan, 0) }}</td>
