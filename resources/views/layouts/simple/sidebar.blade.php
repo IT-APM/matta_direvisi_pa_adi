@@ -514,7 +514,8 @@
                                 <li><a href="{{ route('working.show', [22, 'req'=>'view']) }}">NOC 3 Group</a></li>
                                 <li><a href="{{ route('jadwalnoc.index') }}">NOC Alita Fiber Hub</a></li>
                                 <li><a href="{{ route('jadwalnoc2.index') }}">NOC Alita Fiber Hub 2</a></li>
-                                <li><a href="{{ route('jadwalqats.index') }}">QA Technical Support</a></li>
+                                {{-- <li><a href="{{ route('jadwalqats.index') }}">QA Technical Support</a></li> --}}
+                                <li><a href="{{ route('working.show', [15, 'req'=>'view']) }}">QA Technical Support</a></li>
                                 <li><a href="{{ route('jadwalqatsleader.index') }}">QA Technical Support<br />Leader</a></li>
                                 <li><a href="{{ route('jadwalqatsleader2.index') }}">QA Technical Support<br />Leader 2</a></li>
                                 <li><a href="{{ route('jadwalqatsmember.index') }}">QA Technical Support<br />Member</a></li>
