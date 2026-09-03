@@ -739,7 +739,8 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                                                 <td>{{ $data->departemen }}</td>
                                                 <td>{{ $data->subdepartemen }}</td>
                                                 <td>{{ $data->status_karyawan }}</td>
-                                                <td>{{ $data->status_aktif }}</td>
+                                                {{-- <td>{{ $data->status_aktif }}</td> --}}
+                                                <td>@if(App\Models\Karyawan::where(['nik'=>$data->nik, 'is_aktif'=>1])->exists()) Aktif @else Non Aktif @endif</td>
                                                 <td>{{ $data->jabatan }}</td>
                                                 @can('payroll')
                                                 <td>{{ $data->level }}</td>
