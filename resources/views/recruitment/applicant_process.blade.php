@@ -901,11 +901,17 @@
                     </div>
                     {{-- 13=Negotiation Deal by PC --}}
                     <div id="row_13">
-                        @if(!empty($nego))
+                        {{-- {{ $trx->_kebutuhan->id_status_kerja }}<br/>
+                        {{ $trx->id }}<br/>
+                        {{ $trx->id_kebutuhan }} --}}
+                        {{-- 7=Magang dan 8=Konsultan --}}
+                        @if(!empty($nego) || in_array($trx->_kebutuhan->id_status_kerja, [7, 8]))
                         <form action="{{ route('recruitment.negotiation_save') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                             @csrf
+                            @if(!empty($nego))
                             <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($nego->id) }}">
-                            <input type="hidden" id="id_identitas" name="id_identitas" value="{{ Crypt::encrypt($nego->id_identitas) }}">
+                            @endif
+                            <input type="hidden" id="id_identitas" name="id_identitas" value="{{ Crypt::encrypt($trx->id) }}">
                             <input type="hidden" id="id_status" name="id_status" value="13">
                             <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
                             <div class="row">
@@ -1462,6 +1468,7 @@
             }
             // 13=Negotiation Deal by PC
             else if ($value == 13) {
+            // alert(1);
                 $("#row_4").hide();
                 $("#row_6").hide();
                 $("#row_8").hide();
