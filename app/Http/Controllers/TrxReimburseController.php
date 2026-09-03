@@ -47,11 +47,11 @@ class TrxReimburseController extends Controller
     {
         // http://localhost/matta/reimburse?q=back
         // if($request->q == 'back'){
-        //     dd($request->all());
+        //     // dd($request->all());
         //     set_time_limit(0);
         //     ini_set('max_execution_time', 0);
-        //     $trx = TrxReimburseMaster::all();
-        //     // $trx = TrxReimburseMaster::whereDate('created_at', '>', '2026-01-01')->get();
+        //     // $trx = TrxReimburseMaster::all();
+        //     $trx = TrxReimburseMaster::whereDate('created_at', '>=', '2026-09-01')->get();
         //     foreach($trx as $_trx){
         //         $trxM = TrxReimburseMaster::find($_trx->id);
         //         $karyawan_property = json_decode($_trx->karyawan_property, true);
