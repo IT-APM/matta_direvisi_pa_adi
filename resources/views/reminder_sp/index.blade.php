@@ -194,8 +194,8 @@
                                         <td>
                                             <a href="#" data-bs-toggle="modal" data-bs-target="#modalDetail" class="text-primary" onclick="preview_email(this)" data-subject="{{ $mailData['title'] }}" data-to="{{ $nik_property['email'] }}" data-cc="{{ implode(',', $ccEmails) }}" data-body="{{ base64_encode($body) }}">{{ $type }} {{ $teguran_ke }}</a>
                                         </td>
-                                        <td>{{ Carbon\Carbon::parse($_data->date_from) ->format('d-m-Y') }}</td>
-                                        <td>{{ Carbon\Carbon::parse($_data->date_to) ->format('d-m-Y') }}</td>
+                                        <td>{{ Carbon\Carbon::parse($_data->date_from)->format('d-m-Y') }}</td>
+                                        <td>{{ Carbon\Carbon::parse($_data->date_to)->format('d-m-Y') }}</td>
                                         <td>{{ $nik_property['wg_name'] }}</td>
                                         <td>{{ $_data->nik }}</td>
                                         <td>{{ $nik_property['nama'] }}</td>
@@ -243,15 +243,17 @@
                                                         }
                                                     }
                                                     $clockin = $_terlambat['clockin'];
-                                                    if($nik_property['wg_id'] > 1){
-                                                        $clockin = Carbon\Carbon::parse($_terlambat['clockin']) ->format('H:i:s');
+                                                    $att_property = json_decode(App\Models\Attendance::find($_terlambat['id_attendance'])->att_property, true);
+                                                    // if($nik_property['wg_id'] > 1){
+                                                    if($att_property['wg_id'] > 1){
+                                                        $clockin = Carbon\Carbon::parse($_terlambat['clockin'])->format('H:i:s');
                                                     }
                                                     $html .= '<tr>
                                                         <th>'.++$_no.'</th>
                                                         <td>'.$hari[Carbon\Carbon::parse($_terlambat['tanggal'])->dayOfWeek].'</td>
-                                                        <td>'.Carbon\Carbon::parse($_terlambat['tanggal']) ->format('d-m-Y').'</td>
+                                                        <td>'.Carbon\Carbon::parse($_terlambat['tanggal'])->format('d-m-Y').'</td>
                                                         <td>'.$clockin.'</td>
-                                                        <td>'.Carbon\Carbon::parse($_terlambat['att_timestamp']) ->format('H:i:s').'</td>
+                                                        <td>'.Carbon\Carbon::parse($_terlambat['att_timestamp'])->format('H:i:s').'</td>
                                                         <td>'.$_terlambat['durasi'].'</td>
                                                         <td>'.$str_izin.'</td>
                                                     </tr>';
