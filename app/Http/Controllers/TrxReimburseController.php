@@ -45,6 +45,41 @@ class TrxReimburseController extends Controller
      */
     public function index(Request $request)
     {
+        // http://localhost/matta/reimburse?q=back
+        // if($request->q == 'back'){
+        //     dd($request->all());
+        //     set_time_limit(0);
+        //     ini_set('max_execution_time', 0);
+        //     $trx = TrxReimburseMaster::all();
+        //     // $trx = TrxReimburseMaster::whereDate('created_at', '>', '2026-01-01')->get();
+        //     foreach($trx as $_trx){
+        //         $trxM = TrxReimburseMaster::find($_trx->id);
+        //         $karyawan_property = json_decode($_trx->karyawan_property, true);
+        //         $arr = ['nik_karyawan'=>$_trx->nik_karyawan, 'created_at'=>Carbon::parse($_trx->created_at)->format('Y-m-d')];
+        //         $ret = $this->getNikPropertyBackdate($arr);
+        //         if($ret == 'null'){
+        //             // dd('NOK', $ret, $trxM);
+        //             $karyawan_property['status_karyawan'] = 0;
+        //             $karyawan_property['findim_subdepartemen'] = 0;
+        //             $karyawan_property['findim_departemen'] = 0;
+        //             $karyawan_property['findim_divisi'] = 0;
+        //             $karyawan_property['findim_project'] = 0;
+        //             $trxM->karyawan_property = json_encode($karyawan_property);
+        //             $trxM->update();
+        //         }else{
+        //             $ret = json_decode($ret, true);
+        //             // dd('OK', $ret, $trxM, $ret['status_karyawan']);
+        //             $karyawan_property['status_karyawan'] = $ret['status_karyawan'];
+        //             $karyawan_property['findim_subdepartemen'] = $ret['findim_subdepartemen'];
+        //             $karyawan_property['findim_departemen'] = $ret['findim_departemen'];
+        //             $karyawan_property['findim_divisi'] = $ret['findim_divisi'];
+        //             $karyawan_property['findim_project'] = $ret['findim_project'];
+        //             $trxM->karyawan_property = json_encode($karyawan_property);
+        //             $trxM->update();
+        //         }
+        //     }
+        //     dd('done');
+        // }
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         // 0=NA
@@ -591,14 +626,46 @@ class TrxReimburseController extends Controller
     public function getNikProperty($nik)
     {
         $where = ['nik' => $nik, 'is_aktif' => 1];
-        $data = Karyawan::select('mtr_tbl_karyawan.nik', 'mtr_tbl_karyawan.nama', 'mtr_tbl_karyawan.email', 'mtr_tbl_karyawan.telepon1', 'mtr_tbl_perusahaan.nama as perusahaan', 'mtr_tbl_divisi.nama as divisi', 'mtr_tbl_departemen.nama as dep', 'mtr_tbl_sub_departemen.nama as sub_dep', 'mtr_tbl_level.level as level', 'mtr_tbl_jabatan.jabatan as jabatan', 'mtr_tbl_level.id as id_level')
-            ->leftJoin('mtr_tbl_perusahaan', 'mtr_tbl_perusahaan.id', '=', 'mtr_tbl_karyawan.kode_perusahaan')
-            ->leftJoin('mtr_tbl_divisi', 'mtr_tbl_divisi.id', '=', 'mtr_tbl_karyawan.kode_divisi')
-            ->leftJoin('mtr_tbl_departemen', 'mtr_tbl_departemen.id', '=', 'mtr_tbl_karyawan.kode_departemen')
-            ->leftJoin('mtr_tbl_sub_departemen', 'mtr_tbl_sub_departemen.id', '=', 'mtr_tbl_karyawan.kode_sub_departemen')
-            ->leftJoin('mtr_tbl_level', 'mtr_tbl_level.id', '=', 'mtr_tbl_karyawan.kode_level')
-            ->leftJoin('mtr_tbl_jabatan', 'mtr_tbl_jabatan.id', '=', 'mtr_tbl_karyawan.kode_jabatan')
+        // $data = Karyawan::select('mtr_tbl_karyawan.nik', 'mtr_tbl_karyawan.nama', 'mtr_tbl_karyawan.email', 'mtr_tbl_karyawan.telepon1', 'mtr_tbl_perusahaan.nama as perusahaan', 'mtr_tbl_divisi.nama as divisi', 'mtr_tbl_departemen.nama as dep', 'mtr_tbl_sub_departemen.nama as sub_dep', 'mtr_tbl_level.level as level', 'mtr_tbl_jabatan.jabatan as jabatan', 'mtr_tbl_level.id as id_level')
+        //     ->leftJoin('mtr_tbl_perusahaan', 'mtr_tbl_perusahaan.id', '=', 'mtr_tbl_karyawan.kode_perusahaan')
+        //     ->leftJoin('mtr_tbl_divisi', 'mtr_tbl_divisi.id', '=', 'mtr_tbl_karyawan.kode_divisi')
+        //     ->leftJoin('mtr_tbl_departemen', 'mtr_tbl_departemen.id', '=', 'mtr_tbl_karyawan.kode_departemen')
+        //     ->leftJoin('mtr_tbl_sub_departemen', 'mtr_tbl_sub_departemen.id', '=', 'mtr_tbl_karyawan.kode_sub_departemen')
+        //     ->leftJoin('mtr_tbl_level', 'mtr_tbl_level.id', '=', 'mtr_tbl_karyawan.kode_level')
+        //     ->leftJoin('mtr_tbl_jabatan', 'mtr_tbl_jabatan.id', '=', 'mtr_tbl_karyawan.kode_jabatan')
+        //     ->where($where)->first();
+        $data = DB::table('mtr_tbl_karyawan as a')->select('a.nik', 'a.nama', 'a.email', 'a.telepon1', 'b.nama as perusahaan', 'c.nama as divisi', 'd.nama as dep', 'e.nama as sub_dep', 'f.level as level', 'g.jabatan as jabatan', 'f.id as id_level', 'h.status_karyawan as status_karyawan', DB::Raw("CONCAT(i.subdepartemen_id, '/', i.subdepartemen_desc) as findim_subdepartemen"), DB::Raw("CONCAT(j.departemen_id, '/', j.departemen_desc) as findim_departemen"), DB::Raw("CONCAT(k.divisi_id, '/', k.divisi_desc) as findim_divisi"), DB::Raw("CONCAT(l.project_id, '/', l.project_desc) as findim_project"))
+            ->leftJoin('mtr_tbl_perusahaan as b', 'b.id', '=', 'a.kode_perusahaan')
+            ->leftJoin('mtr_tbl_divisi as c', 'c.id', '=', 'a.kode_divisi')
+            ->leftJoin('mtr_tbl_departemen as d', 'd.id', '=', 'a.kode_departemen')
+            ->leftJoin('mtr_tbl_sub_departemen as e', 'e.id', '=', 'a.kode_sub_departemen')
+            ->leftJoin('mtr_tbl_level as f', 'f.id', '=', 'a.kode_level')
+            ->leftJoin('mtr_tbl_jabatan as g', 'g.id', '=', 'a.kode_jabatan')
+            ->leftJoin('mtr_tbl_status_karyawan as h', 'h.id', '=', 'a.kode_status')
+            ->leftJoin('mtr_tbl_findim_subdepartemen as i', 'i.id', '=', 'a.findim_subdepartemen')
+            ->leftJoin('mtr_tbl_findim_departemen as j', 'j.id', '=', 'a.findim_departemen')
+            ->leftJoin('mtr_tbl_findim_divisi as k', 'k.id', '=', 'a.findim_divisi')
+            ->leftJoin('mtr_tbl_findim_project as l', 'l.id', '=', 'a.findim_project')
             ->where($where)->first();
+        return json_encode($data);
+    }
+
+    public function getNikPropertyBackdate($arr)
+    {
+        $where = ['nik' => $arr['nik_karyawan'], 'is_aktif' => 1];
+        $data = DB::table('mtr_tbl_karyawan_history_archive as a')->select('a.nik', 'a.nama', 'a.email', 'a.telepon1', 'b.nama as perusahaan', 'c.nama as divisi', 'd.nama as dep', 'e.nama as sub_dep', 'f.level as level', 'g.jabatan as jabatan', 'f.id as id_level', 'h.status_karyawan as status_karyawan', DB::Raw("CONCAT(i.subdepartemen_id, '/', i.subdepartemen_desc) as findim_subdepartemen"), DB::Raw("CONCAT(j.departemen_id, '/', j.departemen_desc) as findim_departemen"), DB::Raw("CONCAT(k.divisi_id, '/', k.divisi_desc) as findim_divisi"), DB::Raw("CONCAT(l.project_id, '/', l.project_desc) as findim_project"))
+            ->leftJoin('mtr_tbl_perusahaan as b', 'b.id', '=', 'a.kode_perusahaan')
+            ->leftJoin('mtr_tbl_divisi as c', 'c.id', '=', 'a.kode_divisi')
+            ->leftJoin('mtr_tbl_departemen as d', 'd.id', '=', 'a.kode_departemen')
+            ->leftJoin('mtr_tbl_sub_departemen as e', 'e.id', '=', 'a.kode_sub_departemen')
+            ->leftJoin('mtr_tbl_level as f', 'f.id', '=', 'a.kode_level')
+            ->leftJoin('mtr_tbl_jabatan as g', 'g.id', '=', 'a.kode_jabatan')
+            ->leftJoin('mtr_tbl_status_karyawan as h', 'h.id', '=', 'a.kode_status')
+            ->leftJoin('mtr_tbl_findim_subdepartemen as i', 'i.id', '=', 'a.findim_subdepartemen')
+            ->leftJoin('mtr_tbl_findim_departemen as j', 'j.id', '=', 'a.findim_departemen')
+            ->leftJoin('mtr_tbl_findim_divisi as k', 'k.id', '=', 'a.findim_divisi')
+            ->leftJoin('mtr_tbl_findim_project as l', 'l.id', '=', 'a.findim_project')
+            ->where($where)->whereDate('a.created_at', Carbon::parse($arr['created_at'])->format('Y-m-d'))->first();
         return json_encode($data);
     }
 
