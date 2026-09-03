@@ -513,9 +513,16 @@ class TrxRecruitmentController extends Controller
             // 10=Interview PC Send
             // 23=Psychotest and Interview Not Pass
             $id_status = array_values(array_diff($id_status, [6,8,10,23]));
-            // 12=Negotiation Process
-            // 25=Not Join
-            array_push($id_status, 12, 25);
+            // 7=Magang
+            // 8=Konsultan
+            if(in_array($trxM->id_status_kerja, [7, 8])){
+                // 13=Negotiation Deal by PC
+                array_push($id_status, 13);
+            }else{
+                // 12=Negotiation Process
+                // 25=Not Join
+                array_push($id_status, 12, 25);
+            }
         }
         // 12=Negotiation Process
         if(in_array(12, $log_status)){
@@ -796,7 +803,8 @@ class TrxRecruitmentController extends Controller
 
     public function negotiation_save(Request $request)
     {
-        $id = Crypt::decrypt($request->id);
+        // $id = Crypt::decrypt($request->id);
+        $id = $request->has('id') ? Crypt::decrypt($request->id) : null;
         // dd($id, $request->all());
         $id_identitas = Crypt::decrypt($request->id_identitas);
         $namafile='';
@@ -819,19 +827,22 @@ class TrxRecruitmentController extends Controller
             $nik = auth()->user()->nik;
             $nama = Karyawan::where(['nik'=>$nik])->first()->nama.'/'.$nik;
         }
-        $trx = TrxRecruitmentNegosiasi::find($id);
-        $trx->id_status = $id_status;
-        // 21=Re-Negotiation Process
-        if($id_status == 21){
-            $trx->thp = str_replace(',', '', $request->thp);
-            $trx->benefit_utama = implode(',', $request->input('benefit_utama', []));
-            $trx->benefit_lainnya = $request->benefit_lainnya;
-            $trx->tgl_bergabung = $request->tgl_bergabung;
-            $trx->id_catat_pegawai = $request->id_catat_pegawai;
-            $trx->id_status_pegawai = $request->id_status_pegawai;
-            $trx->masa_kerja = $request->masa_kerja;
+        // 7=Magang dan 8=Konsultan
+        if(!in_array($_trx->_kebutuhan->id_status_kerja, [7, 8])){
+            $trx = TrxRecruitmentNegosiasi::find($id);
+            $trx->id_status = $id_status;
+            // 21=Re-Negotiation Process
+            if($id_status == 21){
+                $trx->thp = str_replace(',', '', $request->thp);
+                $trx->benefit_utama = implode(',', $request->input('benefit_utama', []));
+                $trx->benefit_lainnya = $request->benefit_lainnya;
+                $trx->tgl_bergabung = $request->tgl_bergabung;
+                $trx->id_catat_pegawai = $request->id_catat_pegawai;
+                $trx->id_status_pegawai = $request->id_status_pegawai;
+                $trx->masa_kerja = $request->masa_kerja;
+            }
+            $trx->update();
         }
-        $trx->update();
         // start
         // id_identitas,id_status,pic,pic_property,aktifitas,catatan
         $arr = [$id_identitas,$id_status,$nama,'','negosiasi',''];
@@ -846,7 +857,8 @@ class TrxRecruitmentController extends Controller
         //     $arr = array_replace($arr, array(2=>$_trx->nama));
         // }
         // 15=Recruitment Done
-        if($id_status != 15){
+        // 7=Magang dan 8=Konsultan
+        if($id_status != 15 && !in_array($_trx->_kebutuhan->id_status_kerja, [7, 8])){
             $this->insertNegotiationLog($trx, $data);
         }
         $this->insertLog($arr);
@@ -859,8 +871,11 @@ class TrxRecruitmentController extends Controller
             $_trx->id_status = $id_status;
             $_trx->file_dokumen_ttd = $request->file_dokumen_ttd;
             $_trx->update();
-            $trx->id_status = $id_status;
-            $trx->update();
+            // 7=Magang dan 8=Konsultan
+            if(!in_array($_trx->_kebutuhan->id_status_kerja, [7, 8])){
+                $trx->id_status = $id_status;
+                $trx->update();
+            }
             // insert to TrxRecruitmentPedoman
             $generik = ['matta_page-0001','matta_page-0002','matta_page-0003','matta_page-0004'];
             // matta_page-0001 = 5eaeebe46db8e8134009d0e8ece5640f
@@ -1890,116 +1905,119 @@ class TrxRecruitmentController extends Controller
                         File::copy(public_path('assets/recruitment/upload/'.$_trx->file_ijazah), public_path('assets/kebutuhan/'.$_trx->file_ijazah));
                     }
                     $file_offering = $id.'_'.now()->getTimestampMs().'.pdf';
-                    $this->pdf_offering($id, $file_offering);
-                    $trxD->file_offering = $file_offering;
-                    $trxD->take_home_pay = $nego->thp;
-                    // mapping ke benefit_utama dan benefit_lainnya
-                    $benefit_utama = explode(',', $nego->benefit_utama);
-                    $id_benefit = array();
-                    foreach($benefit_utama as $data){
-                        // mapping mtr_tbl_recruitment_benefit vs mtr_tbl_benefit
+                    // 7=Magang 8=Konsultan
+                    if(!in_array($trxM->id_status_kerja, [7, 8])){
+                        $this->pdf_offering($id, $file_offering);
+                        $trxD->file_offering = $file_offering;
+                        $trxD->take_home_pay = $nego->thp;
+                        // mapping ke benefit_utama dan benefit_lainnya
+                        $benefit_utama = explode(',', $nego->benefit_utama);
+                        $id_benefit = array();
+                        foreach($benefit_utama as $data){
+                            // mapping mtr_tbl_recruitment_benefit vs mtr_tbl_benefit
+                            // refer to "C:\alita\matta\data_master\mapping kebutuhan vs recruitment v1.xlsx"
+                            // 1=Upah Lembur
+                            if($data == 1){
+                                // 1=Overtime
+                                array_push($id_benefit, 1);
+                            }
+                            // Medical Reimbursement
+                            elseif($data == 2){
+                                // 2=Medical Reimbursement
+                                array_push($id_benefit, 2);
+                            }
+                            // Asuransi
+                            elseif($data == 10){
+                                // 3=Asuransi
+                                array_push($id_benefit, 3);
+                            }
+                            // 5=BPJS Ketenagakerjaan, ditanggung perusahaan
+                            // 6=BPJS Ketenagakerjaan, ditanggung  perusahaan & karyawan
+                            elseif($data == 5 || $data == 6){
+                                // 4=BPJS Ketenagakerjaan
+                                array_push($id_benefit, 4);
+                            }
+                            // 7=BPJS Kesehatan, ditanggung perusahaan
+                            // 8=BPJS Kesehatan, ditanggung  perusahaan & karyawan
+                            elseif($data == 7 || $data == 8){
+                                // 5=BPJS Kesehatan
+                                array_push($id_benefit, 5);
+                            }
+                            // 9=Cuti Setelah 1 tahun
+                            elseif($data == 9){
+                                // 6=Cuti
+                                array_push($id_benefit, 6);
+                            }
+                            // 3=PPh 21, ditanggung perusahaan
+                            // 4=PPh 21, ditanggung perusahaan & karyawan
+                            elseif($data == 3 || $data == 4){
+                                // 7=PPh21
+                                array_push($id_benefit, 7);
+                            }
+                            // 11=Tunjangan Corporate
+                            elseif($data == 11){
+                                // 8=Tunjangan Corporate
+                                array_push($id_benefit, 8);
+                            }
+                            // 12=Tunjangan Project / Operasional
+                            elseif($data == 12){
+                                // 9=Tunjangan Project / Operasional
+                                array_push($id_benefit, 9);
+                            }
+                            // 13=Alat kerja (laptop / notebook)
+                            elseif($data == 13){
+                                // 10=Alat kerja (laptop / notebook)
+                                array_push($id_benefit, 10);
+                            }
+                        }
+                        $trxD->id_benefit = implode(',',$id_benefit);
+                        $trxD->keterangan3 = $nego->benefit_lainnya;
+                        $trxD->tanggal_bergabung = $nego->tgl_bergabung;
+                        // mapping mtr_tbl_recruitment_catat_pegawai vs mtr_tbl_rencana_penambahan
                         // refer to "C:\alita\matta\data_master\mapping kebutuhan vs recruitment v1.xlsx"
-                        // 1=Upah Lembur
-                        if($data == 1){
-                            // 1=Overtime
-                            array_push($id_benefit, 1);
+                        $id_catat_pegawai = $nego->id_catat_pegawai;
+                        // 1=ALITA
+                        if($id_catat_pegawai == 1){
+                            // 4=Internal Alita
+                            $trxD->id_pencatatan_kepegawaian = 4;
                         }
-                        // Medical Reimbursement
-                        elseif($data == 2){
-                            // 2=Medical Reimbursement
-                            array_push($id_benefit, 2);
+                        // 2=Outsource
+                        elseif($id_catat_pegawai == 2){
+                            // 3=Outsource
+                            $trxD->id_pencatatan_kepegawaian = 3;
                         }
-                        // Asuransi
-                        elseif($data == 10){
-                            // 3=Asuransi
-                            array_push($id_benefit, 3);
+                        // mapping mtr_tbl_recruitment_status_pegawai vs mtr_tbl_status_kerja
+                        // refer to "C:\alita\matta\data_master\mapping kebutuhan vs recruitment v1.xlsx"
+                        $id_status_pegawai = $nego->id_status_pegawai;
+                        // 1=Kontrak dan 1=ALITA
+                        if($id_status_pegawai == 1 && $id_catat_pegawai == 1){
+                            // 1=Karyawan Kontrak Alita
+                            $trxD->id_status_kepegawaian = 1;
                         }
-                        // 5=BPJS Ketenagakerjaan, ditanggung perusahaan
-                        // 6=BPJS Ketenagakerjaan, ditanggung  perusahaan & karyawan
-                        elseif($data == 5 || $data == 6){
-                            // 4=BPJS Ketenagakerjaan
-                            array_push($id_benefit, 4);
+                        // 2=Tetap
+                        elseif($id_status_pegawai == 2){
+                            // 2=Karyawan Tetap
+                            $trxD->id_status_kepegawaian = 2;
                         }
-                        // 7=BPJS Kesehatan, ditanggung perusahaan
-                        // 8=BPJS Kesehatan, ditanggung  perusahaan & karyawan
-                        elseif($data == 7 || $data == 8){
-                            // 5=BPJS Kesehatan
-                            array_push($id_benefit, 5);
+                        // 3=Tenaga Lepas Harian (TLH)
+                        elseif($id_status_pegawai == 3){
+                            // 3=Freelance
+                            $trxD->id_status_kepegawaian = 3;
                         }
-                        // 9=Cuti Setelah 1 tahun
-                        elseif($data == 9){
-                            // 6=Cuti
-                            array_push($id_benefit, 6);
+                        // 4=Konsultan
+                        elseif($id_status_pegawai == 4){
+                            // 8=Konsultan
+                            $trxD->id_status_kepegawaian = 8;
                         }
-                        // 3=PPh 21, ditanggung perusahaan
-                        // 4=PPh 21, ditanggung perusahaan & karyawan
-                        elseif($data == 3 || $data == 4){
-                            // 7=PPh21
-                            array_push($id_benefit, 7);
+                        // 1=Kontrak dan 2=Outsource
+                        elseif($id_status_pegawai == 1 && $id_catat_pegawai == 2){
+                            // 9=Karyawan Kontrak Outsource
+                            $trxD->id_status_kepegawaian = 9;
                         }
-                        // 11=Tunjangan Corporate
-                        elseif($data == 11){
-                            // 8=Tunjangan Corporate
-                            array_push($id_benefit, 8);
-                        }
-                        // 12=Tunjangan Project / Operasional
-                        elseif($data == 12){
-                            // 9=Tunjangan Project / Operasional
-                            array_push($id_benefit, 9);
-                        }
-                        // 13=Alat kerja (laptop / notebook)
-                        elseif($data == 13){
-                            // 10=Alat kerja (laptop / notebook)
-                            array_push($id_benefit, 10);
-                        }
+                        $trxD->tanggal_mulai = $nego->tgl_bergabung;
+                        $trxD->tanggal_akhir = Carbon::parse($nego->tgl_bergabung)->addMonths($nego->masa_kerja)->format('Y-m-d');
+                        $trxD->tanggal_ttd_kontrak = $nego->tgl_bergabung;
                     }
-                    $trxD->id_benefit = implode(',',$id_benefit);
-                    $trxD->keterangan3 = $nego->benefit_lainnya;
-                    $trxD->tanggal_bergabung = $nego->tgl_bergabung;
-                    // mapping mtr_tbl_recruitment_catat_pegawai vs mtr_tbl_rencana_penambahan
-                    // refer to "C:\alita\matta\data_master\mapping kebutuhan vs recruitment v1.xlsx"
-                    $id_catat_pegawai = $nego->id_catat_pegawai;
-                    // 1=ALITA
-                    if($id_catat_pegawai == 1){
-                        // 4=Internal Alita
-                        $trxD->id_pencatatan_kepegawaian = 4;
-                    }
-                    // 2=Outsource
-                    elseif($id_catat_pegawai == 2){
-                        // 3=Outsource
-                        $trxD->id_pencatatan_kepegawaian = 3;
-                    }
-                    // mapping mtr_tbl_recruitment_status_pegawai vs mtr_tbl_status_kerja
-                    // refer to "C:\alita\matta\data_master\mapping kebutuhan vs recruitment v1.xlsx"
-                    $id_status_pegawai = $nego->id_status_pegawai;
-                    // 1=Kontrak dan 1=ALITA
-                    if($id_status_pegawai == 1 && $id_catat_pegawai == 1){
-                        // 1=Karyawan Kontrak Alita
-                        $trxD->id_status_kepegawaian = 1;
-                    }
-                    // 2=Tetap
-                    elseif($id_status_pegawai == 2){
-                        // 2=Karyawan Tetap
-                        $trxD->id_status_kepegawaian = 2;
-                    }
-                    // 3=Tenaga Lepas Harian (TLH)
-                    elseif($id_status_pegawai == 3){
-                        // 3=Freelance
-                        $trxD->id_status_kepegawaian = 3;
-                    }
-                    // 4=Konsultan
-                    elseif($id_status_pegawai == 4){
-                        // 8=Konsultan
-                        $trxD->id_status_kepegawaian = 8;
-                    }
-                    // 1=Kontrak dan 2=Outsource
-                    elseif($id_status_pegawai == 1 && $id_catat_pegawai == 2){
-                        // 9=Karyawan Kontrak Outsource
-                        $trxD->id_status_kepegawaian = 9;
-                    }
-                    $trxD->tanggal_mulai = $nego->tgl_bergabung;
-                    $trxD->tanggal_akhir = Carbon::parse($nego->tgl_bergabung)->addMonths($nego->masa_kerja)->format('Y-m-d');
-                    $trxD->tanggal_ttd_kontrak = $nego->tgl_bergabung;
                     $trxD->atasan = $trxM->atasan;
                     $trxD->id_identitas = $id;
                     $trxD->update();
@@ -2013,7 +2031,8 @@ class TrxRecruitmentController extends Controller
                     }
                     // 
                     // email ke kandidat dinyatakan diterima
-                    if(empty($request->param)){
+                    // 7=Magang 8=Konsultan
+                    if(empty($request->param) && !in_array($trxM->id_status_kerja, [7, 8])){
                         // kirim email
                         $link = route('recruitment.download_offering', Crypt::encrypt($_trx->id));
                         $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
