@@ -66,7 +66,7 @@ class AttendanceController extends Controller
             $trx_fp = TrxFingePrint::select(
                 // DB::raw('MIN(trx_tbl_fp_data.id) as id_clock_in'),
                 // DB::raw('CAST(CASE WHEN COUNT(*) > 1 THEN MAX(trx_tbl_fp_data.id) ELSE NULL END AS UNSIGNED) as id_clock_out'),
-                // 'trx_tbl_fp_data.id_nip',
+                'trx_tbl_fp_data.id_nip',
                 'mtr_tbl_karyawan.nik',
                 'mtr_tbl_karyawan.nama',
                 // 'mtr_tbl_karyawan.wg_id',
@@ -131,7 +131,7 @@ class AttendanceController extends Controller
         $duration = array();
         // start default hc
         $att = array();
-        // $att = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereMonth('att_timestamp', $bulan)->whereYear('att_timestamp', $tahun)->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+        // $att = Attendance::select('*')->whereMonth('att_timestamp', $bulan)->whereYear('att_timestamp', $tahun)->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
         // end default hc
         if(auth()->user()->userrole == 'nhc'){
             // $where = ['att_nik' => auth()->user()->nik];
@@ -143,35 +143,35 @@ class AttendanceController extends Controller
                 array_push($att_nik, $data->nik);
             }
             $att_nik_nama = $att_nik_nama->whereIn('att_nik', $att_nik)->values();
-            $att = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereMonth('att_timestamp', $bulan)->whereYear('att_timestamp', $tahun)->whereIn('att_nik', $att_nik)->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+            $att = Attendance::select('*')->whereMonth('att_timestamp', $bulan)->whereYear('att_timestamp', $tahun)->whereIn('att_nik', $att_nik)->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
             // start hitung durasi
             $duration = array();
             $_att_data_src = 'Regular';
-            $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereMonth('att_timestamp', $bulan)->whereYear('att_timestamp', $tahun)->whereIn('att_nik', $att_nik)->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            $raw = Attendance::select('*')->whereMonth('att_timestamp', $bulan)->whereYear('att_timestamp', $tahun)->whereIn('att_nik', $att_nik)->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             foreach($raw as $_raw){
-                $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 // jika non reguler
                 $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
                 if(!Karyawan::where($where)->exists()){
-                    $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                    $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 }
                 // 
                 if(!empty($result)){
-                    array_push($duration, ['att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
+                    array_push($duration, ['att_property' => $_raw->att_property, 'att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
                 }
             }
             $_att_data_src = 'Overtime';
-            $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereMonth('att_timestamp', $bulan)->whereYear('att_timestamp', $tahun)->whereIn('att_nik', $att_nik)->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            $raw = Attendance::select('*')->whereMonth('att_timestamp', $bulan)->whereYear('att_timestamp', $tahun)->whereIn('att_nik', $att_nik)->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             foreach($raw as $_raw){
-                $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 // jika non reguler
                 $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
                 if(!Karyawan::where($where)->exists()){
-                    $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                    $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 }
                 // 
                 if(!empty($result)){
-                    array_push($duration, ['att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
+                    array_push($duration, ['att_property' => $_raw->att_property, 'att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
                 }
             }
             // end hitung durasi
@@ -260,67 +260,67 @@ class AttendanceController extends Controller
             }
             $att_nik = Karyawan::select('nik')->whereIn('kode_perusahaan', $arr_perusahaan)->get();
             $nik_wg_id = Karyawan::select('nik')->whereIn('wg_id', $arr_wg_id)->get();
-            $att = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+            $att = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
             if(!empty($str_att_nik_nama)){
-                $att = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+                $att = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
             }
             if(Gate::allows('hc_nkp')){
-                $att = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+                $att = Attendance::select('*')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
                 if(!empty($str_att_nik_nama)){
-                    $att = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+                    $att = Attendance::select('*')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
                 }
             }
-            // $att = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+            // $att = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
             // start hitung durasi
             $duration = array();
             $_att_data_src = 'Regular';
-            $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            $raw = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             if(!empty($str_att_nik_nama)){
-                $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
+                $raw = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
             }
             if(Gate::allows('hc_nkp')){
-                $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+                $raw = Attendance::select('*')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
                 if(!empty($str_att_nik_nama)){
-                    $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
+                    $raw = Attendance::select('*')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
                 }
             }
-            // $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            // $raw = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             foreach($raw as $_raw){
                 // $this->into_debug(['nomor'=>2, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
-                $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 // jika non reguler
                 $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
                 if(!Karyawan::where($where)->exists()){
-                    $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                    $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 }
                 // 
                 if(!empty($result)){
-                    array_push($duration, ['att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
+                    array_push($duration, ['att_property' => $_raw->att_property, 'att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
                 }
             }
             $_att_data_src = 'Overtime';
-            $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            $raw = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             if(!empty($str_att_nik_nama)){
-                $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
+                $raw = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
             }
             if(Gate::allows('hc_nkp')){
-                $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+                $raw = Attendance::select('*')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
                 if(!empty($str_att_nik_nama)){
-                    $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
+                    $raw = Attendance::select('*')->whereIn('att_nik',$arr_nik_nkp)->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
                 }
             }
-            // $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+            // $raw = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
             foreach($raw as $_raw){
                 // $this->into_debug(['nomor'=>3, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
-                $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 // jika non reguler
                 $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
                 if(!Karyawan::where($where)->exists()){
-                    $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                    $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                 }
                 // 
                 if(!empty($result)){
-                    array_push($duration, ['att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
+                    array_push($duration, ['att_property' => $_raw->att_property, 'att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
                 }
             }
             // end hitung durasi
@@ -334,44 +334,44 @@ class AttendanceController extends Controller
                 foreach($bawahan as $data){
                     array_push($att_nik, $data->nik);
                 }
-                $att = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+                $att = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
                 if(!empty($str_att_nik_nama)){
-                    $att = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
+                    $att = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'att_timestamp', 'desc' )->limit($limit)->get();
                 }
                 // start hitung durasi
                 $duration = array();
                 $_att_data_src = 'Regular';
-                $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+                $raw = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
                 if(!empty($str_att_nik_nama)){
-                    $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
+                    $raw = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
                 }
                 foreach($raw as $_raw){
                     // $this->into_debug(['nomor'=>5, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
-                    $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                    $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                     // jika non reguler
                     $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
                     if(!Karyawan::where($where)->exists()){
-                        $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                        $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                     }
                 if(!empty($result)){
-                        array_push($duration, ['att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
+                        array_push($duration, ['att_property' => $_raw->att_property, 'att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
                     }
                 }
                 $_att_data_src = 'Overtime';
-                $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
+                $raw = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'asc' )->limit($limit)->get();
                 if(!empty($str_att_nik_nama)){
-                    $raw = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
+                    $raw = Attendance::select('*')->whereIn('att_type', $arr_att_type)->whereIn('att_status', $arr_att_status)->whereIn('att_data_src', $arr_att_data_src)->whereIn('att_nik', $att_nik)->whereIn('att_nik', $nik_wg_id)->whereBetween('att_date', [$date_from, $date_to])->where('att_type', '=', 'Clock-in')->where('att_data_src', '=', $_att_data_src)->where(['att_nik'=>$str_att_nik_nama])->orderBy( 'id', 'asc' )->limit($limit)->get();
                 }
                 foreach($raw as $_raw){
                     // $this->into_debug(['nomor'=>6, 'modul'=>Route::getCurrentRoute()->getActionName(), 'url'=>$request->fullUrl()]);
-                    $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
+                    $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_date', '=', $_raw->att_date)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();
                     // jika non reguler
                     $where = ['nik' => $_raw->att_nik, 'wg_id' => 1];
                     if(!Karyawan::where($where)->exists()){
-                        $result = Attendance::select('att_wd_ot_id','id_fp_trx','att_date','att_timestamp','att_nik','att_type','att_long','att_lat','att_address','att_status','att_data_src','wg_id')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();    
+                        $result = Attendance::select('*')->where('att_nik', '=', $_raw->att_nik)->where('att_wd_ot_id', '=', $_raw->att_wd_ot_id)->where('att_type', '=', 'Clock-out')->where('att_data_src', '=', $_att_data_src)->orderBy( 'id', 'desc' )->first();    
                     }
                     if(!empty($result)){
-                        array_push($duration, ['att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
+                        array_push($duration, ['att_property' => $_raw->att_property, 'att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp]);
                     }
                 }
                 // end hitung durasi
@@ -402,7 +402,7 @@ class AttendanceController extends Controller
                 }
                 // 
                 if(!empty($result)){
-                    array_push($duration, ['att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp, 'att_property' => $result->att_property]);
+                    array_push($duration, ['att_property' => $_raw->att_property, 'att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp, 'att_property' => $result->att_property]);
                 }
             }
             $_att_data_src = 'Overtime';
@@ -416,7 +416,7 @@ class AttendanceController extends Controller
                 }
                 // 
                 if(!empty($result)){
-                    array_push($duration, ['att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp, 'att_property' => $result->att_property]);
+                    array_push($duration, ['att_property' => $_raw->att_property, 'att_date' => $_raw->att_date, 'att_nik' => $_raw->att_nik, 'att_data_src' => $_att_data_src, 'Clock-in' => $_raw->att_timestamp, 'Clock-out' => $result->att_timestamp, 'att_property' => $result->att_property]);
                 }
             }
             // end hitung durasi
