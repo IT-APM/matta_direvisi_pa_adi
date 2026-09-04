@@ -136,6 +136,7 @@
                                                 <th>Timestamp</th>
                                                 <th>Nama</th>
                                                 <th>NIP</th>
+                                                <th>ID_FP</th>
                                                 <th>Perusahaan</th>
                                                 <th>Direktorat</th>
                                                 <th>Divisi</th>
@@ -156,18 +157,28 @@
                                         @php $no = 0; @endphp
                                         <tbody>
                                         @foreach ($att as $data)
+                                            @php
+                                            $att_property = json_decode($data->att_property, true);
+                                            $karyawan = App\Models\Karyawan::where(['nik'=>$data->att_nik])->first();
+                                            @endphp
                                             <tr>
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($data->att_date)->format('d-m-Y') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($data->att_timestamp)->format('d-m-Y H:i:s') }}</td>
                                                 <td>{{ $data->_att_nik->nama }}</td>
                                                 <td>{{ $data->att_nik }}</td>
-                                                <td>{{ $data->_att_nik->_perusahaan->nama }}</td>
+                                                <td>@if(!empty($data->id_fp_trx)) {{ $karyawan->id_fp }} @endif</td>
+                                                <td>{{ $att_property['perusahaan'] }}</td>
+                                                <td>{{ $att_property['divisi'] }}</td>
+                                                <td>{{ $att_property['dep'] }}</td>
+                                                <td>{{ $att_property['sub_dep'] }}</td>
+                                                {{-- <td>{{ $data->_att_nik->_perusahaan->nama }}</td>
                                                 <td>{{ $data->_att_nik->_divisi->nama }}</td>
                                                 <td>{{ $data->_att_nik->_departemen->nama }}</td>
-                                                <td>{{ $data->_att_nik->_subdepartemen->nama }}</td>
+                                                <td>{{ $data->_att_nik->_subdepartemen->nama }}</td> --}}
                                                 <td>{{ $data->_att_nik->alamat_kantor }}</td>
-                                                <td>{{ $data->_att_nik->_wg->wg_name }}</td>
+                                                <td>{{ $att_property['wg_name'] }}</td>
+                                                {{-- <td>{{ $data->_att_nik->_wg->wg_name }}</td> --}}
                                                 <td>
                                                     @if($data->att_type == 'Clock-in')
                                                         <span class="badge rounded-pill badge-light-primary">{{ $data->att_type }}</span>
@@ -282,6 +293,7 @@
                                         @if(!empty($duration))
                                         <tbody>
                                         @foreach ($duration as $data)
+                                            @php $att_property = json_decode($data['att_property'], true); @endphp
                                             <tr>
                                                 <td>{{ ++$no }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($data['att_date'])->format('d-m-Y') }}</td>
@@ -294,12 +306,17 @@
                                                 @endphp
                                                 <td>{{ $karyawan->nama }}</td>
                                                 <td>{{ $data['att_nik'] }}</td>
-                                                <td>{{ $karyawan->_perusahaan->nama }}</td>
+                                                <td>{{ $att_property['perusahaan'] }}</td>
+                                                <td>{{ $att_property['divisi'] }}</td>
+                                                <td>{{ $att_property['dep'] }}</td>
+                                                <td>{{ $att_property['sub_dep'] }}</td>
+                                                {{-- <td>{{ $karyawan->_perusahaan->nama }}</td>
                                                 <td>{{ $karyawan->_divisi->nama }}</td>
                                                 <td>{{ $karyawan->_departemen->nama }}</td>
-                                                <td>{{ $karyawan->_subdepartemen->nama }}</td>
+                                                <td>{{ $karyawan->_subdepartemen->nama }}</td> --}}
                                                 <td>{{ $karyawan->alamat_kantor }}</td>
-                                                <td>{{ $karyawan->_wg->wg_name }}</td>
+                                                <td>{{ $att_property['wg_name'] }}</td>
+                                                {{-- <td>{{ $karyawan->_wg->wg_name }}</td> --}}
                                                 <td>
                                                     @if($data['att_data_src'] == 'Regular')
                                                         <span class="badge badge-success">{{ $data['att_data_src'] }}</span>
