@@ -70,6 +70,7 @@
                                         <th>No</th>
                                         <th>Nama</th>
                                         <th>NIP</th>
+                                        <th>ID_FP</th>
                                         <th>Waktu</th>
                                         <th>Mesin</th>
                                         {{-- <th>Clock In</th>
@@ -83,6 +84,7 @@
                                             <td>{{ ++$no }}</td>
                                             <td>{{ $data->nama }}</td>
                                             <td>{{ $data->nik }}</td>
+                                            <td>{{ $data->id_nip }}</td>
                                             <td>{{ $data->waktu ? Carbon\Carbon::parse($data->waktu)->format('d-m-Y H:i:s') : '' }}</td>
                                             {{-- <td>@if(!empty($data->id_mesin)) FINGER-{{ $data->id_mesin }} @endif</td> --}}
                                             <td>@if($data->id_mesin == 1) <span class="badge badge-primary">FINGER-{{ $data->id_mesin }}</span> @else <span class="badge badge-info">FINGER-{{ $data->id_mesin }}</span> @endif</td>
