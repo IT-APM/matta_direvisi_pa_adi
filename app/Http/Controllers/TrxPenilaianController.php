@@ -65,38 +65,37 @@ class TrxPenilaianController extends Controller
         $trx->t_lain = str_replace(',', '', $request->t_lain);
         $getOriginal = $trx->getOriginal();
         $trx->update();
-        // start
-        Karyawan::where('nik', $trx->nik_karyawan)->update([
-            'kode_perusahaan' => $request->id_perusahaan,
-            'kode_divisi' => $request->id_divisi,
-            'kode_departemen' => $request->id_departemen,
-            'kode_sub_departemen' => $request->id_sub_departemen,
-            'kode_level' => $request->id_level,
-            'kode_jabatan' => $request->id_jabatan
-        ]);
         // simpan jika ada perubahan
         $getChanges = $trx->getChanges();
         // dd($getOriginal, $getChanges);
+        // start
         $arr = array();
         if ($trx->wasChanged('id_perusahaan')){
             $arr['kode_perusahaan'] = ['before'=>Perusahaan::find($getOriginal['id_perusahaan'])->nama, 'after'=>Perusahaan::find($getChanges['id_perusahaan'])->nama];
+            $update['kode_perusahaan'] = $request->id_perusahaan;
         }
         if ($trx->wasChanged('id_divisi')){
             $arr['kode_divisi'] = ['before'=>Divisi::find($getOriginal['id_divisi'])->nama, 'after'=>Divisi::find($getChanges['id_divisi'])->nama];
+            $update['kode_divisi'] = $request->id_divisi;
         }
         if ($trx->wasChanged('id_departemen')){
             $arr['kode_departemen'] = ['before'=>Departemen::find($getOriginal['id_departemen'])->nama, 'after'=>Departemen::find($getChanges['id_departemen'])->nama];
+            $update['kode_departemen'] = $request->id_departemen;
         }
         if ($trx->wasChanged('id_sub_departemen')){
             $arr['kode_sub_departemen'] = ['before'=>SubDepartemen::find($getOriginal['id_sub_departemen'])->nama, 'after'=>SubDepartemen::find($getChanges['id_sub_departemen'])->nama];
+            $update['kode_sub_departemen'] = $request->id_sub_departemen;
         }
         if ($trx->wasChanged('id_level')){
             $arr['kode_level'] = ['before'=>Level::find($getOriginal['id_level'])->level, 'after'=>Level::find($getChanges['id_level'])->level];
+            $update['kode_level'] = $request->id_level;
         }
         if ($trx->wasChanged('id_jabatan')){
             $arr['kode_jabatan'] = ['before'=>Jabatan::find($getOriginal['id_jabatan'])->jabatan, 'after'=>Jabatan::find($getChanges['id_jabatan'])->jabatan];
+            $update['kode_jabatan'] = $request->id_jabatan;
         }
         if(!empty($arr)){
+            Karyawan::where('nik', $trx->nik_karyawan)->update($update);
             $log = New KaryawanLog;
             $log->nik = $trx->nik_karyawan;
             $log->perubahan = json_encode($arr);
