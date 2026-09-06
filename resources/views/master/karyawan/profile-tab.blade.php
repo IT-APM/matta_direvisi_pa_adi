@@ -470,12 +470,14 @@
                                             </thead>
                                             <tbody>
                                                 @foreach ($history as $data)
-                                                @php $_history = json_decode($data->perubahan, true); @endphp
+                                                @php
+                                                    $_history = json_decode($data->perubahan, true);
+                                                    $catatan = json_decode($data->catatan, true);
+                                                @endphp
                                                 <tr>
                                                     <td>{{ ++$no_history }}</td>
                                                     <td>{{ $data->_nik->nama }} / {{ $data->nik }}</td>
                                                     <td>{{ $data->_insert_by->nama }} / {{ $data->insert_by }}</td>
-                                                    <!-- <td>{{ $data->perubahan }}</td> -->
                                                     <td>
                                                         <table class="table table-striped">
                                                             <thead>
@@ -497,9 +499,7 @@
                                                         </table>
                                                     </td>
                                                     <td>{{ $data->created_at }}</td>
-                                                    <td>
-                                                        @if($data->from_flag == 1) Data Master Employee @elseif($data->from_flag == 2) Penilaian Karyawan @endif
-                                                    </td>
+                                                    <td>{{ $catatan['sumber'] }}</td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>
