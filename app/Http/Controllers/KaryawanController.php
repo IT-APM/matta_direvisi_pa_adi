@@ -2161,12 +2161,14 @@ class KaryawanController extends Controller
             $log->nik = $karyawan->nik;
             $log->perubahan = json_encode($arr);
             $log->insert_by = auth()->user()->nik;
+            $catatan = json_encode(['sumber'=>'Data Master Karyawan']);
+            $log->catatan = $catatan;
             $log->save();
             // start sendEmail
             $mailData['title'] = 'Perubahan Data Karyawan';
             $mailData['filename'] = 'emails.data0';
             $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","tanggal_tidak_aktif"=>"Tanggal Tidak Aktif","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama","findim_project"=>"Findim Project","findim_divisi"=>"Findim Divisi","findim_departemen"=>"Findim Departemen","findim_subdepartemen"=>"Findim Sub Departemen","id_grade"=>"Grade","id_fp"=>"ID Finger Print"];
-            $mailData['data'] = ['insert_by' => $log->_insert_by->nama.' / '.$log->insert_by, 'nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at];
+            $mailData['data'] = ['insert_by' => $log->_insert_by->nama.' / '.$log->insert_by, 'nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at, 'catatan' => $catatan];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // end sendEmail
@@ -2252,13 +2254,15 @@ class KaryawanController extends Controller
             $log->nik = auth()->user()->nik;
             $log->perubahan = json_encode($arr);
             $log->insert_by = auth()->user()->nik;
+            $catatan = json_encode(['sumber'=>'Profil Karyawan']);
+            $log->catatan = $catatan;
             $log->save();
             // start sendEmail
             $mailData['title'] = 'Perubahan Data Karyawan';
             $mailData['filename'] = 'emails.data0';
             $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan"];
             // $mailData['data'] = ['nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at];
-            $mailData['data'] = ['insert_by' => $log->_insert_by->nama.' / '.$log->insert_by, 'nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at];
+            $mailData['data'] = ['insert_by' => $log->_insert_by->nama.' / '.$log->insert_by, 'nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at, 'catatan' => $catatan];
             $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
             $this->sendEmail($mailData);
             // end sendEmail
