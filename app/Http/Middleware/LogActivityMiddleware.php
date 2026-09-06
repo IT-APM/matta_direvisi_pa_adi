@@ -19,29 +19,29 @@ class LogActivityMiddleware
     public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
-        $user = auth()->user();
-        $location = Http::get("https://ipwho.is/{$request->ip()}")->json();
-        // $location = Http::get("http://ip-api.com/json/{$request->ip()}");
-        // if (!$location->successful()) {
-        //     $location = [
-        //         'status' => 'fail',
-        //         'message' => 'Failed get IP address locations',
-        //     ];
-        // }else{
-        //     $location = $location->json();
-        // }
-        activity()
-            ->causedBy($user)
-            ->withProperties([
-                'method' => $request->method(),
-                'url' => $request->fullUrl(),
-                'ip' => $request->ip(),
-                'location' => $location,
-                'user_agent' => $request->userAgent(),
-                'request' => $request->except(['password', 'password_confirmation']),
-                'response_status' => $response->getStatusCode(),
-            ])
-            ->log($this->getActionName($request));
+        // $user = auth()->user();
+        // $location = Http::get("https://ipwho.is/{$request->ip()}")->json();
+        // // $location = Http::get("http://ip-api.com/json/{$request->ip()}");
+        // // if (!$location->successful()) {
+        // //     $location = [
+        // //         'status' => 'fail',
+        // //         'message' => 'Failed get IP address locations',
+        // //     ];
+        // // }else{
+        // //     $location = $location->json();
+        // // }
+        // activity()
+        //     ->causedBy($user)
+        //     ->withProperties([
+        //         'method' => $request->method(),
+        //         'url' => $request->fullUrl(),
+        //         'ip' => $request->ip(),
+        //         'location' => $location,
+        //         'user_agent' => $request->userAgent(),
+        //         'request' => $request->except(['password', 'password_confirmation']),
+        //         'response_status' => $response->getStatusCode(),
+        //     ])
+        //     ->log($this->getActionName($request));
         return $response;
     }
 
