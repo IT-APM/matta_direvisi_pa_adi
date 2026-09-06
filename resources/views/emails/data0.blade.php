@@ -16,12 +16,16 @@
                 <thead>
                     <tr>
                         <th style="width:20%">Karyawan</th>
-                        <th style="width:60%">Perubahan Data</th>
-                        <th style="width:20%">Waktu Perubahan</th>
+                        <th style="width:50%">Data</th>
+                        <th style="width:15%">Perubahan</th>
+                        <th style="width:15%">Sumber</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @php $_history = json_decode($data['perubahan'], true); @endphp
+                    @php
+                        $_history = json_decode($data['perubahan'], true);
+                        $catatan = json_decode($data['catatan'], true);
+                    @endphp
                     <tr>
                         <td>{{ $data['nama'] }} / {{ $data['nik'] }}</td>
                         <td>
@@ -34,7 +38,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $_history = json_decode($data['perubahan'], true); @endphp
                                     @foreach ($_history as $_data => $val)
                                     <tr>
                                         <td>{{ $data['lbl_history'][$_data] }}</td>
@@ -46,6 +49,7 @@
                             </table>
                         </td>
                         <td>{{ $data['created_at'] }}</td>
+                        <td>{{ $catatan['sumber'] }}</td>
                     </tr>
                 </tbody>
             </table>
