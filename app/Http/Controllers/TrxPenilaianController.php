@@ -11,6 +11,7 @@ use App\Models\SubDepartemen;
 use App\Models\Level;
 use App\Models\Jabatan;
 use App\Models\Karyawan;
+use App\Models\KaryawanLog;
 use App\Models\KaryawanPendidikan;
 use App\Models\TrxPenilaian;
 use App\Models\TrxPenilaianLog;
@@ -62,7 +63,57 @@ class TrxPenilaianController extends Controller
         $trx->t_jabatan = str_replace(',', '', $request->t_jabatan);
         $trx->t_telekomunikasi = str_replace(',', '', $request->t_telekomunikasi);
         $trx->t_lain = str_replace(',', '', $request->t_lain);
+        $getOriginal = $trx->getOriginal();
         $trx->update();
+        // start
+        Karyawan::where('nik', $trx->nik_karyawan)->update([
+            'kode_perusahaan' => $request->id_perusahaan,
+            'kode_divisi' => $request->id_divisi,
+            'kode_departemen' => $request->id_departemen,
+            'kode_sub_departemen' => $request->id_sub_departemen,
+            'kode_level' => $request->id_level,
+            'kode_jabatan' => $request->id_jabatan
+        ]);
+        // simpan jika ada perubahan
+        $getChanges = $trx->getChanges();
+        // dd($getOriginal, $getChanges);
+        $arr = array();
+        if ($trx->wasChanged('id_perusahaan')){
+            $arr['kode_perusahaan'] = ['before'=>Perusahaan::find($getOriginal['id_perusahaan'])->nama, 'after'=>Perusahaan::find($getChanges['id_perusahaan'])->nama];
+        }
+        if ($trx->wasChanged('id_divisi')){
+            $arr['kode_divisi'] = ['before'=>Divisi::find($getOriginal['id_divisi'])->nama, 'after'=>Divisi::find($getChanges['id_divisi'])->nama];
+        }
+        if ($trx->wasChanged('id_departemen')){
+            $arr['kode_departemen'] = ['before'=>Departemen::find($getOriginal['id_departemen'])->nama, 'after'=>Departemen::find($getChanges['id_departemen'])->nama];
+        }
+        if ($trx->wasChanged('id_sub_departemen')){
+            $arr['kode_sub_departemen'] = ['before'=>SubDepartemen::find($getOriginal['id_sub_departemen'])->nama, 'after'=>SubDepartemen::find($getChanges['id_sub_departemen'])->nama];
+        }
+        if ($trx->wasChanged('id_level')){
+            $arr['kode_level'] = ['before'=>Level::find($getOriginal['id_level'])->level, 'after'=>Level::find($getChanges['id_level'])->level];
+        }
+        if ($trx->wasChanged('id_jabatan')){
+            $arr['kode_jabatan'] = ['before'=>Jabatan::find($getOriginal['id_jabatan'])->jabatan, 'after'=>Jabatan::find($getChanges['id_jabatan'])->jabatan];
+        }
+        if(!empty($arr)){
+            $log = New KaryawanLog;
+            $log->nik = $trx->nik_karyawan;
+            $log->perubahan = json_encode($arr);
+            $log->insert_by = auth()->user()->nik;
+            $catatan = json_encode(['sumber'=>'Data PKWT Karyawan']);
+            $log->catatan = $catatan;
+            $log->save();
+            // start sendEmail
+            $mailData['title'] = 'Perubahan Data Karyawan';
+            $mailData['filename'] = 'emails.data0';
+            $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","tanggal_tidak_aktif"=>"Tanggal Tidak Aktif","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama","findim_project"=>"Findim Project","findim_divisi"=>"Findim Divisi","findim_departemen"=>"Findim Departemen","findim_subdepartemen"=>"Findim Sub Departemen","id_grade"=>"Grade","id_fp"=>"ID Finger Print"];
+            $mailData['data'] = ['insert_by' => $log->_insert_by->nama.' / '.$log->insert_by, 'nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at, 'catatan' => $catatan];
+            $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
+            $this->sendEmail($mailData);
+            // end sendEmail
+        }
+        // end
         return redirect()->to($request->back_url)->with( 'msg', 'Data is saved successfully.' );
     }
     
@@ -1727,8 +1778,8 @@ class TrxPenilaianController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request->all(), $id);
         $id = (new OpenDataController)->decryptWithKey($id);
+        // dd($request->all(), $id);
         $id_status = $request->id_status;
         $id_tipe = $request->id_tipe;
         if($id_status==14 || $id_status==15){
@@ -1871,6 +1922,37 @@ class TrxPenilaianController extends Controller
             // 5=Tunjangan Lainnya
             $trx->t_lain = $tunjangan->where('id_addsub', 5)->first()->angka;
             $trx->update();
+        }
+        // end
+        // start
+        // update tanggal_berakhir untuk
+        // 1=Diperpanjang
+        // 4=Done by HC (180)
+        // 8=Done by HC (360)
+        $tanggal_berakhir_before = Karyawan::where('nik', $trx->nik_karyawan)->value('tanggal_berakhir');
+        if($request->is_perpanjang == 1 && in_array($id_status, [4,8])){
+            Karyawan::where('nik', $trx->nik_karyawan)->update([
+                'tanggal_berakhir' => DB::raw("LAST_DAY(DATE_ADD(tanggal_berakhir, INTERVAL {$request->bulan} MONTH))")
+            ]);
+            // start
+            $log = New KaryawanLog;
+            $log->nik = $trx->nik_karyawan;
+            // {"tanggal_berakhir":{"before":"2025-12-31","after":"2026-12-31"}}
+            $tanggal_berakhir_after = Karyawan::where('nik', $trx->nik_karyawan)->value('tanggal_berakhir');
+            $arr['tanggal_berakhir'] = ['before'=>$tanggal_berakhir_before, 'after'=>$tanggal_berakhir_after];
+            $log->perubahan = json_encode($arr);
+            $log->insert_by = auth()->user()->nik;
+            $catatan = json_encode(['sumber'=>'Penilaian Karyawan']);
+            $log->catatan = $catatan;
+            $log->save();
+            // start sendEmail
+            $mailData['title'] = 'Perubahan Data Karyawan';
+            $mailData['filename'] = 'emails.data0';
+            $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","tanggal_tidak_aktif"=>"Tanggal Tidak Aktif","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama","findim_project"=>"Findim Project","findim_divisi"=>"Findim Divisi","findim_departemen"=>"Findim Departemen","findim_subdepartemen"=>"Findim Sub Departemen","id_grade"=>"Grade","id_fp"=>"ID Finger Print"];
+            $mailData['data'] = ['insert_by' => $log->_insert_by->nama.' / '.$log->insert_by, 'nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at, 'catatan' => $catatan];
+            $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
+            $this->sendEmail($mailData);
+            // end
         }
         // end
         return redirect( 'penilaian' )->with( 'msg', 'Data is saved successfully.' );
