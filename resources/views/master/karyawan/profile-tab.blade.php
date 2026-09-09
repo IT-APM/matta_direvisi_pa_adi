@@ -491,8 +491,8 @@
                                                                 @foreach ($_history as $_data => $val)
                                                                 <tr>
                                                                     <td>{{ $lbl_history[$_data] }}</td>
-                                                                    <td>{{ $val['before'] }}</td>
-                                                                    <td>{{ $val['after'] }}</td>
+                                                                    <td>@if(in_array($_data, ['layer1','layer2','layer3'])) {{ App\Models\Karyawan::where('nik', $val['before'])->first()->nama }} / @endif {{ $val['before'] }}</td>
+                                                                    <td>@if(in_array($_data, ['layer1','layer2','layer3'])) {{ App\Models\Karyawan::where('nik', $val['after'])->first()->nama }} / @endif {{ $val['after'] }}</td>
                                                                 </tr>
                                                                 @endforeach
                                                             </tbody>
