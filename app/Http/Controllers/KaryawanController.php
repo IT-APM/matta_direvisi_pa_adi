@@ -1609,6 +1609,184 @@ class KaryawanController extends Controller
      */
     public function index(Request $request)
     {
+        // http://localhost/matta/karyawan?str=reorganisasi
+        // if($request->str == 'reorganisasi'){
+        //     // dd($request->all());
+        //     // sync table mtr_tbl_karyawan_re_org dengan mtr_tbl_karyawan
+        //     $count = DB::update("
+        //         UPDATE `mtr_tbl_karyawan_re_org` AS a 
+        //         INNER JOIN `mtr_tbl_karyawan` AS b ON a.`nip` = b.`nik`
+        //         LEFT JOIN `mtr_tbl_perusahaan` AS c ON b.`kode_perusahaan` = c.`id`
+        //         SET 
+        //             a.`id_dir_b`   = b.`kode_divisi`,
+        //             a.`id_div_b`   = b.`kode_departemen`,
+        //             a.`id_dep_b`   = b.`kode_sub_departemen`,
+        //             a.`id_occ_b`   = b.`kode_jabatan`,
+        //             a.`nip_l1_b`   = b.`layer1`,
+        //             a.`nip_l2_b`   = b.`layer2`,
+        //             a.`nip_l3_b`   = b.`layer3`,
+        //             a.`id_per`     = b.`kode_perusahaan`,
+        //             a.`perusahaan` = c.`nama`
+        //     ");
+        //     // dd($count);
+        //     // jalankan data dari mtr_tbl_karyawan_re_org
+        //     $data = DB::table('mtr_tbl_karyawan_re_org')
+        //     ->select('perusahaan', 'dir_a', 'div_a', 'dep_a', 'occ_a')
+        //     ->get();
+        //     foreach($data as $_data){
+        //         // jika ada divisi baru maka tambahkan
+        //         $perusahaan = DB::table('mtr_tbl_perusahaan')
+        //         ->select('id', 'nama')
+        //         ->where('nama', $_data->perusahaan)
+        //         ->first();
+        //         $exists_div = DB::table('mtr_tbl_divisi as a')
+        //         ->leftJoin('mtr_tbl_perusahaan as b', 'a.kode_perusahaan', '=', 'b.id')
+        //         ->where('b.nama', $_data->perusahaan)
+        //         ->where('a.nama', $_data->dir_a)
+        //         ->exists();
+        //         if(!$exists_div){
+        //             DB::table('mtr_tbl_divisi')->insert([
+        //                 'nama' => $_data->dir_a,
+        //                 'kode_perusahaan' => $perusahaan->id,
+        //                 'is_active' => 1,
+        //                 'created_at' => now(),
+        //                 'updated_at' => now(),
+        //             ]);
+        //         }
+        //         // jika ada departemen baru maka tambahkan
+        //         $kode_divisi = DB::table('mtr_tbl_divisi as a')
+        //         ->leftJoin('mtr_tbl_perusahaan as b', 'a.kode_perusahaan', '=', 'b.id')
+        //         ->where('b.nama', $_data->perusahaan)
+        //         ->where('a.nama', $_data->dir_a)
+        //         ->value('a.id');
+        //         $exists_dep = DB::table('mtr_tbl_departemen as a')
+        //         ->leftJoin('mtr_tbl_divisi as b', 'a.kode_divisi', '=', 'b.id')
+        //         ->leftJoin('mtr_tbl_perusahaan as c', 'b.kode_perusahaan', '=', 'c.id')
+        //         ->where('c.nama', $_data->perusahaan)
+        //         ->where('b.nama', $_data->dir_a)
+        //         ->where('a.nama', $_data->div_a)
+        //         ->exists();
+        //         if(!$exists_dep){
+        //             DB::table('mtr_tbl_departemen')->insert([
+        //                 'nama' => $_data->div_a,
+        //                 'kode_divisi' => $kode_divisi,
+        //                 'is_active' => 1,
+        //                 'created_at' => now(),
+        //                 'updated_at' => now(),
+        //             ]);
+        //         }
+        //         // jika ada sub_departemen baru maka tambahkan
+        //         $kode_dep = DB::table('mtr_tbl_departemen as a')
+        //         ->leftJoin('mtr_tbl_divisi as b', 'a.kode_divisi', '=', 'b.id')
+        //         ->leftJoin('mtr_tbl_perusahaan as c', 'b.kode_perusahaan', '=', 'c.id')
+        //         ->where('c.nama', $_data->perusahaan)
+        //         ->where('b.nama', $_data->dir_a)
+        //         ->where('a.nama', $_data->div_a)
+        //         ->value('a.id');
+        //         $exists_sub_dep = DB::table('mtr_tbl_sub_departemen as a')
+        //         ->leftJoin('mtr_tbl_departemen as b', 'a.kode_departemen', '=', 'b.id')
+        //         ->leftJoin('mtr_tbl_divisi as c', 'b.kode_divisi', '=', 'c.id')
+        //         ->leftJoin('mtr_tbl_perusahaan as d', 'c.kode_perusahaan', '=', 'd.id')
+        //         ->where('d.nama', $_data->perusahaan)
+        //         ->where('c.nama', $_data->dir_a)
+        //         ->where('b.nama', $_data->div_a)
+        //         ->where('a.nama', $_data->dep_a)
+        //         ->exists();
+        //         if(!$exists_sub_dep){
+        //             DB::table('mtr_tbl_sub_departemen')->insert([
+        //                 'nama' => $_data->dep_a,
+        //                 'kode_departemen' => $kode_dep,
+        //                 'is_active' => 1,
+        //                 'created_at' => now(),
+        //                 'updated_at' => now(),
+        //             ]);
+        //         }
+        //         // jika ada jabatan baru maka tambahkan
+        //         $jabatan = DB::table('mtr_tbl_jabatan')
+        //         ->where('jabatan', $_data->occ_a)
+        //         ->exists();
+        //         if(!$jabatan){
+        //             DB::table('mtr_tbl_jabatan')->insert([
+        //                 'jabatan' => $_data->occ_a,
+        //                 'created_at' => now(),
+        //                 'updated_at' => now(),
+        //             ]);
+        //         }
+        //     }
+        //     // sync mtr_tbl_karyawan_re_org dari data update diatas
+        //     $data = DB::table('mtr_tbl_karyawan_re_org')->select('*')->get();
+        //     foreach($data as $_data){
+        //         $id = DB::table('mtr_tbl_sub_departemen as a')
+        //         ->leftJoin('mtr_tbl_departemen as b', 'a.kode_departemen', '=', 'b.id')
+        //         ->leftJoin('mtr_tbl_divisi as c', 'b.kode_divisi', '=', 'c.id')
+        //         ->leftJoin('mtr_tbl_perusahaan as d', 'c.kode_perusahaan', '=', 'd.id')
+        //         ->select(
+        //             'a.id as sub_dep',
+        //             'b.id as dep',
+        //             'c.id as div'
+        //         )
+        //         ->where('a.nama', $_data->dep_a)
+        //         ->where('b.nama', $_data->div_a)
+        //         ->where('c.nama', $_data->dir_a)
+        //         ->where('d.nama', $_data->perusahaan)
+        //         ->first();
+        //         $jabatan = DB::table('mtr_tbl_jabatan')->where('jabatan', $_data->occ_a)->first();
+        //         if($id){
+        //             DB::table('mtr_tbl_karyawan_re_org')
+        //             ->where('nip', $_data->nip)
+        //             ->update([
+        //                 'id_dep_a' => $id->sub_dep,
+        //                 'id_div_a' => $id->dep,
+        //                 'id_dir_a' => $id->div,
+        //                 'id_occ_a' => $jabatan->id,
+        //             ]);
+        //         }
+        //     }
+        //     // update mtr_tbl_karyawan dari mtr_tbl_karyawan_re_org
+        //     $data = DB::table('mtr_tbl_karyawan_re_org')->select('*')->get();
+        //     foreach($data as $_data){
+        //         $arr = array();
+        //         $update = array();
+        //         if($_data->id_dir_b <> $_data->id_dir_a){
+        //             $arr['kode_divisi'] = ['before'=>Divisi::find($_data->id_dir_b)->nama, 'after'=>Divisi::find($_data->id_dir_a)->nama];
+        //             $update['kode_divisi'] = $_data->id_dir_a;
+        //         }
+        //         if($_data->id_div_b <> $_data->id_div_a){
+        //             $arr['kode_departemen'] = ['before'=>Departemen::find($_data->id_div_b)->nama, 'after'=>Departemen::find($_data->id_div_a)->nama];
+        //             $update['kode_departemen'] = $_data->id_div_a;
+        //         }
+        //         if($_data->id_dep_b <> $_data->id_dep_a){
+        //             $arr['kode_sub_departemen'] = ['before'=>SubDepartemen::find($_data->id_dep_b)->nama, 'after'=>SubDepartemen::find($_data->id_dep_a)->nama];
+        //             $update['kode_sub_departemen'] = $_data->id_dep_a;
+        //         }
+        //         if($_data->id_occ_b <> $_data->id_occ_a){
+        //             $arr['kode_jabatan'] = ['before'=>Jabatan::find($_data->id_occ_b)->jabatan, 'after'=>Jabatan::find($_data->id_occ_a)->jabatan];
+        //             $update['kode_jabatan'] = $_data->id_occ_a;
+        //         }
+        //         if($_data->nip_l1_b <> $_data->nip_l1_a){
+        //             $arr['layer1'] = ['before'=>$_data->nip_l1_b, 'after'=>$_data->nip_l1_a];
+        //             $update['layer1'] = $_data->nip_l1_a;
+        //         }
+        //         if($_data->nip_l2_b <> $_data->nip_l2_a){
+        //             $arr['layer2'] = ['before'=>$_data->nip_l2_b, 'after'=>$_data->nip_l2_a];
+        //             $update['layer2'] = $_data->nip_l2_a;
+        //         }
+        //         if($_data->nip_l3_b <> $_data->nip_l3_a){
+        //             $arr['layer3'] = ['before'=>$_data->nip_l3_b, 'after'=>$_data->nip_l3_a];
+        //             $update['layer3'] = $_data->nip_l3_a;
+        //         }
+        //         Karyawan::where('nik', $_data->nip)->update($update);
+        //         $log = New KaryawanLog;
+        //         $log->nik = $_data->nip;
+        //         $log->perubahan = json_encode($arr);
+        //         $log->insert_by = '01032307866';
+        //         $catatan = json_encode(['sumber'=>'Data Reorganisasi Karyawan']);
+        //         $log->catatan = $catatan;
+        //         $log->save();
+        //     }
+        //     dd('done');
+        // }
+        
         if($request->str == 'proper_karyawan'){
             $trx = Karyawan::all();
             foreach($trx as $_trx){
