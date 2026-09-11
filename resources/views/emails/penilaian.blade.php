@@ -188,6 +188,12 @@
                                                                         <!--  -->
                                                                     </td>
                                                                 </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>Tanggal Berakhir: @if(!empty($data['tanggal_berakhir'])) {{ Carbon\Carbon::parse($data['tanggal_berakhir'])->format('d-m-Y') }} @endif </b>
+                                                                        <hr />
+                                                                    </td>
+                                                                </tr>
                                                                 <!--  -->
                                                                 {!! $isian_kes_rek !!}
                                                                 <!--  -->
