@@ -201,6 +201,7 @@
                                     {{-- <th>Nominal Klaim</th> --}}
                                     <th>Klaim Kesehatan</th>
                                     <th>Klaim Non Kesehatan</th>
+                                    @can('hc')
                                     @php
                                      $non_kesehatan = App\Models\ReimburseLayanan::all();
                                     @endphp
@@ -210,6 +211,7 @@
                                     <th>{{ $non_kesehatan->find(5)->layanan }}</th>
                                     <th>{{ $non_kesehatan->find(6)->layanan }}</th>
                                     <th>{{ $non_kesehatan->find(7)->layanan }}</th>
+                                    @endcan
                                     <th>Status</th>
                                     <th>Created at</th>
                                     <th>Updated at</th>
@@ -249,12 +251,14 @@
                                     {{-- <td>Rp. {{ number_format($data->klaim_kesehatan + $data->klaim_non_kesehatan, 0) }}</td> --}}
                                     <td>Rp. {{ number_format($data->klaim_kesehatan, 0) }}</td>
                                     <td>Rp. {{ number_format($data->klaim_non_kesehatan, 0) }}</td>
+                                    @can('hc')
                                     <td>@if(!empty($trxD->where('id_layanan', 2)->first())) Rp. {{ number_format($trxD->where('id_layanan', 2)->first()->jumlah_klaim, 0) }} @else Rp. 0 @endif</td>
                                     <td>@if(!empty($trxD->where('id_layanan', 3)->first())) Rp. {{ number_format($trxD->where('id_layanan', 3)->first()->jumlah_klaim, 0) }} @else Rp. 0 @endif</td>
                                     <td>@if(!empty($trxD->where('id_layanan', 4)->first())) Rp. {{ number_format($trxD->where('id_layanan', 4)->first()->jumlah_klaim, 0) }} @else Rp. 0 @endif</td>
                                     <td>@if(!empty($trxD->where('id_layanan', 5)->first())) Rp. {{ number_format($trxD->where('id_layanan', 5)->first()->jumlah_klaim, 0) }} @else Rp. 0 @endif</td>
                                     <td>@if(!empty($trxD->where('id_layanan', 6)->first())) Rp. {{ number_format($trxD->where('id_layanan', 6)->first()->jumlah_klaim, 0) }} @else Rp. 0 @endif</td>
                                     <td>@if(!empty($trxD->where('id_layanan', 7)->first())) Rp. {{ number_format($trxD->where('id_layanan', 7)->first()->jumlah_klaim, 0) }} @else Rp. 0 @endif</td>
+                                    @endcan
                                     <td>{{ $data->_status->status }}</td>
                                     <td>{{ $data->created_at }}</td>
                                     <td>{{ $data->updated_at }}</td>
