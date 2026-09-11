@@ -39,6 +39,7 @@ class DataCleansingController extends Controller
         // dijalankan hanya di tanggal 01 setiap bulannya
         if(explode('-', Carbon::now()->format('Y-m-d'))[2] == '01'){
             $this->PerubahanDataKaryawanBulanan();
+            // dd('done');
         }
         // $data = $this->PerubahanDataKaryawanBulanan();
         // return response()->json( [ 'success' => true, 'layer1' => $data ], 200 );
@@ -229,17 +230,19 @@ class DataCleansingController extends Controller
 
     public function PerubahanDataKaryawanBulanan()
     {
+        KaryawanBulanan::query()->delete();
         $trx = Karyawan::select(
             DB::raw('COUNT(*) as total'),
             'layer1'
         )
         ->where('is_aktif', 1)
+        ->whereNotIn('nik', ['Hco.all','IT.BM'])
         ->whereNotNull('layer1')
         ->whereRaw("TRIM(layer1) <> ''")
         ->groupBy('layer1')
         ->get();
         foreach($trx as $data){
-            $_trx = Karyawan::where(['is_aktif'=>1, 'layer1'=>$data->layer1])->orderBy('nama', 'asc')->get();
+            $_trx = Karyawan::where(['is_aktif'=>1, 'layer1'=>$data->layer1])->whereNotIn('nik', ['Hco.all','IT.BM'])->orderBy('nama', 'asc')->get();
             foreach($_trx as $_data){
                 $insert = new KaryawanBulanan;
                 $insert->tanggal = Carbon::now()->format('Y-m-d');
