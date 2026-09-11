@@ -90,15 +90,15 @@
                 <p>Dear</p>
                 <p>Berikut Konfirmasi Data Karyawan dari bawahan {{ $layer1_property['nama'] }} (Layer1), Divisi {{ $layer1_property['dep'] }}, Departement {{ $layer1_property['sub_dep'] }} periode bulan {{ Carbon\Carbon::parse($data['data']->tanggal)->locale('id')->isoFormat('MMMM YYYY') }}.</p>
                 @endif
-                <p>{!! $html !!}</p>
                 @if(in_array($data['data']->is_berubah, [0, 1]))
-                <p>Mohon konfirmasinya selambat - lambatnya hari ini dengan klik link di bawah guna kebutuhan penggajian periode bulan {{ Carbon\Carbon::parse($data['data']->tanggal)->locale('id')->isoFormat('MMMM YYYY') }} dan update database kami.</p>
+                <p>Mohon konfirmasinya selambat - lambatnya hari ini dengan klik Link Konfirmasi Data Karyawan di bawah guna kebutuhan penggajian periode bulan {{ Carbon\Carbon::parse($data['data']->tanggal)->locale('id')->isoFormat('MMMM YYYY') }} dan update database kami.</p>
                 @elseif(in_array($data['data']->is_berubah, [2]))
-                <p>Mohon konfirmasinya telah menerima informasi ini dengan klik link di bawah guna kebutuhan penggajian periode bulan {{ Carbon\Carbon::parse($data['data']->tanggal)->locale('id')->isoFormat('MMMM YYYY') }} dan update database kami.</p>
+                <p>Mohon konfirmasinya telah menerima informasi ini dengan klik Link Konfirmasi Data Karyawan di bawah guna kebutuhan penggajian periode bulan {{ Carbon\Carbon::parse($data['data']->tanggal)->locale('id')->isoFormat('MMMM YYYY') }} dan update database kami.</p>
                 @endif
                 @if(!empty($data['link']))
-                <p><h3><a href="{{ $data['link'] }}" target="_blank">Link</a></h3></p>
+                <p><h3><a href="{{ $data['link'] }}" target="_blank">Link Konfirmasi Data Karyawan</a></h3></p>
                 @endif
+                <p>{!! $html !!}</p>
                 <p>Demikian Infomasi saya sampaikan. Terimakasih atas perhatian dan kerjasamanya.</p>
                 @include('emails.footer0')
             </div>
