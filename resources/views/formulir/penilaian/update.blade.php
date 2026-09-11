@@ -108,10 +108,13 @@
                                 </tbody>
                             </table>
                             @endif
-                        </div>
-                        <div class="card-body">
+                            <br/>
+                            @if(!empty($_karyawan['tanggal_berakhir']))<b>Tanggal Berakhir: {{ Carbon\Carbon::parse($_karyawan['tanggal_berakhir'])->format('d-m-Y') }}</b><hr/>@endif
                             {!! $isian_kes_rek !!}
                         </div>
+                        {{-- <div class="card-body">
+                            {!! $isian_kes_rek !!}
+                        </div> --}}
             </div>
         </div>
         <div class="col-sm-8">
