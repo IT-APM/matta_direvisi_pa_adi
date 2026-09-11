@@ -187,13 +187,13 @@
                                                 <td>{{ ++$no }}</td>
                                                 <td>@if($data->id_status == 3) <input id="id_identitas[]" name="id_identitas[]" type="checkbox" value="{{ $data->id }}"> @endif</td>
                                                 <td>{{ $nomor }}</td>
-                                                <td>
+                                                <td>@can('hc')
                                                     <a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id)]) }}" data-toggle="tooltip" title='Process'><i class="icon-pencil-alt"></i></a>
                                                     {{-- jika belum 5=Psychotest Done maka bisa diberikan extend --}}
                                                     @if(!in_array(5, $log) && $data->id_status > 3)&nbsp;<a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'type'=>'extend']) }}" data-toggle="tooltip" title='Extend'><i class="fa fa-calendar-plus-o"></i></a>@endif
                                                     <br/><a href="{{ route('recruitment.applicant_item', [Crypt::encrypt($data->id)]) }}" data-toggle="tooltip" title='Form' target="_blank"><i class="fa fa-file-text-o" style="color:green"></i></a>
                                                     &nbsp;<a href="{{ route('recruitment.psychotest', [Crypt::encrypt(array($data->id, 'psychotest'))]) }}" data-toggle="tooltip" title='Psychotest' target="_blank"><i class="fa fa-file-text-o" style="color:green"></i></a>
-                                                </td>
+                                                @endcan</td>
                                                 <td>
                                                     {{-- jika ada soal dan sudah selesai maka tampilkan hasilnya --}}
                                                     @if($check_tiu5)
@@ -236,19 +236,19 @@
                                                 {{-- $check3 adalah pengecekan apakah psikotes sudah berjalan, jika belum maka bisa reschedule --}}
                                                 <td>@if(!empty($data->check_in)){{ \Carbon\Carbon::parse($data->check_in) ->format('d-m-Y H:i:s') }} @if($check3) <a href="{{ route('recruitment.applicant_process', [Crypt::encrypt($data->id), 'process'=>'psikotest_reschedule']) }}" target="_self" data-toggle="tooltip" title="Reschedule"><i class="fa fa-calendar" aria-hidden="true"></i></a> @endif @endif</td>
                                                 <td>@if(!empty($data->check_out)){{ \Carbon\Carbon::parse($data->check_out) ->format('d-m-Y H:i:s') }}@endif</td>
-                                                <td>
+                                                <td>@can('hc')
                                                     {{-- 16=Interpretation --}}
                                                     @if(in_array(16, $log))<a href="{{ route('recruitment.get_interpretation', [Crypt::encrypt([$data->id, 'view'])]) }}" target="_blank" data-toggle="tooltip" title="Interpretation"><i class="fa fa-file-text-o"></i></a>@endif
                                                     {{-- @if(!empty($data->interpretasi))<a href="{{ asset('assets/recruitment/upload/'.$data->interpretasi) }}" target="_blank" data-toggle="tooltip" title="File Interpretasi"><i class="fa fa-file-text-o"></i></a>@endif --}}
-                                                </td>
-                                                <td>
+                                                @endcan</td>
+                                                <td>@can('hc')
                                                     {{-- 12=Negotiation Process --}}
                                                     @if(in_array(12, $log))<a href="{{ route('recruitment.get_offering', [Crypt::encrypt([$data->id, 'view'])]) }}" target="_blank" data-toggle="tooltip" title="Offering Letter"><i class="fa fa-file-text-o"></i></a>@endif
-                                                </td>
-                                                <td>
+                                                @endcan</td>
+                                                <td>@can('hc')
                                                     {{-- 20=COC and File Upload Done --}}
                                                     @if(in_array(20, $log))<a href="{{ route('recruitment.upload_dokumen_get', [Crypt::encrypt([$data->id, 'view'])]) }}" target="_blank" data-toggle="tooltip" title="File Upload"><i class="fa fa-file-text-o"></i></a>@endif
-                                                </td>
+                                                @endcan</td>
                                                 <td>{{ $data->_status->status }}</td>
                                                 <td>@if(!empty($data->id_join)) {!! implode('<br/>', App\Models\MtrJoin::whereIn('id', explode(',', $data->id_join))->orderBy('nama', 'asc')->pluck('nama')->toArray()) !!} @endif</td>
                                                 <td>{{ $data->created_at }}</td>
@@ -319,6 +319,7 @@
                         </div>
                         {{-- Negotiation --}}
                         <div class="tab-pane fade" id="pills-negotiation" role="tabpanel" aria-labelledby="pills-negotiation-tab">
+                            @can('hc')
                             <p class="mb-0 m-t-10">
                                 <div class="table-responsive text-nowrap">
                                     <table class="display" id="_datatable2">
@@ -370,6 +371,7 @@
                                     </table>
                                 </div>
                             </p>
+                            @endcan
                         </div>
                         {{--  --}}
                     </div>
