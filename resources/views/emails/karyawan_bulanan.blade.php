@@ -121,12 +121,12 @@ if(!empty($karyawan)){
                     <p>Dear</p>
                     <p>Berikut Konfirmasi Data Karyawan dari bawahan {{ $layer1_property['nama'] }} (Layer1), Divisi {{ $layer1_property['dep'] }}, Departement {{ $layer1_property['sub_dep'] }} periode bulan {{ Carbon\Carbon::parse($trx->tanggal)->locale('id')->isoFormat('MMMM YYYY') }}.</p>
                     @endif
-                    <p>{!! $html !!}</p>
                     @if(in_array($trx->is_berubah, [0, 1]))
-                    <p>Mohon konfirmasinya selambat - lambatnya hari ini dengan klik link di bawah guna kebutuhan penggajian periode bulan {{ Carbon\Carbon::parse($trx->tanggal)->locale('id')->isoFormat('MMMM YYYY') }} dan update database kami.</p>
+                    <p>Mohon konfirmasinya selambat - lambatnya hari ini dengan klik Link Konfirmasi Data Karyawan di bawah guna kebutuhan penggajian periode bulan {{ Carbon\Carbon::parse($trx->tanggal)->locale('id')->isoFormat('MMMM YYYY') }} dan update database kami.</p>
                     @elseif(in_array($trx->is_berubah, [2]))
-                    <p>Mohon konfirmasinya telah menerima informasi ini dengan klik link di bawah guna kebutuhan penggajian periode bulan {{ Carbon\Carbon::parse($trx->tanggal)->locale('id')->isoFormat('MMMM YYYY') }} dan update database kami.</p>
+                    <p>Mohon konfirmasinya telah menerima informasi ini dengan klik Link Konfirmasi Data Karyawan di bawah guna kebutuhan penggajian periode bulan {{ Carbon\Carbon::parse($trx->tanggal)->locale('id')->isoFormat('MMMM YYYY') }} dan update database kami.</p>
                     @endif
+                    <p>{!! $html !!}</p>
                     <form method="post" enctype="multipart/form-data" action="{{ route('karyawanperubahan.update', Crypt::encrypt($trx->is_berubah + 1)) }}" target="_self" onsubmit="return confirm('Are you sure want to submit this data?');">
                     @method('PATCH')
                     @csrf
