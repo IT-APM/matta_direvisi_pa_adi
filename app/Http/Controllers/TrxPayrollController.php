@@ -1383,76 +1383,79 @@ class TrxPayrollController extends Controller
                 // dimulai dari baris ke-3
                 // data payroll
                 for ($x = 2; $x < count($data0); $x++) {
-                    // delete data existing
-                    $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
-                    TrxPayroll::where($where)->delete();
-                    TrxPayrollAddsub::where($where)->delete();
-                    TrxPayrollBpjstk::where($where)->delete();
-                    TrxPayrollBpjskes::where($where)->delete();
-                    TrxPayrollEmail::where($where)->delete();
-                    // default akan menggunakan dari mtr_tbl_karyawan
-                    $where = ['nik' => $data0[$x][$_101]];
-                    $karyawan = Karyawan::where($where)->first();
-                    // jika tidak maka gunakan data lampau dari mtr_tbl_karyawan_history
-                    $_check = Carbon::create($data0[$x][$_103], $data0[$x][$_102], 25);
-                    $check = $_check->isSameMonth(Carbon::now()) && $_check->isSameYear(Carbon::now());
-                    if(!$check && KaryawanHistory::whereDate('created_at', $_check)->exists()){
-                        $karyawan = KaryawanHistory::whereDate('created_at', $_check)->first();
+                    // tidak boleh row ada yang kosong
+                    if(!empty($data0[$x][$_100])){
+                        // delete data existing
+                        $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                        TrxPayroll::where($where)->delete();
+                        TrxPayrollAddsub::where($where)->delete();
+                        TrxPayrollBpjstk::where($where)->delete();
+                        TrxPayrollBpjskes::where($where)->delete();
+                        TrxPayrollEmail::where($where)->delete();
+                        // default akan menggunakan dari mtr_tbl_karyawan
+                        $where = ['nik' => $data0[$x][$_101]];
+                        $karyawan = Karyawan::where($where)->first();
+                        // jika tidak maka gunakan data lampau dari mtr_tbl_karyawan_history
+                        $_check = Carbon::create($data0[$x][$_103], $data0[$x][$_102], 25);
+                        $check = $_check->isSameMonth(Carbon::now()) && $_check->isSameYear(Carbon::now());
+                        if(!$check && KaryawanHistory::whereDate('created_at', $_check)->exists()){
+                            $karyawan = KaryawanHistory::whereDate('created_at', $_check)->first();
+                        }
+                        // dd($karyawan);
+                        // $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
+                        // TrxPayroll::where($where)->delete();
+                        $trx = New TrxPayroll;
+                        $trx->status = $data0[$x][$_100];
+                        $trx->nik = $data0[$x][$_101];
+                        $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
+                        $trx->bulan = $data0[$x][$_102];
+                        $trx->tahun = $data0[$x][$_103];
+                        $trx->gapok = $data0[$x][$_104];
+                        $trx->findim_subdepartemen = $karyawan->_findim_subdepartemen->subdepartemen_id.'/'.$karyawan->_findim_subdepartemen->subdepartemen_desc;
+                        $trx->findim_departemen = $karyawan->_findim_departemen->departemen_id.'/'.$karyawan->_findim_departemen->departemen_desc;
+                        $trx->findim_divisi = $karyawan->_findim_divisi->divisi_id.'/'.$karyawan->_findim_divisi->divisi_desc;
+                        $trx->findim_project = $karyawan->_findim_project->project_id.'/'.$karyawan->_findim_project->project_desc;
+                        $trx->perusahaan = $karyawan->_perusahaan->nama;
+                        $trx->divisi = $karyawan->_divisi->nama;
+                        $trx->departemen = $karyawan->_departemen->nama;
+                        $trx->subdepartemen = $karyawan->_subdepartemen->nama;
+                        $trx->status_karyawan = $karyawan->_status->status_karyawan;
+                        $trx->status_aktif = 'Aktif';
+                        $trx->jabatan = $karyawan->_jabatan->jabatan;
+                        $trx->level = $karyawan->_level->level;
+                        $trx->grade = $karyawan->_grade->grade;
+                        $trx->created_by = auth()->user()->nik;
+                        $trx->updated_by = auth()->user()->nik;
+                        // overtime data bulan lalu
+                        // start
+                        $date_from = Carbon::createFromFormat('Y-m-d', "{$data0[$x][$_103]}-{$data0[$x][$_102]}-01")->subMonth()->startOfMonth()->format('Y-m-d');
+                        $date_to = Carbon::createFromFormat('Y-m-d', "{$data0[$x][$_103]}-{$data0[$x][$_102]}-01")->subMonth()->endOfMonth()->format('Y-m-d');
+                        $where = ['ot_maker_by'=>$data0[$x][$_101], 'ot_approver_status'=>'Approve'];
+                        $overtime = Overtime::select(DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
+                        $overtime = $overtime->sum('ot_length_rp_adj');
+                        // end
+                        $trx->overtime = $overtime;
+                        $trx->overtime_max = MtrUtility::find(33)->informasi;
+                        // overtime_ori sama dengan overtime
+                        $trx->overtime_ori = $overtime;
+                        // hanya outsource saja
+                        if($data0[$x][$_100] == 'osc'){
+                            // 401=PPh21
+                            $trx->pajak = $data0[$x][$_401];
+                            // parameter tidak digunakan lagi
+                            // 4=Management Fee(%)
+                            // $trx->mgt_fee = MtrPayrollBpjsMax::find(4)->angka;
+                            // 5=Management Fee Kompensasi KKWT(%)
+                            // $trx->mgt_fee_kkwt = MtrPayrollBpjsMax::find(5)->angka;
+                            // 
+                            // 501=Management Fee (%)
+                            $trx->mgt_fee = $data0[$x][$_501]*100;
+                            // 502=Management Fee Kompensasi KKWT(%)
+                            $trx->mgt_fee_kkwt = $data0[$x][$_502]*100;
+                            // dd($data0[$x][$_501], $data0[$x][$_502]);
+                        }
+                        $trx->save();
                     }
-                    // dd($karyawan);
-                    // $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103]];
-                    // TrxPayroll::where($where)->delete();
-                    $trx = New TrxPayroll;
-                    $trx->status = $data0[$x][$_100];
-                    $trx->nik = $data0[$x][$_101];
-                    $trx->nik_property = $this->getNikProperty($data0[$x][$_101]);
-                    $trx->bulan = $data0[$x][$_102];
-                    $trx->tahun = $data0[$x][$_103];
-                    $trx->gapok = $data0[$x][$_104];
-                    $trx->findim_subdepartemen = $karyawan->_findim_subdepartemen->subdepartemen_id.'/'.$karyawan->_findim_subdepartemen->subdepartemen_desc;
-                    $trx->findim_departemen = $karyawan->_findim_departemen->departemen_id.'/'.$karyawan->_findim_departemen->departemen_desc;
-                    $trx->findim_divisi = $karyawan->_findim_divisi->divisi_id.'/'.$karyawan->_findim_divisi->divisi_desc;
-                    $trx->findim_project = $karyawan->_findim_project->project_id.'/'.$karyawan->_findim_project->project_desc;
-                    $trx->perusahaan = $karyawan->_perusahaan->nama;
-                    $trx->divisi = $karyawan->_divisi->nama;
-                    $trx->departemen = $karyawan->_departemen->nama;
-                    $trx->subdepartemen = $karyawan->_subdepartemen->nama;
-                    $trx->status_karyawan = $karyawan->_status->status_karyawan;
-                    $trx->status_aktif = 'Aktif';
-                    $trx->jabatan = $karyawan->_jabatan->jabatan;
-                    $trx->level = $karyawan->_level->level;
-                    $trx->grade = $karyawan->_grade->grade;
-                    $trx->created_by = auth()->user()->nik;
-                    $trx->updated_by = auth()->user()->nik;
-                    // overtime data bulan lalu
-                    // start
-                    $date_from = Carbon::createFromFormat('Y-m-d', "{$data0[$x][$_103]}-{$data0[$x][$_102]}-01")->subMonth()->startOfMonth()->format('Y-m-d');
-                    $date_to = Carbon::createFromFormat('Y-m-d', "{$data0[$x][$_103]}-{$data0[$x][$_102]}-01")->subMonth()->endOfMonth()->format('Y-m-d');
-                    $where = ['ot_maker_by'=>$data0[$x][$_101], 'ot_approver_status'=>'Approve'];
-                    $overtime = Overtime::select(DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
-                    $overtime = $overtime->sum('ot_length_rp_adj');
-                    // end
-                    $trx->overtime = $overtime;
-                    $trx->overtime_max = MtrUtility::find(33)->informasi;
-                    // overtime_ori sama dengan overtime
-                    $trx->overtime_ori = $overtime;
-                    // hanya outsource saja
-                    if($data0[$x][$_100] == 'osc'){
-                        // 401=PPh21
-                        $trx->pajak = $data0[$x][$_401];
-                        // parameter tidak digunakan lagi
-                        // 4=Management Fee(%)
-                        // $trx->mgt_fee = MtrPayrollBpjsMax::find(4)->angka;
-                        // 5=Management Fee Kompensasi KKWT(%)
-                        // $trx->mgt_fee_kkwt = MtrPayrollBpjsMax::find(5)->angka;
-                        // 
-                        // 501=Management Fee (%)
-                        $trx->mgt_fee = $data0[$x][$_501]*100;
-                        // 502=Management Fee Kompensasi KKWT(%)
-                        $trx->mgt_fee_kkwt = $data0[$x][$_502]*100;
-                        // dd($data0[$x][$_501], $data0[$x][$_502]);
-                    }
-                    $trx->save();
                 }
                 // data tambahan
                 $addsub = MtrPayrollAddsub::whereIn('id', $data0[0])->orderBy('id', 'asc')->get();
@@ -1468,20 +1471,22 @@ class TrxPayrollController extends Controller
                     foreach($arr as $_arr){
                         // $where = ['nik'=>$data0[$x][$_101], 'bulan'=>$data0[$x][$_102], 'tahun'=>$data0[$x][$_103], 'id_addsub'=>$_arr[1]];
                         // TrxPayrollAddsub::where($where)->delete();
-                        $trx = New TrxPayrollAddsub;
-                        $trx->status = $data0[$x][$_100];
-                        $trx->nik = $data0[$x][$_101];
-                        $trx->bulan = $data0[$x][$_102];
-                        $trx->tahun = $data0[$x][$_103];
-                        // 0=index data
-                        $trx->angka = $data0[$x][$_arr[0]];
-                        // 1=id_addsub
-                        $trx->id_addsub = $_arr[1];
-                        // 2=tipe
-                        $trx->tipe = $_arr[2];
-                        $trx->created_by = auth()->user()->nik;
-                        $trx->updated_by = auth()->user()->nik;
-                        $trx->save();
+                        if(!empty($data0[$x][$_100])){
+                            $trx = New TrxPayrollAddsub;
+                            $trx->status = $data0[$x][$_100];
+                            $trx->nik = $data0[$x][$_101];
+                            $trx->bulan = $data0[$x][$_102];
+                            $trx->tahun = $data0[$x][$_103];
+                            // 0=index data
+                            $trx->angka = $data0[$x][$_arr[0]];
+                            // 1=id_addsub
+                            $trx->id_addsub = $_arr[1];
+                            // 2=tipe
+                            $trx->tipe = $_arr[2];
+                            $trx->created_by = auth()->user()->nik;
+                            $trx->updated_by = auth()->user()->nik;
+                            $trx->save();
+                        }
                     }
                     // hanya alita saja
                     if($data0[$x][$_100] == 'apm'){
