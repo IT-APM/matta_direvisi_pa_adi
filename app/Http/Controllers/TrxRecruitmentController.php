@@ -610,6 +610,10 @@ class TrxRecruitmentController extends Controller
 
     public function applicant_list(Request $request, $id)
     {
+        $allowed_nik = ['P0826165'];
+        if (!auth()->user()->can('hc') && !in_array(auth()->user()->nik, $allowed_nik)) {
+            return redirect()->route('error-403');
+        }
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $id_kebutuhan = TrxKebutuhanMaster::pluck('id')->toArray();
@@ -742,6 +746,10 @@ class TrxRecruitmentController extends Controller
 
     public function interview_item($id)
     {
+        $allowed_nik = ['P0826165'];
+        if (!auth()->user()->can('hc') && !in_array(auth()->user()->nik, $allowed_nik)) {
+            return redirect()->route('error-403');
+        }
         $id = Crypt::decrypt($id);
         // dd($id);
         $trx = TrxRecruitmentInterview::find($id);
@@ -1537,6 +1545,10 @@ class TrxRecruitmentController extends Controller
 
     public function upload_psikotest($id)
     {
+        $allowed_nik = ['P0826165'];
+        if (!auth()->user()->can('hc') && !in_array(auth()->user()->nik, $allowed_nik)) {
+            return redirect()->route('error-403');
+        }
         $id = Crypt::decrypt($id);
         $_id = $id[0];
         $kondisi = $id[1];
@@ -1549,6 +1561,10 @@ class TrxRecruitmentController extends Controller
 
     public function upload_psikotest_post(Request $request)
     {
+        $allowed_nik = ['P0826165'];
+        if (!auth()->user()->can('hc') && !in_array(auth()->user()->nik, $allowed_nik)) {
+            return redirect()->route('error-403');
+        }
         $id = Crypt::decrypt($request->id);
         $_trx = TrxRecruitmentIdentitas::find($id);
         if($request->hasFile('file_epps')){
@@ -1691,6 +1707,10 @@ class TrxRecruitmentController extends Controller
     public function interview_save(Request $request)
     {
         // dd($request->all());
+        $allowed_nik = ['P0826165'];
+        if (!auth()->user()->can('hc') && !in_array(auth()->user()->nik, $allowed_nik)) {
+            return redirect()->route('error-403');
+        }
         $nik = auth()->user()->nik;
         $nama = Karyawan::where(['nik'=>$nik])->first()->nama;
         $id = Crypt::decrypt($request->id);
@@ -3242,6 +3262,10 @@ class TrxRecruitmentController extends Controller
 
     public function psychotestexcel(Request $request, $id)
     {
+        $allowed_nik = ['P0826165'];
+        if (!auth()->user()->can('hc') && !in_array(auth()->user()->nik, $allowed_nik)) {
+            return redirect()->route('error-403');
+        }
         $id = Crypt::decrypt($id);
         // dd($request->all(), $id);
         $filename = '';
