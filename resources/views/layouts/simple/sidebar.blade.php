@@ -230,7 +230,9 @@
                     </li>
 					@endcan
                     {{--  --}}
-                    @can('hc')
+                    {{-- @can('hc') --}}
+                    @php $allowed_nik = ['P0826165']; @endphp
+                    @if(auth()->user()->can('hc') || in_array(auth()->user()->nik, $allowed_nik))
                     <li class="sidebar-main-title">
                         <div>
                             <h6>Recruitment</h6>
@@ -291,7 +293,8 @@
                         <svg class="fill-icon">
                             <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"> </use>
                         </svg><span>List of Recruitment</span></a></li>
-                    @endcan
+                    @endif
+                    {{-- @endcan --}}
                     <li class="sidebar-main-title">
                         <div>
                             <h6>Payroll</h6>
