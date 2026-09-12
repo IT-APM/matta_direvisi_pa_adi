@@ -66,7 +66,10 @@ class TrxPayrollController extends Controller
         // cek tanggal
         $today = Carbon::today();
         // setiap tanggal 1 memindahkan trx_tbl_payroll ke trx_tbl_payroll_log
-        if($today->day == 1) {
+        // atau
+        // tidak ada data bulan dan tahun saat ini
+        $exists = TrxPayroll::where('bulan', $today->month)->where('tahun', $today->year)->exists();
+        if($today->day == 1 || !$exists) {
             $this->bkp(0);
         }
         $check = TrxPayroll::whereNull('paid_at')->exists();
