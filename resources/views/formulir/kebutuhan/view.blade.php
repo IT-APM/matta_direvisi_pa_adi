@@ -126,19 +126,20 @@
                                     // 2=Approved by L1
                                     // 9=Approved by L2 to P&C
                                     // 10=Done by P&C
-                                    $disable=[1,2,9,10];
+                                    // $disable=[1,2,9,10];
+                                    $disable=[1,2,9];
                                     $remains = array_diff($disable, $history->pluck('id_status')->toArray());
                                     rsort($remains);
-                                    $nik_hco = App\Models\MtrUtility::find(37)->informasi;
+                                    // $nik_hco = App\Models\MtrUtility::find(37)->informasi;
                                 @endphp
                                 @foreach ($remains as $remain)
                                 <li class="d-flex">
                                     <div class="activity-dot-dark"></div>
                                     <div class="ms-3">
                                         <h6 class="f-light" style="color: #adb5bd;">{{ App\Models\KebutuhanStatus::find($remain)->status_pengajuan }}</h6>
-                                        @if($remain == 10)
-                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$nik_hco)->first()->nama }} / {{ $nik_hco }}</p>
-                                        @elseif($remain == 9)
+                                        {{-- @if($remain == 10)
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$nik_hco)->first()->nama }} / {{ $nik_hco }}</p> --}}
+                                        @if($remain == 9)
                                         <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$trxM->layer2)->first()->nama }} / {{ $trxM->layer2 }}</p>
                                         @elseif($remain == 2)
                                         <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$trxM->layer1)->first()->nama }} / {{ $trxM->layer1 }}</p>
