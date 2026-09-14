@@ -96,6 +96,61 @@
                         </div>
                         <div class="card-body pt-0">
                             <ul>
+                                @php
+                                    // tipe
+                                    // 1=Penilaian 180
+                                    // 4=Penilaian 180-Reguler
+                                    // 5=Penilaian 180-Assesment
+                                    // 2=Penilaian 360-Reguler
+                                    // 3=Penilaian 360-Assesment
+                                    // 6=Penilaian Outsourcing
+                                    // status
+                                    // 1=Send to Employee
+                                    // 2=Done by Employee
+                                    // 3=Done By Reviewer 1
+                                    // 4=Done by P&C (180)
+                                    // 6=Done By Reviewer 2
+                                    // 7=Done By Reviewer 3
+                                    // 8=Done by P&C (360)
+                                    // untuk tipe=[1,4,5] maka status=[1,2,3]
+                                    $disable=[1,2,3];
+                                    // untuk tipe=[2,3] maka status=[1,2,3,6,7]
+                                    if(in_array($penilaian->id_tipe, [2,3])){
+                                        $disable=[1,2,3,6,7];
+                                        if(empty($penilaian->nik_penilai_3)){
+                                            $disable=[1,2,3,6];
+                                        }
+                                    }
+                                    // untuk tipe=[6] maka status=[3,6,7]
+                                    elseif(in_array($penilaian->id_tipe, [6])){
+                                        $disable=[3,6,7];
+                                        if(empty($penilaian->nik_penilai_3)){
+                                            $disable=[3,6];
+                                        }
+                                    }
+                                    $remains = array_diff($disable, $history->pluck('id_status')->toArray());
+                                    rsort($remains);
+                                    // $nik_hco = App\Models\MtrUtility::find(37)->informasi;
+                                @endphp
+                                @foreach ($remains as $remain)
+                                <li class="d-flex">
+                                    <div class="activity-dot-dark"></div>
+                                    <div class="ms-3">
+                                        <h6 class="f-light" style="color: #adb5bd;">{{ App\Models\MtrPenilaianStatus::find($remain)->status_penilaian }}</h6>
+                                        @if($remain == 7)
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$penilaian->nik_penilai_3)->first()->nama }} / {{ $penilaian->nik_penilai_3 }}</p>
+                                        @elseif($remain == 6)
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$penilaian->nik_penilai_2)->first()->nama }} / {{ $penilaian->nik_penilai_2 }}</p>
+                                        @elseif($remain == 3)
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$penilaian->nik_penilai_1)->first()->nama }} / {{ $penilaian->nik_penilai_1 }}</p>
+                                        @elseif($remain == 2)
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$penilaian->nik_karyawan)->first()->nama }} / {{ $penilaian->nik_karyawan }}</p>
+                                        @endif
+                                    </div>
+                                </li>
+                                @endforeach
+                            </ul>   
+                            <ul>
                                 @foreach ($history as $_history)
                                 <li class="d-flex">
                                     @if ($loop->first)
