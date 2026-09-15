@@ -93,7 +93,7 @@ class MtrDataBpdController extends Controller
             $request->validate([
                 'lampiran' => 'required|file|mimes:xls,xlsx|max:2048',
             ]);
-            BpdNikPeran::truncate();
+            // BpdNikPeran::truncate();
             // 0 = NIP
             // 1 = Nama
             // 2 = Business Travel Group
