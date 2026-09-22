@@ -141,7 +141,7 @@
                 <!-- hc -->
                 <table width="100%" border="0" cellspacing="0" cellpadding="2">
                     <tr>
-                        <td align="center"><strong>HUMAN CAPITAL</strong></td>
+                        <td align="center"><strong>PEOPLE & CULTURE</strong></td>
                     </tr>
                 </table>
                 <hr />
