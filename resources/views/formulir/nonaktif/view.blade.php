@@ -155,7 +155,7 @@
                                         $isReject = true;
                                     }
                                 }elseif($value->_into_ == 'hc'){
-                                    $lable = 'Human Capital';
+                                    $lable = 'People & Culture';
                                     $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
                                     // 22 = Reject by PIC HC
                                     // 23 = Resubmit to PIC HC
@@ -163,6 +163,17 @@
                                     $whereIn = [22, 23, 24];
                                     $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
                                     if(!empty($log) && $log->id_status == 22){
+                                        $isReject = true;
+                                    }
+                                }elseif($value->_into_ == 'am'){
+                                    $lable = 'Application Management';
+                                    $where = ['id_trx' => $value->id_trx, 'nik_pic' => $value->kepada];
+                                    // 28 = Reject by PIC Application Management
+                                    // 29 = Resubmit to PIC Application Management
+                                    // 30 = Approve by PIC Application Management
+                                    $whereIn = [28, 29, 30];
+                                    $log = App\Models\TrxNonaktifLog::where($where)->whereIn('id_status', $whereIn)->orderBy('id', 'desc')->first();
+                                    if(!empty($log) && $log->id_status == 28){
                                         $isReject = true;
                                     }
                                 }
@@ -204,6 +215,73 @@
                             </div>
                         </div>
                         <div class="card-body pt-0">
+                            <ul>
+                                @php
+                                    // status
+                                    // 31=Statement Of Compliance
+                                    // 1=Submit to All PIC
+                                    // 8=Approve by PIC DIVISI
+                                    // 12=Approve by PIC GA
+                                    // 16=Approve by PIC IT
+                                    // 20=Approve by PIC KOPERASI
+                                    // 24=Approve by PIC P&C
+                                    // 30=Approve by PIC Application Management
+                                    // 4=Done All
+                                    $disable=[4,8,12,16,20,24];
+                                    if($trxD->where(['id_trx'=>$trxM->id, '_into_'=>'am'])->isNotEmpty()){
+                                        $disable=[4,8,12,16,20,24,30];
+                                    }
+                                    $remains = array_diff($disable, $history->pluck('id_status')->toArray());
+                                    $remains = array_values($remains);
+                                @endphp
+                                @foreach ($remains as $remain)
+                                <li class="d-flex">
+                                    <div class="activity-dot-dark"></div>
+                                    <div class="ms-3">
+                                        <h6 class="f-light" style="color: #adb5bd;">{{ App\Models\NonaktifStatus::find($remain)->status }}</h6>
+                                        @if($remain == 4)
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$trxM->atasan)->first()->nama }} / {{ $trxM->atasan }}</p>
+                                        @elseif($remain == 8)
+                                            @foreach ($trxD as $value)
+                                            @if($value->_into_ == 'di')
+                                            <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                            @endif
+                                            @endforeach
+                                        @elseif($remain == 12)
+                                            @foreach ($trxD as $value)
+                                            @if($value->_into_ == 'ga')
+                                            <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                            @endif
+                                            @endforeach
+                                        @elseif($remain == 16)
+                                            @foreach ($trxD as $value)
+                                            @if($value->_into_ == 'it')
+                                            <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                            @endif
+                                            @endforeach
+                                        @elseif($remain == 20)
+                                            @foreach ($trxD as $value)
+                                            @if($value->_into_ == 'ko')
+                                            <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                            @endif
+                                            @endforeach
+                                        @elseif($remain == 24)
+                                            @foreach ($trxD as $value)
+                                            @if($value->_into_ == 'hc')
+                                            <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                            @endif
+                                            @endforeach
+                                        @elseif($remain == 30)
+                                            @foreach ($trxD as $value)
+                                            @if($value->_into_ == 'am')
+                                            <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                            @endif
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </li>
+                                @endforeach
+                            </ul>
                             <ul>
                                 @foreach ($history as $_history)
                                 <li class="d-flex">
