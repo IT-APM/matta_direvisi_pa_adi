@@ -111,6 +111,75 @@
                     </div>
                     <div class="card-body typography notification">
                         <ul>
+                            @php
+                                // status
+                                // 31=Statement Of Compliance
+                                // 1=Submit to All PIC
+                                // 8=Approve by PIC DIVISI
+                                // 12=Approve by PIC GA
+                                // 16=Approve by PIC IT
+                                // 20=Approve by PIC KOPERASI
+                                // 24=Approve by PIC P&C
+                                // 30=Approve by PIC Application Management
+                                // 4=Done All
+                                $trx_detail = App\Models\TrxNonaktifDetail::where(['id_trx'=>$trxM->id])->orderBy('id', 'desc')->get();
+                                $disable=[4,8,12,16,20,24];
+                                if($trx_detail->where(['id_trx'=>$trxM->id, '_into_'=>'am'])->isNotEmpty()){
+                                    $disable=[4,8,12,16,20,24,30];
+                                }
+                                $remains = array_diff($disable, $history->pluck('id_status')->toArray());
+                                $remains = array_values($remains);
+                                // dd($remains);
+                            @endphp
+                            @foreach ($remains as $remain)
+                            <li class="d-flex">
+                                <div class="activity-dot-dark"></div>
+                                <div class="ms-3">
+                                    <h6 class="f-light" style="color: #adb5bd;">{{ App\Models\NonaktifStatus::find($remain)->status }}</h6>
+                                    @if($remain == 4)
+                                    <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$trxM->atasan)->first()->nama }} / {{ $trxM->atasan }}</p>
+                                    @elseif($remain == 8)
+                                        @foreach ($trx_detail as $value)
+                                        @if($value->_into_ == 'di')
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                        @endif
+                                        @endforeach
+                                    @elseif($remain == 12)
+                                        @foreach ($trx_detail as $value)
+                                        @if($value->_into_ == 'ga')
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                        @endif
+                                        @endforeach
+                                    @elseif($remain == 16)
+                                        @foreach ($trx_detail as $value)
+                                        @if($value->_into_ == 'it')
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                        @endif
+                                        @endforeach
+                                    @elseif($remain == 20)
+                                        @foreach ($trx_detail as $value)
+                                        @if($value->_into_ == 'ko')
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                        @endif
+                                        @endforeach
+                                    @elseif($remain == 24)
+                                        @foreach ($trx_detail as $value)
+                                        @if($value->_into_ == 'hc')
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                        @endif
+                                        @endforeach
+                                    @elseif($remain == 30)
+                                        @foreach ($trx_detail as $value)
+                                        @if($value->_into_ == 'am')
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value->kepada)->first()->nama }} / {{ $value->kepada }}</p>
+                                        @endif
+                                        @endforeach
+                                    @endif
+                                </div>
+                            </li>
+                            @endforeach
+                        </ul>
+                        <ul>
                             @foreach ($history as $_history)
                             <li class="d-flex">
                                 @if ($loop->first)
