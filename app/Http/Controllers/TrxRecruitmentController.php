@@ -2048,6 +2048,12 @@ class TrxRecruitmentController extends Controller
                         // 10=Done by HC
                         $_trx_->status_pengajuan = 10;
                         $_trx_->update();
+                        // 
+                        $data = new TrxKebutuhanLog;
+                        $data->id_trx = $_trx->id_kebutuhan;
+                        $data->id_status = 10;
+                        $data->nik_pic = auth()->user()->nik;
+                        $data->save();
                     }
                     // 
                     // email ke kandidat dinyatakan diterima
