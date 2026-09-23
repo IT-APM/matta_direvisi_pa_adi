@@ -1155,6 +1155,13 @@ class TrxKebutuhanController extends Controller
             $data->save();
             // 
             $trxM->jumlah = $sesudah;
+            // check apakah perubahan jumlah sudah sama dengan jumlah kandidat yang join dari recruitment jika sama maka status menjadi 
+            // 10=Done by P&C
+            $jumlah_present = TrxKebutuhanDetail::where(['id_kebutuhan' => $id])->whereNotNull('id_identitas')->get();
+            if($jumlah_present->count() == $sesudah){
+                $trxM->status_pengajuan = 10;
+                $this->insertLog($id, 10, auth()->user()->nik);
+            }
             $trxM->update();
             // 
             return redirect('kebutuhan')->with('msg', 'Data is saved successfully.');
