@@ -530,6 +530,29 @@ class TrxKebutuhanController extends Controller
      */
     public function index(Request $request)
     {
+        // // start sync jika status_pengajuan=10 maka insert trx_tbl_kebutuhan_log
+        // $trx_id = TrxKebutuhanMaster::where(['status_pengajuan'=>10])->get();
+        // $trx_dengan_status_10 = TrxKebutuhanLog::whereIn('id_trx', $trx_id->pluck('id')->toArray())
+        // ->where('id_status', 10)
+        // ->pluck('id_trx')
+        // ->toArray();
+        // $trx = TrxKebutuhanLog::whereIn('id_trx', $trx_id->pluck('id')->toArray())
+        // ->whereNotIn('id_trx', $trx_dengan_status_10)
+        // ->distinct()
+        // ->pluck('id_trx')
+        // ->toArray();
+        // foreach($trx as $value){
+        //     $updated_at = Carbon::createFromFormat('d-m-Y H:i:s', $trx_id->where('id', $value)->first()?->updated_at)->format('Y-m-d H:i:s');
+        //     DB::insert("INSERT INTO `trx_tbl_kebutuhan_log`(`id_trx`,`id_status`,`nik_pic`,`created_at`,`updated_at`) VALUES (?, ?, ?, ?, ?)", [
+        //         $value,
+        //         10,
+        //         '01031808735',
+        //         $updated_at,
+        //         $updated_at,
+        //     ]);
+        // }
+        // return response()->json(['trx' => $trx]);
+        // // end
         $no = 0;
         $karyawan = Karyawan::select('nik', 'nama')->where(['is_aktif' => 1])->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $arr_nik_nkp = new Karyawan();
