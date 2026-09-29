@@ -126,6 +126,38 @@
                                         </div>
                                         <div class="card-body pt-0">
                                             <ul>
+                                                @php
+                                                    // status
+                                                    // 1=Recommended by L1
+                                                    // 4=Approved by Approval-1
+                                                    // 9=Approved by Approval-2
+                                                    // 17=Approved by Approval-3
+                                                    $disable=[1,4];
+                                                    if(!empty($trxM->nik_reviewer2)){
+                                                        $disable=[1,4,9];
+                                                    }elseif(!empty($trxM->nik_reviewer3)){
+                                                        $disable=[1,4,9,17];
+                                                    }
+                                                    $remains = array_diff($disable, $history->pluck('id_status')->toArray());
+                                                    rsort($remains);
+                                                @endphp
+                                                @foreach ($remains as $remain)
+                                                <li class="d-flex">
+                                                    <div class="activity-dot-dark"></div>
+                                                    <div class="ms-3">
+                                                        <h6 class="f-light" style="color: #adb5bd;">{{ App\Models\RekomendasiStatus::find($remain)->status_pengajuan }}</h6>
+                                                        @if($remain == 4)
+                                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$trxM->nik_reviewer1)->first()->nama }} / {{ $trxM->nik_reviewer1 }}</p>
+                                                        @elseif($remain == 9)
+                                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$trxM->nik_reviewer2)->first()->nama }} / {{ $trxM->nik_reviewer2 }}</p>
+                                                        @elseif($remain == 17)
+                                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$trxM->nik_reviewer3)->first()->nama }} / {{ $trxM->nik_reviewer3 }}</p>
+                                                        @endif
+                                                    </div>
+                                                </li>
+                                                @endforeach
+                                            </ul>
+                                            <ul>
                                                 @foreach ($history as $_history)
                                                 <li class="d-flex">
                                                     @if ($loop->first)
