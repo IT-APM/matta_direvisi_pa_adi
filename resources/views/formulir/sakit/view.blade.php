@@ -84,6 +84,34 @@
                         </div>
                         <div class="card-body pt-0">
                             <ul>
+                                @php
+                                    // status
+                                    // 1=Pengajuan oleh Karyawan
+                                    // 2=Disetujui oleh PIC Pengganti
+                                    // 4=Disetujui oleh Layer 1
+                                    // 6=Selesai
+                                    $remains = [];
+                                    array_push($remains, [4=>$trxSakit->nik_atasan]);
+                                    foreach(explode(';', $trxSakit->pic_pengganti) as $value){
+                                        array_push($remains, [2=>$value]);
+                                    }
+                                    array_push($remains, [1=>$trxSakit->nik_karyawan]);
+                                @endphp
+                                @foreach ($remains as $remain)
+                                    @foreach($remain as $key => $value)
+                                    @if($history->where('id_status', $key)->where('nik_pic', $value)->isEmpty())
+                                    <li class="d-flex">
+                                        <div class="activity-dot-dark"></div>
+                                        <div class="ms-3">
+                                            <h6 class="f-light" style="color: #adb5bd;">{{ App\Models\SakitStatus::find($key)->status_sakit }}</h6>
+                                            <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value)->first()->nama }} / {{ $value }}</p>
+                                        </div>
+                                    </li>
+                                    @endif
+                                    @endforeach
+                                @endforeach
+                            </ul>
+                            <ul>
                                 @foreach ($history as $_history)
                                 <li class="d-flex">
                                     @if ($loop->first)
