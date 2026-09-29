@@ -231,6 +231,34 @@
                 </div>
                 <div class="card-body typography notification">
                     <ul>
+                        @php
+                            // status
+                            // 1=Pengajuan oleh Karyawan
+                            // 2=Disetujui oleh PIC Pengganti
+                            // 4=Disetujui oleh Layer 1
+                            // 6=Selesai
+                            $remains = [];
+                            array_push($remains, [4=>$trxCuti->nik_atasan]);
+                            foreach(explode(';', $trxCuti->pic_pengganti) as $value){
+                                array_push($remains, [2=>$value]);
+                            }
+                            array_push($remains, [1=>$trxCuti->nik_karyawan]);
+                        @endphp
+                        @foreach ($remains as $remain)
+                            @foreach($remain as $key => $value)
+                            @if($history->where('id_status', $key)->where('nik_pic', $value)->isEmpty())
+                            <li class="d-flex">
+                                <div class="activity-dot-dark"></div>
+                                <div class="ms-3">
+                                    <h6 class="f-light" style="color: #adb5bd;">{{ App\Models\SakitStatus::find($key)->status_sakit }}</h6>
+                                    <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value)->first()->nama }} / {{ $value }}</p>
+                                </div>
+                            </li>
+                            @endif
+                            @endforeach
+                        @endforeach
+                    </ul>
+                    <ul>
                         @foreach ($history as $_history)
                         <li class="d-flex">
                             @if ($loop->first)
@@ -241,13 +269,9 @@
                             <div class="activity-dot-primary"></div>
                             @endif
                             <div class="ms-3">
-                                <p class="d-flex justify-content-between mb-2"><span
-                                        class="date-content light-background">{{ $_history->created_at }}</span>
-                                </p>
-                                <h6>{{ $_history->_status->status_cuti }}<span class="dot-notification"></span>
-                                </h6>
-                                <p class="f-light">Oleh {{ $_history->_pic->nama }} /
-                                    {{ $_history->nik_pic }}</p>
+                                <p class="d-flex justify-content-between mb-2"><span class="date-content light-background">{{ $_history->created_at }}</span></p>
+                                <h6>{{ $_history->_status->status_cuti }}<span class="dot-notification"></span></h6>
+                                <p class="f-light">Oleh {{ $_history->_pic->nama }} / {{ $_history->nik_pic }}</p>
                             </div>
                         </li>
                         @endforeach
