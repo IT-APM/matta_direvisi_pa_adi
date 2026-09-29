@@ -163,6 +163,34 @@
                         </div>
                         <div class="card-body pt-0">
                             <ul>
+                                @php
+                                    // status
+                                    // 1=Submit by Requestor
+                                    // 2=Approve by L1
+                                    // 6=Approve by L2
+                                    // 4=Done by P&C
+                                    $disable=[1,2,6];
+                                    if(empty($trx->layer2)){
+                                        $disable=[1,2];
+                                    }
+                                    $remains = array_diff($disable, $history->pluck('id_status')->toArray());
+                                    rsort($remains);
+                                @endphp
+                                @foreach ($remains as $remain)
+                                <li class="d-flex">
+                                    <div class="activity-dot-dark"></div>
+                                    <div class="ms-3">
+                                        <h6 class="f-light" style="color: #adb5bd;">{{ App\Models\IjinStatus::find($remain)->status }}</h6>
+                                        @if($remain == 2)
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$trx->atasan)->first()->nama }} / {{ $trx->atasan }}</p>
+                                        @elseif($remain == 6)
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$trx->layer2)->first()->nama }} / {{ $trx->layer2 }}</p>
+                                        @endif
+                                    </div>
+                                </li>
+                                @endforeach
+                            </ul>
+                            <ul>
                                 @foreach ($history as $_history)
                                 <li class="d-flex">
                                     @if ($loop->first)
@@ -173,8 +201,7 @@
                                     <div class="activity-dot-primary"></div>
                                     @endif
                                     <div class="ms-3">
-                                        <p class="d-flex justify-content-between mb-2"><span class="date-content light-background">{{ $_history->created_at }}</span>
-                                        </p>
+                                        <p class="d-flex justify-content-between mb-2"><span class="date-content light-background">{{ $_history->created_at }}</span></p>
                                         <h6>{{ $_history->_status->status }}<span class="dot-notification"></span></h6>
                                         <p class="f-light">Oleh {{ $_history->_pic->nama }} / {{ $_history->nik_pic }}</p>
                                     </div>
