@@ -207,6 +207,41 @@
                     </div>
                     <div class="card-body typography notification">
                         <ul>
+                            @php
+                                // status
+                                // 1=Submit by Requestor
+                                // 2=Approve by L1 Requestor
+                                // 5=Approve by L1 Participants
+                                // 10=Approve by Reviewer 1
+                                // 14=Approve by Reviewer 2
+                                // 11=Done by HC
+                                $remains = [];
+                                if(!empty($trx->reviewer2)){
+                                    array_push($remains, [14=>$trx->reviewer2]);
+                                }
+                                if(!empty($trx->reviewer1)){
+                                    array_push($remains, [10=>$trx->reviewer1]);
+                                }
+                                foreach(explode(';', $trx->atasan_peserta) as $value){
+                                    array_push($remains, [5=>$value]);
+                                }
+                                array_push($remains, [2=>$trx->atasan_pengaju]);
+                            @endphp
+                            @foreach ($remains as $remain)
+                                @foreach($remain as $key => $value)
+                                @if($history->where('id_status', $key)->where('nik_pic', $value)->isEmpty())
+                                <li class="d-flex">
+                                    <div class="activity-dot-dark"></div>
+                                    <div class="ms-3">
+                                        <h6 class="f-light" style="color: #adb5bd;">{{ App\Models\PelatihanStatus::find($key)->status_pengajuan }}</h6>
+                                        <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value)->first()->nama }} / {{ $value }}</p>
+                                    </div>
+                                </li>
+                                @endif
+                                @endforeach
+                            @endforeach
+                        </ul>
+                        <ul>
                             @foreach ($history as $_history)
                             <li class="d-flex">
                                 @if ($loop->first)
