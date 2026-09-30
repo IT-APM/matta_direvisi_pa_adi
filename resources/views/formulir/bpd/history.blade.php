@@ -117,6 +117,116 @@
                         </div>
                         <div class="card-body pt-0">
                             <ul>
+                                @php
+                                    // status
+                                    // 2=Pengajuan CA
+                                    // 3=CA Diproses Admin
+                                    // 4=CA Disetujui Admin
+                                    // 7=CA Disetujui PC
+                                    // 9=CA Disetujui L1
+                                    // 11=CA Disetujui L2
+                                    // 13=CA Disetujui P&C
+
+                                    // 18=Realisasi CA
+                                    // 19=Realisasi Disetujui Admin
+                                    // 22=Realisasi Disetujui PC
+                                    // 24=Realisasi Disetujui L1
+                                    // 26=Realisasi Disetujui L2
+                                    // 28=Realisasi Disetujui P&C
+
+                                    // 33=Pengajuan Reimburse
+                                    // 34=Reimburse Diproses Admin
+                                    // 35=Reimburse Disetujui Admin
+                                    // 38=Reimburse Disetujui PC
+                                    // 40=Reimburse Disetujui L1
+                                    // 42=Reimburse Disetujui L2
+                                    // 44=Reimburse Disetujui P&C
+                                    
+                                    // default Pengajuan Reimburse
+                                    // is_ca=0
+                                    $remains = [];
+                                    if(!empty($trxMaster->hco)){
+                                        array_push($remains, [44=>$trxMaster->hco]);
+                                    }
+                                    if(!empty($trxMaster->layer2)){
+                                        array_push($remains, [42=>$trxMaster->layer2]);
+                                    }
+                                    if(!empty($trxMaster->layer1)){
+                                        array_push($remains, [40=>$trxMaster->layer1]);
+                                    }
+                                    if(!empty($trxMaster->koordinator)){
+                                        array_push($remains, [38=>$trxMaster->koordinator]);
+                                    }
+                                    if(!empty($trxMaster->admin)){
+                                        array_push($remains, [35=>$trxMaster->admin]);
+                                    }
+                                    if(!empty($trxMaster->admin)){
+                                        array_push($remains, [34=>$trxMaster->admin]);
+                                    }
+                                    if(!empty($trxMaster->pengaju)){
+                                        array_push($remains, [33=>$trxMaster->pengaju]);
+                                    }
+                                    // CA is_ca=1
+                                    if($trxMaster->is_ca){
+                                        // Realisasi
+                                        $remains = [];
+                                        if(!empty($trxMaster->hco)){
+                                            array_push($remains, [28=>$trxMaster->hco]);
+                                        }
+                                        if(!empty($trxMaster->layer2)){
+                                            array_push($remains, [26=>$trxMaster->layer2]);
+                                        }
+                                        if(!empty($trxMaster->layer1)){
+                                            array_push($remains, [24=>$trxMaster->layer1]);
+                                        }
+                                        if(!empty($trxMaster->koordinator)){
+                                            array_push($remains, [22=>$trxMaster->koordinator]);
+                                        }
+                                        if(!empty($trxMaster->admin)){
+                                            array_push($remains, [19=>$trxMaster->admin]);
+                                        }
+                                        if(!empty($trxMaster->pengaju)){
+                                            array_push($remains, [18=>$trxMaster->pengaju]);
+                                        }
+                                        // Pengajuan CA
+                                        if(!empty($trxMaster->hco)){
+                                            array_push($remains, [13=>$trxMaster->hco]);
+                                        }
+                                        if(!empty($trxMaster->layer2)){
+                                            array_push($remains, [11=>$trxMaster->layer2]);
+                                        }
+                                        if(!empty($trxMaster->layer1)){
+                                            array_push($remains, [9=>$trxMaster->layer1]);
+                                        }
+                                        if(!empty($trxMaster->koordinator)){
+                                            array_push($remains, [7=>$trxMaster->koordinator]);
+                                        }
+                                        if(!empty($trxMaster->admin)){
+                                            array_push($remains, [4=>$trxMaster->admin]);
+                                        }
+                                        if(!empty($trxMaster->admin)){
+                                            array_push($remains, [3=>$trxMaster->admin]);
+                                        }
+                                        if(!empty($trxMaster->pengaju)){
+                                            array_push($remains, [2=>$trxMaster->pengaju]);
+                                        }
+                                    }
+                                @endphp
+                                @foreach ($remains as $remain)
+                                    @foreach($remain as $key => $value)
+                                    @if($history->where('id_status', $key)->where('nik_pic', $value)->isEmpty())
+                                    <li class="d-flex">
+                                        <div class="activity-dot-dark"></div>
+                                        <div class="ms-3">
+                                            <h6 class="f-light" style="color: #adb5bd;">{{ App\Models\BpdStatus::find($key)->status }}</h6>
+                                            <p class="f-light" style="color: #adb5bd;">Oleh {{ App\Models\Karyawan::where('nik',$value)->first()->nama }} / {{ $value }}</p>
+                                        </div>
+                                    </li>
+                                    @endif
+                                    @endforeach
+                                @endforeach
+                            </ul>
+                            <ul>
                                 @foreach ($history as $_history)
                                 <li class="d-flex">
                                     @if ($loop->first)
