@@ -26,10 +26,7 @@
                     <h5>Diajukan Oleh</h5>
                 </div>
                 <div class="card-header">
-                    <a href="{{ asset('assets/images/matta/karyawan/'.$data['nik'].'/'.$data['nik'].'.jpg') }}"
-                        target="_blank"><img class="img-thumbnail" width="20%"
-                            src="{{ asset('assets/images/matta/karyawan/'.$data['nik'].'/'.$data['nik'].'.jpg') }}"
-                            alt="user"></a>
+                    <a href="{{ asset('assets/images/matta/karyawan/'.$data['nik'].'/'.$data['nik'].'.jpg') }}" target="_blank"><img class="img-thumbnail" width="20%" src="{{ asset('assets/images/matta/karyawan/'.$data['nik'].'/'.$data['nik'].'.jpg') }}" alt="user"></a>
                 </div>
                 <div class="card-body typography">
                     <table class="table table-striped">
@@ -93,7 +90,7 @@
                 </div>
             </div>
         </div>
-        <!--  -->
+        @if (Carbon\Carbon::parse($overtime->ot_start_at) >= Carbon\Carbon::parse(now()))
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body typography">
@@ -106,14 +103,12 @@
                 </div>
             </div>
         </div>
-        <!--  -->
+        @endif
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body typography text-center">
-                    <h6>Terima kasih untuk partisipasi dan kerjasamanya untuk melakukan review Overtime
-                        ini.</h6>
-                    <a href="https://alita.id/"><img src="{{ asset('assets/images/matta/Alita-New-Log.png') }}"
-                            height="40" alt="Alita" /></a><br />
+                    <h6>Terima kasih untuk partisipasi dan kerjasamanya untuk melakukan review Overtime ini.</h6>
+                    <a href="https://alita.id/"><img src="{{ asset('assets/images/matta/Alita-New-Log.png') }}" height="40" alt="Alita" /></a><br />
                     <h6>&reg; PT Alita Praya Mitra - 2021</h6>
                 </div>
             </div>
