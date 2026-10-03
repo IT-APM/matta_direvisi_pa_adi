@@ -60,7 +60,10 @@ class KaryawanPerubahanController extends Controller
         $trx = KaryawanBulanan::find($id);
         $layer1_property = json_decode($trx->layer1_property, true);
         $layer2_property = json_decode($trx->layer2_property, true);
-        $karyawan = KaryawanBulanan::where(['layer1'=>$trx->layer1])->get();
+        $karyawan = KaryawanBulanan::where(['layer1'=>$trx->layer1,'is_berubah'=>1])->get();
+        if($request->pic == 'pic_hco'){
+            $karyawan = KaryawanBulanan::where(['layer1'=>$trx->layer1,'is_berubah'=>2])->get();
+        }
         $karyawan = $karyawan->sortBy(function ($data) {
             $nik_property = json_decode($data->nik_property, true);
             return $nik_property['nama'] ?? '';
@@ -100,7 +103,7 @@ class KaryawanPerubahanController extends Controller
         }
         // id = 2 layer 1 submit semua perubahan
         elseif($id == 2){
-            KaryawanBulanan::where('layer1', $request->layer1)->update(['is_berubah' => 2]);
+            KaryawanBulanan::where(['layer1'=>$request->layer1,'is_berubah'=>1])->update(['is_berubah' => 2]);
             $trx = KaryawanBulanan::find($request->data_id_all);
             $layer1_property = json_decode($trx->layer1_property, true);
             // start
@@ -109,7 +112,7 @@ class KaryawanPerubahanController extends Controller
             $mailData['filename'] = 'emails.karyawan_bulanan0';
             $pic_hco = explode('/', MtrUtility::find(54)->informasi);
             $mailData['to'] = $pic_hco[1];
-            $karyawan = KaryawanBulanan::where(['layer1'=>$request->layer1])->get();
+            $karyawan = KaryawanBulanan::where(['layer1'=>$request->layer1,'is_berubah'=>2])->get();
             $karyawan = $karyawan->sortBy(function ($data) {
                 $nik_property = json_decode($data->nik_property, true);
                 return $nik_property['nama'] ?? '';
@@ -126,7 +129,7 @@ class KaryawanPerubahanController extends Controller
         }
         // id = 3 confirmed by pic_hco
         elseif($id == 3){
-            KaryawanBulanan::where('layer1', $request->layer1)->update(['is_berubah' => 3]);
+            KaryawanBulanan::where(['layer1'=>$request->layer1,'is_berubah'=>2])->update(['is_berubah' => 3]);
             $mailData['filename'] = 'emails.karyawan_bulanan0';
             $pic_hco = explode('/', MtrUtility::find(54)->informasi);
             $this->deleteToDoList(['id_trx'=>$request->data_id_all, 'filename'=>$mailData['filename'], 'pic'=>'pic_hco', 'nik'=>$pic_hco[0]]);
