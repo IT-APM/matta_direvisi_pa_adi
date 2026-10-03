@@ -135,7 +135,7 @@
                                     $mailData['title'] = 'Perubahan Data Karyawan';
                                     $mailData['filename'] = 'emails.karyawan_bulanan0';
                                     $mailData['to'] = $layer1_property['email'];
-                                    $karyawan = App\Models\KaryawanBulanan::where(['layer1'=>$layer1_property['nik']])->get();
+                                    $karyawan = App\Models\KaryawanBulanan::where(['layer1'=>$layer1_property['nik'],'is_berubah'=>0])->get();
                                     $karyawan = $karyawan->sortBy(function ($_data) {
                                         $nik_property = json_decode($_data->nik_property, true);
                                         return $nik_property['nama'] ?? '';
