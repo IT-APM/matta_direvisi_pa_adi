@@ -130,7 +130,12 @@
                                     <td>{{ ++$no }}</td>
                                     <td>{{ Carbon\Carbon::parse($data->tanggal)->locale('id')->isoFormat('MMMM YYYY') }}</td>
                                     <td>{{ $nik_property['nik'] }}</td>
-                                    <td>{{ $nik_property['nama'] }}</td>
+                                    <td>
+                                        {{ $nik_property['nama'] }}
+                                        @if(!empty($data->perubahan))
+                                        <br/><span style="background-color:#ffc107;">{{ nl2br($data->perubahan) }}</span>
+                                        @endif
+                                    </td>
                                     <td>{{ $nik_property['perusahaan'] }}</td>
                                     <td>{{ $nik_property['divisi'] }}</td>
                                     <td>{{ $nik_property['dep'] }}</td>
@@ -142,12 +147,12 @@
                                     <td>{{ $layer1_property['nik'] }}</td>
                                     <td>{{ $layer1_property['nama'] }}</td>
                                 </tr>
-                                @if(!empty($data->perubahan))
+                                {{-- @if(!empty($data->perubahan))
                                 <tr style="background-color:#ffc107;">
                                     <td colspan="2">Perubahan</td>
                                     <td colspan="12">{{ nl2br($data->perubahan) }}</td>
-                                    </tr>
-                                @endif
+                                </tr>
+                                @endif --}}
                                 @endforeach
                             </tbody>
                         </table>
