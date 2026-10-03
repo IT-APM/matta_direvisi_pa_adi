@@ -257,7 +257,7 @@ class KaryawanController extends Controller
                             $mailData['title'] = 'Konfirmasi Data Karyawan';
                             $mailData['filename'] = 'emails.karyawan_bulanan0';
                             $mailData['to'] = $layer1_property['email'];
-                            $karyawan = KaryawanBulanan::where(['layer1'=>$trx->layer1])->get();
+                            $karyawan = KaryawanBulanan::where(['layer1'=>$trx->layer1,'is_berubah'=>0])->get();
                             $karyawan = $karyawan->sortBy(function ($data) {
                                 $nik_property = json_decode($data->nik_property, true);
                                 return $nik_property['nama'] ?? '';
@@ -275,7 +275,7 @@ class KaryawanController extends Controller
                             $todolist = ['id_trx' => $_data_id, 'nik' => $layer1_property['nik'], 'id_status' => 1, 'pic' => 'layer1'];
                             $this->insertToDoList($todolist, $mailData);
                             // is_berubah=1 jika sudah diemail
-                            KaryawanBulanan::where('layer1', $trx->layer1)->update(['is_berubah' => 1]);
+                            KaryawanBulanan::where(['layer1'=>$trx->layer1,'is_berubah'=>0])->update(['is_berubah' => 1]);
                         }
                         // return response()->json( [ 'arr' => $arr ], 200 );
                         return redirect( 'karyawan/bulanan/0' )->with( 'msg', 'Data is executed successfully.' );
@@ -293,7 +293,7 @@ class KaryawanController extends Controller
     public function bulanan_delete($id)
     {
         $trx = KaryawanBulanan::find($id);
-        KaryawanBulanan::where('layer1', $trx->layer1)->delete();
+        KaryawanBulanan::where(['layer1'=>$trx->layer1,'is_berubah'=>0])->delete();
     }
     
     public function download_allphoto($id)
