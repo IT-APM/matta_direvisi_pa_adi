@@ -65,6 +65,10 @@
                         <td>: @if(!empty($atasan_property)) {{ $atasan_property['nama'] }} / {{ $atasan_property['nik'] }} @endif</td>
                     </tr>
                     <tr>
+                        <td>Jabatan Atasan Langsung</td>
+                        <td>: @if(!empty($atasan_property)) {{ $atasan_property['jabatan'] }} @endif</td>
+                    </tr>
+                    <tr>
                         <td>Direktorat / Divisi / Departemen</td>
                         <td>: {{ $pengaju['divisi'] }} / {{ $pengaju['dep'] }} / {{ $pengaju['sub_dep'] }}</td>
                     </tr>
