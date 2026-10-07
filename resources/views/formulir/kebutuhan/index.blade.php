@@ -155,6 +155,7 @@
                                         @can('hc')
                                         <br /><a href="{{ route('kebutuhan.edit', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)]) }}" data-toggle="tooltip" title='Update'><i class="icon-pencil-alt"></i></a>
                                         &nbsp;<a href="{{ route('kebutuhan.show', [(new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id), 'view' => (new App\Http\Controllers\OpenDataController)->encryptWithKey('doc')]) }}" data-toggle="tooltip" title="Document"><i class="fa fa-file-text-o"></i></a>
+                                        &nbsp;<a href="{{ route('kebutuhan.export_word', (new App\Http\Controllers\OpenDataController)->encryptWithKey($data->id)) }}" data-toggle="tooltip" title="Uraian"><i style="color:orange" class="fa fa-file-text-o"></i></a>
                                         @endcan
 
                                     </td>
