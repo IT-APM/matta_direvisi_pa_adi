@@ -163,7 +163,7 @@ class TrxCutiController extends Controller
             array_push($arr_nik_atasan, $data->nik_atasan);
         }
         $status_cuti = CutiStatus::whereIn('id', $arr_status_cuti)->orderBy('id', 'asc')->get();
-        $tipe_cuti = CutiTipe::whereIn('id', $arr_tipe_cuti)->orderBy('created_at', 'asc')->get();
+        $tipe_cuti = CutiTipe::whereIn('id', $arr_tipe_cuti)->orderBy('order_by', 'asc')->get();
         $nik_karyawan = Karyawan::whereIn('nik', $arr_nik_karyawan)->orderBy('nama', 'asc')->get();
         $nik_atasan = Karyawan::whereIn('nik', $arr_nik_atasan)->orderBy('nama', 'asc')->get();
         // start dibatasi 30 hari terakhir dari created_at
@@ -358,7 +358,9 @@ class TrxCutiController extends Controller
         // 13 = Ibadah Haji Plus (30 hari)
         // 14 = Ibadah Umroh (10 hari)
         // 15 = Ibadah Haji Reguler (40 hari)
-        $arr_tipe_cuti = array(2,3,4,5,6,7,10,11,12,13,14,15);
+        // 16 = Cuti Haid (2 hari)
+        // 17 = Cuti Haid (1 hari)
+        $arr_tipe_cuti = array(2,3,4,5,6,7,10,11,12,13,14,15,16,17);
         if(in_array($tipe_cuti, $arr_tipe_cuti)){
             $cek = true;
         }
@@ -536,7 +538,7 @@ class TrxCutiController extends Controller
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', [auth()->user()->nik])->orderBy('nama', 'asc')->get();
         // $tipe = CutiTipe::orderBy('id', 'asc')->get();
         // 12 = Ibadah Umroh (7 hari)
-        $tipe = CutiTipe::whereNotIn('id', [12])->orderBy('created_at', 'asc')->get();
+        $tipe = CutiTipe::whereNotIn('id', [12])->orderBy('order_by', 'asc')->get();
         $status = 'create';
         // $jumlah_hari = [1,2,3,4,5,6,7,8,9,10,11,12];
         $nik_karyawan = Crypt::decrypt($request->nik_karyawan);
