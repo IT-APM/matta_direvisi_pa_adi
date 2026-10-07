@@ -54,12 +54,233 @@ use DB;
 use Elibyy\TCPDF\Facades\TCPDF;
 use Illuminate\Support\Facades\Crypt;
 // 
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Style\Font;
+use PhpOffice\PhpWord\SimpleType\Jc;
+use PhpOffice\PhpWord\Shared\Html;
+// 
 
 class TrxKebutuhanController extends Controller
 {
     public function __construct()
     {
         $this->middleware('can:asm', ['except' => ['show','update','kota']]);
+    }
+
+    public function cleanText($text)
+    {
+        $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text);
+        $text = str_replace('&', 'dan', $text);
+        $text = str_replace(['<', '>'], ['(', ')'], $text);
+        return trim($text);
+    }
+
+    public function export_word($id)
+    {
+        $id = (new OpenDataController)->decryptWithKey($id);
+        $trxM = TrxKebutuhanMaster::find($id);
+        // dd($trxM);
+        $phpWord = new PhpWord();
+        $phpWord->setDefaultFontName('times');
+        $phpWord->setDefaultFontSize(10);
+        $section = $phpWord->addSection([
+            'marginTop'    => 720,
+            'marginBottom' => 720,
+            'marginLeft'   => 720,
+            'marginRight'  => 720,
+        ]);
+        $boldCenter  = ['bold' => true];
+        $boldCenterHeader = ['bold' => true, 'size' => 14];
+        $centerPara  = ['alignment' => Jc::CENTER];
+        $boldStyle   = ['bold' => true];
+        $normalStyle = [];
+        $leftPara    = ['alignment' => Jc::LEFT];
+        $tableStyle  = [
+            'borderSize'  => 0,
+            'borderColor' => '000000',
+            'cellMargin'  => 50,
+            'width'       => 10800,
+            // 'unit'        => 'dxa',
+        ];
+        $parStyle = [
+            'alignment'   => Jc::LEFT,
+            'spacing'     => [
+                'after'  => 0,
+                'line'   => 360, // 1.5 line spacing (240 = single, 360 = 1.5, 480 = double)
+                'lineRule' => 'auto',
+            ],
+        ];
+        $headerCellStyle = [
+            'shading' => [
+                'type'  => \PhpOffice\PhpWord\Style\Shading::PATTERN_CLEAR,
+                'color' => 'auto',
+                'fill'  => 'D9D9D9',
+            ],
+        ];
+        // $section->addText('URAIAN JABATAN', $boldCenterHeader, $centerPara);
+        $tblHeader = $section->addTable([
+            'borderSize'  => 1,
+            'borderColor' => '000000',
+            'cellMargin'  => 80,
+            // 'width'       => 10800,
+            'unit'        => 'dxa',
+        ]);
+
+        $tblHeader->addRow();
+
+        // Kolom 1 - Gambar kiri
+        $cellLogo = $tblHeader->addCell(1000, ['vAlign' => \PhpOffice\PhpWord\SimpleType\VerticalJc::CENTER]);
+        $cellLogo->addImage(
+            public_path('assets/images/matta/alita_new.png'), // sesuaikan path gambar
+            [
+                'width'  => 90,
+                'height' => 34,
+            ]
+        );
+
+        // Kolom 2 - Judul tengah
+        $cellJudul = $tblHeader->addCell(6800, ['vAlign' => \PhpOffice\PhpWord\SimpleType\VerticalJc::CENTER]);
+        $cellJudul->addText('URAIAN JABATAN', $boldCenterHeader, ['alignment' => Jc::CENTER]);
+
+        // Kolom 3 - Kode kanan
+        $cellKode = $tblHeader->addCell(2000, ['vAlign' => \PhpOffice\PhpWord\SimpleType\VerticalJc::CENTER]);
+        $cellKode->addText('No: '. $trxM->id, $normalStyle, ['alignment' => Jc::CENTER]);
+        // $section->addText('KEBUTUHAN REKRUITMEN', $boldCenter, $centerPara);
+        $section->addTextBreak(1);
+        $atasan_property = json_decode($trxM->atasan_property, true);
+        $tblInfo = $section->addTable($tableStyle);
+        $infoRows = [
+            ['Nama Jabatan/Posisi', $trxM->_pekerjaan->pekerjaan],
+            ['Level', $trxM->_level->level],
+            ['Jabatan Atasan Langsung', !is_null($trxM->atasan_property) ? $atasan_property['jabatan'] : ''],
+            ['Direktorat / Divisi / Departemen', !is_null($trxM->atasan_property) ? $atasan_property['divisi'].' / '.$atasan_property['dep'].' / '.$atasan_property['sub_dep'] : ''],
+            ['Status Kerja', $trxM->_status_kerja->status_kerja],
+        ];
+        foreach ($infoRows as $row) {
+            $tblInfo->addRow();
+            $tblInfo->addCell(3500)->addText($row[0], $normalStyle, $parStyle);
+            $tblInfo->addCell(7300)->addText($row[1], $normalStyle, $parStyle);
+        }
+        $section->addTextBreak(1);
+        $section->addText('TUGAS, WEWENANG DAN TANGGUNG JAWAB', $boldCenter, $centerPara);
+        $tblInfo = $section->addTable($tableStyle);
+        $infoRows = [
+            ['Tugas',          $trxM->tugas],
+            ['Wewenang',       $trxM->wewenang],
+            ['Tanggung jawab', $trxM->tanggung_jawab],
+        ];
+
+        foreach ($infoRows as $row) {
+            $tblInfo->addRow();
+            $tblInfo->addCell(3500)->addText($row[0], $normalStyle, $parStyle);
+
+            $cell  = $tblInfo->addCell(7300);
+            $lines = preg_split('/\r\n|\r|\n/', $row[1]);
+            foreach ($lines as $line) {
+                if (!empty(trim($line))) {
+                    $line = $this->cleanText($line);
+                    $cell->addText($line, $normalStyle, $parStyle);
+                }
+            }
+        }
+        $section->addTextBreak(1);
+        $section->addText('KUALIFIKASI / SPESIFIKASI JABATAN', $boldCenter, $centerPara);
+        $tblInfo = $section->addTable($tableStyle);
+        $infoRows = [
+            ['Pendidikan Minimum', $trxM->_jenjang_pendidikan->jenjang],
+            ['Usia Minimum', $trxM->umur_minimum.' (Tahun)'],
+            ['Usia Maksimum', $trxM->umur_maksimum.' (Tahun)'],
+            ['Pengalaman Kerja (Tahun)', $trxM->_pengalaman->pengalaman],
+        ];
+        foreach ($infoRows as $row) {
+            $tblInfo->addRow();
+            $tblInfo->addCell(3500)->addText($row[0], $normalStyle, $parStyle);
+            $tblInfo->addCell(7300)->addText($row[1], $normalStyle, $parStyle);
+        }
+        $section->addTextBreak(1);
+        $tblInfo = $section->addTable($tableStyle);
+        // Row 1 - PelatihanSub
+        $arr   = explode(',', $trxM->id_pelatihan);
+        $lines = [];
+        if (!empty($trxM->id_pelatihan)) {
+            foreach ($arr as $index => $value) {
+                $lines[] = ($index + 1) . '. ' . $this->cleanText(PelatihanSub::find($value)?->sub_pelatihan ?? '');
+            }
+        }
+        $tblInfo->addRow();
+        $tblInfo->addCell(3500)->addText('Training yang seharusnya sudah diikuti', $normalStyle, $parStyle);
+        $cell_str = $tblInfo->addCell(7300);
+        if (!empty($lines)) {
+            foreach ($lines as $line) {
+                $cell_str->addText($line, $normalStyle, $parStyle);
+            }
+        } else {
+            $cell_str->addText('', $normalStyle, $parStyle);
+        }
+        // Row 2 - SertifikasiSub
+        $arr   = explode(',', $trxM->id_sertifikasi);
+        $lines = [];
+        if (!empty($trxM->id_sertifikasi)) {
+            foreach ($arr as $index => $value) {
+                $lines[] = ($index + 1) . '. ' . $this->cleanText(SertifikasiSub::find($value)?->sub_sertifikasi ?? '');
+            }
+        }
+        $tblInfo->addRow();
+        $tblInfo->addCell(3500)->addText('Kursus/sertifikasi yang seharusnya sudah diperoleh', $normalStyle, $parStyle);
+        $cell_str = $tblInfo->addCell(7300);
+        if (!empty($lines)) {
+            foreach ($lines as $line) {
+                $cell_str->addText($line, $normalStyle, $parStyle);
+            }
+        } else {
+            $cell_str->addText('', $normalStyle, $parStyle);
+        }
+        $section->addTextBreak(1);
+        $section->addText('KEMAMPUAN PRIBADI', $boldCenter, $centerPara);
+        $tblInfo = $section->addTable($tableStyle);
+        // Row 3 - KeterampilanSub
+        $arr   = explode(',', $trxM->id_keterampilan);
+        $lines = [];
+        if (!empty($trxM->id_keterampilan)) {
+            foreach ($arr as $index => $value) {
+                $lines[] = ($index + 1) . '. ' . $this->cleanText(KeterampilanSub::find($value)?->sub_keterampilan ?? '');
+            }
+        }
+        $tblInfo->addRow();
+        $tblInfo->addCell(3500)->addText('Ketrampilan yang harus sudah dipunyai', $normalStyle, $parStyle);
+        $cell_str = $tblInfo->addCell(7300);
+        if (!empty($lines)) {
+            foreach ($lines as $line) {
+                $cell_str->addText($line, $normalStyle, $parStyle);
+            }
+        } else {
+            $cell_str->addText('', $normalStyle, $parStyle);
+        }
+        // Row 4 - KepribadianSub
+        $arr   = explode(',', $trxM->id_kepribadian);
+        $lines = [];
+        if (!empty($trxM->id_kepribadian)) {
+            foreach ($arr as $index => $value) {
+                $lines[] = ($index + 1) . '. ' . $this->cleanText(KepribadianSub::find($value)?->sub_kepribadian ?? '');
+            }
+        }
+        $tblInfo->addRow();
+        $tblInfo->addCell(3500)->addText('Kepribadian dasar yang harus dimiliki', $normalStyle, $parStyle);
+        $cell_str = $tblInfo->addCell(7300);
+        if (!empty($lines)) {
+            foreach ($lines as $line) {
+                $cell_str->addText($line, $normalStyle, $parStyle);
+            }
+        } else {
+            $cell_str->addText('', $normalStyle, $parStyle);
+        }
+        // 
+        $filename = 'uraian_' . $id . '_' . now()->format('YmdHis') . '.docx';
+        $path = storage_path('app/' . $filename);
+        $writer = IOFactory::createWriter($phpWord, 'Word2007');
+        $writer->save($path);
+        return response()->download($path, $filename)->deleteFileAfterSend(true);
     }
 
     public function dashboard(Request $request)
