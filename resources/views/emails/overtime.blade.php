@@ -63,7 +63,7 @@
                         <tbody>
                             <tr>
                                 <td width="40%">Created at</td>
-                                <td width="60%">{{$overtime->ot_maker_at}}</td>
+                                <td width="60%">{{Carbon\Carbon::parse($overtime->ot_maker_at) ->format('d-m-Y H:i:s')}}</td>
                             </tr>
                             <tr>
                                 <td>Title</td>
@@ -75,11 +75,11 @@
                             </tr>
                             <tr>
                                 <td>Start</td>
-                                <td>{{$overtime->ot_start_at}}</td>
+                                <td>{{Carbon\Carbon::parse($overtime->ot_start_at) ->format('d-m-Y H:i:s')}}</td>
                             </tr>
                             <tr>
                                 <td>Finish</td>
-                                <td>{{$overtime->ot_end_at}}</td>
+                                <td>{{Carbon\Carbon::parse($overtime->ot_end_at) ->format('d-m-Y H:i:s')}}</td>
                             </tr>
                             <tr>
                                 <td>Type</td>
