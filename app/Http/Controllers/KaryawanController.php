@@ -553,6 +553,8 @@ class KaryawanController extends Controller
     {
         // initial
         $trx = [];
+        // 55=NIP NKP
+        $arr_nkp = explode(',', MtrUtility::find(55)->informasi);
         // histori
         $jumlah_karyawan = [];
         $jumlah_karyawan_kelamin = [];
@@ -618,7 +620,7 @@ class KaryawanController extends Controller
             ['id'=>7, 'min'=>2024, 'max'=>2050, 'data'=>'Gen Beta (2024< X)'],
         ];
         // start sync id_jenjang
-        $trx = Karyawan::where(['is_aktif' => 1])->get();
+        $trx = Karyawan::where(['is_aktif' => 1])->whereNotIn('nik', $arr_nkp)->get();
         foreach($trx as $_trx){
             $data = Karyawan::find($_trx->id);
             // 11=Lainnya
@@ -695,7 +697,7 @@ class KaryawanController extends Controller
         }
         // end filter
         // all
-        $where0 = "`nik` NOT IN (".$arr_not_in_nik.") AND `kode_perusahaan` NOT IN (".$arr_not_in_perusahaan.")";
+        $where0 = "nik NOT IN ('03032512019','03022110004') AND `nik` NOT IN (".$arr_not_in_nik.") AND `kode_perusahaan` NOT IN (".$arr_not_in_perusahaan.")";
         $where1 = "AND kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND kode_status IN (".implode(',', $arr_select_status).") 
                 AND kode_perusahaan IN (".implode(',', $arr_perusahaan).") 
@@ -753,14 +755,14 @@ class KaryawanController extends Controller
                 AND DATE(`created_at`)='".$akhir."'");
                 // non_aktif
                 $non_aktif = DB::select("SELECT COUNT(*) AS jumlah FROM `mtr_tbl_karyawan` 
-                WHERE ".$where0." 
+                WHERE ".$where0."
                 AND `tanggal_tidak_aktif` BETWEEN '".$awal."' AND '".$akhir."'")[0]->jumlah;
                 $non_aktif_detail = DB::select("SELECT `nik`,`nama` FROM `mtr_tbl_karyawan` 
                 WHERE ".$where0."
                 AND `tanggal_tidak_aktif` BETWEEN '".$awal."' AND '".$akhir."'");
                 // join
                 $join = DB::select("SELECT COUNT(*) AS jumlah FROM `mtr_tbl_karyawan` 
-                WHERE ".$where0." 
+                WHERE ".$where0."
                 AND `tanggal_bergabung` BETWEEN '".$awal."' AND '".$akhir."'")[0]->jumlah;
                 $join_detail = DB::select("SELECT `nik`,`nama` FROM `mtr_tbl_karyawan` 
                 WHERE ".$where0."
@@ -1030,7 +1032,7 @@ class KaryawanController extends Controller
         // start now
         if($id == 0){
             // jumlah_karyawan_kelamin_now
-            $trx = DB::select("SELECT COUNT(*) AS jumlah,IFNULL(`kode_kelamin`, 1) AS `kode_kelamin` FROM `mtr_tbl_karyawan` WHERE `is_aktif`=1 AND `nik` NOT IN (".$arr_not_in_nik.") AND kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY `kode_kelamin`");
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,IFNULL(`kode_kelamin`, 1) AS `kode_kelamin` FROM `mtr_tbl_karyawan` WHERE nik NOT IN ('03032512019','03022110004') AND `is_aktif`=1 AND `nik` NOT IN (".$arr_not_in_nik.") AND kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY `kode_kelamin`");
             $data = collect($trx)->map(function($item){
                 return (array) $item;
             });
@@ -1041,6 +1043,7 @@ class KaryawanController extends Controller
             ];
             foreach ($data as $item) {
                 $detail = Karyawan::select('nik','nama')
+                ->whereNotIn('nik', $arr_nkp)
                 ->where(['is_aktif'=>1, 'kode_kelamin'=>$item['kode_kelamin']])
                 ->whereNotIn('nik', explode(',', str_replace("'", "", $arr_not_in_nik)))
                 ->whereNotIn('kode_perusahaan', explode(',', $arr_not_in_perusahaan))
@@ -1055,12 +1058,13 @@ class KaryawanController extends Controller
                 ];
             }
             // jumlah_karyawan_status_now
-            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`status_karyawan`,a.`kode_status` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_status_karyawan` AS b ON a.`kode_status`=b.`id` WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_status` ORDER BY b.`status_karyawan`");
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`status_karyawan`,a.`kode_status` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_status_karyawan` AS b ON a.`kode_status`=b.`id` WHERE a.nik NOT IN ('03032512019','03022110004') AND a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_status` ORDER BY b.`status_karyawan`");
             $data = collect($trx)->map(function($item){
                 return (array) $item;
             });
             foreach ($data as $item) {
                 $detail = Karyawan::select('nik','nama')
+                ->whereNotIn('nik', $arr_nkp)
                 ->where(['is_aktif'=>1, 'kode_status'=>$item['kode_status']])
                 ->whereNotIn('nik', explode(',', str_replace("'", "", $arr_not_in_nik)))
                 ->whereNotIn('kode_perusahaan', explode(',', $arr_not_in_perusahaan))
@@ -1074,12 +1078,13 @@ class KaryawanController extends Controller
                 ];
             }
             // jumlah_karyawan_level_now
-            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`level`,a.`kode_level` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_level` AS b ON a.`kode_level`=b.`id` WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_level` ORDER BY b.`level`");
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`level`,a.`kode_level` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_level` AS b ON a.`kode_level`=b.`id` WHERE a.nik NOT IN ('03032512019','03022110004') AND  a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_level` ORDER BY b.`level`");
             $data = collect($trx)->map(function($item){
                 return (array) $item;
             });
             foreach ($data as $item) {
                 $detail = Karyawan::select('nik','nama')
+                ->whereNotIn('nik', $arr_nkp)
                 ->where(['is_aktif'=>1, 'kode_level'=>$item['kode_level']])
                 ->whereNotIn('nik', explode(',', str_replace("'", "", $arr_not_in_nik)))
                 ->whereNotIn('kode_perusahaan', explode(',', $arr_not_in_perusahaan))
@@ -1093,12 +1098,13 @@ class KaryawanController extends Controller
                 ];
             }
             // jumlah_karyawan_perusahaan_now
-            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`nama`,a.`kode_perusahaan` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_perusahaan` AS b ON a.`kode_perusahaan`=b.`id` WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_perusahaan` ORDER BY b.`nama`");
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`nama`,a.`kode_perusahaan` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_perusahaan` AS b ON a.`kode_perusahaan`=b.`id` WHERE a.nik NOT IN ('03032512019','03022110004') AND a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_perusahaan` ORDER BY b.`nama`");
             $data = collect($trx)->map(function($item){
                 return (array) $item;
             });
             foreach ($data as $item) {
                 $detail = Karyawan::select('nik','nama')
+                ->whereNotIn('nik', $arr_nkp)
                 ->where(['is_aktif'=>1, 'kode_perusahaan'=>$item['kode_perusahaan']])
                 ->whereNotIn('nik', explode(',', str_replace("'", "", $arr_not_in_nik)))
                 ->whereNotIn('kode_perusahaan', explode(',', $arr_not_in_perusahaan))
@@ -1112,12 +1118,13 @@ class KaryawanController extends Controller
                 ];
             }
             // jumlah_karyawan_pendidikan_now
-            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`jenjang`,a.`id_jenjang` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_pendidikan_jenjang` AS b ON a.`id_jenjang`=b.`id` WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`id_jenjang` ORDER BY a.`id_jenjang`");
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`jenjang`,a.`id_jenjang` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_pendidikan_jenjang` AS b ON a.`id_jenjang`=b.`id` WHERE a.nik NOT IN ('03032512019','03022110004') AND a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`id_jenjang` ORDER BY a.`id_jenjang`");
             $data = collect($trx)->map(function($item){
                 return (array) $item;
             });
             foreach ($data as $item) {
                 $detail = Karyawan::select('nik','nama')
+                ->whereNotIn('nik', $arr_nkp)
                 ->where(['is_aktif'=>1, 'id_jenjang'=>$item['id_jenjang']])
                 ->whereNotIn('nik', explode(',', str_replace("'", "", $arr_not_in_nik)))
                 ->whereNotIn('kode_perusahaan', explode(',', $arr_not_in_perusahaan))
@@ -1165,6 +1172,7 @@ class KaryawanController extends Controller
                 COUNT(*) AS jumlah
             FROM `mtr_tbl_karyawan`
             WHERE `is_aktif` = 1
+            AND nik NOT IN ('03032512019','03022110004')
             AND `nik` NOT IN (".$arr_not_in_nik.")
             AND kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") 
             AND `tanggal_lahir` IS NOT NULL
@@ -1175,6 +1183,7 @@ class KaryawanController extends Controller
             });
             foreach ($data as $item) {
                 $detail = Karyawan::select('nik','nama')
+                ->whereNotIn('nik', $arr_nkp)
                 ->where(['is_aktif'=>1])
                 ->whereYear('tanggal_lahir', '>', $item['tahun_min'])
                 ->whereYear('tanggal_lahir', '<=', $item['tahun_max'])
@@ -1286,6 +1295,7 @@ class KaryawanController extends Controller
                 // jumlah_karyawan_kelamin_now
                 $trx = DB::select("SELECT COUNT(*) AS jumlah,IFNULL(`kode_kelamin`, 1) AS `kode_kelamin` 
                 FROM `mtr_tbl_karyawan` WHERE `is_aktif`=1 AND `nik` NOT IN (".$arr_not_in_nik.") 
+                AND nik NOT IN ('03032512019','03022110004')
                 AND (".$where_sql.") 
                 AND kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND kode_status IN (".implode(',', $arr_select_status).") 
@@ -1305,6 +1315,7 @@ class KaryawanController extends Controller
                 ];
                 foreach ($data as $item) {
                     $detail = Karyawan::select('nik','nama')
+                    ->whereNotIn('nik', $arr_nkp)
                     ->where(['is_aktif'=>1, 'kode_kelamin'=>$item['kode_kelamin']])
                     ->whereNotIn('nik', explode(',', str_replace("'", "", $arr_not_in_nik)))
                     ->whereNotIn('kode_perusahaan', explode(',', $arr_not_in_perusahaan))
@@ -1337,6 +1348,7 @@ class KaryawanController extends Controller
                 $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`status_karyawan`,a.`kode_status` 
                 FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_status_karyawan` AS b ON a.`kode_status`=b.`id` 
                 WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") 
+                AND a.nik NOT IN ('03032512019','03022110004')
                 AND (".$where_sql.") AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND a.kode_status IN (".implode(',', $arr_select_status).") 
                 AND a.kode_level IN (".implode(',', $arr_select_level).") 
@@ -1350,6 +1362,7 @@ class KaryawanController extends Controller
                 });
                 foreach ($data as $item) {
                     $detail = Karyawan::select('nik','nama')
+                    ->whereNotIn('nik', $arr_nkp)
                     ->where(['is_aktif'=>1, 'kode_status'=>$item['kode_status']])
                     ->whereNotIn('nik', explode(',', str_replace("'", "", $arr_not_in_nik)))
                     ->whereNotIn('kode_perusahaan', explode(',', $arr_not_in_perusahaan))
@@ -1381,6 +1394,7 @@ class KaryawanController extends Controller
                 $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`level`,a.`kode_level` 
                 FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_level` AS b ON a.`kode_level`=b.`id` 
                 WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") 
+                AND a.nik NOT IN ('03032512019','03022110004')
                 AND (".$where_sql.") AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND a.kode_status IN (".implode(',', $arr_select_status).") 
                 AND a.kode_level IN (".implode(',', $arr_select_level).") 
@@ -1394,6 +1408,7 @@ class KaryawanController extends Controller
                 });
                 foreach ($data as $item) {
                     $detail = Karyawan::select('nik','nama')
+                    ->whereNotIn('nik', $arr_nkp)
                     ->where(['is_aktif'=>1, 'kode_level'=>$item['kode_level']])
                     ->whereNotIn('nik', explode(',', str_replace("'", "", $arr_not_in_nik)))
                     ->whereNotIn('kode_perusahaan', explode(',', $arr_not_in_perusahaan))
@@ -1425,6 +1440,7 @@ class KaryawanController extends Controller
                 $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`nama`,a.`kode_perusahaan` 
                 FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_perusahaan` AS b ON a.`kode_perusahaan`=b.`id` 
                 WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") 
+                AND a.nik NOT IN ('03032512019','03022110004')
                 AND (".$where_sql.") AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND a.kode_status IN (".implode(',', $arr_select_status).") 
                 AND a.kode_level IN (".implode(',', $arr_select_level).") 
@@ -1438,6 +1454,7 @@ class KaryawanController extends Controller
                 });
                 foreach ($data as $item) {
                     $detail = Karyawan::select('nik','nama')
+                    ->whereNotIn('nik', $arr_nkp)
                     ->where(['is_aktif'=>1, 'kode_perusahaan'=>$item['kode_perusahaan']])
                     ->whereNotIn('nik', explode(',', str_replace("'", "", $arr_not_in_nik)))
                     ->whereNotIn('kode_perusahaan', explode(',', $arr_not_in_perusahaan))
@@ -1469,6 +1486,7 @@ class KaryawanController extends Controller
                 $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`jenjang`,a.`id_jenjang` 
                 FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_pendidikan_jenjang` AS b ON a.`id_jenjang`=b.`id` 
                 WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") 
+                AND a.nik NOT IN ('03032512019','03022110004')
                 AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") 
                 AND (".$where_sql.") AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND a.kode_status IN (".implode(',', $arr_select_status).") 
@@ -1484,6 +1502,7 @@ class KaryawanController extends Controller
                 });
                 foreach ($data as $item) {
                     $detail = Karyawan::select('nik','nama')
+                    ->whereNotIn('nik', $arr_nkp)
                     ->where(['is_aktif'=>1, 'id_jenjang'=>$item['id_jenjang']])
                     ->whereNotIn('nik', explode(',', str_replace("'", "", $arr_not_in_nik)))
                     ->whereNotIn('kode_perusahaan', explode(',', $arr_not_in_perusahaan))
@@ -1547,6 +1566,7 @@ class KaryawanController extends Controller
                     COUNT(*) AS jumlah
                 FROM `mtr_tbl_karyawan`
                 WHERE `is_aktif` = 1
+                AND nik NOT IN ('03032512019','03022110004')
                 AND `nik` NOT IN (".$arr_not_in_nik.")
                 AND `tanggal_lahir` IS NOT NULL
                 -- AND YEAR(`tanggal_lahir`) <= YEAR(NOW())
@@ -1565,6 +1585,7 @@ class KaryawanController extends Controller
                 $jumlah_karyawan_kelahiran_now = [];
                 foreach ($data as $item) {
                     $detail = Karyawan::select('nik','nama')
+                    ->whereNotIn('nik', $arr_nkp)
                     ->where(['is_aktif'=>1])
                     ->whereYear('tanggal_lahir', '>', $item['tahun_min'])
                     ->whereYear('tanggal_lahir', '<=', $item['tahun_max'])
