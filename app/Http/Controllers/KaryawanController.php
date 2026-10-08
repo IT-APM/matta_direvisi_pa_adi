@@ -239,8 +239,10 @@ class KaryawanController extends Controller
                 if(empty($request->data_id)){
                     if($value == 'execute'){
                         return redirect( 'karyawan/bulanan/0' )->with( 'error', 'No Data is executed.' );
-                    }else if($value == 'delete'){
+                    }elseif($value == 'delete'){
                         return redirect( 'karyawan/bulanan/0' )->with( 'error', 'No Data is deleted.' );
+                    }elseif($value == 'refresh'){
+                        return redirect( 'karyawan/bulanan/0' )->with( 'error', 'No Data is refreshed.' );
                     }
                 }else{
                     $data_id = $request->data_id;
@@ -279,15 +281,58 @@ class KaryawanController extends Controller
                         }
                         // return response()->json( [ 'arr' => $arr ], 200 );
                         return redirect( 'karyawan/bulanan/0' )->with( 'msg', 'Data is executed successfully.' );
-                    }else if($value == 'delete'){
+                    }elseif($value == 'delete'){
                         foreach($data_id as $_data_id){
                             $this->bulanan_delete($_data_id);
                         }
                         return redirect( 'karyawan/bulanan/0' )->with( 'msg', 'Data is deleted successfully.' );
+                    }elseif($value == 'refresh'){
+                        foreach($data_id as $_data_id){
+                            $arr_not_in_nik = ['Hco.all','IT Infras','IT.BM'];
+                            foreach(explode(',', MtrUtility::find(55)->informasi) as $arr_nkp){
+                                array_push($arr_not_in_nik, $arr_nkp);
+                            }
+                            $trx = KaryawanBulanan::find($_data_id);
+                            $this->bulanan_delete($_data_id);
+                            $_trx = Karyawan::where(['is_aktif'=>1, 'layer1'=>$trx->layer1])->whereNotIn('nik', $arr_not_in_nik)->orderBy('nama', 'asc')->get();
+                            foreach($_trx as $_data){
+                                $insert = new KaryawanBulanan;
+                                $insert->tanggal = Carbon::now()->format('Y-m-d');
+                                $insert->nik = $_data->nik;
+                                $insert->nik_property = $this->getNikProperty($_data->nik);
+                                $insert->layer1 = $_data->layer1;
+                                $insert->layer1_property = $this->getNikProperty($_data->layer1);
+                                $insert->layer2 = $_data->layer2;
+                                $insert->layer2_property = $this->getNikProperty($_data->layer2);
+                                $insert->save();
+                            }
+                        }
+                        return redirect( 'karyawan/bulanan/0' )->with( 'msg', 'Data is refreshed successfully.' );
                     }
                 }
             }
         }
+    }
+
+    public function getNikProperty($nik)
+    {
+        // $where = ['nik' => $nik, 'is_aktif' => 1];
+        $where = ['nik' => $nik];
+        $data = Karyawan::select('mtr_tbl_karyawan.nik', 'mtr_tbl_karyawan.nama', 'mtr_tbl_karyawan.email', 'mtr_tbl_karyawan.telepon1', 
+        'mtr_tbl_perusahaan.nama as perusahaan', 'mtr_tbl_divisi.nama as divisi', 'mtr_tbl_departemen.nama as dep', 'mtr_tbl_sub_departemen.nama as sub_dep', 
+        'mtr_tbl_level.level as level', 'mtr_tbl_jabatan.jabatan as jabatan', 'mtr_tbl_level.id as id_level', 'mtr_tbl_working_group.wg_name as wg_name', 
+        'mtr_tbl_working_group.id as wg_id', 'mtr_tbl_working_group.is_reguler as is_reguler',
+        'mtr_tbl_status_karyawan.status_karyawan as status_karyawan')
+            ->leftJoin('mtr_tbl_perusahaan', 'mtr_tbl_perusahaan.id', '=', 'mtr_tbl_karyawan.kode_perusahaan')
+            ->leftJoin('mtr_tbl_divisi', 'mtr_tbl_divisi.id', '=', 'mtr_tbl_karyawan.kode_divisi')
+            ->leftJoin('mtr_tbl_departemen', 'mtr_tbl_departemen.id', '=', 'mtr_tbl_karyawan.kode_departemen')
+            ->leftJoin('mtr_tbl_sub_departemen', 'mtr_tbl_sub_departemen.id', '=', 'mtr_tbl_karyawan.kode_sub_departemen')
+            ->leftJoin('mtr_tbl_level', 'mtr_tbl_level.id', '=', 'mtr_tbl_karyawan.kode_level')
+            ->leftJoin('mtr_tbl_jabatan', 'mtr_tbl_jabatan.id', '=', 'mtr_tbl_karyawan.kode_jabatan')
+            ->leftJoin('mtr_tbl_working_group', 'mtr_tbl_working_group.id', '=', 'mtr_tbl_karyawan.wg_id')
+            ->leftJoin('mtr_tbl_status_karyawan', 'mtr_tbl_status_karyawan.id', '=', 'mtr_tbl_karyawan.kode_status')
+            ->where($where)->first();
+        return json_encode($data);
     }
     
     public function bulanan_delete($id)
