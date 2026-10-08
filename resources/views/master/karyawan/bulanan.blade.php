@@ -99,11 +99,10 @@
                             </div>
                         </form>
                     </div>
-                    <form class="mt-2" action="{{ route('karyawan.bulanan_update') }}" method="post" enctype="multipart/form-data"
-                        onsubmit="return confirm('Are you sure want to do this?');">
+                    <form class="mt-2" action="{{ route('karyawan.bulanan_update') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to do this?');">
                         @csrf
                         @if (count($layer1) > 0)
-                        <button class="btn btn-success" type="submit" name="submit" id="submit" value="execute"><i class="fa fa-plus-circle" aria-hidden="true"></i> Execute</button> | <button class="btn btn-danger" type="submit" name="submit" id="submit" value="delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>
+                        <button class="btn btn-success" type="submit" name="submit" id="submit" value="execute"><i class="fa fa-plus-circle" aria-hidden="true"></i> Execute</button> | <button class="btn btn-danger" type="submit" name="submit" id="submit" value="delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button> | <button class="btn btn-info" type="submit" name="submit" id="submit" value="refresh"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
                         @endif
                         <div class="table-responsive">
                             <table class="display nowrap" id="_datatable">
