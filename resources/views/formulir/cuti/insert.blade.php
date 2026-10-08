@@ -88,9 +88,20 @@
                                     <button id="autoClickBtn" type="button" class="btn text-white" style="background-color: #797d7f;" data-bs-toggle="modal" data-bs-target="#show_cuti">Detail</button>
                                 @endif
                             </div>
-                            {{-- @foreach ($TrxCuti as $data)
-                                <label class="form-label">{{ $data->id }}</label><br/>
-                            @endforeach --}}
+                            @php
+                            // 2=Pria
+                            // 3=Wanita
+                            $kode_kelamin = App\Models\Karyawan::where(['nik'=>$nik_karyawan])->first()->kode_kelamin;
+                            if($kode_kelamin == 2){
+                                // 8=Melahirkan-Karyawati (90 hari)
+                                // 16=Cuti Haid (2 hari)
+                                // 17=Cuti Haid (1 hari)
+                                $tipe = $tipe->whereNotIn('id', [8, 16, 17]);
+                            }elseif($kode_kelamin == 3){
+                                // 9=Melahirkan-Istri (3 hari)
+                                $tipe = $tipe->whereNotIn('id', [9]);
+                            }
+                            @endphp
                             <div class="col-md-4">
                                 <label class="form-label" for="tipe_cuti">Tipe Cuti</label>
                                 <select class="form-select" id="tipe_cuti" name="tipe_cuti" required="">
