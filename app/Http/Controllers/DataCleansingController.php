@@ -230,20 +230,23 @@ class DataCleansingController extends Controller
 
     public function PerubahanDataKaryawanBulanan()
     {
-        // KaryawanBulanan::query()->delete();
+        $arr_not_in_nik = ['Hco.all','IT Infras','IT.BM'];
+        foreach(explode(',', MtrUtility::find(55)->informasi) as $arr_nkp){
+            array_push($arr_not_in_nik, $arr_nkp);
+        }
         KaryawanBulanan::where('is_berubah', 0)->delete();
         $trx = Karyawan::select(
             DB::raw('COUNT(*) as total'),
             'layer1'
         )
         ->where('is_aktif', 1)
-        ->whereNotIn('nik', ['Hco.all','IT.BM','03032512019','03022110004'])
+        ->whereNotIn('nik', $arr_not_in_nik)
         ->whereNotNull('layer1')
         ->whereRaw("TRIM(layer1) <> ''")
         ->groupBy('layer1')
         ->get();
         foreach($trx as $data){
-            $_trx = Karyawan::where(['is_aktif'=>1, 'layer1'=>$data->layer1])->whereNotIn('nik', ['Hco.all','IT.BM','03032512019','03022110004'])->orderBy('nama', 'asc')->get();
+            $_trx = Karyawan::where(['is_aktif'=>1, 'layer1'=>$data->layer1])->whereNotIn('nik', $arr_not_in_nik)->orderBy('nama', 'asc')->get();
             foreach($_trx as $_data){
                 $insert = new KaryawanBulanan;
                 $insert->tanggal = Carbon::now()->format('Y-m-d');
