@@ -555,6 +555,7 @@ class KaryawanController extends Controller
         $trx = [];
         // 55=NIP NKP
         $arr_nkp = explode(',', MtrUtility::find(55)->informasi);
+        $str_nkp = implode(',', array_map(fn($item) => "'" . trim($item) . "'", $arr_nkp));
         // histori
         $jumlah_karyawan = [];
         $jumlah_karyawan_kelamin = [];
@@ -697,7 +698,7 @@ class KaryawanController extends Controller
         }
         // end filter
         // all
-        $where0 = "nik NOT IN ('03032512019','03022110004') AND `nik` NOT IN (".$arr_not_in_nik.") AND `kode_perusahaan` NOT IN (".$arr_not_in_perusahaan.")";
+        $where0 = "nik NOT IN (".$str_nkp.") AND `nik` NOT IN (".$arr_not_in_nik.") AND `kode_perusahaan` NOT IN (".$arr_not_in_perusahaan.")";
         $where1 = "AND kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND kode_status IN (".implode(',', $arr_select_status).") 
                 AND kode_perusahaan IN (".implode(',', $arr_perusahaan).") 
@@ -1032,7 +1033,7 @@ class KaryawanController extends Controller
         // start now
         if($id == 0){
             // jumlah_karyawan_kelamin_now
-            $trx = DB::select("SELECT COUNT(*) AS jumlah,IFNULL(`kode_kelamin`, 1) AS `kode_kelamin` FROM `mtr_tbl_karyawan` WHERE nik NOT IN ('03032512019','03022110004') AND `is_aktif`=1 AND `nik` NOT IN (".$arr_not_in_nik.") AND kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY `kode_kelamin`");
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,IFNULL(`kode_kelamin`, 1) AS `kode_kelamin` FROM `mtr_tbl_karyawan` WHERE nik NOT IN (".$str_nkp.") AND `is_aktif`=1 AND `nik` NOT IN (".$arr_not_in_nik.") AND kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY `kode_kelamin`");
             $data = collect($trx)->map(function($item){
                 return (array) $item;
             });
@@ -1058,7 +1059,7 @@ class KaryawanController extends Controller
                 ];
             }
             // jumlah_karyawan_status_now
-            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`status_karyawan`,a.`kode_status` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_status_karyawan` AS b ON a.`kode_status`=b.`id` WHERE a.nik NOT IN ('03032512019','03022110004') AND a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_status` ORDER BY b.`status_karyawan`");
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`status_karyawan`,a.`kode_status` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_status_karyawan` AS b ON a.`kode_status`=b.`id` WHERE a.nik NOT IN (".$str_nkp.") AND a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_status` ORDER BY b.`status_karyawan`");
             $data = collect($trx)->map(function($item){
                 return (array) $item;
             });
@@ -1078,7 +1079,7 @@ class KaryawanController extends Controller
                 ];
             }
             // jumlah_karyawan_level_now
-            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`level`,a.`kode_level` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_level` AS b ON a.`kode_level`=b.`id` WHERE a.nik NOT IN ('03032512019','03022110004') AND  a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_level` ORDER BY b.`level`");
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`level`,a.`kode_level` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_level` AS b ON a.`kode_level`=b.`id` WHERE a.nik NOT IN (".$str_nkp.") AND  a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_level` ORDER BY b.`level`");
             $data = collect($trx)->map(function($item){
                 return (array) $item;
             });
@@ -1098,7 +1099,7 @@ class KaryawanController extends Controller
                 ];
             }
             // jumlah_karyawan_perusahaan_now
-            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`nama`,a.`kode_perusahaan` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_perusahaan` AS b ON a.`kode_perusahaan`=b.`id` WHERE a.nik NOT IN ('03032512019','03022110004') AND a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_perusahaan` ORDER BY b.`nama`");
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`nama`,a.`kode_perusahaan` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_perusahaan` AS b ON a.`kode_perusahaan`=b.`id` WHERE a.nik NOT IN (".$str_nkp.") AND a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`kode_perusahaan` ORDER BY b.`nama`");
             $data = collect($trx)->map(function($item){
                 return (array) $item;
             });
@@ -1118,7 +1119,7 @@ class KaryawanController extends Controller
                 ];
             }
             // jumlah_karyawan_pendidikan_now
-            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`jenjang`,a.`id_jenjang` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_pendidikan_jenjang` AS b ON a.`id_jenjang`=b.`id` WHERE a.nik NOT IN ('03032512019','03022110004') AND a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`id_jenjang` ORDER BY a.`id_jenjang`");
+            $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`jenjang`,a.`id_jenjang` FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_pendidikan_jenjang` AS b ON a.`id_jenjang`=b.`id` WHERE a.nik NOT IN (".$str_nkp.") AND a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") GROUP BY a.`id_jenjang` ORDER BY a.`id_jenjang`");
             $data = collect($trx)->map(function($item){
                 return (array) $item;
             });
@@ -1172,7 +1173,7 @@ class KaryawanController extends Controller
                 COUNT(*) AS jumlah
             FROM `mtr_tbl_karyawan`
             WHERE `is_aktif` = 1
-            AND nik NOT IN ('03032512019','03022110004')
+            AND nik NOT IN (".$str_nkp.")
             AND `nik` NOT IN (".$arr_not_in_nik.")
             AND kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") 
             AND `tanggal_lahir` IS NOT NULL
@@ -1295,7 +1296,7 @@ class KaryawanController extends Controller
                 // jumlah_karyawan_kelamin_now
                 $trx = DB::select("SELECT COUNT(*) AS jumlah,IFNULL(`kode_kelamin`, 1) AS `kode_kelamin` 
                 FROM `mtr_tbl_karyawan` WHERE `is_aktif`=1 AND `nik` NOT IN (".$arr_not_in_nik.") 
-                AND nik NOT IN ('03032512019','03022110004')
+                AND nik NOT IN (".$str_nkp.")
                 AND (".$where_sql.") 
                 AND kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND kode_status IN (".implode(',', $arr_select_status).") 
@@ -1348,7 +1349,7 @@ class KaryawanController extends Controller
                 $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`status_karyawan`,a.`kode_status` 
                 FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_status_karyawan` AS b ON a.`kode_status`=b.`id` 
                 WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") 
-                AND a.nik NOT IN ('03032512019','03022110004')
+                AND a.nik NOT IN (".$str_nkp.")
                 AND (".$where_sql.") AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND a.kode_status IN (".implode(',', $arr_select_status).") 
                 AND a.kode_level IN (".implode(',', $arr_select_level).") 
@@ -1394,7 +1395,7 @@ class KaryawanController extends Controller
                 $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`level`,a.`kode_level` 
                 FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_level` AS b ON a.`kode_level`=b.`id` 
                 WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") 
-                AND a.nik NOT IN ('03032512019','03022110004')
+                AND a.nik NOT IN (".$str_nkp.")
                 AND (".$where_sql.") AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND a.kode_status IN (".implode(',', $arr_select_status).") 
                 AND a.kode_level IN (".implode(',', $arr_select_level).") 
@@ -1440,7 +1441,7 @@ class KaryawanController extends Controller
                 $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`nama`,a.`kode_perusahaan` 
                 FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_perusahaan` AS b ON a.`kode_perusahaan`=b.`id` 
                 WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") 
-                AND a.nik NOT IN ('03032512019','03022110004')
+                AND a.nik NOT IN (".$str_nkp.")
                 AND (".$where_sql.") AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND a.kode_status IN (".implode(',', $arr_select_status).") 
                 AND a.kode_level IN (".implode(',', $arr_select_level).") 
@@ -1486,7 +1487,7 @@ class KaryawanController extends Controller
                 $trx = DB::select("SELECT COUNT(*) AS jumlah,b.`jenjang`,a.`id_jenjang` 
                 FROM `mtr_tbl_karyawan` AS a LEFT JOIN `mtr_tbl_pendidikan_jenjang` AS b ON a.`id_jenjang`=b.`id` 
                 WHERE a.`is_aktif`=1 AND a.`nik` NOT IN (".$arr_not_in_nik.") 
-                AND a.nik NOT IN ('03032512019','03022110004')
+                AND a.nik NOT IN (".$str_nkp.")
                 AND a.kode_perusahaan NOT IN (".$arr_not_in_perusahaan.") 
                 AND (".$where_sql.") AND a.kode_kelamin IN (".implode(',', $arr_select_kelamin).") 
                 AND a.kode_status IN (".implode(',', $arr_select_status).") 
@@ -1566,7 +1567,7 @@ class KaryawanController extends Controller
                     COUNT(*) AS jumlah
                 FROM `mtr_tbl_karyawan`
                 WHERE `is_aktif` = 1
-                AND nik NOT IN ('03032512019','03022110004')
+                AND nik NOT IN (".$str_nkp.")
                 AND `nik` NOT IN (".$arr_not_in_nik.")
                 AND `tanggal_lahir` IS NOT NULL
                 -- AND YEAR(`tanggal_lahir`) <= YEAR(NOW())
