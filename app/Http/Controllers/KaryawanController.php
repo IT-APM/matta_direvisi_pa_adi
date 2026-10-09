@@ -270,6 +270,7 @@ class KaryawanController extends Controller
                             // cc email ke layer2 jika dicheck
                             if(!empty($cc_layer2) && array_key_exists($_data_id, $cc_layer2)){
                                 array_push($ccEmails, $layer2_property['email']);
+                                KaryawanBulanan::where(['layer1'=>$trx->layer1,'is_berubah'=>0])->update(['is_cc_layer2' => 1]);
                             }
                             // array_push($arr, ['body'=>$mailData, 'cc'=>$ccEmails]);
                             Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
