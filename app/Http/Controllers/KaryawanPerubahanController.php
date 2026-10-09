@@ -106,6 +106,7 @@ class KaryawanPerubahanController extends Controller
             KaryawanBulanan::where(['layer1'=>$request->layer1,'is_berubah'=>1])->update(['is_berubah' => 2]);
             $trx = KaryawanBulanan::find($request->data_id_all);
             $layer1_property = json_decode($trx->layer1_property, true);
+            $layer2_property = json_decode($trx->layer2_property, true);
             // start
             // parameter yang dipassing ke sendemail
             $mailData['title'] = 'Konfirmasi Data Karyawan';
@@ -120,6 +121,11 @@ class KaryawanPerubahanController extends Controller
             $mailData['data'] = ['karyawan' => $karyawan, 'data' => $trx, 'nama'=>$layer1_property['nama'].'/'.$layer1_property['nik'], 'jabatan'=>$layer1_property['jabatan'], 'unit_kerja'=>$layer1_property['divisi'].'/'.$layer1_property['dep'].'/'.$layer1_property['sub_dep'], 'link'=> route('karyawanperubahan.show', [Crypt::encrypt($request->data_id_all), 'nik'=>$pic_hco[0], 'pic'=>'pic_hco', 'filename'=>$mailData['filename']]) ];
             // cc email ke hco
             $ccEmails = explode(',', MtrUtility::find(11)->informasi);
+            array_push($ccEmails, $layer1_property['email']);
+            // check apakah is_cc_layer2 TRUE maka cc ke layer2
+            if($trx->is_cc_layer2){
+                array_push($ccEmails, $layer2_property['email']);
+            }
             Mail::to($mailData['to'])->cc($ccEmails)->send(new MattaRebornMail($mailData));
             // end
             $this->deleteToDoList(['id_trx'=>$request->data_id_all, 'filename'=>$mailData['filename'], 'pic'=>'layer1', 'nik'=>$request->layer1]);
