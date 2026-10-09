@@ -1436,11 +1436,16 @@ class TrxPayrollController extends Controller
                         $where = ['ot_maker_by'=>$data0[$x][$_101], 'ot_approver_status'=>'Approve'];
                         $overtime = Overtime::select(DB::raw('SUM(ROUND(ot_length_rp_adj,-3)) as ot_length_rp_adj'))->where($where)->whereBetween(DB::raw('DATE(ot_start_at)'), [$date_from, $date_to])->orderBy( 'ot_start_at', 'desc' )->groupBy('ot_maker_by')->get();
                         $overtime = $overtime->sum('ot_length_rp_adj');
-                        // end
                         $trx->overtime = $overtime;
-                        $trx->overtime_max = MtrUtility::find(33)->informasi;
+                        $overtime_max = MtrUtility::find(33)->informasi;
+                        $trx->overtime_max = $overtime_max;
                         // overtime_ori sama dengan overtime
                         $trx->overtime_ori = $overtime;
+                        // jika overtime > overtime_max maka overtime = overtime_max
+                        if($overtime > $overtime_max){
+                            $overtime = $overtime_max;
+                        }
+                        // end
                         // hanya outsource saja
                         if($data0[$x][$_100] == 'osc'){
                             // 401=PPh21
