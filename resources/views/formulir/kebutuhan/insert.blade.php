@@ -203,7 +203,7 @@
                                         @endforeach
                                     </select> --}}
                                     <label class="form-label" for="id_jurusan_pendidikan[]">Jurusan</label>
-                                    <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_jurusan_pendidikan[]" name="id_jurusan_pendidikan[]" placeholder="Pilih...">
+                                    <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_jurusan_pendidikan[]" name="id_jurusan_pendidikan[]" >
                                         <option selected="" disabled="" value="">Pilih...</option>
                                         @foreach ($jurusan_pendidikan as $data)
                                         <option value="{{ $data->id }}">{{ $data->jurusan }} ({{ $data->_kelompok->kelompok }})</option>
@@ -232,12 +232,13 @@
                                 <div class="row mt-2">
                                     <label class="form-label" for="id_pelatihan[]">Pelatihan</label>
                                     <div class="col-md-11">
-                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_pelatihan[]" name="id_pelatihan[]" placeholder="Pilih...">
-                                            <option selected disabled hidden>Pilih...</option>
+                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_pelatihan[]" name="id_pelatihan[]" required="">
+                                            {{-- <option selected disabled hidden>Pilih...</option> --}}
                                             @foreach ($pelatihan as $data)
                                             <option value="{{ $data->id }}">{{ $data->sub_pelatihan }}</option>
                                             @endforeach
                                         </select>
+                                        <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
                                     <div class="col-md-1 text-start">
                                         <a href="{{ route('_pelatihan_master.index') }}" data-toggle="tooltip" title="Add new" target="_blank"><i class="fa fa-plus"></i></a><br/><a href="#" id="get_pelatihan" data-toggle="tooltip" title="Refresh"><i class="fa fa-refresh"></i></a>
@@ -246,12 +247,13 @@
                                 <div class="row mt-2">
                                     <label class="form-label" for="id_sertifikasi[]">Sertifikasi</label>
                                     <div class="col-md-11">
-                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_sertifikasi[]" name="id_sertifikasi[]" >
-                                            <option selected disabled hidden>Pilih...</option>
+                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_sertifikasi[]" name="id_sertifikasi[]" required="">
+                                            {{-- <option selected disabled hidden>Pilih...</option> --}}
                                             @foreach ($sertifikasi as $data)
                                             <option value="{{ $data->id }}">{{ $data->sub_sertifikasi }}</option>
                                             @endforeach
                                         </select>
+                                        <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
                                     <div class="col-md-1 text-start">
                                         <a href="{{ route('_sertifikasi_master.index') }}" data-toggle="tooltip" title="Add new" target="_blank"><i class="fa fa-plus"></i></a><br/><a href="#" id="get_sertifikasi" data-toggle="tooltip" title="Refresh"><i class="fa fa-refresh"></i></a>
@@ -260,12 +262,13 @@
                                 <div class="row mt-2">
                                     <label class="form-label" for="id_keterampilan[]">Keterampilan</label>
                                     <div class="col-md-11">
-                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_keterampilan[]" name="id_keterampilan[]" >
-                                            <option selected disabled hidden>Pilih...</option>
+                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_keterampilan[]" name="id_keterampilan[]" required="">
+                                            {{-- <option selected disabled hidden>Pilih...</option> --}}
                                             @foreach ($keterampilan as $data)
                                             <option value="{{ $data->id }}">{{ $data->sub_keterampilan }}</option>
                                             @endforeach
                                         </select>
+                                        <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
                                     <div class="col-md-1 text-start">
                                         <a href="{{ route('_keterampilan_master.index') }}" data-toggle="tooltip" title="Add new" target="_blank"><i class="fa fa-plus"></i></a><br/><a href="#" id="get_keterampilan" data-toggle="tooltip" title="Refresh"><i class="fa fa-refresh"></i></a>
@@ -274,12 +277,13 @@
                                 <div class="row mt-2">
                                     <label class="form-label" for="id_kepribadian[]">Kepribadian</label>
                                     <div class="col-md-11">
-                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_kepribadian[]" name="id_kepribadian[]" >
-                                            <option selected disabled hidden>Pilih...</option>
+                                        <select class="form-select js-example-basic-multiple col-sm-12" multiple="multiple" id="id_kepribadian[]" name="id_kepribadian[]" required="">
+                                            {{-- <option selected disabled hidden>Pilih...</option> --}}
                                             @foreach ($kepribadian as $data)
                                             <option value="{{ $data->id }}">{{ $data->sub_kepribadian }}</option>
                                             @endforeach
                                         </select>
+                                        <div class="invalid-feedback txt-danger">This field is required.</div>
                                     </div>
                                     <div class="col-md-1 text-start">
                                         <a href="{{ route('_kepribadian_master.index') }}" data-toggle="tooltip" title="Add new" target="_blank"><i class="fa fa-plus"></i></a><br/><a href="#" id="get_kepribadian" data-toggle="tooltip" title="Refresh"><i class="fa fa-refresh"></i></a>
