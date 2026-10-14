@@ -226,7 +226,7 @@
                     <!-- end -->
                     <!-- start -->
                     <div class="card-header">
-                        <h5>Human Capital</h5>
+                        <h5>{{ App\Models\MtrUtility::find(51)->informasi }}</h5>
                     </div>
                     <div class="card-body typography">
                         <div class="row">
