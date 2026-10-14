@@ -39,6 +39,7 @@ use App\Models\TrxKebutuhanDetail;
 use App\Models\TrxKebutuhanLog;
 use App\Models\TrxRecruitment;
 use App\Models\TrxRecruitmentIdentitas;
+use App\Models\TrxRecruitmentNegosiasi;
 use App\Models\TrxRecruitmentLog;
 use App\Models\Holiday;
 // 
@@ -1335,7 +1336,9 @@ class TrxKebutuhanController extends Controller
         $pengaju = json_decode($trxM->pengaju_property, true);
         $layer1 = json_decode($trxM->layer1_property, true);
         $layer2 = json_decode($trxM->layer2_property, true);
-        return view('formulir.kebutuhan.update', compact('trxM', 'pengaju', 'layer1', 'layer2', 'status_pengajuan'));
+        $pekerjaan = PekerjaanSub::orderBy('pekerjaan', 'asc')->get();
+        $level = Level::orderBy('id', 'asc')->get();
+        return view('formulir.kebutuhan.update', compact('trxM', 'pengaju', 'layer1', 'layer2', 'status_pengajuan', 'pekerjaan', 'level'));
         // } else {
         //     abort('404');
         // }
@@ -1351,6 +1354,20 @@ class TrxKebutuhanController extends Controller
         $history = TrxKebutuhanMasterEdit::where($where)->orderBy('created_at', 'desc')->get();
         return view('formulir.kebutuhan.edit_kolom', compact('trxM', 'field', 'history') );
         // 
+    }
+    
+    public function post_atribut(Request $request, $id)
+    {
+        $id = (new OpenDataController)->decryptWithKey($id);
+        // update TrxKebutuhanMaster
+        $trxM = TrxKebutuhanMaster::find($id);
+        $trxM->id_pekerjaan = $request->id_pekerjaan;
+        $trxM->id_level = $request->id_level;
+        $trxM->update();
+        // update TrxRecruitmentNegosiasi
+        $id_identitas = TrxRecruitmentIdentitas::where('id_kebutuhan', $id)->pluck('id');
+        TrxRecruitmentNegosiasi::whereIn('id_identitas', $id_identitas)->update(['posisi' => PekerjaanSub::find($request->id_pekerjaan)->pekerjaan]);
+        return redirect('kebutuhan')->with('msg', 'Data is saved successfully.');
     }
     
     public function post_kolom(Request $request, $id)
