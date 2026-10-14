@@ -548,14 +548,14 @@ class KaryawanController extends Controller
                             $catatan = json_encode(['sumber'=>'Upload Data Master Karyawan']);
                             $log->catatan = $catatan;
                             $log->save();
-                            // start sendEmail
-                            $mailData['title'] = 'Perubahan Data Karyawan';
-                            $mailData['filename'] = 'emails.data0';
-                            $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","tanggal_tidak_aktif"=>"Tanggal Tidak Aktif","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama","findim_project"=>"Findim Project","findim_divisi"=>"Findim Divisi","findim_departemen"=>"Findim Departemen","findim_subdepartemen"=>"Findim Sub Departemen","id_grade"=>"Grade","id_fp"=>"ID Finger Print"];
-                            $mailData['data'] = ['insert_by' => $log->_insert_by->nama.' / '.$log->insert_by, 'nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at, 'catatan' => $catatan];
-                            $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
-                            $this->sendEmail($mailData);
-                            // end sendEmail
+                            // // start sendEmail
+                            // $mailData['title'] = 'Perubahan Data Karyawan';
+                            // $mailData['filename'] = 'emails.data0';
+                            // $lbl_history = ["tanggal_lahir"=>"Tanggal Lahir","tempat_lahir"=>"Tempat Lahir","alamat_domisili"=>"Alamat Domisili","alamat_ktp"=>"Alamat KTP","alamat_npwp"=>"Alamat NPWP","telepon1"=>"Telepon 1","telepon2"=>"Telepon 2","telepon3"=>"Telepon 3","no_ktp"=>"NIK KTP","no_npwp"=>"NPWP","no_bpjs"=>"No BPJS Kesehatan","no_bpjstk"=>"No BPJS Ketenagakerjaan","nama_pasangan"=>"Nama Pasangan","kode_kelamin"=>"Jenis Kelamin","kode_agama"=>"Agama","kode_kawin"=>"Status Kawin","kode_warga"=>"Kewarganegaraan","nama"=>"Nama","telepon_darurat"=>"Telepon Darurat","nama_anak"=>"Nama Anak","email"=>"Email","kode_perusahaan"=>"Perusahaan","alamat_kantor"=>"Alamat Kantor","kode_divisi"=>"Direktorat","kode_departemen"=>"Divisi","kode_sub_departemen"=>"Departemen","layer1"=>"Layer 1","layer2"=>"Layer 2","layer3"=>"Layer 3","kode_status"=>"Status Karyawan","wg_id"=>"Grup Kerja","is_aktif"=>"Aktif","gaji_pokok"=>"Gaji Pokok","kode_level"=>"Level","kode_jabatan"=>"Jabatan","tanggal_mulai"=>"Tanggal Mulai Bekerja","tanggal_bergabung"=>"Tanggal Bergabung","tanggal_berakhir"=>"Tanggal Berakhir","tanggal_karyawan_tetap"=>"Tanggal Karyawan Tetap","tanggal_tidak_aktif"=>"Tanggal Tidak Aktif","no_rek"=>"Nomor Rekening","nama_bank"=>"Nama Bank","nama_rek"=>"Rekening Atas Nama","findim_project"=>"Findim Project","findim_divisi"=>"Findim Divisi","findim_departemen"=>"Findim Departemen","findim_subdepartemen"=>"Findim Sub Departemen","id_grade"=>"Grade","id_fp"=>"ID Finger Print"];
+                            // $mailData['data'] = ['insert_by' => $log->_insert_by->nama.' / '.$log->insert_by, 'nik' => $log->nik, 'nama' => $log->_nik->nama, 'perubahan' => $log->perubahan, 'lbl_history' => $lbl_history, 'created_at' => $log->created_at, 'catatan' => $catatan];
+                            // $mailData['to'] = explode(',', MtrUtility::find(1)->informasi);
+                            // $this->sendEmail($mailData);
+                            // // end sendEmail
                         }
                     }
                 }
@@ -1714,6 +1714,7 @@ class KaryawanController extends Controller
     public function index(Request $request)
     {
         // http://localhost/matta/karyawan?str=reorganisasi
+        // https://matta-reborn.alita.id/matta/karyawan?str=reorganisasi
         // if($request->str == 'reorganisasi'){
         //     // dd($request->all());
         //     // sync table mtr_tbl_karyawan_re_org dengan mtr_tbl_karyawan
@@ -1846,6 +1847,7 @@ class KaryawanController extends Controller
         //             ]);
         //         }
         //     }
+        //     // dd('done 1');
         //     // update mtr_tbl_karyawan dari mtr_tbl_karyawan_re_org
         //     $data = DB::table('mtr_tbl_karyawan_re_org')->select('*')->get();
         //     foreach($data as $_data){
@@ -1867,18 +1869,19 @@ class KaryawanController extends Controller
         //             $arr['kode_jabatan'] = ['before'=>Jabatan::find($_data->id_occ_b)->jabatan, 'after'=>Jabatan::find($_data->id_occ_a)->jabatan];
         //             $update['kode_jabatan'] = $_data->id_occ_a;
         //         }
-        //         if($_data->nip_l1_b <> $_data->nip_l1_a){
-        //             $arr['layer1'] = ['before'=>$_data->nip_l1_b, 'after'=>$_data->nip_l1_a];
-        //             $update['layer1'] = $_data->nip_l1_a;
-        //         }
-        //         if($_data->nip_l2_b <> $_data->nip_l2_a){
-        //             $arr['layer2'] = ['before'=>$_data->nip_l2_b, 'after'=>$_data->nip_l2_a];
-        //             $update['layer2'] = $_data->nip_l2_a;
-        //         }
-        //         if($_data->nip_l3_b <> $_data->nip_l3_a){
-        //             $arr['layer3'] = ['before'=>$_data->nip_l3_b, 'after'=>$_data->nip_l3_a];
-        //             $update['layer3'] = $_data->nip_l3_a;
-        //         }
+        //         // if($_data->nip_l1_b <> $_data->nip_l1_a){
+        //         //     $arr['layer1'] = ['before'=>$_data->nip_l1_b, 'after'=>$_data->nip_l1_a];
+        //         //     $update['layer1'] = $_data->nip_l1_a;
+        //         // }
+        //         // if($_data->nip_l2_b <> $_data->nip_l2_a){
+        //         //     $arr['layer2'] = ['before'=>$_data->nip_l2_b, 'after'=>$_data->nip_l2_a];
+        //         //     $update['layer2'] = $_data->nip_l2_a;
+        //         // }
+        //         // if($_data->nip_l3_b <> $_data->nip_l3_a){
+        //         //     $arr['layer3'] = ['before'=>$_data->nip_l3_b, 'after'=>$_data->nip_l3_a];
+        //         //     $update['layer3'] = $_data->nip_l3_a;
+        //         // }
+        //         // dd($arr);
         //         Karyawan::where('nik', $_data->nip)->update($update);
         //         $log = New KaryawanLog;
         //         $log->nik = $_data->nip;
@@ -1888,7 +1891,7 @@ class KaryawanController extends Controller
         //         $log->catatan = $catatan;
         //         $log->save();
         //     }
-        //     dd('done');
+        //     dd('done 2');
         // }
         
         if($request->str == 'proper_karyawan'){
