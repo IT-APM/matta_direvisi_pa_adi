@@ -381,7 +381,8 @@ Route::get('kebutuhan/layer', [TrxKebutuhanController::class, 'layer'])->name('k
 // 
 Route::get('kebutuhan/edit_kolom/{id}', [TrxKebutuhanController::class, 'edit_kolom'])->name('kebutuhan.edit_kolom')->middleware('can:hc');
 Route::post('kebutuhan/post_kolom/{id}', [TrxKebutuhanController::class, 'post_kolom'])->name('kebutuhan.post_kolom')->middleware('can:hc');
-Route::post('kebutuhan/post_atribut/{id}', [TrxKebutuhanController::class, 'post_atribut'])->name('kebutuhan.post_atribut')->middleware('can:hc');
+// Route::get('kebutuhan/get_atribute/{id}', [TrxKebutuhanController::class, 'get_atribute'])->name('kebutuhan.get_atribute')->middleware('can:hc');
+Route::post('kebutuhan/post_atribute/{id}', [TrxKebutuhanController::class, 'post_atribute'])->name('kebutuhan.post_atribute')->middleware('can:hc');
 // 
 Route::get('kebutuhan/export_word/{id}', [TrxKebutuhanController::class, 'export_word'])->name('kebutuhan.export_word')->middleware('can:hc');
 // 
