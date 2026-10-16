@@ -34,6 +34,98 @@
     <div class="row">
         <div class="col-12 col-md-8">
             <div class="card">
+                @php
+                    $kebutuhan_atribute = json_decode($trx->kebutuhan_atribute, true);
+                    $kebutuhan_atribute_atasan_property = json_decode($kebutuhan_atribute['atasan_property'], true);
+                @endphp
+                <div class="card-header">
+                    <h5>Add Employee Atribute</h5>
+                </div>
+                <div class="card-body">
+                    <form action="#" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    @csrf
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <label for="id_pekerjaan" class="form-label">Nama Jabatan</label>
+                            <select class="form-select col-sm-12 js-example-basic-single" id="id_pekerjaan" name="id_pekerjaan" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($pekerjaan as $data)
+                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_pekerjaan']) selected @endif >{{ $data->pekerjaan }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="id_level">Level</label>
+                            <select class="form-select col-sm-12 js-example-basic-single" id="id_level" name="id_level" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($level as $data)
+                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_level']) selected @endif >{{ $data->level }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mt-2">
+                            <label class="form-label" for="id_area">Area Kerja</label>
+                            <select class="form-select col-sm-12 js-example-basic-single" id="id_area" name="id_area" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($area as $data)
+                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_area']) selected @endif >{{ $data->propinsi }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mt-2">
+                            <label class="form-label" for="id_kota">Area Kerja Kota</label>
+                            <select class="form-select col-sm-12 js-example-basic-single" id="id_kota" name="id_kota" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($kota as $data)
+                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_kota']) selected @endif >{{ $data->kota }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mt-2">
+                            <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
+                            <select class="form-select js-example-basic-single col-sm-12" id="atasan" name="atasan" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($atasan as $data)
+                                <option value="{{ $data->nik }}" @if($data->nik == $kebutuhan_atribute['atasan']) selected @endif>{{ $data->nama }} - {{ $data->nik }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mt-2">
+                            <label class="form-label" for="id_divisi_kandidat">Direktorat Kandidat</label>
+                            <select class="form-select col-sm-12 js-example-basic-single" id="id_divisi_kandidat" name="id_divisi_kandidat" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($divisi as $data)
+                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_divisi_kandidat']) selected @endif >{{ $data->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mt-2">
+                            <label class="form-label" for="id_dep_kandidat">Divisi Kandidat</label>
+                            <select class="form-select col-sm-12 js-example-basic-single" id="id_dep_kandidat" name="id_dep_kandidat" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($dep as $data)
+                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_dep_kandidat']) selected @endif >{{ $data->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mt-2">
+                            <label class="form-label" for="id_sub_dep_kandidat">Departemen Kandidat</label>
+                            <select class="form-select col-sm-12 js-example-basic-single" id="id_sub_dep_kandidat" name="id_sub_dep_kandidat" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($sub_dep as $data)
+                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_sub_dep_kandidat']) selected @endif >{{ $data->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-4 mt-2">
+                                <button class="btn btn-primary" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+                <hr/>
                 <div class="card-header">
                     <h5>Process</h5>
                 </div>
