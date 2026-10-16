@@ -752,6 +752,24 @@ class TrxKebutuhanController extends Controller
      */
     public function index(Request $request)
     {
+        // // start default isi kolom kebutuhan_atribute pada tabel trx_tbl_recruitment_identitas
+        // $trx = TrxRecruitmentIdentitas::all();
+        // foreach($trx as $_trx){
+        //     $data = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
+        //     $_data = json_encode([
+        //         'id_pekerjaan'=>$data->id_pekerjaan,
+        //         'id_level'=>$data->id_level,
+        //         'id_area'=>$data->id_area,
+        //         'id_kota'=>$data->id_kota,
+        //         'atasan'=>$data->atasan,
+        //         'atasan_property'=>$data->atasan_property,
+        //         'id_divisi_kandidat'=>$data->id_divisi_kandidat,
+        //         'id_dep_kandidat'=>$data->id_dep_kandidat,
+        //         'id_sub_dep_kandidat'=>$data->id_sub_dep_kandidat,
+        //     ]);
+        //     TrxRecruitmentIdentitas::where('id', $_trx->id)->update(['kebutuhan_atribute' => $_data]);
+        // }
+        // // end
         // // start sync jika status_pengajuan=10 maka insert trx_tbl_kebutuhan_log
         // $trx_id = TrxKebutuhanMaster::where(['status_pengajuan'=>10])->get();
         // $trx_dengan_status_10 = TrxKebutuhanLog::whereIn('id_trx', $trx_id->pluck('id')->toArray())
@@ -1356,9 +1374,15 @@ class TrxKebutuhanController extends Controller
         // 
     }
     
-    public function post_atribut(Request $request, $id)
+    public function get_atribute(Request $request, $id)
+    {
+        dd($request->all(), $id);
+    }
+    
+    public function post_atribute(Request $request, $id)
     {
         $id = (new OpenDataController)->decryptWithKey($id);
+        dd($request->all(), $id);
         // update TrxKebutuhanMaster
         $trxM = TrxKebutuhanMaster::find($id);
         $trxM->id_pekerjaan = $request->id_pekerjaan;
