@@ -96,12 +96,12 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-5">
+        {{-- <div class="col-sm-5">
             <div class="card">
                 <div class="card-header">
-                    <h5>Edit Atribut</h5>
+                    <h5>Edit Atribute</h5>
                 </div>
-                <form action="{{ route('kebutuhan.post_atribut', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxM->id)) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                <form action="{{ route('kebutuhan.post_atribute', (new App\Http\Controllers\OpenDataController)->encryptWithKey($trxM->id)) }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                 @method('POST')
                 @csrf
                 <div class="card-body">
@@ -127,7 +127,7 @@
                 </div>
                 </form>
             </div>
-        </div>
+        </div> --}}
     </div>
 </div>
 @endsection
