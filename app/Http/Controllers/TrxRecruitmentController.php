@@ -50,6 +50,12 @@ use Elibyy\TCPDF\Facades\TCPDF;
 use App\Models\TrxRecruitmentPedoman;
 use App\Models\StatusKerja;
 use App\Models\PekerjaanSub;
+use App\Models\Level;
+use App\Models\Propinsi;
+use App\Models\PropinsiKota;
+use App\Models\Divisi;
+use App\Models\Departemen;
+use App\Models\SubDepartemen;
 use App\Models\ToDoList;
 use App\Models\ToDoListLog;
 use ZipArchive;
@@ -479,6 +485,16 @@ class TrxRecruitmentController extends Controller
         // 25=Not Join
         $id_status = [4,6,8,10,25];
         $log_status = TrxRecruitmentLog::where(['id_identitas'=>$id])->pluck('id_status')->toArray();
+        // 
+        $pekerjaan = PekerjaanSub::orderBy('pekerjaan', 'asc')->get();
+        $level = Level::orderBy('id', 'asc')->get();
+        $area = Propinsi::orderBy('order_by', 'asc')->get();
+        $kota = PropinsiKota::orderBy('kota', 'asc')->get();
+        $divisi = Divisi::orderBy('nama', 'asc')->get();
+        $dep = Departemen::orderBy('nama', 'asc')->get();
+        $sub_dep = SubDepartemen::orderBy('nama', 'asc')->get();
+        // atasan langsung dengan level minimal 3 = Supervisor (SPV)
+        $atasan = Karyawan::select('nik', 'nama')->where(['is_aktif' => 1])->where('kode_level','>=',3)->orderBy('nama', 'asc')->get();
         // 5=Psychotest Done
         if(in_array(5, $log_status)){
             // jika kandidat sudah diberikan TIU 5 dan (EPPS, PAPI Kostick, DISC, BAUM, DAP) maka Psychotest Send menjadi tidak ada
@@ -568,7 +584,7 @@ class TrxRecruitmentController extends Controller
         $karyawan_user_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
         $where = ['is_aktif' => 1, 'kode_sub_departemen' => 363];
         $karyawan_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
-        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume', 'status_join', 'status_not_join', 'process', 'interview'));
+        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume', 'status_join', 'status_not_join', 'process', 'interview', 'pekerjaan', 'level', 'area', 'kota', 'atasan','divisi', 'dep', 'sub_dep'));
         
     }
 
@@ -3026,6 +3042,17 @@ class TrxRecruitmentController extends Controller
         $trx = TrxKebutuhanMaster::find($id_kebutuhan);
         $posisi = $trx->_pekerjaan->pekerjaan;
         $id_status_kerja = $trx->id_status_kerja;
+        $_data = json_encode([
+            'id_pekerjaan'=>$trx->id_pekerjaan,
+            'id_level'=>$trx->id_level,
+            'id_area'=>$trx->id_area,
+            'id_kota'=>$trx->id_kota,
+            'atasan'=>$trx->atasan,
+            'atasan_property'=>$trx->atasan_property,
+            'id_divisi_kandidat'=>$trx->id_divisi_kandidat,
+            'id_dep_kandidat'=>$trx->id_dep_kandidat,
+            'id_sub_dep_kandidat'=>$trx->id_sub_dep_kandidat,
+        ]);
         // dd($id);
         $trx = new TrxRecruitmentIdentitas;
         $trx->id_recruitment = $id_recruitment;
@@ -3090,6 +3117,7 @@ class TrxRecruitmentController extends Controller
         $trx->pendidikan = $request->pendidikan;
         $trx->pekerjaan = $request->pekerjaan;
         $trx->usia = Carbon::parse($request->tanggal_lahir)->age;
+        $trx->kebutuhan_atribute = $_data;
         $trx->save();
         $this->insertInterpretation($trx);
         // start
