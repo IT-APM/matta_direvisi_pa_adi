@@ -151,6 +151,8 @@
                                             @php $no=0; @endphp
                                             @foreach ($trx as $data)
                                             @php
+                                                $kebutuhan_atribute = json_decode($data->kebutuhan_atribute, true);
+                                                $kebutuhan_atribute_atasan_property = json_decode($kebutuhan_atribute['atasan_property'], true);
                                                 $recruitment = App\Models\TrxKebutuhanMaster::find($data->id_kebutuhan);
                                                 $pengaju_property = json_decode($recruitment->pengaju_property, true);
                                                 $atasan_property = $recruitment->atasan_property;
@@ -220,15 +222,19 @@
                                                     &nbsp;<a href="{{ route('recruitment.upload_psikotest', [Crypt::encrypt([$data->id, 'upload'])]) }}" target="_blank" data-toggle="tooltip" title='Upload'><i class="fa fa-upload" style="color: orange;"></i></a>
                                                     @endif
                                                 </td>
-                                                <td>{{ $recruitment->_area->propinsi }}</td>
-                                                <td>@if (!empty($recruitment->id_kota)) {{ $recruitment->_kota->kota }} @endif</td>
+                                                {{-- <td>{{ $recruitment->_area->propinsi }}</td> --}}
+                                                <td>{{ App\Models\Propinsi::find($kebutuhan_atribute['id_area'])->propinsi }}</td>
+                                                {{-- <td>@if (!empty($recruitment->id_kota)) {{ $recruitment->_kota->kota }} @endif</td> --}}
+                                                <td>@if(App\Models\PropinsiKota::find($kebutuhan_atribute['id_kota'])?->kota !== null) {{ App\Models\PropinsiKota::find($kebutuhan_atribute['id_kota'])->kota }} @endif</td>
                                                 <td>{{ $pengaju_property['nama'] }}</td>
                                                 <td>{{ $pengaju_property['nik'] }}</td>
                                                 <td>{{ $pengaju_property['divisi'] }}</td>
                                                 <td>{{ $pengaju_property['dep'] }}</td>
                                                 <td>{{ $pengaju_property['sub_dep'] }}</td>
-                                                <td>{{ $recruitment->_pekerjaan->pekerjaan }}</td>
-                                                <td>@if(!empty($atasan_property)) {{ $atasan_property['nama'] }}/{{ $atasan_property['nik'] }} @endif</td>
+                                                {{-- <td>{{ $recruitment->_pekerjaan->pekerjaan }}</td> --}}
+                                                <td>{{ App\Models\PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan }}</td>
+                                                {{-- <td>@if(!empty($atasan_property)) {{ $atasan_property['nama'] }}/{{ $atasan_property['nik'] }} @endif</td> --}}
+                                                <td>{{ $kebutuhan_atribute_atasan_property['nama'] }}/{{ $kebutuhan_atribute_atasan_property['nik'] }}</td>
                                                 <td>{{ $data->nama }}</td>
                                                 <td>{{ $data->email }}&nbsp;<a href="{{ route('recruitment.edit', [Crypt::encrypt($data->id), 'type'=>'email', 'back_url'=>URL::full()]) }}" data-toggle="tooltip" title='Edit'><i class="icon-pencil-alt" style="color:green"></i></a></td>
                                                 <td>{{ $data->telepon }}</td>
