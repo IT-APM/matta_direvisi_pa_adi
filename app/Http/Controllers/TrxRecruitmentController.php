@@ -29,6 +29,7 @@ use App\Models\TrxRecruitmentPsychotestLog;
 use App\Models\TrxRecruitmentTiu5;
 use App\Models\TrxRecruitmentInterview;
 use App\Models\TrxRecruitmentLog;
+use App\Models\TrxRecruitmentAtributeLog;
 use App\Models\MtrRecruitmentBenefit;
 use App\Models\MtrRecruitmentCatatPegawai;
 use App\Models\MtrRecruitmentStatusPegawai;
@@ -53,6 +54,7 @@ use App\Models\PekerjaanSub;
 use App\Models\Level;
 use App\Models\Propinsi;
 use App\Models\PropinsiKota;
+use App\Models\Perusahaan;
 use App\Models\Divisi;
 use App\Models\Departemen;
 use App\Models\SubDepartemen;
@@ -349,6 +351,51 @@ class TrxRecruitmentController extends Controller
         return view('recruitment.index', compact('trx', 'pengaju', 'pekerjaan', 'status_kerja', 'arr_id_pekerjaan', 'arr_id_status_kerja', 'arr_pengaju'));
     }
 
+    public function getNikProperty($nik)
+    {
+        $where = ['nik' => $nik, 'is_aktif' => 1];
+        $data = Karyawan::select('mtr_tbl_karyawan.nik', 'mtr_tbl_karyawan.nama', 'mtr_tbl_karyawan.email', 'mtr_tbl_karyawan.telepon1', 'mtr_tbl_perusahaan.nama as perusahaan', 'mtr_tbl_divisi.nama as divisi', 'mtr_tbl_departemen.nama as dep', 'mtr_tbl_sub_departemen.nama as sub_dep', 'mtr_tbl_level.level as level', 'mtr_tbl_jabatan.jabatan as jabatan', 'mtr_tbl_level.id as id_level', 'mtr_tbl_sub_departemen.id as id_sub_departemen')
+            ->leftJoin('mtr_tbl_perusahaan', 'mtr_tbl_perusahaan.id', '=', 'mtr_tbl_karyawan.kode_perusahaan')
+            ->leftJoin('mtr_tbl_divisi', 'mtr_tbl_divisi.id', '=', 'mtr_tbl_karyawan.kode_divisi')
+            ->leftJoin('mtr_tbl_departemen', 'mtr_tbl_departemen.id', '=', 'mtr_tbl_karyawan.kode_departemen')
+            ->leftJoin('mtr_tbl_sub_departemen', 'mtr_tbl_sub_departemen.id', '=', 'mtr_tbl_karyawan.kode_sub_departemen')
+            ->leftJoin('mtr_tbl_level', 'mtr_tbl_level.id', '=', 'mtr_tbl_karyawan.kode_level')
+            ->leftJoin('mtr_tbl_jabatan', 'mtr_tbl_jabatan.id', '=', 'mtr_tbl_karyawan.kode_jabatan')
+            ->where($where)->first();
+        return json_encode($data);
+    }
+
+    public function post_atribute(Request $request)
+    {
+        // dd($request->all());
+        $id_identitas = Crypt::decrypt($request->id);
+        $_data = json_encode([
+            'id_pekerjaan'=>$request->id_pekerjaan,
+            'id_level'=>$request->id_level,
+            'id_area'=>$request->id_area,
+            'id_kota'=>$request->id_kota,
+            'atasan'=>$request->atasan,
+            'atasan_property'=>$this->getNikProperty($request->atasan),
+            'id_perusahaan_kandidat'=>$request->id_perusahaan_kandidat,
+            'id_divisi_kandidat'=>$request->id_divisi_kandidat,
+            'id_dep_kandidat'=>$request->id_dep_kandidat,
+            'id_sub_dep_kandidat'=>$request->id_sub_dep_kandidat,
+        ]);
+        TrxRecruitmentIdentitas::where('id', $id_identitas)->update(['kebutuhan_atribute' => $_data]);
+        // $trx = TrxRecruitmentIdentitas::find($id_identitas);
+        // $trx->kebutuhan_atribute = $_data;
+        // $trx->save();
+        // if($trx->wasChanged('kebutuhan_atribute')) {
+        if(!empty($request->catatan)) {
+            $trx = new TrxRecruitmentAtributeLog;
+            $trx->id_identitas = $id_identitas;
+            $trx->inserted_by = auth()->user()->nik;
+            $trx->catatan = $request->catatan;
+            $trx->save();
+        }
+        return redirect()->to($request->back_url)->with('msg_post_atribute', 'Data is saved successfully.');
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -490,6 +537,7 @@ class TrxRecruitmentController extends Controller
         $level = Level::orderBy('id', 'asc')->get();
         $area = Propinsi::orderBy('order_by', 'asc')->get();
         $kota = PropinsiKota::orderBy('kota', 'asc')->get();
+        $perusahaan = Perusahaan::whereNotIn('id', [0,3])->orderBy('nama', 'asc')->get();
         $divisi = Divisi::orderBy('nama', 'asc')->get();
         $dep = Departemen::orderBy('nama', 'asc')->get();
         $sub_dep = SubDepartemen::orderBy('nama', 'asc')->get();
@@ -578,13 +626,14 @@ class TrxRecruitmentController extends Controller
         }
         // kode_level=3=Supervisor (SPV)
         // dd($id_status);
-        // kode_sub_departemen=363 adalah hco
+        // kode_sub_departemen=56 adalah hco
+        // MtrUtility::find(56)->informasi
         $where = ['is_aktif' => 1];
-        $karyawan = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->whereNotIn('kode_sub_departemen', [363])->orderBy('nama', 'asc')->get();
+        $karyawan = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->whereNotIn('kode_sub_departemen', [MtrUtility::find(56)->informasi])->orderBy('nama', 'asc')->get();
         $karyawan_user_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
-        $where = ['is_aktif' => 1, 'kode_sub_departemen' => 363];
+        $where = ['is_aktif' => 1, 'kode_sub_departemen' => MtrUtility::find(56)->informasi];
         $karyawan_hco = Karyawan::select('nik', 'nama')->where('kode_level', '>=', 3)->where($where)->orderBy('nama', 'asc')->get();
-        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume', 'status_join', 'status_not_join', 'process', 'interview', 'pekerjaan', 'level', 'area', 'kota', 'atasan','divisi', 'dep', 'sub_dep'));
+        return view('recruitment.applicant_process', compact('trx', 'id_status', 'karyawan', 'karyawan_hco', 'karyawan_user_hco', 'history', 'trxM', 'benefit', 'catat_pegawai', 'status_pegawai', 'nego', 'resume', 'status_join', 'status_not_join', 'process', 'interview', 'pekerjaan', 'level', 'area', 'kota', 'atasan', 'perusahaan', 'divisi', 'dep', 'sub_dep'));
         
     }
 
@@ -638,8 +687,6 @@ class TrxRecruitmentController extends Controller
         }
         $trx = TrxRecruitmentIdentitas::whereIn('id_kebutuhan',$id_kebutuhan)->orderBy('updated_at', 'desc')->get();
         $id_identitas = $trx->pluck('id')->toArray();
-        $trx1 = TrxRecruitmentInterview::whereIn('id_identitas',$id_identitas)->orderBy('updated_at', 'desc')->get();
-        $trx2 = TrxRecruitmentNegosiasiLog::whereIn('id_identitas',$id_identitas)->orderBy('updated_at', 'desc')->get();
         $nama = TrxRecruitmentIdentitas::distinct()->orderBy('nama', 'asc')->get(['nama']);
         $arr_nama = array();
         $id_kebutuhan = array();
@@ -655,10 +702,22 @@ class TrxRecruitmentController extends Controller
         }
         $pekerjaan = PekerjaanSub::whereIn('id', $id_pekerjaan)->orderBy('pekerjaan', 'asc')->get();
         $status = MtrRecruitmentStatus::whereIn('id', $id_status)->orderBy('id', 'asc')->get();
+        // start dibatasi 30 hari terakhir dari created_at
+        $trx = $trx->filter(function ($item) {
+            return Carbon::parse($item->created_at)->gte(Carbon::now()->subDays(30));
+        });
+        $id_identitas = $trx->pluck('id')->toArray();
+        $trx1 = TrxRecruitmentInterview::whereIn('id_identitas',$id_identitas)->orderBy('updated_at', 'desc')->get();
+        $trx2 = TrxRecruitmentNegosiasiLog::whereIn('id_identitas',$id_identitas)->orderBy('updated_at', 'desc')->get();
+        $tanggal_mulai = '';
+        $tanggal_akhir = '';
+        // end
         $arr_id_pekerjaan = array();
         $arr_id_status = array();
         // start filter
         if($request->filter == true){
+            $tanggal_mulai = $request->tanggal_mulai;
+            $tanggal_akhir = $request->tanggal_akhir;
             // $_nama = $request->input('nama', []);
             $_nama = [$request->nama];
             $_id_pekerjaan = $request->input('id_pekerjaan', []);
@@ -689,9 +748,9 @@ class TrxRecruitmentController extends Controller
             foreach($trx0 as $data){
                 array_push($id_kebutuhan, $data->id);
             }
-            $trx = TrxRecruitmentIdentitas::whereIn('nama', $arr_nama)->whereIn('id_kebutuhan', $id_kebutuhan)->whereIn('id_status', $arr_id_status)->orderBy('updated_at', 'desc')->get();
+            $trx = TrxRecruitmentIdentitas::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('nama', $arr_nama)->whereIn('id_kebutuhan', $id_kebutuhan)->whereIn('id_status', $arr_id_status)->orderBy('updated_at', 'desc')->get();
             if(in_array('0', $arr_nama)){
-                $trx = TrxRecruitmentIdentitas::whereIn('id_kebutuhan', $id_kebutuhan)->whereIn('id_status', $arr_id_status)->orderBy('updated_at', 'desc')->get();
+                $trx = TrxRecruitmentIdentitas::whereBetween('created_at', [Carbon::parse($tanggal_mulai)->startOfDay(), Carbon::parse($tanggal_akhir)->endOfDay()])->whereIn('id_kebutuhan', $id_kebutuhan)->whereIn('id_status', $arr_id_status)->orderBy('updated_at', 'desc')->get();
             }
             $id_identitas = array();
             foreach($trx as $data){
@@ -705,7 +764,7 @@ class TrxRecruitmentController extends Controller
             $arr_id_status = array();
         }
         // end filter
-        return view('recruitment.applicant_list', compact('trx', 'trx1', 'trx2', 'nama', 'pekerjaan', 'status', 'arr_nama', 'arr_id_pekerjaan', 'arr_id_status'));
+        return view('recruitment.applicant_list', compact('trx', 'trx1', 'trx2', 'nama', 'pekerjaan', 'status', 'arr_nama', 'arr_id_pekerjaan', 'arr_id_status', 'tanggal_mulai', 'tanggal_akhir'));
     }
 
     public function applicant_item($id)
@@ -784,7 +843,9 @@ class TrxRecruitmentController extends Controller
         $_trx->id_status = $id_status;
         $_trx->update();
         $trx = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
-        $posisi = $trx->_pekerjaan->pekerjaan;
+        // $posisi = $trx->_pekerjaan->pekerjaan;
+        $kebutuhan_atribute = json_decode($_trx->kebutuhan_atribute, true);
+        $posisi = PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan;
         $nego = TrxRecruitmentNegosiasi::where(['id_identitas' => $id_identitas])->orderBy('id', 'desc')->first();
         $atasan = json_decode($trx->atasan_property, true);
         $nama = $atasan['nama'].'/'.$atasan['nik'];
@@ -1011,7 +1072,9 @@ class TrxRecruitmentController extends Controller
         // 21=Re-Negotiation Process
         elseif($id_status == 21){
             $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
-            $posisi = $_trx_->_pekerjaan->pekerjaan;
+            // $posisi = $_trx_->_pekerjaan->pekerjaan;
+            $kebutuhan_atribute = json_decode($_trx->kebutuhan_atribute, true);
+            $posisi = PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan;
             // parameter yang dipassing ke sendemail
             $mailData['title'] = $info;
             $mailData['filename'] = 'emails.recruitment3';
@@ -1415,7 +1478,9 @@ class TrxRecruitmentController extends Controller
         $trxM = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
         $trx = TrxRecruitmentNegosiasi::where(['id_identitas'=>$id])->orderBy('id', 'desc')->first();
         if($_trx->id_status == 26 && !empty($_id[2])){
-            $posisi = $trxM->_pekerjaan->pekerjaan;
+            // $posisi = $trxM->_pekerjaan->pekerjaan;
+            $kebutuhan_atribute = json_decode($_trx->kebutuhan_atribute, true);
+            $posisi = PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan;
             $atasan = json_decode($trxM->atasan_property, true);
             $msg = '<p>Yth. '.$atasan['nama'].',<br/>Dengan hormat,</p>
             <p>Kami informasikan bahwa Proses Seleksi Penerimaan Karyawan untuk Formulir Kebutuhan Karyawan nomor '.$_trx->id_kebutuhan.' telah disetujui oleh atasan untuk calon karyawan atas nama berikut:</p>
@@ -1706,7 +1771,9 @@ class TrxRecruitmentController extends Controller
         $trx->update();
         // 
         $_trx = TrxKebutuhanMaster::find($trx->id_kebutuhan);
-        $posisi = $_trx->_pekerjaan->pekerjaan;
+        // $posisi = $_trx->_pekerjaan->pekerjaan;
+        $kebutuhan_atribute = json_decode($trx->kebutuhan_atribute, true);
+        $posisi = PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan;
         // parameter yang dipassing ke sendemail
         $mailData['title'] = 'Proses Negosiasi';
         $mailData['filename'] = 'emails.recruitment3';
@@ -1744,7 +1811,9 @@ class TrxRecruitmentController extends Controller
         if($id_status == 6 || $id_status == 8 || $id_status == 10){
             $_trx = TrxRecruitmentIdentitas::find($id);
             $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
-            $posisi = $_trx_->_pekerjaan->pekerjaan;
+            // $posisi = $_trx_->_pekerjaan->pekerjaan;
+            $kebutuhan_atribute = json_decode($_trx->kebutuhan_atribute, true);
+            $posisi = PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan;
             $_trx->id_status = $id_status;
             $_trx->update();
             $metode = $request->metode;
@@ -1854,7 +1923,9 @@ class TrxRecruitmentController extends Controller
             // 
             $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
             $atasan = json_decode($_trx_->atasan_property, true);
-            $posisi = $_trx_->_pekerjaan->pekerjaan;
+            // $posisi = $_trx_->_pekerjaan->pekerjaan;
+            $kebutuhan_atribute = json_decode($_trx->kebutuhan_atribute, true);
+            $posisi = PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan;
             $bagian = json_decode($_trx_->pengaju_property, true);
             $bagian = $bagian['divisi'].'/'.$bagian['dep'].'/'.$bagian['sub_dep'];
             // 24=Join
@@ -2230,7 +2301,9 @@ class TrxRecruitmentController extends Controller
             $_trx->update();
             // end
             $_trx_ = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
-            $posisi = $_trx_->_pekerjaan->pekerjaan;
+            // $posisi = $_trx_->_pekerjaan->pekerjaan;
+            $kebutuhan_atribute = json_decode($_trx->kebutuhan_atribute, true);
+            $posisi = PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan;
             // kirim email
             $msg = '<p>Yth. '.$_trx->nama.',<br/>Dengan hormat,</p>
             <p>Kami ucapkan terima kasih atas partisipasi Bapak/Ibu/Saudara/i dalam proses Interview untuk posisi '.$posisi.' di PT. Alita Praya Mitra. Kami telah menerima hasil interview Bapak/Ibu/Saudara/i dan saat ini kami sedang melakukan proses evaluasi lebih lanjut.</p>
@@ -2712,6 +2785,9 @@ class TrxRecruitmentController extends Controller
             $id = $_id[0];
             // $kode = $_id[1];
             $trx = TrxRecruitmentIdentitas::find($id);
+            $kebutuhan_atribute = json_decode($trx->kebutuhan_atribute, true);
+            $kebutuhan_atribute_atasan_property = json_decode($kebutuhan_atribute['atasan_property'], true);
+            $posisi = PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan;
             $_trx_ = TrxKebutuhanMaster::find($trx->id_kebutuhan);
             // ambil sisa waktu yang tersisa
             $remain = $_now->diffInSeconds(Carbon::parse($trx->check_out));
@@ -2733,7 +2809,7 @@ class TrxRecruitmentController extends Controller
                     }
                     $soal->update();
                 }
-                $posisi = $_trx_->_pekerjaan->pekerjaan;
+                // $posisi = $_trx_->_pekerjaan->pekerjaan;
                 $where = ['id_identitas' => $id];
                 $soal = TrxRecruitmentTiu5::where($where)->whereNull('check_out')->orderBy('jenis', 'asc')->orderBy('nomor', 'asc')->first();
                 if(!empty($soal)){
@@ -2798,7 +2874,7 @@ class TrxRecruitmentController extends Controller
                     $soal->update();
                 }
             }
-            $posisi = $_trx_->_pekerjaan->pekerjaan;
+            // $posisi = $_trx_->_pekerjaan->pekerjaan;
             $where = ['id_identitas' => $id];
             $soal = TrxRecruitmentPsychotest::where($where)->whereNull('check_out')->orderBy('jenis', 'asc')->orderBy('nomor', 'asc')->first();
             if(!empty($soal)){
@@ -2834,6 +2910,7 @@ class TrxRecruitmentController extends Controller
                     <p>Terima kasih,</p>'.MtrUtility::find(47)->informasi;
                     return view('recruitment.thank', compact('msg'));
                 }else{
+                    // $posisi
                     $msg = '<p>Yth. '.$trx->nama.',<br/>Dengan hormat,</p>
                     <p>Kami ucapkan terima kasih atas partisipasi Bapak/Ibu/Saudara/i dalam proses psikotes untuk posisi '.$posisi.' di PT. Alita Praya Mitra. Kami telah menerima hasil pengerjaan psikotes Bapak/Ibu/Saudara/i dan saat ini kami sedang melakukan proses evaluasi lebih lanjut.</p>
                     <p>Kami akan segera menghubungi Bapak/Ibu/Saudara/i apabila terdapat informasi tambahan atau informasi jika ada tahapan seleksi selanjutnya.</p>
@@ -2931,9 +3008,12 @@ class TrxRecruitmentController extends Controller
                 $this->insertLog($arr);
                 // 
                 $_trx = TrxKebutuhanMaster::find($trx->id_kebutuhan);
-                $posisi = $_trx->_pekerjaan->pekerjaan;
+                // $posisi = $_trx->_pekerjaan->pekerjaan;
+                $kebutuhan_atribute = json_decode($trx->kebutuhan_atribute, true);
+                $posisi = PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan;
                 // end
                 // kirim email
+                // $posisi
                 $msg = '<p>Yth. '.$trx->nama.',<br/>Dengan hormat,</p>
                 <p>Kami ucapkan terima kasih atas partisipasi Bapak/Ibu/Saudara/i dalam proses psikotes untuk posisi '.$posisi.' di PT. Alita Praya Mitra. Kami telah menerima hasil pengerjaan psikotes Bapak/Ibu/Saudara/i dan saat ini kami sedang melakukan proses evaluasi lebih lanjut.</p>
                 <p>Kami akan segera menghubungi Bapak/Ibu/Saudara/i apabila terdapat informasi tambahan atau informasi jika ada tahapan seleksi selanjutnya.</p>
@@ -3049,6 +3129,7 @@ class TrxRecruitmentController extends Controller
             'id_kota'=>$trx->id_kota,
             'atasan'=>$trx->atasan,
             'atasan_property'=>$trx->atasan_property,
+            'id_perusahaan_kandidat'=>Divisi::find($trx->id_divisi_kandidat)->kode_perusahaan,
             'id_divisi_kandidat'=>$trx->id_divisi_kandidat,
             'id_dep_kandidat'=>$trx->id_dep_kandidat,
             'id_sub_dep_kandidat'=>$trx->id_sub_dep_kandidat,
