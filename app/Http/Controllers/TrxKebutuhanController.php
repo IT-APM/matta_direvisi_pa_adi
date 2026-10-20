@@ -763,11 +763,14 @@ class TrxKebutuhanController extends Controller
         //         'id_kota'=>$data->id_kota,
         //         'atasan'=>$data->atasan,
         //         'atasan_property'=>$data->atasan_property,
+        //         'id_perusahaan_kandidat'=>Divisi::find($data->id_divisi_kandidat)->kode_perusahaan,
         //         'id_divisi_kandidat'=>$data->id_divisi_kandidat,
         //         'id_dep_kandidat'=>$data->id_dep_kandidat,
         //         'id_sub_dep_kandidat'=>$data->id_sub_dep_kandidat,
         //     ]);
-        //     TrxRecruitmentIdentitas::where('id', $_trx->id)->update(['kebutuhan_atribute' => $_data]);
+        //     if(in_array($_trx->id, [11460])){
+        //         TrxRecruitmentIdentitas::where('id', $_trx->id)->update(['kebutuhan_atribute' => $_data]);
+        //     }
         // }
         // // end
         // // start sync jika status_pengajuan=10 maka insert trx_tbl_kebutuhan_log
@@ -1379,20 +1382,20 @@ class TrxKebutuhanController extends Controller
         dd($request->all(), $id);
     }
     
-    public function post_atribute(Request $request, $id)
-    {
-        $id = (new OpenDataController)->decryptWithKey($id);
-        dd($request->all(), $id);
-        // update TrxKebutuhanMaster
-        $trxM = TrxKebutuhanMaster::find($id);
-        $trxM->id_pekerjaan = $request->id_pekerjaan;
-        $trxM->id_level = $request->id_level;
-        $trxM->update();
-        // update TrxRecruitmentNegosiasi
-        $id_identitas = TrxRecruitmentIdentitas::where('id_kebutuhan', $id)->pluck('id');
-        TrxRecruitmentNegosiasi::whereIn('id_identitas', $id_identitas)->update(['posisi' => PekerjaanSub::find($request->id_pekerjaan)->pekerjaan]);
-        return redirect('kebutuhan')->with('msg', 'Data is saved successfully.');
-    }
+    // public function post_atribute(Request $request, $id)
+    // {
+    //     $id = (new OpenDataController)->decryptWithKey($id);
+    //     // dd($request->all(), $id);
+    //     // update TrxKebutuhanMaster
+    //     $trxM = TrxKebutuhanMaster::find($id);
+    //     $trxM->id_pekerjaan = $request->id_pekerjaan;
+    //     $trxM->id_level = $request->id_level;
+    //     $trxM->update();
+    //     // update TrxRecruitmentNegosiasi
+    //     $id_identitas = TrxRecruitmentIdentitas::where('id_kebutuhan', $id)->pluck('id');
+    //     TrxRecruitmentNegosiasi::whereIn('id_identitas', $id_identitas)->update(['posisi' => PekerjaanSub::find($request->id_pekerjaan)->pekerjaan]);
+    //     return redirect('kebutuhan')->with('msg', 'Data is saved successfully.');
+    // }
     
     public function post_kolom(Request $request, $id)
     {
