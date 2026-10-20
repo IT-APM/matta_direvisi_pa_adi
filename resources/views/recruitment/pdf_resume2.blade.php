@@ -108,7 +108,7 @@
 					</tr>
 				</table>
 				<p>&nbsp;</p>
-				<span>PT Alita Praya Mitra - Human Capital & Organization<br/>{{ $resume[$x]->updated_at }}</span>
+				<span>PT Alita Praya Mitra - {{ App\Models\MtrUtility::find(51)->informasi }}<br/>{{ $resume[$x]->updated_at }}</span>
 			</td>
 		</tr>
 	</table>
