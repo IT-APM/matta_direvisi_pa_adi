@@ -37,15 +37,24 @@
                 @php
                     $kebutuhan_atribute = json_decode($trx->kebutuhan_atribute, true);
                     $kebutuhan_atribute_atasan_property = json_decode($kebutuhan_atribute['atasan_property'], true);
+                    $catatan = App\Models\TrxRecruitmentAtributeLog::where(['id_identitas'=>$trx->id])->orderBy('id', 'desc')->get();
                 @endphp
                 <div class="card-header">
                     <h5>Add Employee Atribute</h5>
                 </div>
                 <div class="card-body">
-                    <form action="#" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
+                    @if(Session::has('msg_post_atribute'))
+                    <div class="alert alert-success dark alert-dismissible fade show" role="alert">
+                        <h6>{{ session('msg_post_atribute') }}</h6>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+                    <form action="{{ route('recruitment.post_atribute') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to submit this data?');">
                     @csrf
+                    <input type="hidden" id="id" name="id" value="{{ Crypt::encrypt($trx->id) }}">
+                    <input type="hidden" id="back_url" name="back_url" value="{{ URL::full() }}">
                     <div class="row">
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-4">
                             <label for="id_pekerjaan" class="form-label">Nama Jabatan</label>
                             <select class="form-select col-sm-12 js-example-basic-single" id="id_pekerjaan" name="id_pekerjaan" required="">
                                 <option selected="" disabled="" value="">Pilih...</option>
@@ -54,7 +63,25 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-4">
+                            <label class="form-label" for="id_area">Area Kerja</label>
+                            <select class="form-select col-sm-12 js-example-basic-single" id="id_area" name="id_area" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($area as $data)
+                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_area']) selected @endif>{{ $data->propinsi }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="form-label" for="id_kota">Area Kerja Kota</label>
+                            <select class="form-select col-sm-12 js-example-basic-single" id="id_kota" name="id_kota" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($kota as $data)
+                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_kota']) selected @endif>{{ $data->kota }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4 mt-2">
                             <label class="form-label" for="id_level">Level</label>
                             <select class="form-select col-sm-12 js-example-basic-single" id="id_level" name="id_level" required="">
                                 <option selected="" disabled="" value="">Pilih...</option>
@@ -63,25 +90,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-12 col-md-6 mt-2">
-                            <label class="form-label" for="id_area">Area Kerja</label>
-                            <select class="form-select col-sm-12 js-example-basic-single" id="id_area" name="id_area" required="">
-                                <option selected="" disabled="" value="">Pilih...</option>
-                                @foreach ($area as $data)
-                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_area']) selected @endif >{{ $data->propinsi }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-6 mt-2">
-                            <label class="form-label" for="id_kota">Area Kerja Kota</label>
-                            <select class="form-select col-sm-12 js-example-basic-single" id="id_kota" name="id_kota" required="">
-                                <option selected="" disabled="" value="">Pilih...</option>
-                                @foreach ($kota as $data)
-                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_kota']) selected @endif >{{ $data->kota }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-6 mt-2">
+                        <div class="col-12 col-md-4 mt-2">
                             <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
                             <select class="form-select js-example-basic-single col-sm-12" id="atasan" name="atasan" required="">
                                 <option selected="" disabled="" value="">Pilih...</option>
@@ -90,32 +99,62 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-12 col-md-6 mt-2">
+                        <div class="col-12 col-md-4 mt-2">
+                            <label class="form-label" for="id_perusahaan_kandidat">Perusahaan Kandidat</label>
+                            <select class="form-select col-sm-12 js-example-basic-single" id="id_perusahaan_kandidat" name="id_perusahaan_kandidat" required="">
+                                <option selected="" disabled="" value="">Pilih...</option>
+                                @foreach ($perusahaan as $data)
+                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_perusahaan_kandidat']) selected @endif>{{ $data->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4 mt-2">
                             <label class="form-label" for="id_divisi_kandidat">Direktorat Kandidat</label>
                             <select class="form-select col-sm-12 js-example-basic-single" id="id_divisi_kandidat" name="id_divisi_kandidat" required="">
                                 <option selected="" disabled="" value="">Pilih...</option>
-                                @foreach ($divisi as $data)
-                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_divisi_kandidat']) selected @endif >{{ $data->nama }}</option>
-                                @endforeach
                             </select>
                         </div>
-                        <div class="col-12 col-md-6 mt-2">
+                        <div class="col-12 col-md-4 mt-2">
                             <label class="form-label" for="id_dep_kandidat">Divisi Kandidat</label>
                             <select class="form-select col-sm-12 js-example-basic-single" id="id_dep_kandidat" name="id_dep_kandidat" required="">
                                 <option selected="" disabled="" value="">Pilih...</option>
-                                @foreach ($dep as $data)
-                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_dep_kandidat']) selected @endif >{{ $data->nama }}</option>
-                                @endforeach
                             </select>
                         </div>
-                        <div class="col-12 col-md-6 mt-2">
+                        <div class="col-12 col-md-4 mt-2">
                             <label class="form-label" for="id_sub_dep_kandidat">Departemen Kandidat</label>
                             <select class="form-select col-sm-12 js-example-basic-single" id="id_sub_dep_kandidat" name="id_sub_dep_kandidat" required="">
                                 <option selected="" disabled="" value="">Pilih...</option>
-                                @foreach ($sub_dep as $data)
-                                <option value="{{ $data->id }}" @if($data->id == $kebutuhan_atribute['id_sub_dep_kandidat']) selected @endif >{{ $data->nama }}</option>
-                                @endforeach
                             </select>
+                        </div>
+                        <div class="col-12 col-md-12 mt-2">
+                            <label class="form-label" for="catatan">Catatan</label>
+                            <textarea class="form-control" id="catatan" name="catatan" rows="4" required=""></textarea>
+                        </div>
+                        <div class="col-12 col-md-12 mt-2 notification">
+                            <label class="form-label">Catatan Histori:</label><br/>
+                            <span>
+                                {{-- @foreach($catatan as $_catatan) --}}
+                                {{-- {{ $_catatan->created_at }} oleh {{ App\Models\Karyawan::where('nik', $_catatan->inserted_by)->first()->nama }}/{{ $_catatan->inserted_by }}<br/>
+                                {{ $_catatan->catatan }}<br/> --}}
+                                 <ul>
+                                    @foreach ($catatan as $_catatan)
+                                    <li class="d-flex">
+                                        @if ($loop->first)
+                                        <div class="activity-dot-success"></div>
+                                        @elseif ($loop->last)
+                                        <div class="activity-dot-warning"></div>
+                                        @else
+                                        <div class="activity-dot-primary"></div>
+                                        @endif
+                                        <div class="ms-3">
+                                            <p class="d-flex justify-content-between mb-2"><span class="date-content light-background">{{ $_catatan->created_at }} oleh {{ App\Models\Karyawan::where('nik', $_catatan->inserted_by)->first()->nama }}/{{ $_catatan->inserted_by }}</span></p>
+                                            <p class="f-light">{{ $_catatan->catatan }}</p>
+                                        </div>
+                                    </li>
+                                    @endforeach
+                                </ul>
+                                {{-- @endforeach --}}
+                            </span>
                         </div>
                         <div class="row">
                             <div class="col-12 col-md-4 mt-2">
@@ -169,6 +208,8 @@
                         // 18=Negotiation No Deal by Candidate
                         $nego_log = App\Models\TrxRecruitmentNegosiasiLog::where(['id_identitas'=>$nego->id_identitas])->whereIn('id_status', [17,18])->orderBy('id', 'desc')->first();
                         $atasan = json_decode($trxM->atasan_property, true);
+                        $kebutuhan_atribute = json_decode($trx->kebutuhan_atribute, true);
+                        $kebutuhan_atribute_atasan_property = json_decode($kebutuhan_atribute['atasan_property'], true);
                         @endphp
                         @if(!empty($nego_log))
                         <div class="col-12 col-md-12">
@@ -178,27 +219,33 @@
                         <div class="row">
                             <div class="col-12 col-md-12 mb-2">
                                 <label class="form-label" for="posisi">Posisi / Jabatan</label>
-                                <input class="form-control" type="text" readonly="" value="{{ $nego_log->posisi }}">
+                                {{-- $nego_log->posisi --}}
+                                <input class="form-control" type="text" readonly="" value="{{ App\Models\PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan }}">
                             </div>
                             <div class="col-12 col-md-12 mb-2">
                                 <label class="form-label" for="level">Level</label>
-                                <input class="form-control" type="text" readonly="" value="{{ $trxM->_level->level }}">
+                                {{-- $trxM->_level->level --}}
+                                <input class="form-control" type="text" readonly="" value="{{ App\Models\Level::find($kebutuhan_atribute['id_level'])->level }}">
                             </div>
                             <div class="col-12 col-md-12 mb-2">
                                 <label class="form-label" for="area_kerja">Area Kerja</label>
-                                <input class="form-control" type="text" readonly="" value="{{ $nego_log->area_kerja }}">
+                                {{-- $nego_log->area_kerja --}}
+                                <input class="form-control" type="text" readonly="" value="{{ App\Models\Propinsi::find($kebutuhan_atribute['id_area'])->propinsi }}">
                             </div>
                             <div class="col-12 col-md-12 mb-2">
-                                <label class="form-label" for="ddd_kandidat">Direktorat / Divisi / Departemen</label>
-                                <input class="form-control" type="text" readonly="" value="{{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }}">
+                                <label class="form-label" for="ddd_kandidat">Direktorat / Divisi / Departemen Kandidat</label>
+                                {{-- {{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }} --}}
+                                <input class="form-control" type="text" readonly="" value="{{ App\Models\Divisi::find($kebutuhan_atribute['id_divisi_kandidat'])->nama }} / {{ App\Models\Departemen::find($kebutuhan_atribute['id_dep_kandidat'])->nama }} / {{ App\Models\SubDepartemen::find($kebutuhan_atribute['id_sub_dep_kandidat'])->nama }}">
                             </div>
                             <div class="col-12 col-md-12 mb-2">
                                 <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
-                                <input class="form-control" type="text" readonly="" @if(!empty($atasan))value="{{ $atasan['nama'] }} / {{ $atasan['nik'] }}"@endif>
+                                {{-- @if(!empty($atasan))value="{{ $atasan['nama'] }} / {{ $atasan['nik'] }}"@endif --}}
+                                <input class="form-control" type="text" readonly="" value="{{ $kebutuhan_atribute_atasan_property['nama'] }} / {{ $kebutuhan_atribute_atasan_property['nik'] }}">
                             </div>
                             <div class="col-12 col-md-12 mb-2">
                                 <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
-                                <input class="form-control" type="text" readonly="" value="{{ $nego_log->divisi }}">
+                                {{-- $nego_log->divisi --}}
+                                <input class="form-control" type="text" readonly="" value="{{ $kebutuhan_atribute_atasan_property['divisi'] }} / {{ $kebutuhan_atribute_atasan_property['dep'] }} / {{ $kebutuhan_atribute_atasan_property['sub_dep'] }}">
                             </div>
                         </div>
                         <div class="col-12 col-md-12">
@@ -876,33 +923,41 @@
                                 @php
                                 $pengaju = json_decode($trxM->pengaju_property, true);
                                 $atasan = json_decode($trxM->atasan_property, true);
+                                $kebutuhan_atribute = json_decode($trx->kebutuhan_atribute, true);
+                                $kebutuhan_atribute_atasan_property = json_decode($kebutuhan_atribute['atasan_property'], true);
                                 @endphp
                                 <div class="col-12 col-md-12">
                                     <h6 class="text-center">ORGANISASI</h6>
                                 </div>
                                 <div class="col-12 col-md-12 mb-2">
                                     <label class="form-label" for="posisi">Posisi / Jabatan</label>
-                                    <input class="form-control" name="posisi" id="posisi" type="text" readonly="" value="{{ $trxM->_pekerjaan->pekerjaan }}">
+                                    {{-- $trxM->_pekerjaan->pekerjaan --}}
+                                    <input class="form-control" name="posisi" id="posisi" type="text" readonly="" value="{{ App\Models\PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan }}">
                                 </div>
                                 <div class="col-12 col-md-12 mb-2">
                                     <label class="form-label" for="level">Level</label>
-                                    <input class="form-control" name="level" id="level" type="text" readonly="" value="{{ $trxM->_level->level }}">
+                                    {{-- $trxM->_level->level --}}
+                                    <input class="form-control" name="level" id="level" type="text" readonly="" value="{{ App\Models\Level::find($kebutuhan_atribute['id_level'])->level }}">
                                 </div>
                                 <div class="col-12 col-md-12 mb-2">
                                     <label class="form-label" for="area_kerja">Area Kerja</label>
-                                    <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="{{ $trxM->_area->propinsi }}">
+                                    {{-- $trxM->_area->propinsi --}}
+                                    <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="{{ App\Models\Propinsi::find($kebutuhan_atribute['id_area'])->propinsi }}">
                                 </div>
                                 <div class="col-12 col-md-12 mb-2">
-                                    <label class="form-label" for="ddd_kandidat">Direktorat / Divisi / Departemen</label>
-                                    <input class="form-control" name="ddd_kandidat" id="ddd_kandidat" type="text" readonly="" value="{{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }}">
+                                    <label class="form-label" for="ddd_kandidat">Direktorat / Divisi / Departemen Kandidat</label>
+                                    {{-- {{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }} --}}
+                                    <input class="form-control" name="ddd_kandidat" id="ddd_kandidat" type="text" readonly="" value="{{ App\Models\Divisi::find($kebutuhan_atribute['id_divisi_kandidat'])->nama }} / {{ App\Models\Departemen::find($kebutuhan_atribute['id_dep_kandidat'])->nama }} / {{ App\Models\SubDepartemen::find($kebutuhan_atribute['id_sub_dep_kandidat'])->nama }}">
                                 </div>
                                 <div class="col-12 col-md-12 mb-2">
                                     <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
-                                    <input class="form-control" name="atasan" id="atasan" type="text" readonly="" @if(!empty($atasan))value="{{ $atasan['nama'] }} / {{ $atasan['nik'] }}"@endif>
+                                    {{-- @if(!empty($atasan))value="{{ $atasan['nama'] }} / {{ $atasan['nik'] }}"@endif --}}
+                                    <input class="form-control" name="atasan" id="atasan" type="text" readonly="" value="{{ $kebutuhan_atribute_atasan_property['nama'] }} / {{ $kebutuhan_atribute_atasan_property['nik'] }}">
                                 </div>
                                 <div class="col-12 col-md-12 mb-2">
                                     <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
-                                    <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="{{ $pengaju['divisi'] }} / {{ $pengaju['dep'] }} / {{ $pengaju['sub_dep'] }}">
+                                    {{-- {{ $pengaju['divisi'] }} / {{ $pengaju['dep'] }} / {{ $pengaju['sub_dep'] }} --}}
+                                    <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="{{ $kebutuhan_atribute_atasan_property['divisi'] }} / {{ $kebutuhan_atribute_atasan_property['dep'] }} / {{ $kebutuhan_atribute_atasan_property['sub_dep'] }}">
                                 </div>
                             </div>
                             <div class="row">
@@ -1396,323 +1451,465 @@
 <script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
 <script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 <script type="text/javascript">
-    function use_number(node) {
-      var empty_val = false;
-      const value = node.value;
-      if (node.value == '')
-        empty_val = true;
-      node.type = 'number';
-      if (!empty_val)
-        node.value = Number(value.replace(/,/g, '')); // or equivalent per locale
+$('#id_area').on('change', function() {
+    const id_propinsi = $(this).val();
+    // Reset dan loading
+    $('#id_kota').empty().append('<option selected disabled value="">Pilih...</option>');
+    $('#id_kota').trigger('change'); // reset select2
+    $.ajax({
+        url    : `{{ url('/get_propinsi_kota') }}/${id_propinsi}`,
+        method : 'GET',
+        success: function(data) {
+            $('#id_kota').empty().append('<option selected disabled value="">Pilih...</option>');
+            $.each(data, function(index, item) {
+                $('#id_kota').append(`<option value="${item.id}">${item.kota}</option>`);
+            });
+            $('#id_kota').trigger('change'); // refresh select2
+        },
+        error: function() {
+            $('#id_kota').empty().append('<option selected disabled value="">Pilih...</option>');
+        }
+    });
+});
+// // Helper function load dropdown via AJAX
+function loadDropdown(url, targetId, selectedId = null) {
+    $(targetId).empty().append('<option selected disabled value="">Pilih...</option>');
+    $(targetId).trigger('change');
+    $.ajax({
+        url    : url,
+        method : 'GET',
+        success: function(data) {
+            // Filter hanya is_active=1
+            const filtered = data.filter(item => item.is_active == 1);
+            $(targetId).empty().append('<option selected disabled value="">Pilih...</option>');
+            $.each(filtered, function(index, item) {
+                const selected = item.id == selectedId ? 'selected' : '';
+                $(targetId).append(`<option value="${item.id}" ${selected}>${item.nama}</option>`);
+            });
+            $(targetId).trigger('change');
+        },
+        error: function() {
+            $(targetId).empty().append('<option selected disabled value="">Gagal memuat data</option>');
+        }
+    });
+}
+// Perusahaan → Divisi
+$('#id_perusahaan_kandidat').on('change', function() {
+    const id = $(this).val();
+    // Reset dropdown bawahnya
+    $('#id_divisi_kandidat').empty().append('<option selected disabled value="">Pilih...</option>').trigger('change');
+    $('#id_dep_kandidat').empty().append('<option selected disabled value="">Pilih...</option>').trigger('change');
+    $('#id_sub_dep_kandidat').empty().append('<option selected disabled value="">Pilih...</option>').trigger('change');
+    if (id) loadDropdown(`{{ url('/getDivisi') }}/${id}`, '#id_divisi_kandidat');
+});
+// Divisi → Departemen
+$('#id_divisi_kandidat').on('change', function() {
+    const id = $(this).val();
+    // Reset dropdown bawahnya
+    $('#id_dep_kandidat').empty().append('<option selected disabled value="">Pilih...</option>').trigger('change');
+    $('#id_sub_dep_kandidat').empty().append('<option selected disabled value="">Pilih...</option>').trigger('change');
+    if (id) loadDropdown(`{{ url('/getDepartemen') }}/${id}`, '#id_dep_kandidat');
+});
+// Departemen → Sub Departemen
+$('#id_dep_kandidat').on('change', function() {
+    const id = $(this).val();
+    // Reset dropdown bawahnya
+    $('#id_sub_dep_kandidat').empty().append('<option selected disabled value="">Pilih...</option>').trigger('change');
+    if (id) loadDropdown(`{{ url('/getSubDepartemen') }}/${id}`, '#id_sub_dep_kandidat');
+});
+// 
+function use_number(node) {
+    var empty_val = false;
+    const value = node.value;
+    if (node.value == '')
+    empty_val = true;
+    node.type = 'number';
+    if (!empty_val)
+    node.value = Number(value.replace(/,/g, '')); // or equivalent per locale
+}
+// 
+function use_text(node) {
+    var empty_val = false;
+    const value = Number(node.value);
+    if (node.value == '')
+    empty_val = true;
+    node.type = 'text';
+    if (!empty_val)
+    node.value = value.toLocaleString('en');  // or other formatting
+}
+// 
+$(document).ready(function () {
+    const id_perusahaan = '{{ $kebutuhan_atribute["id_perusahaan_kandidat"] ?? "" }}';
+    const id_divisi     = '{{ $kebutuhan_atribute["id_divisi_kandidat"] ?? "" }}';
+    const id_dep        = '{{ $kebutuhan_atribute["id_dep_kandidat"] ?? "" }}';
+    const id_sub_dep    = '{{ $kebutuhan_atribute["id_sub_dep_kandidat"] ?? "" }}';
+
+    if (id_perusahaan) {
+        $.ajax({
+            url    : `{{ url('/getDivisi') }}/${id_perusahaan}`,
+            method : 'GET',
+            success: function(data) {
+                // Filter is_active=1
+                const filtered = data.filter(item => item.is_active == 1);
+
+                $('#id_divisi_kandidat').empty().append('<option selected disabled value="">Pilih...</option>');
+                $.each(filtered, function(index, item) {
+                    const selected = item.id == id_divisi ? 'selected' : '';
+                    $('#id_divisi_kandidat').append(`<option value="${item.id}" ${selected}>${item.nama}</option>`);
+                });
+                $('#id_divisi_kandidat').trigger('change');
+
+                if (id_divisi) {
+                    $.ajax({
+                        url    : `{{ url('/getDepartemen') }}/${id_divisi}`,
+                        method : 'GET',
+                        success: function(data) {
+                            // Filter is_active=1
+                            const filtered = data.filter(item => item.is_active == 1);
+
+                            $('#id_dep_kandidat').empty().append('<option selected disabled value="">Pilih...</option>');
+                            $.each(filtered, function(index, item) {
+                                const selected = item.id == id_dep ? 'selected' : '';
+                                $('#id_dep_kandidat').append(`<option value="${item.id}" ${selected}>${item.nama}</option>`);
+                            });
+                            $('#id_dep_kandidat').trigger('change');
+
+                            if (id_dep) {
+                                $.ajax({
+                                    url    : `{{ url('/getSubDepartemen') }}/${id_dep}`,
+                                    method : 'GET',
+                                    success: function(data) {
+                                        // Filter is_active=1
+                                        const filtered = data.filter(item => item.is_active == 1);
+
+                                        $('#id_sub_dep_kandidat').empty().append('<option selected disabled value="">Pilih...</option>');
+                                        $.each(filtered, function(index, item) {
+                                            const selected = item.id == id_sub_dep ? 'selected' : '';
+                                            $('#id_sub_dep_kandidat').append(`<option value="${item.id}" ${selected}>${item.nama}</option>`);
+                                        });
+                                        $('#id_sub_dep_kandidat').trigger('change');
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
     // 
-    function use_text(node) {
-      var empty_val = false;
-      const value = Number(node.value);
-      if (node.value == '')
-        empty_val = true;
-      node.type = 'text';
-      if (!empty_val)
-        node.value = value.toLocaleString('en');  // or other formatting
+    const id_area = $('#id_area').val();
+    if (id_area) {
+        $.ajax({
+            url    : `{{ url('/get_propinsi_kota') }}/${id_area}`,
+            method : 'GET',
+            success: function(data) {
+                $('#id_kota').empty().append('<option selected disabled value="">Pilih...</option>');
+                $.each(data, function(index, item) {
+                    const selected = item.id == {{ $kebutuhan_atribute['id_kota'] ?? 0 }} ? 'selected' : '';
+                    $('#id_kota').append(`<option value="${item.id}" ${selected}>${item.kota}</option>`);
+                });
+                $('#id_kota').trigger('change'); // refresh select2
+            }
+        });
     }
-    $(document).ready(function () {
-        // 
-        $('#myForm').on('submit', function (e) {
-            if ($('input[name="jenis[]"]:checked').length === 0) {
-                e.preventDefault();
-                $('#checkboxError').show();
-            } else {
-                $('#checkboxError').hide();
-            }
-        });
-        // 
-        // 4=Psycotest Send
-        // 6=Interview User and PC Send
-        // 8=Interview User Send
-        // 10=Interview PC Send
-        // 16=Interpretation
-        // 12=Negotiation Process
-        // 13=Negotiation Deal by PC
-        // 14=Negotiation No Deal by PC
-        // 15=Recruitment Done
-        // 21=Re-Negotiation Process
-        // 22=Psychotest and Interview Pass
-        // 23=Psychotest and Interview Not Pass
-        // 24=Join
-        // 25=Not Join
-        $("#row_4").hide();
-        $("#row_6").hide();
-        $("#row_8").hide();
-        $("#row_10").hide();
-        $("#row_16").hide();
-        $("#row_12").hide();
-        $("#row_13").hide();
-        $("#row_14").hide();
-        $("#row_15").hide();
-        $("#row_21").hide();
-        $("#row_22").hide();
-        $("#row_23").hide();
-        $("#row_24").hide();
-        $("#row_25").hide();
-        // 
-        $("#id_process").change(function () {
-            $value = $("#id_process").val();
-            // 4=Psychotest Send
-            if ($value == 4) {
-                $("#row_4").show();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // 6=Interview User and PC Send
-            else if ($value == 6) {
-                $("#row_4").hide();
-                $("#row_6").show();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // 8=Interview User Send
-            else if ($value == 8) {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").show();
-                $("#row_16").hide();
-                $("#row_10").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // 10=Interview PC Send
-            else if ($value == 10) {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").show();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // 16=Interpretation
-            else if ($value == 16) {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").show();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // 12=Negotiation Process
-            else if ($value == 12) {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").show();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // 13=Negotiation Deal by PC
-            else if ($value == 13) {
-            // alert(1);
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").show();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // 14=Negotiation No Deal by PC
-            else if ($value == 14) {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").show();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // 21=Re-Negotiation Process
-            else if ($value == 21) {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").show();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // 22=Psychotest and Interview Pass
-            else if ($value == 22) {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").show();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // 23=Psychotest and Interview Not Pass
-            else if ($value == 23) {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").show();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // 24=Join
-            else if ($value == 24) {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").show();
-                $("#row_25").hide();
-            }
-            // 25=Not Join
-            else if ($value == 25) {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").show();
-            }
-            // 15=Recruitment Done
-            else if ($value == 15) {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").show();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-            // lainnya
-            else {
-                $("#row_4").hide();
-                $("#row_6").hide();
-                $("#row_8").hide();
-                $("#row_10").hide();
-                $("#row_16").hide();
-                $("#row_12").hide();
-                $("#row_13").hide();
-                $("#row_14").hide();
-                $("#row_15").hide();
-                $("#row_21").hide();
-                $("#row_22").hide();
-                $("#row_23").hide();
-                $("#row_24").hide();
-                $("#row_25").hide();
-            }
-        });
+    // 
+    $('#myForm').on('submit', function (e) {
+        if ($('input[name="jenis[]"]:checked').length === 0) {
+            e.preventDefault();
+            $('#checkboxError').show();
+        } else {
+            $('#checkboxError').hide();
+        }
     });
+    // 
+    // 4=Psycotest Send
+    // 6=Interview User and PC Send
+    // 8=Interview User Send
+    // 10=Interview PC Send
+    // 16=Interpretation
+    // 12=Negotiation Process
+    // 13=Negotiation Deal by PC
+    // 14=Negotiation No Deal by PC
+    // 15=Recruitment Done
+    // 21=Re-Negotiation Process
+    // 22=Psychotest and Interview Pass
+    // 23=Psychotest and Interview Not Pass
+    // 24=Join
+    // 25=Not Join
+    $("#row_4").hide();
+    $("#row_6").hide();
+    $("#row_8").hide();
+    $("#row_10").hide();
+    $("#row_16").hide();
+    $("#row_12").hide();
+    $("#row_13").hide();
+    $("#row_14").hide();
+    $("#row_15").hide();
+    $("#row_21").hide();
+    $("#row_22").hide();
+    $("#row_23").hide();
+    $("#row_24").hide();
+    $("#row_25").hide();
+    // 
+    $("#id_process").change(function () {
+        $value = $("#id_process").val();
+        // 4=Psychotest Send
+        if ($value == 4) {
+            $("#row_4").show();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // 6=Interview User and PC Send
+        else if ($value == 6) {
+            $("#row_4").hide();
+            $("#row_6").show();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // 8=Interview User Send
+        else if ($value == 8) {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").show();
+            $("#row_16").hide();
+            $("#row_10").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // 10=Interview PC Send
+        else if ($value == 10) {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").show();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // 16=Interpretation
+        else if ($value == 16) {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").show();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // 12=Negotiation Process
+        else if ($value == 12) {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").show();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // 13=Negotiation Deal by PC
+        else if ($value == 13) {
+        // alert(1);
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").show();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // 14=Negotiation No Deal by PC
+        else if ($value == 14) {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").show();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // 21=Re-Negotiation Process
+        else if ($value == 21) {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").show();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // 22=Psychotest and Interview Pass
+        else if ($value == 22) {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").show();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // 23=Psychotest and Interview Not Pass
+        else if ($value == 23) {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").show();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // 24=Join
+        else if ($value == 24) {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").show();
+            $("#row_25").hide();
+        }
+        // 25=Not Join
+        else if ($value == 25) {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").show();
+        }
+        // 15=Recruitment Done
+        else if ($value == 15) {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").show();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+        // lainnya
+        else {
+            $("#row_4").hide();
+            $("#row_6").hide();
+            $("#row_8").hide();
+            $("#row_10").hide();
+            $("#row_16").hide();
+            $("#row_12").hide();
+            $("#row_13").hide();
+            $("#row_14").hide();
+            $("#row_15").hide();
+            $("#row_21").hide();
+            $("#row_22").hide();
+            $("#row_23").hide();
+            $("#row_24").hide();
+            $("#row_25").hide();
+        }
+    });
+});
 </script>
 @endsection
