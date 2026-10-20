@@ -6,6 +6,8 @@ use App\Models\Perusahaan;
 use App\Models\Divisi;
 use App\Models\Departemen;
 use App\Models\SubDepartemen;
+use App\Models\Propinsi;
+use App\Models\PropinsiKota;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 // 
@@ -243,6 +245,11 @@ class OpenDataController extends Controller
 
     public function getSubDepartemen($id) {
         $data = SubDepartemen::whereIn('kode_departemen', explode(',', $id))->orderBy('nama', 'asc')->get();
+        return json_decode($data, true);
+    }
+
+    public function get_propinsi_kota($id) {
+        $data = PropinsiKota::whereIn('id_propinsi', explode(',', $id))->orderBy('kota', 'asc')->get();
         return json_decode($data, true);
     }
 
