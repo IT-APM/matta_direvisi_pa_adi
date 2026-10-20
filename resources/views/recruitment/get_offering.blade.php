@@ -65,6 +65,8 @@
                         </div>
                         @php
                         $formal = App\Models\TrxRecruitmentFormal::where(['id_identitas'=>$_trx->id, 'jenjang'=>$_trx->pendidikan])->first();
+                        $kebutuhan_atribute = json_decode($_trx->kebutuhan_atribute, true);
+                        $kebutuhan_atribute_atasan_property = json_decode($kebutuhan_atribute['atasan_property'], true);
                         @endphp
                         @if(!empty($formal))
                         <div class="col-12 col-md-12 mb-2">
@@ -173,30 +175,36 @@
                     <div class="row">
                         <div class="col-12 col-md-12 mb-2">
                             <label class="form-label" for="posisi">Posisi / Jabatan</label>
-                            <input class="form-control" name="posisi" id="posisi" type="text" readonly="" value="{{ $trx->posisi }}">
+                            {{-- $trx->posisi --}}
+                            <input class="form-control" name="posisi" id="posisi" type="text" readonly="" value="{{ App\Models\PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan }}">
                         </div>
                         <div class="col-12 col-md-12 mb-2">
                             <label class="form-label" for="level">Level</label>
-                            <input class="form-control" name="level" id="level" type="text" readonly="" value="{{ $trxM->_level->level }}">
+                            {{-- $trxM->_level->level --}}
+                            <input class="form-control" name="level" id="level" type="text" readonly="" value="{{ App\Models\Level::find($kebutuhan_atribute['id_level'])->level }}">
                         </div>
                         <div class="col-12 col-md-12 mb-2">
                             <label class="form-label" for="area_kerja">Area Kerja</label>
-                            <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="{{ $trx->area_kerja }}">
+                            {{-- $trx->area_kerja --}}
+                            <input class="form-control" name="area_kerja" id="area_kerja" type="text" readonly="" value="{{ App\Models\Propinsi::find($kebutuhan_atribute['id_area'])->propinsi }}">
                         </div>
                         <div class="col-12 col-md-12 mb-2">
-                            <label class="form-label" for="ddd_kandidat">Direktorat / Divisi / Departemen</label>
-                            <input class="form-control" name="ddd_kandidat" id="ddd_kandidat" type="text" readonly="" value="{{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }}">
+                            <label class="form-label" for="ddd_kandidat">Direktorat / Divisi / Departemen Kandidat</label>
+                            {{-- {{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }} --}}
+                            <input class="form-control" name="ddd_kandidat" id="ddd_kandidat" type="text" readonly="" value="{{ App\Models\Divisi::find($kebutuhan_atribute['id_divisi_kandidat'])->nama }} / {{ App\Models\Departemen::find($kebutuhan_atribute['id_dep_kandidat'])->nama }} / {{ App\Models\SubDepartemen::find($kebutuhan_atribute['id_sub_dep_kandidat'])->nama }}">
                         </div>
                         @php
                         $atasan = json_decode($trxM->atasan_property, true);
                         @endphp
                         <div class="col-12 col-md-12 mb-2">
                             <label class="form-label" for="atasan">Atasan Langsung Kandidat</label>
-                            <input class="form-control" name="atasan" id="atasan" type="text" readonly="" @if(!empty($atasan))value="{{ $atasan['nama'] }} / {{ $atasan['nik'] }}"@endif>
+                            {{-- @if(!empty($atasan))value="{{ $atasan['nama'] }} / {{ $atasan['nik'] }}"@endif --}}
+                            <input class="form-control" name="atasan" id="atasan" type="text" readonly="" value="{{ $kebutuhan_atribute_atasan_property['nama'] }} / {{ $kebutuhan_atribute_atasan_property['nik'] }}">
                         </div>
                         <div class="col-12 col-md-12 mb-2">
                             <label class="form-label" for="divisi">Direktorat / Divisi / Departemen</label>
-                            <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="{{ $trx->divisi }}">
+                            {{-- $trx->divisi --}}
+                            <input class="form-control" name="divisi" id="divisi" type="text" readonly="" value="{{ $kebutuhan_atribute_atasan_property['divisi'] }} / {{ $kebutuhan_atribute_atasan_property['dep'] }} / {{ $kebutuhan_atribute_atasan_property['sub_dep'] }}">
                         </div>
                     </div>
                     <hr class="mt-2 mb-2" />
