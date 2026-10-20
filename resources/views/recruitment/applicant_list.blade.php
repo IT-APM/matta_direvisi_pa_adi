@@ -50,7 +50,13 @@
                     <div class="collapse" id="collapse_filter">
                         <form class="mb-2" action="{{ route('recruitment.applicant_list', 0) }}" method="get" enctype="multipart/form-data">
                             <div class="row">
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label class="h6">Tanggal</label>
+                                    <input class="form-control" name="tanggal_mulai" id="tanggal_mulai" type="date" required="" value="{{ $tanggal_mulai }}">
+                                    sampai
+                                    <input class="form-control" name="tanggal_akhir" id="tanggal_akhir" type="date" required="" value="{{ $tanggal_akhir }}">
+                                </div>
+                                <div class="col-sm-3">
                                     {{-- <label class="h6">Nama</label>&nbsp;<input type="checkbox" onClick="toggle_nama(this)" /> Check All
                                     <label class="d-block" for="nama">
                                         @foreach ($nama as $data)
@@ -67,21 +73,25 @@
                                     </select>
                                     <div class="invalid-feedback txt-danger">Field is required.</div>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="h6">Nama Jabatan</label>&nbsp;<input type="checkbox" onClick="toggle_id_pekerjaan(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="id_pekerjaan">
                                         @foreach ($pekerjaan as $data)
                                         <input class="checkbox_animated" id="id_pekerjaan[]" name="id_pekerjaan[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_id_pekerjaan)) checked @endif> {{ $data->pekerjaan }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="h6">Status</label>&nbsp;<input type="checkbox" onClick="toggle_id_status(this)" /> Check All
+                                    <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
                                     <label class="d-block" for="id_status">
                                         @foreach ($status as $data)
                                         <input class="checkbox_animated" id="id_status[]" name="id_status[]" type="checkbox" value="{{ $data->id }}" @if(in_array($data->id, $arr_id_status)) checked @endif> {{ $data->status }}<br/>
                                         @endforeach
                                     </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row mt-2">
