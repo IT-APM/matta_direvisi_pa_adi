@@ -148,6 +148,7 @@ Route::get('get_sertifikasi/{id}', [OpenDataController::class, 'get_sertifikasi'
 Route::get('get_keterampilan/{id}', [OpenDataController::class, 'get_keterampilan'])->name('get_keterampilan');
 Route::get('get_kepribadian/{id}', [OpenDataController::class, 'get_kepribadian'])->name('get_kepribadian');
 // Route::get('encrypt_link', [OpenDataController::class, 'encrypt_link'])->name('encrypt_link');
+Route::get('get_propinsi_kota/{id}', [OpenDataController::class, 'get_propinsi_kota'])->name('get_propinsi_kota');
 // 
 Route::get('payroll/get_divisi/{id}', [DashboardController::class, 'get_divisi'])->name('payroll.get_divisi');
 Route::get('payroll/get_departemen/{id}', [DashboardController::class, 'get_departemen'])->name('payroll.get_departemen');
@@ -301,6 +302,8 @@ Route::get('recruitment/interpretation/download/{id}', [TrxRecruitmentController
 Route::get('recruitment/get_offering/{id}', [TrxRecruitmentController::class, 'get_offering'])->name('recruitment.get_offering');
 Route::get('recruitment/get_offering/download/{id}', [TrxRecruitmentController::class, 'download_offering'])->name('recruitment.download_offering');
 Route::post('recruitment/pedoman_post', [ TrxRecruitmentController::class, 'pedoman_post'])->name('recruitment.pedoman_post');
+Route::post('recruitment/post_atribute', [TrxRecruitmentController::class, 'post_atribute'])->name('recruitment.post_atribute')->middleware('can:hc');
+// 
 Route::resource('noattendance', NoAttendanceController::class)->middleware('can:hc');
 Route::resource('overtime', OvertimeController::class)->middleware('auth');
 Route::get('overtime/dashboard/{id}', [OvertimeController::class, 'dashboard'])->name('overtime.dashboard')->middleware('can:hc');
@@ -382,7 +385,7 @@ Route::get('kebutuhan/layer', [TrxKebutuhanController::class, 'layer'])->name('k
 Route::get('kebutuhan/edit_kolom/{id}', [TrxKebutuhanController::class, 'edit_kolom'])->name('kebutuhan.edit_kolom')->middleware('can:hc');
 Route::post('kebutuhan/post_kolom/{id}', [TrxKebutuhanController::class, 'post_kolom'])->name('kebutuhan.post_kolom')->middleware('can:hc');
 // Route::get('kebutuhan/get_atribute/{id}', [TrxKebutuhanController::class, 'get_atribute'])->name('kebutuhan.get_atribute')->middleware('can:hc');
-Route::post('kebutuhan/post_atribute/{id}', [TrxKebutuhanController::class, 'post_atribute'])->name('kebutuhan.post_atribute')->middleware('can:hc');
+// Route::post('kebutuhan/post_atribute/{id}', [TrxKebutuhanController::class, 'post_atribute'])->name('kebutuhan.post_atribute')->middleware('can:hc');
 // 
 Route::get('kebutuhan/export_word/{id}', [TrxKebutuhanController::class, 'export_word'])->name('kebutuhan.export_word')->middleware('can:hc');
 // 
