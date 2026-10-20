@@ -64,6 +64,8 @@
                     </tr>
 					@php
 					$formal = App\Models\TrxRecruitmentFormal::where(['id_identitas'=>$_trx->id, 'jenjang'=>$_trx->pendidikan])->first();
+					$kebutuhan_atribute = json_decode($_trx->kebutuhan_atribute, true);
+					$kebutuhan_atribute_atasan_property = json_decode($kebutuhan_atribute['atasan_property'], true);
 					@endphp
 					@if(!empty($formal))
                     <tr>
@@ -117,22 +119,26 @@
                     <tr>
                         <td width="29%">Posisi / Jabatan</td>
                         <td width="2%">:</td>
-                        <td width="69%">{{ $trx->posisi }}</td>
+						{{-- $trx->posisi --}}
+                        <td width="69%">{{ App\Models\PekerjaanSub::find($kebutuhan_atribute['id_pekerjaan'])->pekerjaan }}</td>
                     </tr>
                     <tr>
                         <td>Level</td>
                         <td>:</td>
-                        <td>{{ $trxM->_level->level }}</td>
+						{{-- $trxM->_level->level --}}
+                        <td>{{ App\Models\Level::find($kebutuhan_atribute['id_level'])->level }}</td>
                     </tr>
                     <tr>
                         <td>Area Kerja</td>
                         <td>:</td>
-                        <td>{{ $trx->area_kerja }}</td>
+						{{-- $trx->area_kerja --}}
+                        <td>{{ App\Models\Propinsi::find($kebutuhan_atribute['id_area'])->propinsi }}</td>
                     </tr>
                     <tr>
-                        <td>Direktorat / Divisi / Departemen</td>
+                        <td>Direktorat / Divisi / Departemen Kandidat</td>
                         <td>:</td>
-                        <td>{{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }}</td>
+						{{-- {{ $trxM->_divisi_kandidat->nama }} / {{ $trxM->_dep_kandidat->nama }} / {{ $trxM->_sub_dep_kandidat->nama }} --}}
+                        <td>{{ App\Models\Divisi::find($kebutuhan_atribute['id_divisi_kandidat'])->nama }} / {{ App\Models\Departemen::find($kebutuhan_atribute['id_dep_kandidat'])->nama }} / {{ App\Models\SubDepartemen::find($kebutuhan_atribute['id_sub_dep_kandidat'])->nama }}</td>
                     </tr>
 					@php
 					$atasan = json_decode($trxM->atasan_property, true);
@@ -140,12 +146,14 @@
                     <tr>
                         <td>Atasan Langsung Kandidat</td>
                         <td>:</td>
-                        <td>@if(!empty($atasan)){{ $atasan['nama'] }} / {{ $atasan['nik'] }}@endif</td>
+                        {{-- <td>@if(!empty($atasan)){{ $atasan['nama'] }} / {{ $atasan['nik'] }}@endif</td> --}}
+                        <td>{{ $kebutuhan_atribute_atasan_property['nama'] }} / {{ $kebutuhan_atribute_atasan_property['nik'] }}</td>
                     </tr>
                     <tr>
                         <td>Direktorat / Divisi / Departemen</td>
                         <td>:</td>
-                        <td>{{ $trx->divisi }}</td>
+                        {{-- <td>{{ $trx->divisi }}</td> --}}
+						<td>{{ $kebutuhan_atribute_atasan_property['divisi'] }} / {{ $kebutuhan_atribute_atasan_property['dep'] }} / {{ $kebutuhan_atribute_atasan_property['sub_dep'] }}</td>
                     </tr>
                 </table>
 				<br/><br/>
@@ -254,7 +262,7 @@
 							@endif
 							@endif
 						</td>
-                        @if(!empty($flow2))<td>Human Capital & Org.<br/><img src="{{ public_path('assets/images/matta/verified_new.png') }}" height="30" /><br/>{{ $flow2->pic }}<br/>{{ $flow2->created_at }}</td>@endif
+                        @if(!empty($flow2))<td>{{ App\Models\MtrUtility::find(51)->informasi }}<br/><img src="{{ public_path('assets/images/matta/verified_new.png') }}" height="30" /><br/>{{ $flow2->pic }}<br/>{{ $flow2->created_at }}</td>@endif
 						{{-- atasan kandidat --}}
                         @if(!empty($flow3))<td>Mengetahui/Menyetujui<br/><img src="{{ public_path('assets/images/matta/approved_new.png') }}" height="30" /><br/>{{ $flow3->pic }}<br/>{{ $flow3->created_at }}</td>@endif
                         {{-- <td>Diarsip oleh<br/><img src="{{ public_path('assets/images/matta/informed_new.png') }}" height="30" /><br/>{{ $kandidat->pic }}<br/>{{ $kandidat->created_at }}</td> --}}
