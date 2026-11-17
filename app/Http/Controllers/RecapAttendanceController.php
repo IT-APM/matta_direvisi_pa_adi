@@ -26,6 +26,9 @@ class RecapAttendanceController extends Controller
      */
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->attendanceRecap();
+        }
         // dd($request->all());
         set_time_limit(3600);
         // filter parameter

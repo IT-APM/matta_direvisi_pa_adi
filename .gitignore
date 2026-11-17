@@ -17,3 +17,21 @@ yarn-error.log
 # uploads
 public/assets/recruitment/upload/
 public/assets/images/matta/
+
+# Laravel storage framework
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+!storage/framework/cache/.gitignore
+!storage/framework/sessions/.gitignore
+!storage/framework/views/.gitignore
+
+# Database & environment backups & scratch
+*.sql
+*.env*
+*Copy.env*
+*Copy.htaccess*
+scratch/
+scratch_todolist.html
+desain.md
+

@@ -17,6 +17,9 @@ class FeedController extends Controller
      */
     public function view()
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->feeds();
+        }
         //
         $no = 0;
         $feed = Feeds::orderBy( 'id', 'desc' )->get();

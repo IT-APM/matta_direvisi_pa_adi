@@ -40,6 +40,9 @@ class TrxCutiController extends Controller
      */
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->formModule('leave');
+        }
         set_time_limit(3600);
         // dd($request->all());
         // $tipe_cuti = 0;
@@ -96,10 +99,10 @@ class TrxCutiController extends Controller
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
-        $trx = TrxCuti::orderBy('id', 'desc')->get();
+        $trx = TrxCuti::orderBy('id', 'desc')->limit(100)->get();
         if(Gate::allows('hc_nkp')){
             $karyawan = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
-            $trx = TrxCuti::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx = TrxCuti::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->limit(100)->get();
         }
         // foreach ($trx as $value) {
         //     $trxM = TrxCuti::find( $value->id );
@@ -137,14 +140,16 @@ class TrxCutiController extends Controller
             $trx = TrxCuti::whereIn('id', $arr_id)->orderBy('id', 'desc')->get();
         }
         // filter parameter
-        function forgetById($collection,$id){
-            foreach($collection as $key => $item){
-                if($item->id == $id){
-                    $collection->forget($key);
-                    break;
+        if (!function_exists('App\Http\Controllers\forgetById')) {
+            function forgetById($collection, $id){
+                foreach($collection as $key => $item){
+                    if($item->id == $id){
+                        $collection->forget($key);
+                        break;
+                    }
                 }
+                return $collection;
             }
-            return $collection;
         }
         // 
         $arr_status_cuti = array();
@@ -256,24 +261,33 @@ class TrxCutiController extends Controller
     // ambil sisa cuti
     public static function getSisaCuti($nik, $periode, $id)
     {
+        static $cache = [];
+        $key = "{$nik}_{$periode}_{$id}";
+        if (isset($cache[$key])) {
+            return $cache[$key];
+        }
+
         $where = ['nik_karyawan' => $nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
         $trx = TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->where('id', '<=', $id)->sum('jumlah_hari');
-        // cek karyawan jika ada perubahan nik tetapi emailnya sama maka cutinya dihitung juga
-        $email = Karyawan::where(['nik' => $nik])->first()->email;
-        $arr_nik = array_values(array_diff(Karyawan::where(['email' => $email])->get()->pluck('nik')->toArray(), [$nik]));
-        foreach($arr_nik as $_nik){
-            $where = ['nik_karyawan' => $_nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
-            $trx += TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->where('id', '<=', $id)->sum('jumlah_hari');
+        $kary = Karyawan::where(['nik' => $nik])->first();
+        $email = $kary ? $kary->email : null;
+        if ($email) {
+            $arr_nik = array_values(array_diff(Karyawan::where(['email' => $email])->pluck('nik')->toArray(), [$nik]));
+            foreach($arr_nik as $_nik){
+                $where = ['nik_karyawan' => $_nik, 'periode_cuti' => $periode, 'tipe_cuti' => 0];
+                $trx += TrxCuti::where($where)->whereNotIn('status_cuti', [5,7,8])->where('id', '<=', $id)->sum('jumlah_hari');
+            }
         }
-        // cek apakah karyawan reguler atau tidak, jika iya maka dihitung cuti bersama
-        $where = [ 'nik' => $nik, 'wg_id' => 1 ];
-        $check = Karyawan::where($where)->exists();
+        $check = $kary ? ($kary->wg_id == 1) : false;
         $cuti_bersama = 0;
         if($check){
-            $where = ['is_cuti' => 1];
-            $cuti_bersama = Holiday::whereYear('tanggal', $periode)->where($where)->count();
+            static $holidayCache = [];
+            if (!isset($holidayCache[$periode])) {
+                $holidayCache[$periode] = Holiday::whereYear('tanggal', $periode)->where('is_cuti', 1)->count();
+            }
+            $cuti_bersama = $holidayCache[$periode];
         }
-        return 12 - $trx - $cuti_bersama;
+        return $cache[$key] = (12 - $trx - $cuti_bersama);
     }
 
     // ambil sisa cuti ketika input formulir
@@ -541,10 +555,17 @@ class TrxCutiController extends Controller
         $tipe = CutiTipe::whereNotIn('id', [12])->orderBy('order_by', 'asc')->get();
         $status = 'create';
         // $jumlah_hari = [1,2,3,4,5,6,7,8,9,10,11,12];
-        $nik_karyawan = Crypt::decrypt($request->nik_karyawan);
+        $nik_karyawan = auth()->user()->nik;
+        if ($request->filled('nik_karyawan') && $request->nik_karyawan !== '0') {
+            try {
+                $nik_karyawan = Crypt::decrypt($request->nik_karyawan);
+            } catch (\Throwable $e) {
+                $nik_karyawan = $request->nik_karyawan;
+            }
+        }
         $where = ['nik' => $nik_karyawan];
         $pengaju = Karyawan::select('nik', 'nama')->where($where)->first();
-        $pengaju = $pengaju->nama.' - '.$pengaju->nik;
+        $pengaju = $pengaju ? ($pengaju->nama.' - '.$pengaju->nik) : (auth()->user()->name ?? 'Karyawan');
         return view('formulir.cuti.insert', compact('karyawan', 'tipe', 'status', 'pengaju', 'nik_karyawan'));
     }
 

@@ -305,7 +305,8 @@ class OvertimeController extends Controller
 
     public function getOvertimeByGroup(string $groupKey, $dari = null, $sampai = null)
     {
-        $maxNominal = MtrUtility::find(33)->informasi;
+        $rawMax = optional(MtrUtility::find(33))->informasi;
+        $maxNominal = (is_numeric($rawMax) && (float)$rawMax > 0) ? (float)$rawMax : 10000000;
         $query = Overtime::where('ot_length_rp_adj', '>', 0);
         if ($dari && $sampai) {
             $query->whereBetween('ot_start_at', [
@@ -547,6 +548,9 @@ class OvertimeController extends Controller
 
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->propose();
+        }
         //
         // $ot = Overtime::orderBy( 'ot_maker_at', 'desc' )->paginate( 50 );
         $no = 0;

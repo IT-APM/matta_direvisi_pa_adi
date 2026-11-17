@@ -41,7 +41,7 @@
                             <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    @if (count($errors) > 0)
+                    @if (!empty($errors) && $errors->any())
                     <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
                         <h6>Upload file is ERROR</h6>
                         <ul>
@@ -138,7 +138,7 @@ $('#_datatable').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "pageLength": 10, "lengthMenu": [[10], [10]]
 } );
 // 
 $('#_datatable1').DataTable( {
@@ -149,7 +149,7 @@ $('#_datatable1').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "pageLength": 10, "lengthMenu": [[10], [10]]
 } );
 </script>
 @endsection

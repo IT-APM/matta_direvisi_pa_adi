@@ -14,13 +14,27 @@
 <!-- Plugins JS start-->
 <script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script>
 <script src="{{ asset('assets/js/chart/apex-chart/stock-prices.js') }}"></script>
-<script id="menu" src="{{asset('assets/js/sidebar-menu.js')}}"></script>
+<script id="menu" src="{{asset('assets/js/sidebar-menu.js')}}?v={{ file_exists(public_path('assets/js/sidebar-menu.js')) ? filemtime(public_path('assets/js/sidebar-menu.js')) : time() }}"></script>
+<script>
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    function resetSidebarScroll() {
+        var el = document.querySelector('.simplebar-content-wrapper');
+        if (el) el.scrollTop = 0;
+        var links = document.getElementById('simple-bar');
+        if (links) links.scrollTop = 0;
+    }
+    $(document).ready(resetSidebarScroll);
+    window.addEventListener('load', resetSidebarScroll);
+    window.addEventListener('pageshow', resetSidebarScroll);
+</script>
 <script src="{{ asset('assets/js/slick/slick.min.js') }}"></script>
 <script src="{{ asset('assets/js/slick/slick.js') }}"></script>
 <script src="{{ asset('assets/js/header-slick.js') }}"></script>
 @yield('script')
 
-@if(Route::current()->getName() != 'popover') 
+@if(Route::currentRouteName() != 'popover') 
 	<script src="{{asset('assets/js/tooltip-init.js')}}"></script>
 @endif
 

@@ -9,18 +9,22 @@
 
 @section('style')
 <style>
-    button.dt-button {
-        float: none;
-        text-align: center;
-        color: black;
-        background: white;
-    }
     .filter-box {
         max-height: 250px;
         overflow-y: auto;
-        border: 1px solid #e0e0e0;
-        padding: 10px;
-        border-radius: 4px;
+        border: 1px solid #e2e8f0;
+        padding: 12px;
+        border-radius: 8px;
+        background: #f8fafc;
+    }
+    .map-marker-icon {
+        font-size: 18px !important;
+        color: #ff5400;
+        vertical-align: middle;
+        transition: transform 0.2s ease;
+    }
+    .map-marker-icon:hover {
+        transform: scale(1.2);
     }
 </style>
 @endsection
@@ -120,7 +124,7 @@
                             {{-- rawdata --}}
                             <div class="tab-pane fade show active" id="rawdata" role="tabpanel" aria-labelledby="rawdata-tab">
                                 <div class="table-responsive mt-2">
-                                    <table class="display" id="raw_datatable">
+                                    <table class="display table table-striped table-bordered" id="raw_datatable" style="width: 100%;">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
@@ -147,78 +151,6 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach ($att as $data)
-                                            @php
-                                                // tanpa query: relasi sudah di-eager load di controller
-                                                $att_property = json_decode($data->att_property, true) ?? [];
-                                                $karyawan     = $data->_att_nik;
-
-                                                $delay = '';
-                                                if ($data->att_type == 'Clock-in' && $data->att_status == 'Late-in' && $data->att_data_src == 'Regular') {
-                                                    $clockin = $data->wg_id == 1 ? '09:00:00' : ($data->wg_id > 1 ? ($wdClockin[$data->att_wd_ot_id] ?? null) : null);
-                                                    if ($clockin) {
-                                                        $totalDetik = (int) abs(\Carbon\Carbon::createFromFormat('H:i:s', \Carbon\Carbon::parse($data->att_timestamp)->format('H:i:s'))
-                                                            ->diffInSeconds(\Carbon\Carbon::createFromFormat('H:i:s', \Carbon\Carbon::parse($clockin)->format('H:i:s'))));
-                                                        $delay = gmdate('H:i:s', $totalDetik);
-                                                    }
-                                                } elseif ($data->att_type == 'Clock-out' && $data->att_status == 'Early-out' && $data->att_data_src == 'Regular' && $data->wg_id == 1) {
-                                                    $delay = $selisihEO[$data->att_nik.'|'.$data->att_date] ?? '';
-                                                }
-                                            @endphp
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($data->att_date)->format('d-m-Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($data->att_timestamp)->format('d-m-Y H:i:s') }}</td>
-                                                <td>{{ $karyawan?->nama }}</td>
-                                                <td>{{ $data->att_nik }}</td>
-                                                <td>@if(!empty($data->id_fp_trx)) {{ $karyawan?->id_fp }} @endif</td>
-                                                <td>{{ $att_property['perusahaan'] ?? '' }}</td>
-                                                <td>{{ $att_property['divisi'] ?? '' }}</td>
-                                                <td>{{ $att_property['dep'] ?? '' }}</td>
-                                                <td>{{ $att_property['sub_dep'] ?? '' }}</td>
-                                                <td>{{ $karyawan?->alamat_kantor }}</td>
-                                                <td>{{ $att_property['wg_name'] ?? '' }}</td>
-                                                <td>
-                                                    @if($data->att_type == 'Clock-in')
-                                                        <span class="badge rounded-pill badge-light-primary">{{ $data->att_type }}</span>
-                                                    @elseif ($data->att_type == 'Clock-out')
-                                                        <span class="badge rounded-pill badge-light-success">{{ $data->att_type }}</span>
-                                                    @else
-                                                        <span class="badge rounded-pill badge-light-warning">{{ $data->att_type }}</span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $data->att_long }}</td>
-                                                <td>{{ $data->att_lat }}</td>
-                                                <td>{{ $data->att_address }}</td>
-                                                <td>@if(!empty($data->att_long) && !empty($data->att_lat))<a href="https://www.google.com/maps/place/{{ $data->att_lat }},{{ $data->att_long }}" target="_blank"><i class="fa fa-map-marker" style="font-size:25px;color:red;"></i></a>@endif</td>
-                                                <td>
-                                                    @if($data->att_status == 'Book-in' || $data->att_status == 'Book-out')
-                                                        <span class="badge badge-success">{{ $data->att_status }}</span>
-                                                    @elseif ($data->att_status == 'Leave')
-                                                        <span class="badge badge-warning">{{ $data->att_status }}</span>
-                                                    @else
-                                                        <span class="badge badge-danger">{{ $data->att_status }}</span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $delay }}</td>
-                                                <td>
-                                                    @if($data->att_data_src == 'Regular')
-                                                        <span class="badge badge-success">{{ $data->att_data_src }}</span>
-                                                    @elseif ($data->att_data_src == 'Overtime')
-                                                        <span class="badge badge-primary">{{ $data->att_data_src }}</span>
-                                                    @else
-                                                        <span class="badge badge-warning">{{ $data->att_data_src }}</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if(!empty($data->id_fp_trx) && $data->_fp_trx)
-                                                        <span class="badge {{ $data->_fp_trx->id_mesin == 1 ? 'badge-primary' : 'badge-info' }}">FINGER-{{ $data->_fp_trx->id_mesin }}</span>
-                                                    @else
-                                                        <span class="badge badge-warning">MATTA</span>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -226,7 +158,7 @@
                             {{-- duration --}}
                             <div class="tab-pane fade" id="duration" role="tabpanel" aria-labelledby="duration-tab">
                                 <div class="table-responsive mt-2">
-                                    <table class="display" id="duration_datatable">
+                                    <table class="display table table-striped table-bordered" id="duration_datatable" style="width: 100%;">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
@@ -246,33 +178,6 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach ($duration as $data)
-                                            @php $att_property = json_decode($data['att_property'], true) ?? []; @endphp
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($data['att_date'])->format('d-m-Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($data['Clock-in'])->format('d-m-Y H:i:s') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($data['Clock-out'])->format('d-m-Y H:i:s') }}</td>
-                                                <td>{{ $data['durasi'] }}</td>
-                                                <td>{{ $data['nama'] }}</td>
-                                                <td>{{ $data['att_nik'] }}</td>
-                                                <td>{{ $att_property['perusahaan'] ?? '' }}</td>
-                                                <td>{{ $att_property['divisi'] ?? '' }}</td>
-                                                <td>{{ $att_property['dep'] ?? '' }}</td>
-                                                <td>{{ $att_property['sub_dep'] ?? '' }}</td>
-                                                <td>{{ $data['alamat_kantor'] }}</td>
-                                                <td>{{ $att_property['wg_name'] ?? '' }}</td>
-                                                <td>
-                                                    @if($data['att_data_src'] == 'Regular')
-                                                        <span class="badge badge-success">{{ $data['att_data_src'] }}</span>
-                                                    @elseif ($data['att_data_src'] == 'Overtime')
-                                                        <span class="badge badge-primary">{{ $data['att_data_src'] }}</span>
-                                                    @else
-                                                        <span class="badge badge-warning">{{ $data['att_data_src'] }}</span>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -302,21 +207,98 @@ function toggleCheck(name, source) {
     document.getElementsByName(name).forEach(cb => cb.checked = source.checked);
 }
 
-const dtOptions = {
+const filterParams = {
+    filter: '{{ $isFilter ? 1 : 0 }}',
+    date_from: '{{ $date_from }}',
+    date_to: '{{ $date_to }}',
+    str_att_nik_nama: '{{ $str_att_nik_nama }}',
+    att_type: @json($arr_att_type),
+    att_status: @json($arr_att_status),
+    att_data_src: @json($arr_att_data_src),
+    perusahaan: @json($arr_perusahaan),
+    wg_id: @json($arr_wg_id)
+};
+
+// DataTables Server-Side untuk Raw Data (membuka instan, paginasi 25, memuat 40.000 data lengkap)
+const tblRaw = $('#raw_datatable').DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: {
+        url: "{{ route('attendance.index') }}",
+        type: 'GET',
+        data: function(d) {
+            d.tab = 'raw';
+            $.extend(d, filterParams);
+        }
+    },
     dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
          "<'row'<'col-sm-12'rt>>" +
          "<'row'<'col-sm-5'i><'col-sm-7'p>>",
     buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
-    lengthMenu: [[50, 100, 200, 500, -1], [50, 100, 200, 500, "All"]]
-};
+    order: [[0, 'desc']],
+    autoWidth: false,
+    pageLength: 25,
+    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+    language: {
+        processing: '<div class="spinner-border text-primary spinner-border-sm" role="status"></div> Memuat data...',
+        search: "Search:",
+        lengthMenu: "Show _MENU_ entries",
+        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+        infoEmpty: "Showing 0 to 0 of 0 entries",
+        infoFiltered: "(filtered from _MAX_ total entries)",
+        paginate: {
+            first: "First",
+            last: "Last",
+            next: "Next",
+            previous: "Previous"
+        }
+    }
+});
 
-const tblRaw = $('#raw_datatable').DataTable(dtOptions);
-const tblDur = $('#duration_datatable').DataTable(dtOptions);
+let tblDur = null;
+$('#duration-tab').on('shown.bs.tab', function () {
+    if (!tblDur) {
+        tblDur = $('#duration_datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('attendance.index') }}",
+                type: 'GET',
+                data: function(d) {
+                    d.tab = 'duration';
+                    $.extend(d, filterParams);
+                }
+            },
+            dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>" +
+                 "<'row'<'col-sm-12'rt>>" +
+                 "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+            order: [],
+            autoWidth: false,
+            pageLength: 25,
+            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            language: {
+                processing: '<div class="spinner-border text-primary spinner-border-sm" role="status"></div> Memuat data durasi...',
+                search: "Search:",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                infoEmpty: "Showing 0 to 0 of 0 entries",
+                paginate: {
+                    first: "First",
+                    last: "Last",
+                    next: "Next",
+                    previous: "Previous"
+                }
+            }
+        });
+    } else {
+        tblDur.columns.adjust();
+    }
+});
 
 // Hitung ulang lebar kolom saat tab dibuka
-$('a[data-bs-toggle="pill"]').on('shown.bs.tab', () => {
-    tblRaw.columns.adjust();
-    tblDur.columns.adjust();
+$('a[data-bs-toggle="pill"], button[data-bs-toggle="pill"]').on('shown.bs.tab', function () {
+    $($.fn.dataTable.tables({ visible: true, api: true })).DataTable().columns.adjust();
 });
 </script>
 @endsection

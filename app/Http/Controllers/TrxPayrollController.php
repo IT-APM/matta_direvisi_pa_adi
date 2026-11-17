@@ -404,6 +404,9 @@ class TrxPayrollController extends Controller
     
     public function slip(Request $request, $id)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->payroll();
+        }
         // fungsi untuk set paid_at default pada trx_tbl_payroll_log
         // $arr = array();
         // $startYear = 2022;

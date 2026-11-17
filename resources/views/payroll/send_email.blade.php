@@ -34,7 +34,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    @if (count($errors) > 0)
+                    @if (!empty($errors) && $errors->any())
                     <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
                         <h6>Upload File is ERROR</h6>
                         <ul>
@@ -239,7 +239,7 @@ $('#_datatable_current').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    "pageLength": 10, "lengthMenu": [[10], [10]],
 });
 // 
 $('#_datatable_history').DataTable( {
@@ -250,7 +250,7 @@ $('#_datatable_history').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    "pageLength": 10, "lengthMenu": [[10], [10]],
 });
 // 
 </script>

@@ -32,66 +32,66 @@
                     </div>
                     @endif
                     @if(!empty($data))
-                    @foreach ($data as $arr)
-                        @if($arr['ot_approver_status'] == 'Approve')
+                    @foreach ((array)$data as $arr)
+                        @if(data_get($arr, 'ot_approver_status') == 'Approve')
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
                                     <td width="40%">Nama/NIP</td>
-                                    <td width="60%">{{ $karyawan->nama }}/{{ $karyawan->nik }}</td>
+                                    <td width="60%">{{ optional($karyawan)->nama ?? '-' }}/{{ optional($karyawan)->nik ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Overtime</td>
-                                    <td>{{ $arr['ot_title'] }}</td>
+                                    <td>{{ data_get($arr, 'ot_title', '-') }}</td>
                                 </tr>
                                 <tr>
                                     <td>Description</td>
-                                    <td>{{ $arr['ot_desc'] }}</td>
+                                    <td>{{ data_get($arr, 'ot_desc', '-') }}</td>
                                 </tr>
                                 <tr>
                                     <td>Type</td>
-                                    <td>{{ $arr['ot_type'] }}</td>
+                                    <td>{{ data_get($arr, 'ot_type', '-') }}</td>
                                 </tr>
                                 <tr>
                                     <td>Start datetime</td>
-                                    <td>{{ date('d-m-Y H:i:s', strtotime($arr['ot_start_at'])) }}</td>
+                                    <td>{{ date('d-m-Y H:i:s', strtotime(data_get($arr, 'ot_start_at', 'now'))) }}</td>
                                 </tr>
                                 <tr>
                                     <td>End datetime</td>
-                                    <td>{{ date('d-m-Y H:i:s', strtotime($arr['ot_end_at'])) }}</td>
+                                    <td>{{ date('d-m-Y H:i:s', strtotime(data_get($arr, 'ot_end_at', 'now'))) }}</td>
                                 </tr>
                                 <tr>
                                     <td>Durasi</td>
-                                    <td>{{ Carbon\CarbonInterval::seconds($arr['ot_length'])->cascade()->forHumans() }}</td>
+                                    <td>{{ Carbon\CarbonInterval::seconds(data_get($arr, 'ot_length', 0))->cascade()->forHumans() }}</td>
                                 </tr>
-                                @if ($arr['n_clockin'] > 0)
+                                @if (data_get($arr, 'n_clockin', 0) > 0)
                                 <tr>
                                     <td>Clock in</td>
-                                    <td>{{ date('d-m-Y H:i:s', strtotime($arr['dtClockin'])) }}</td>
+                                    <td>{{ date('d-m-Y H:i:s', strtotime(data_get($arr, 'dtClockin', 'now'))) }}</td>
                                 </tr>
                                 @endif
-                                @if ($arr['n_clockout'] > 0)
+                                @if (data_get($arr, 'n_clockout', 0) > 0)
                                 <tr>
                                     <td>Clock out</td>
-                                    <td>{{ date('d-m-Y H:i:s', strtotime($arr['dtClockout'])) }}</td>
+                                    <td>{{ date('d-m-Y H:i:s', strtotime(data_get($arr, 'dtClockout', 'now'))) }}</td>
                                 </tr>
                                 @endif
                             </tbody>
                         </table>
                         <br />
-                                @if ($arr['isClockin'])
+                                @if (data_get($arr, 'isClockin'))
                                 <form action="{{ route('cico_ot.store') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to Clock-in?');">
                                     @csrf
-                                    <input name="id" id="id" class="form-control" type="hidden" value="{{ $arr['id'] }}">
+                                    <input name="id" id="id" class="form-control" type="hidden" value="{{ data_get($arr, 'id') }}">
                                     <input name="att_type" id="att_type" class="form-control" type="hidden" value="Clock-in">
                                     <button class="btn btn-success" type="submit"><i class="fa fa-sign-in" aria-hidden="true"></i> Clock In</button>
                                 </form>
                                 <br />
                                 @endif
-                                @if ($arr['isClockout'])
+                                @if (data_get($arr, 'isClockout'))
                                 <form action="{{ route('cico_ot.store') }}" method="post" enctype="multipart/form-data" onsubmit="return confirm('Are you sure want to Clock-out?');">
                                     @csrf
-                                    <input name="id" id="id" class="form-control" type="hidden" value="{{ $arr['id'] }}">
+                                    <input name="id" id="id" class="form-control" type="hidden" value="{{ data_get($arr, 'id') }}">
                                     <input name="att_type" id="att_type" class="form-control" type="hidden" value="Clock-out">
                                     <button class="btn btn-primary" type="submit"><i class="fa fa-sign-out" aria-hidden="true"></i> Clock Out</button>
                                 </form>

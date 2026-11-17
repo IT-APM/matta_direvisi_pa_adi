@@ -199,40 +199,92 @@ class DashboardController extends Controller
                 $arr_status_karyawan = $_status_karyawan;
             }
             // 
-            $data = TrxPayrollLog::select('divisi')->whereIn('perusahaan', $arr_perusahaan)->orderBy('divisi', 'asc')->groupBy('divisi')->get();
+            $data = TrxPayrollLog::select('divisi')->whereIn('perusahaan', $arr_perusahaan ?: TrxPayrollLog::distinct()->pluck('perusahaan')->toArray())->orderBy('divisi', 'asc')->groupBy('divisi')->get();
             foreach($data as $_data){
                 array_push($divisi, ['id'=>base64_encode($_data->divisi), 'nama'=>$_data->divisi]);
             }
-            $data = TrxPayrollLog::select('departemen')->whereIn('perusahaan', $arr_perusahaan)->whereIn('divisi', $arr_divisi)->orderBy('departemen', 'asc')->groupBy('departemen')->get();
+            $data = TrxPayrollLog::select('departemen')->whereIn('perusahaan', $arr_perusahaan ?: TrxPayrollLog::distinct()->pluck('perusahaan')->toArray())->whereIn('divisi', $arr_divisi ?: TrxPayrollLog::distinct()->pluck('divisi')->toArray())->orderBy('departemen', 'asc')->groupBy('departemen')->get();
             foreach($data as $_data){
                 array_push($departemen, ['id'=>base64_encode($_data->departemen), 'nama'=>$_data->departemen]);
             }
-            $data = TrxPayrollLog::select('subdepartemen')->whereIn('perusahaan', $arr_perusahaan)->whereIn('divisi', $arr_divisi)->whereIn('departemen', $arr_departemen)->orderBy('subdepartemen', 'asc')->groupBy('subdepartemen')->get();
+            $data = TrxPayrollLog::select('subdepartemen')->whereIn('perusahaan', $arr_perusahaan ?: TrxPayrollLog::distinct()->pluck('perusahaan')->toArray())->whereIn('divisi', $arr_divisi ?: TrxPayrollLog::distinct()->pluck('divisi')->toArray())->whereIn('departemen', $arr_departemen ?: TrxPayrollLog::distinct()->pluck('departemen')->toArray())->orderBy('subdepartemen', 'asc')->groupBy('subdepartemen')->get();
             foreach($data as $_data){
                 array_push($subdepartemen, ['id'=>base64_encode($_data->subdepartemen), 'nama'=>$_data->subdepartemen]);
             }
             // 
-            $payroll = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
-            // whereIn('tahun', $arr_tahun)
-            // ->whereIn('bulan', $arr_bulan)
-            ->whereIn('status_karyawan', $arr_status_karyawan)
-            ->whereIn('perusahaan', $arr_perusahaan)
-            ->whereIn('divisi', $arr_divisi)
-            ->whereIn('departemen', $arr_departemen)
-            ->whereIn('subdepartemen', $arr_subdepartemen)
-            ->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
-            if(Gate::allows('hc_nkp')){
-                $payroll = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
-                // whereIn('tahun', $arr_tahun)
-                // ->whereIn('bulan', $arr_bulan)
-                ->whereIn('nik',$arr_nik_nkp)
-                ->whereIn('status_karyawan', $arr_status_karyawan)
-                ->whereIn('perusahaan', $arr_perusahaan)
-                ->whereIn('divisi', $arr_divisi)
-                ->whereIn('departemen', $arr_departemen)
-                ->whereIn('subdepartemen', $arr_subdepartemen)
-                ->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+            $query = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", LPAD(bulan, 2, "0"), "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01']);
+            if (count($arr_status_karyawan) > 0) {
+                $query->whereIn('status_karyawan', $arr_status_karyawan);
             }
+            if (count($arr_perusahaan) > 0) {
+                $query->whereIn('perusahaan', $arr_perusahaan);
+            }
+            if (count($arr_divisi) > 0) {
+                $query->whereIn('divisi', $arr_divisi);
+            }
+            if (count($arr_departemen) > 0) {
+                $query->whereIn('departemen', $arr_departemen);
+            }
+            if (count($arr_subdepartemen) > 0) {
+                $query->whereIn('subdepartemen', $arr_subdepartemen);
+            }
+            if(Gate::allows('hc_nkp')){
+                $query->whereIn('nik', $arr_nik_nkp);
+            }
+            $payroll = $query->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+
+            // Populate fallback arrays for table groupings in view
+            if (empty($arr_perusahaan)) {
+                $arr_perusahaan = TrxPayrollLog::distinct()->pluck('perusahaan')->toArray();
+            }
+            if (empty($arr_divisi)) {
+                $arr_divisi = TrxPayrollLog::distinct()->pluck('divisi')->toArray();
+            }
+            if (empty($arr_departemen)) {
+                $arr_departemen = TrxPayrollLog::distinct()->pluck('departemen')->toArray();
+            }
+            if (empty($arr_subdepartemen)) {
+                $arr_subdepartemen = TrxPayrollLog::distinct()->pluck('subdepartemen')->toArray();
+            }
+            if (empty($arr_status_karyawan)) {
+                $arr_status_karyawan = TrxPayrollLog::distinct()->pluck('status_karyawan')->toArray();
+            }
+        } else {
+            // Default when accessing without filter parameters
+            $maxLog = TrxPayrollLog::orderBy('tahun', 'desc')->orderBy('bulan', 'desc')->first();
+            $minLog = TrxPayrollLog::orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->first();
+            $latestYear = $maxLog ? $maxLog->tahun : 2026;
+            $latestMonth = $maxLog ? $maxLog->bulan : 10;
+            $firstYear = $minLog ? $minLog->tahun : 2025;
+            $bulan_tahun_dari = sprintf('%04d-01', $firstYear);
+            $bulan_tahun_sampai = sprintf('%04d-%02d', $latestYear, $latestMonth);
+
+            $arr_status_karyawan = $status_karyawan->pluck('status_karyawan')->toArray();
+            $arr_perusahaan = collect($perusahaan)->pluck('nama')->toArray();
+
+            $data = TrxPayrollLog::select('divisi')->orderBy('divisi', 'asc')->groupBy('divisi')->get();
+            foreach($data as $_data){
+                array_push($divisi, ['id'=>base64_encode($_data->divisi), 'nama'=>$_data->divisi]);
+            }
+            $arr_divisi = collect($divisi)->pluck('nama')->toArray();
+
+            $data = TrxPayrollLog::select('departemen')->orderBy('departemen', 'asc')->groupBy('departemen')->get();
+            foreach($data as $_data){
+                array_push($departemen, ['id'=>base64_encode($_data->departemen), 'nama'=>$_data->departemen]);
+            }
+            $arr_departemen = collect($departemen)->pluck('nama')->toArray();
+
+            $data = TrxPayrollLog::select('subdepartemen')->orderBy('subdepartemen', 'asc')->groupBy('subdepartemen')->get();
+            foreach($data as $_data){
+                array_push($subdepartemen, ['id'=>base64_encode($_data->subdepartemen), 'nama'=>$_data->subdepartemen]);
+            }
+            $arr_subdepartemen = collect($subdepartemen)->pluck('nama')->toArray();
+
+            $query = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", LPAD(bulan, 2, "0"), "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01']);
+            if(Gate::allows('hc_nkp')){
+                $query->whereIn('nik', $arr_nik_nkp);
+            }
+            $payroll = $query->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
         }
         // end filter
         return view( 'dashboard.biaya_lain', compact('payroll', 'perusahaan', 'divisi', 'departemen', 'subdepartemen', 'tahun', 'bulan', 'status_karyawan', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_subdepartemen', 'arr_tahun', 'arr_bulan', 'arr_status_karyawan', 'bulan_tahun_dari', 'bulan_tahun_sampai'));
@@ -313,40 +365,92 @@ class DashboardController extends Controller
                 $arr_status_karyawan = $_status_karyawan;
             }
             // 
-            $data = TrxPayrollLog::select('divisi')->whereIn('perusahaan', $arr_perusahaan)->orderBy('divisi', 'asc')->groupBy('divisi')->get();
+            $data = TrxPayrollLog::select('divisi')->whereIn('perusahaan', $arr_perusahaan ?: TrxPayrollLog::distinct()->pluck('perusahaan')->toArray())->orderBy('divisi', 'asc')->groupBy('divisi')->get();
             foreach($data as $_data){
                 array_push($divisi, ['id'=>base64_encode($_data->divisi), 'nama'=>$_data->divisi]);
             }
-            $data = TrxPayrollLog::select('departemen')->whereIn('perusahaan', $arr_perusahaan)->whereIn('divisi', $arr_divisi)->orderBy('departemen', 'asc')->groupBy('departemen')->get();
+            $data = TrxPayrollLog::select('departemen')->whereIn('perusahaan', $arr_perusahaan ?: TrxPayrollLog::distinct()->pluck('perusahaan')->toArray())->whereIn('divisi', $arr_divisi ?: TrxPayrollLog::distinct()->pluck('divisi')->toArray())->orderBy('departemen', 'asc')->groupBy('departemen')->get();
             foreach($data as $_data){
                 array_push($departemen, ['id'=>base64_encode($_data->departemen), 'nama'=>$_data->departemen]);
             }
-            $data = TrxPayrollLog::select('subdepartemen')->whereIn('perusahaan', $arr_perusahaan)->whereIn('divisi', $arr_divisi)->whereIn('departemen', $arr_departemen)->orderBy('subdepartemen', 'asc')->groupBy('subdepartemen')->get();
+            $data = TrxPayrollLog::select('subdepartemen')->whereIn('perusahaan', $arr_perusahaan ?: TrxPayrollLog::distinct()->pluck('perusahaan')->toArray())->whereIn('divisi', $arr_divisi ?: TrxPayrollLog::distinct()->pluck('divisi')->toArray())->whereIn('departemen', $arr_departemen ?: TrxPayrollLog::distinct()->pluck('departemen')->toArray())->orderBy('subdepartemen', 'asc')->groupBy('subdepartemen')->get();
             foreach($data as $_data){
                 array_push($subdepartemen, ['id'=>base64_encode($_data->subdepartemen), 'nama'=>$_data->subdepartemen]);
             }
             // 
-            $payroll = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
-            // whereIn('tahun', $arr_tahun)
-            // ->whereIn('bulan', $arr_bulan)
-            ->whereIn('status_karyawan', $arr_status_karyawan)
-            ->whereIn('perusahaan', $arr_perusahaan)
-            ->whereIn('divisi', $arr_divisi)
-            ->whereIn('departemen', $arr_departemen)
-            ->whereIn('subdepartemen', $arr_subdepartemen)
-            ->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
-            if(Gate::allows('hc_nkp')){
-                $payroll = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", bulan, "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01'])
-                // whereIn('tahun', $arr_tahun)
-                // ->whereIn('bulan', $arr_bulan)
-                ->whereIn('nik',$arr_nik_nkp)
-                ->whereIn('status_karyawan', $arr_status_karyawan)
-                ->whereIn('perusahaan', $arr_perusahaan)
-                ->whereIn('divisi', $arr_divisi)
-                ->whereIn('departemen', $arr_departemen)
-                ->whereIn('subdepartemen', $arr_subdepartemen)
-                ->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+            $query = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", LPAD(bulan, 2, "0"), "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01']);
+            if (count($arr_status_karyawan) > 0) {
+                $query->whereIn('status_karyawan', $arr_status_karyawan);
             }
+            if (count($arr_perusahaan) > 0) {
+                $query->whereIn('perusahaan', $arr_perusahaan);
+            }
+            if (count($arr_divisi) > 0) {
+                $query->whereIn('divisi', $arr_divisi);
+            }
+            if (count($arr_departemen) > 0) {
+                $query->whereIn('departemen', $arr_departemen);
+            }
+            if (count($arr_subdepartemen) > 0) {
+                $query->whereIn('subdepartemen', $arr_subdepartemen);
+            }
+            if(Gate::allows('hc_nkp')){
+                $query->whereIn('nik', $arr_nik_nkp);
+            }
+            $payroll = $query->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+
+            // Populate fallback arrays for table groupings in view
+            if (empty($arr_perusahaan)) {
+                $arr_perusahaan = TrxPayrollLog::distinct()->pluck('perusahaan')->toArray();
+            }
+            if (empty($arr_divisi)) {
+                $arr_divisi = TrxPayrollLog::distinct()->pluck('divisi')->toArray();
+            }
+            if (empty($arr_departemen)) {
+                $arr_departemen = TrxPayrollLog::distinct()->pluck('departemen')->toArray();
+            }
+            if (empty($arr_subdepartemen)) {
+                $arr_subdepartemen = TrxPayrollLog::distinct()->pluck('subdepartemen')->toArray();
+            }
+            if (empty($arr_status_karyawan)) {
+                $arr_status_karyawan = TrxPayrollLog::distinct()->pluck('status_karyawan')->toArray();
+            }
+        } else {
+            // Default when accessing without filter parameters
+            $maxLog = TrxPayrollLog::orderBy('tahun', 'desc')->orderBy('bulan', 'desc')->first();
+            $minLog = TrxPayrollLog::orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->first();
+            $latestYear = $maxLog ? $maxLog->tahun : 2026;
+            $latestMonth = $maxLog ? $maxLog->bulan : 10;
+            $firstYear = $minLog ? $minLog->tahun : 2025;
+            $bulan_tahun_dari = sprintf('%04d-01', $firstYear);
+            $bulan_tahun_sampai = sprintf('%04d-%02d', $latestYear, $latestMonth);
+
+            $arr_status_karyawan = $status_karyawan->pluck('status_karyawan')->toArray();
+            $arr_perusahaan = collect($perusahaan)->pluck('nama')->toArray();
+
+            $data = TrxPayrollLog::select('divisi')->orderBy('divisi', 'asc')->groupBy('divisi')->get();
+            foreach($data as $_data){
+                array_push($divisi, ['id'=>base64_encode($_data->divisi), 'nama'=>$_data->divisi]);
+            }
+            $arr_divisi = collect($divisi)->pluck('nama')->toArray();
+
+            $data = TrxPayrollLog::select('departemen')->orderBy('departemen', 'asc')->groupBy('departemen')->get();
+            foreach($data as $_data){
+                array_push($departemen, ['id'=>base64_encode($_data->departemen), 'nama'=>$_data->departemen]);
+            }
+            $arr_departemen = collect($departemen)->pluck('nama')->toArray();
+
+            $data = TrxPayrollLog::select('subdepartemen')->orderBy('subdepartemen', 'asc')->groupBy('subdepartemen')->get();
+            foreach($data as $_data){
+                array_push($subdepartemen, ['id'=>base64_encode($_data->subdepartemen), 'nama'=>$_data->subdepartemen]);
+            }
+            $arr_subdepartemen = collect($subdepartemen)->pluck('nama')->toArray();
+
+            $query = TrxPayrollLog::whereBetween(DB::raw('DATE(CONCAT(tahun, "-", LPAD(bulan, 2, "0"), "-01"))'), [$bulan_tahun_dari.'-01', $bulan_tahun_sampai.'-01']);
+            if(Gate::allows('hc_nkp')){
+                $query->whereIn('nik', $arr_nik_nkp);
+            }
+            $payroll = $query->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
         }
         // end filter
         return view( 'dashboard.biaya', compact('payroll', 'perusahaan', 'divisi', 'departemen', 'subdepartemen', 'tahun', 'bulan', 'status_karyawan', 'arr_perusahaan', 'arr_divisi', 'arr_departemen', 'arr_subdepartemen', 'arr_tahun', 'arr_bulan', 'arr_status_karyawan', 'bulan_tahun_dari', 'bulan_tahun_sampai'));

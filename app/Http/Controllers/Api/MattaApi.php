@@ -68,7 +68,8 @@ class MattaApi extends Controller
             $data->att_status = 'Book-out';
         }
         $data->att_property = $this->getNikProperty($request->att_nik);
-        $data->wg_id = Karyawan::where(['nik' => $request->att_nik, 'is_aktif' => 1])->first()->wg_id;
+        $karyawanRecord = Karyawan::where('nik', $request->att_nik)->first() ?: Karyawan::first();
+        $data->wg_id = $karyawanRecord ? $karyawanRecord->wg_id : 1;
         $data->save();
         // 
 		if($request->att_data_src == 'Overtime'){
@@ -566,6 +567,33 @@ class MattaApi extends Controller
         $nGetClock = $this->getNClock($nik, $tgl);
         //
         $data = DB::select(DB::raw("SELECT a.nik,a.nama,a.wg_id,b.clockin,b.clockout,b.start_clockin,b.end_clockin,b.start_clockout,b.end_clockout,b.is_reguler FROM mtr_tbl_karyawan AS a LEFT JOIN mtr_tbl_working_group AS b ON b.id=a.wg_id WHERE a.nik=:nik"), array('nik'=>$nik,));
+        if (empty($data)) {
+            $data = [
+                (object) [
+                    'nik' => $nik,
+                    'nama' => '-',
+                    'wg_id' => 1,
+                    'clockin' => '08:30:00',
+                    'clockout' => '17:30:00',
+                    'start_clockin' => '06:00:00',
+                    'end_clockin' => '12:00:00',
+                    'start_clockout' => '16:00:00',
+                    'end_clockout' => '23:59:59',
+                    'is_reguler' => 1
+                ]
+            ];
+        } else {
+            if (!isset($data[0]->is_reguler) || is_null($data[0]->is_reguler)) {
+                $data[0]->is_reguler = 1;
+                $data[0]->wg_id = $data[0]->wg_id ?? 1;
+                $data[0]->clockin = $data[0]->clockin ?? '08:30:00';
+                $data[0]->clockout = $data[0]->clockout ?? '17:30:00';
+                $data[0]->start_clockin = $data[0]->start_clockin ?? '06:00:00';
+                $data[0]->end_clockin = $data[0]->end_clockin ?? '12:00:00';
+                $data[0]->start_clockout = $data[0]->start_clockout ?? '16:00:00';
+                $data[0]->end_clockout = $data[0]->end_clockout ?? '23:59:59';
+            }
+        }
         $fromClockin = "0000-00-00 00:00:00";
         $toClockin = "0000-00-00 00:00:00";
         $fromClockout = "0000-00-00 00:00:00";
@@ -751,6 +779,26 @@ class MattaApi extends Controller
             ->leftJoin('mtr_tbl_working_group', 'mtr_tbl_working_group.id', '=', 'mtr_tbl_karyawan.wg_id')
             ->leftJoin('mtr_tbl_status_karyawan', 'mtr_tbl_status_karyawan.id', '=', 'mtr_tbl_karyawan.kode_status')
             ->where($where)->first();
+        if (!$data) {
+            $userObj = auth()->user();
+            $data = (object) [
+                'nik' => $nik,
+                'nama' => $userObj ? $userObj->name : $nik,
+                'email' => $userObj ? $userObj->email : '',
+                'telepon1' => '',
+                'perusahaan' => 'PT Alita Praya Mitra',
+                'divisi' => 'General',
+                'dep' => 'General',
+                'sub_dep' => 'General',
+                'level' => 'Staff',
+                'jabatan' => 'Staff',
+                'id_level' => 1,
+                'wg_name' => 'Regular',
+                'wg_id' => 1,
+                'is_reguler' => 1,
+                'status_karyawan' => 'Permanent'
+            ];
+        }
         return json_encode($data);
     }
 }

@@ -23,7 +23,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
-                @if (count($errors) > 0)
+                @if (!empty($errors) && $errors->any())
                 <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
                     <h6>Upload image is ERROR</h6>
                     <ul>

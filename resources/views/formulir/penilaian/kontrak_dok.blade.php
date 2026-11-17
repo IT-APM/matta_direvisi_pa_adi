@@ -156,10 +156,7 @@
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
             "pageLength": 50,
-            "lengthMenu": [
-                [10, 50, 100, 200, 500, -1],
-                [10, 50, 100, 200, 500, "All"]
-            ]
+            "pageLength": 10, "lengthMenu": [[10], [10]]
         });
     </script>
 @endsection

@@ -920,12 +920,15 @@ class TrxPenilaianController extends Controller
      */
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->formModule('evaluation');
+        }
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no = 0;
-        $trx = TrxPenilaian::orderBy('id', 'desc')->get();
+        $trx = TrxPenilaian::orderBy('id', 'desc')->limit(100)->get();
         if(Gate::allows('hc_nkp')){
-            $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx = TrxPenilaian::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->limit(100)->get();
         }
         if(auth()->user()->userrole == 'nhc'){
             // nik_karyawan
@@ -950,14 +953,16 @@ class TrxPenilaianController extends Controller
         //     $trxM->update();
         // }
         // filter parameter
-        function forgetById($collection,$id){
-            foreach($collection as $key => $item){
-                if($item->id == $id){
-                    $collection->forget($key);
-                    break;
+        if (!function_exists('App\Http\Controllers\forgetById')) {
+            function forgetById($collection, $id){
+                foreach($collection as $key => $item){
+                    if($item->id == $id){
+                        $collection->forget($key);
+                        break;
+                    }
                 }
+                return $collection;
             }
-            return $collection;
         }
         // 
         $arr_id_status = array();

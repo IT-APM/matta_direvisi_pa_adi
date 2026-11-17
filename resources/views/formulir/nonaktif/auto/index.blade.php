@@ -200,10 +200,7 @@
             buttons: [
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
-            "lengthMenu": [
-                [50, 100, 200, 500, -1],
-                [50, 100, 200, 500, "All"]
-            ]
+            "pageLength": 10, "lengthMenu": [[10], [10]]
         });
         // 
         $(document).on('click', '#btn-delete', function(event) {

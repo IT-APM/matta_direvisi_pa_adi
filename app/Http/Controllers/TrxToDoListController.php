@@ -177,6 +177,9 @@ class TrxToDoListController extends Controller
      */
     public function index()
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->dashboard();
+        }
         $where = ['nik' => auth()->user()->nik];
         $is_setuju = TrxPdp::where($where)->orderBy('id', 'desc')->first();
         // $pdp_next = Carbon::parse($is_setuju->created_at)->addYear(MtrUtility::find(41)->informasi);
@@ -245,8 +248,10 @@ class TrxToDoListController extends Controller
         // karyawan_bulanan0
         $where = ['nik' => auth()->user()->nik, 'filename' => 'emails.karyawan_bulanan0'];
         $karyawan_bulanan = ToDoList::where($where)->orderBy('id', 'desc')->get();
+        // feeds aktif untuk carousel info & pengumuman
+        $feeds = \App\Models\Feeds::where('is_active', 1)->orderBy('id', 'desc')->take(9)->get();
         // 
-        return view('todolist.index', compact('trxKebutuhan','trxCuti','trxIzin','trxNonAktif','trxPelatihan','trxPenilaian','trxReimburse','trxRekomendasi','trxOvertime','trxBpd','trxSakit','recruitment','is_pdp','notif_letter','is_survey_pora', 'karyawan_bulanan'));
+        return view('todolist.index', compact('trxKebutuhan','trxCuti','trxIzin','trxNonAktif','trxPelatihan','trxPenilaian','trxReimburse','trxRekomendasi','trxOvertime','trxBpd','trxSakit','recruitment','is_pdp','notif_letter','is_survey_pora', 'karyawan_bulanan', 'feeds'));
     }
 
     /**

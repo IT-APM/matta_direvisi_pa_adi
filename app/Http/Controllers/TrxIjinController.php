@@ -125,11 +125,14 @@ class TrxIjinController extends Controller
      */
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->formModule('permit');
+        }
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
-        $trx = TrxIjin::orderBy('id', 'desc')->get();
+        $trx = TrxIjin::orderBy('id', 'desc')->limit(100)->get();
         if(Gate::allows('hc_nkp')){
-            $trx = TrxIjin::whereIn('karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx = TrxIjin::whereIn('karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->limit(100)->get();
         }
         // foreach ($trx as $value) {
         //     $trxM = TrxIjin::find( $value->id );

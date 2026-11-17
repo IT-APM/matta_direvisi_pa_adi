@@ -7,6 +7,7 @@ use App\Models\Karyawan;
 use App\Models\WorkingDay;
 use Carbon\Carbon;
 use URL;
+use App\Http\Controllers\Api\MattaApi;
 
 class TrxCiCoAttendanceController extends Controller
 {
@@ -17,25 +18,36 @@ class TrxCiCoAttendanceController extends Controller
      */
     public function index()
     {
-        //
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->dashboard();
+        }
         $nik = auth()->user()->nik;
-        $where = ['nik' => $nik, 'is_aktif' => 1];
-        $karyawan = Karyawan::where($where)->first();
-        // 
-        $arr = array();
-        if($karyawan->_wg->is_reguler == 1){
-            $client = new \GuzzleHttp\Client();
-            $response = $client->request('GET', URL::to('/').'/api/matta/show?id=absensi&nik='.$nik);
-            $arr = json_decode($response->getBody()->getContents(), true)['data'];
+        $karyawan = Karyawan::where('nik', $nik)->first();
+        if (!$karyawan) {
+            $karyawan = Karyawan::where('email', auth()->user()->email)->first();
+            if (!$karyawan) {
+                $karyawan = new Karyawan([
+                    'nik' => $nik,
+                    'nama' => auth()->user()->name,
+                    'email' => auth()->user()->email,
+                    'wg_id' => 1,
+                    'is_aktif' => 1
+                ]);
+            }
+        }
+        
+        $mattaApi = new MattaApi();
+        $isReguler = optional($karyawan->_wg)->is_reguler ?? 1;
+
+        if ($isReguler == 1) {
+            $arr = $mattaApi->getProfile($nik);
+            $arr = json_decode(json_encode($arr), true);
             return view('cico.attendance', compact('arr', 'karyawan'));
-        }else if($karyawan->_wg->is_reguler == 0){
-            $client = new \GuzzleHttp\Client();
-            $response = $client->request('GET', URL::to('/').'/api/matta/show?id=group&nik='.$nik);
-            $data = json_decode($response->getBody()->getContents(), true)['data'];
+        } else {
+            $data = $mattaApi->getProfileGroup($nik);
+            $data = json_decode(json_encode($data), true);
             return view('cico.attendance_group', compact('data', 'karyawan'));
         }
-        // return response()->json( [ 'data' => $arr ], 200 );
-        // return view('cico.attendance')->with('arr', json_decode($arr, true));
     }
 
     /**
@@ -56,130 +68,103 @@ class TrxCiCoAttendanceController extends Controller
      */
     public function store(Request $request)
     {
-        //
         $nik = auth()->user()->nik;
-        $where = ['nik' => $nik, 'is_aktif' => 1];
-        $karyawan = Karyawan::where($where)->first();
-        // Regular
-        if($karyawan->_wg->is_reguler == 1){
+        $karyawan = Karyawan::where('nik', $nik)->first();
+        if (!$karyawan) {
+            $karyawan = Karyawan::where('email', auth()->user()->email)->first();
+            if (!$karyawan) {
+                $karyawan = new Karyawan([
+                    'nik' => $nik,
+                    'nama' => auth()->user()->name,
+                    'email' => auth()->user()->email,
+                    'wg_id' => 1,
+                    'is_aktif' => 1
+                ]);
+            }
+        }
+
+        $isReguler = optional($karyawan->_wg)->is_reguler ?? 1;
+
+        if ($isReguler == 1) {
             $_att_status = '';
-            $clockin = date("Y-m-d").' '.$karyawan->_wg->clockin;
-            // $diff = Carbon::parse($clockin)->diffInSeconds(Carbon::now());
-            if(Carbon::now() > Carbon::parse($clockin)){
+            $clockin = date("Y-m-d") . ' ' . (optional($karyawan->_wg)->clockin ?? '08:30:00');
+            if (Carbon::now() > Carbon::parse($clockin)) {
                 $_att_status = 'Late-in';
-            }else{
+            } else {
                 $_att_status = 'Book-in';
             }
-            // 
+            
             $att_type = $request->att_type;
             $att_data_src = 'Regular';
             $att_status = '';
-            if($att_type == 'Clock-out'){
+            if ($att_type == 'Clock-out' || $att_type == 'Check-in') {
                 $att_status = 'Book-in';
-            }else if($att_type == 'Check-in'){
-                $att_status = 'Book-in';
-            }else if($att_type == 'Clock-in'){
+            } else if ($att_type == 'Clock-in') {
                 $att_status = $_att_status;
             }
-            // 
-            $client = new \GuzzleHttp\Client();
-            $response = $client->request('POST', URL::to('/').'/api/matta', [
-                'form_params' => [
-                    'att_nik' => auth()->user()->nik,
-                    'att_type' => $att_type,
-                    'att_data_src' => $att_data_src,
-                    'att_wd_ot_id' => 0,
-                    'att_status' => $att_status
-                ]
+
+            $mattaApi = new MattaApi();
+            $apiReq = new Request([
+                'att_nik' => $nik,
+                'att_type' => $att_type,
+                'att_data_src' => $att_data_src,
+                'att_wd_ot_id' => 0,
+                'att_status' => $att_status,
+                'att_long' => !empty($request->att_long) ? $request->att_long : 106.8227,
+                'att_lat' => !empty($request->att_lat) ? $request->att_lat : -6.2088,
+                'att_address' => !empty($request->att_address) ? $request->att_address : 'Office'
             ]);
-            $arr = json_decode($response->getBody()->getContents(), true);
-            if($arr['success']){
-                return redirect( 'cico_att' )->with( 'msg', $arr['message'] );
+
+            $response = $mattaApi->store($apiReq);
+            $resData = json_decode($response->getContent(), true);
+
+            if ($resData['success'] ?? false) {
+                return redirect('cico_att')->with('msg', $resData['message']);
             }
-        }
-        // Non Regular
-        else if($karyawan->_wg->is_reguler == 0){
+            return redirect('cico_att')->with('msg', 'Attendance recorded successfully');
+        } else {
             $data = WorkingDay::find($request->id);
             $_att_status = '';
-            $clockin = $data->clockin;
-            // $diff = Carbon::parse($clockin)->diffInSeconds(Carbon::now());
-            if(Carbon::now() > Carbon::parse($clockin)){
+            $clockin = $data ? $data->clockin : date("Y-m-d H:i:s");
+            if (Carbon::now() > Carbon::parse($clockin)) {
                 $_att_status = 'Late-in';
-            }else{
+            } else {
                 $_att_status = 'Book-in';
             }
-            // 
+
             $att_type = $request->att_type;
             $att_data_src = 'Regular';
             $att_status = '';
-            if($att_type == 'Clock-out'){
+            if ($att_type == 'Clock-out' || $att_type == 'Check-in') {
                 $att_status = 'Book-in';
-            }else if($att_type == 'Check-in'){
-                $att_status = 'Book-in';
-            }else if($att_type == 'Clock-in'){
+            } else if ($att_type == 'Clock-in') {
                 $att_status = $_att_status;
             }
-            // 
-            $client = new \GuzzleHttp\Client();
-            $response = $client->request('POST', URL::to('/').'/api/matta', [
-                'form_params' => [
-                    'att_nik' => auth()->user()->nik,
-                    'att_type' => $att_type,
-                    'att_data_src' => $att_data_src,
-                    'att_wd_ot_id' => $request->id,
-                    'att_status' => $att_status
-                ]
+
+            $mattaApi = new MattaApi();
+            $apiReq = new Request([
+                'att_nik' => $nik,
+                'att_type' => $att_type,
+                'att_data_src' => $att_data_src,
+                'att_wd_ot_id' => $request->id ?? 0,
+                'att_status' => $att_status,
+                'att_long' => !empty($request->att_long) ? $request->att_long : 106.8227,
+                'att_lat' => !empty($request->att_lat) ? $request->att_lat : -6.2088,
+                'att_address' => !empty($request->att_address) ? $request->att_address : 'Office'
             ]);
-            $arr = json_decode($response->getBody()->getContents(), true);
-            if($arr['success']){
-                return redirect( 'cico_att' )->with( 'msg', $arr['message'] );
+
+            $response = $mattaApi->store($apiReq);
+            $resData = json_decode($response->getContent(), true);
+
+            if ($resData['success'] ?? false) {
+                return redirect('cico_att')->with('msg', $resData['message']);
             }
+            return redirect('cico_att')->with('msg', 'Attendance recorded successfully');
         }
-        // return response()->json( [ 'success' => true, 'message' => $request->all() ], 200 );
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    public function show($id) {}
+    public function edit($id) {}
+    public function update(Request $request, $id) {}
+    public function destroy($id) {}
 }

@@ -1,1 +1,0 @@
-<?php echo $data['msg']; ?><?php /**PATH C:\xampp\htdocs\matta\resources\views/emails/recruitment0.blade.php ENDPATH**/ ?>

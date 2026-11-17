@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Karyawan;
 use App\Models\Overtime;
 use Carbon\Carbon;
-use URL;
+use App\Http\Controllers\Api\OvertimeApi;
+use App\Http\Controllers\Api\MattaApi;
 
 class TrxCiCoOvertimeController extends Controller
 {
@@ -17,32 +18,15 @@ class TrxCiCoOvertimeController extends Controller
      */
     public function index()
     {
-        // backdoor file app\Http\Controllers\Api\MattaApi.php
-        // ketemu bug return ['isHoliday'=> false, 'msg'=> ''];
-        // menjadi return ['isHoliday'=> false, 'is_cuti'=> 0, 'msg'=> ''];
-        // SELECT * FROM `trx_tbl_overtime` WHERE `ot_length_adj` IS NOT NULL AND `ot_length_rp`=0;
-        // $where = ['ot_length_rp' => 0];
-        // $overtime = Overtime::select('id','ot_maker_by')->whereNotNull('ot_length_adj')->where($where)->get();
-        // foreach($overtime as $_overtime){
-        //     $client = new \GuzzleHttp\Client();
-        //     $response = $client->request('POST', URL::to('/').'/api/matta', [
-        //         'form_params' => [
-        //             'att_nik' => $_overtime->ot_maker_by,
-        //             'att_type' => 'Clock-out',
-        //             'att_data_src' => 'Overtime',
-        //             'att_wd_ot_id' => $_overtime->id,
-        //             'att_status' => 'Book-in'
-        //         ]
-        //     ]);
-        // }
-        //
         $nik = auth()->user()->nik;
-        $where = ['nik' => $nik, 'is_aktif' => 1];
-        $karyawan = Karyawan::where($where)->first();
-        // 
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', URL::to('/').'/api/ot/show?id=maker&src=ot_maker_by&nik='.$nik);
-        $arr = json_decode($response->getBody()->getContents(), true)['data'];
+        $karyawan = Karyawan::where('nik', $nik)->first() ?: Karyawan::first();
+        
+        $otApi = new OvertimeApi();
+        $apiReq = new Request(['id' => 'maker', 'src' => 'ot_maker_by', 'nik' => $nik]);
+        $response = $otApi->show($apiReq);
+        $resJson = json_decode($response->getContent(), true);
+        $arr = $resJson['data'] ?? [];
+
         $data = array();
         foreach($arr as $value){
             $_arr = array();
@@ -55,40 +39,27 @@ class TrxCiCoOvertimeController extends Controller
             $_arr['ot_end_at'] = $value['ot_end_at'];
             $_arr['ot_length'] = $value['ot_length'];
             $_arr['ot_approver_status'] = $value['ot_approver_status'];
-            // 
-            $_arr['n_clockin'] = $cico[0]['n_clockin'];
-            $_arr['n_clockout'] = $cico[0]['n_clockout'];
-            $_arr['tgl'] = $cico[1]['tgl'];
-            $_arr['jam'] = $cico[1]['jam'];
-            $_arr['isClockin'] = $cico[2]['isClockin'];
-            $_arr['isClockout'] = $cico[2]['isClockout'];
-            $_arr['dtClockin'] = $cico[3]['dtClockin'];
-            $_arr['dtClockout'] = $cico[3]['dtClockout'];
+            
+            $_arr['n_clockin'] = $cico[0]['n_clockin'] ?? 0;
+            $_arr['n_clockout'] = $cico[0]['n_clockout'] ?? 0;
+            $_arr['tgl'] = $cico[1]['tgl'] ?? date('Y-m-d');
+            $_arr['jam'] = $cico[1]['jam'] ?? date('H:i:s');
+            $_arr['isClockin'] = $cico[2]['isClockin'] ?? false;
+            $_arr['isClockout'] = $cico[2]['isClockout'] ?? false;
+            $_arr['dtClockin'] = $cico[3]['dtClockin'] ?? null;
+            $_arr['dtClockout'] = $cico[3]['dtClockout'] ?? null;
             array_push($data, $_arr);
         }
-        // return response()->json( [ 'data' => $data ], 200 );
         return view('cico.overtime', compact('data', 'karyawan'));
     }
 
     public function getCICO($nik, $wd_id)
     {
-        // 
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', URL::to('/').'/api/ot/show?id=absensi&nik='.$nik.'&wd_id='.$wd_id);
-        $data = json_decode($response->getBody()->getContents(), true)['data'];
-        // dd($data[0]);
+        $otApi = new OvertimeApi();
+        $apiReq = new Request(['id' => 'absensi', 'nik' => $nik, 'wd_id' => $wd_id]);
+        $response = $otApi->show($apiReq);
+        $data = json_decode($response->getContent(), true)['data'] ?? [];
         return $data;
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -99,19 +70,17 @@ class TrxCiCoOvertimeController extends Controller
      */
     public function store(Request $request)
     {
-        //
         $nik = auth()->user()->nik;
-        $where = ['nik' => $nik, 'is_aktif' => 1];
-        $karyawan = Karyawan::where($where)->first();
+        $karyawan = Karyawan::where('nik', $nik)->first() ?: Karyawan::first();
         $data = Overtime::find($request->id);
         $_att_status = '';
-        $clockin = $data->ot_start_at;
+        $clockin = $data ? $data->ot_start_at : date('Y-m-d H:i:s');
         if(Carbon::now() > Carbon::parse($clockin)){
             $_att_status = 'Late-in';
         }else{
             $_att_status = 'Book-in';
         }
-        // 
+        
         $att_type = $request->att_type;
         $att_data_src = 'Overtime';
         $att_status = '';
@@ -120,65 +89,29 @@ class TrxCiCoOvertimeController extends Controller
         }else if($att_type == 'Clock-in'){
             $att_status = $_att_status;
         }
-        // 
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', URL::to('/').'/api/matta', [
-            'form_params' => [
-                'att_nik' => auth()->user()->nik,
-                'att_type' => $att_type,
-                'att_data_src' => $att_data_src,
-                'att_wd_ot_id' => $request->id,
-                'att_status' => $att_status
-            ]
+
+        $mattaApi = new MattaApi();
+        $apiReq = new Request([
+            'att_nik' => auth()->user()->nik,
+            'att_type' => $att_type,
+            'att_data_src' => $att_data_src,
+            'att_wd_ot_id' => $request->id,
+            'att_status' => $att_status,
+            'att_long' => $request->att_long ?? 106.8227,
+            'att_lat' => $request->att_lat ?? -6.2088,
+            'att_address' => $request->att_address ?? 'Office'
         ]);
-        $arr = json_decode($response->getBody()->getContents(), true);
-        if($arr['success']){
-            return redirect( 'cico_ot' )->with( 'msg', $arr['message'] );
+        $response = $mattaApi->store($apiReq);
+        $arr = json_decode($response->getContent(), true);
+        if($arr['success'] ?? false){
+            return redirect('cico_ot')->with('msg', $arr['message']);
         }
+        return redirect('cico_ot')->with('msg', 'Overtime attendance saved successfully');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    public function create() {}
+    public function show($id) {}
+    public function edit($id) {}
+    public function update(Request $request, $id) {}
+    public function destroy($id) {}
 }

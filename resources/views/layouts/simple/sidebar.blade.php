@@ -5,30 +5,21 @@
                 {{-- <img class="img-fluid for-light" src="{{ asset('assets/images/logo/logo.png') }}" alt="">
                 <img class="img-fluid for-dark" src="{{ asset('assets/images/logo/logo_dark.png') }}" alt=""> --}}
                 {{-- logo_2.jpg --}}
-                <img height="60" src="{{ asset('assets/images/logo/logo_2.jpg') }}" alt="image">
-            </a>
-            <div class="back-btn"><i class="fa fa-angle-left"></i></div>
-            <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
-        </div>
-        <div class="logo-icon-wrapper">
-            <a href="{{ route('todolist.index') }}">
-                <img class="img-fluid" src="{{ asset('assets/images/logo/logo-icon.png') }}" alt="">
+                <div class="d-flex align-items-center gap-2">
+                    <img src="{{ asset('matta-ui/img/logo-matta.png') }}" alt="MATTA" width="36" height="36" style="object-fit: contain;">
+                    <div class="brand-text-block">
+                        <div class="brand-name">MATTA</div>
+                        <div class="brand-sub">ADMIN WORKPLACE</div>
+                    </div>
+                </div>
             </a>
         </div>
         <nav class="sidebar-main">
-            <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+            <div class="left-arrow d-none" id="left-arrow"><i data-feather="arrow-left"></i></div>
             <div id="sidebar-menu">
                 <ul class="sidebar-links" id="simple-bar">
-                    <li class="back-btn">
-                        <a href="{{ route('todolist.index') }}"><img class="img-fluid" src="{{ asset('assets/images/logo/logo-icon.png') }}" alt=""></a>
-                        <div class="mobile-back text-end"><span>Back</span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
-                    </li>
-                    <li class="sidebar-main-title">
-                        <div>
-                            <h6>Home Page</h6>
-                        </div>
-                    </li>
-                    <li class="sidebar-list mt-3">
+                    <li class="d-none" style="display:none !important; height:0 !important; margin:0 !important; padding:0 !important; line-height:0 !important; font-size:0 !important;"></li>
+                    <li class="sidebar-list">
                         <!-- <label class="badge badge-light-primary">5</label> -->
                         <a class="sidebar-link sidebar-title" href="#">
                             <svg class="stroke-icon">
@@ -172,37 +163,6 @@
                             <h6>Dashboard</h6>
                         </div>
                     </li>
-                    @php
-                    $all = App\Models\TrxKebutuhanMaster::all();
-                    $arr_direktorat = [];
-                    $arr_divisi = [];
-                    $arr_departemen = [];
-                    $arr_status_kerja = [];
-                    $arr_area = [];
-                    foreach($all as $data){
-                        $pengaju_property = json_decode($data->pengaju_property);
-                        array_push($arr_direktorat, $pengaju_property->divisi);
-                        array_push($arr_divisi, $pengaju_property->dep);
-                        array_push($arr_departemen, $pengaju_property->sub_dep);
-                        array_push($arr_status_kerja, App\Models\StatusKerja::find($data->id_status_kerja)->status_kerja);
-                        array_push($arr_area, App\Models\Propinsi::find($data->id_area)->propinsi);
-                    }
-                    $arr_select_tahun = [];
-                    $select_direktorat = array_values(array_unique($arr_direktorat));
-                    sort($select_direktorat);
-                    $arr_select_direktorat = [];
-                    $select_divisi = array_values(array_unique($arr_divisi));
-                    sort($select_divisi);
-                    $arr_select_divisi = [];
-                    $select_departemen = array_values(array_unique($arr_departemen));
-                    sort($select_departemen);
-                    $arr_select_departemen = [];
-                    $select_status_kerja = array_values(array_unique($arr_status_kerja));
-                    sort($select_status_kerja);
-                    $arr_select_status_kerja = [];
-                    $select_area = array_values(array_unique($arr_area));
-                    sort($select_area);
-                    @endphp
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="#">
                                 <svg class="stroke-icon">
                                     <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-charts') }}"></use>
@@ -217,14 +177,7 @@
                             <li><a href="{{ route('dashboard.survey_pora', 0) }}">Hasil Survey PORA</a></li>
                             <li><a href="{{ route('karyawan.dashboard', 0) }}">Infografis</a></li>
                             <li><a href="{{ route('overtime.dashboard', 1) }}">Overtime</a></li>
-                            <li><a href="{{ route('kebutuhan.dashboard', [
-                                'id'=>0, 'filter'=>'true', 'tahun'=>[now()->year],
-                                'type_direktorat'=>'bar', 'direktorat'=>$select_direktorat,
-                                'type_divisi'=>'bar', 'divisi'=>$select_divisi,
-                                'type_departemen'=>'bar', 'departemen'=>$select_departemen,
-                                'type_status_kerja'=>'bar', 'status_kerja'=>$select_status_kerja,
-                                'type_area'=>'bar', 'area'=>$select_area,
-                                ]) }}">Recruitment</a></li>
+                            <li><a href="{{ route('kebutuhan.dashboard', 0) }}">Recruitment</a></li>
                             @endcan
                         </ul>
                     </li>
@@ -238,47 +191,7 @@
                             <h6>Recruitment</h6>
                         </div>
                     </li>
-                    {{-- @php
-                    $all = App\Models\TrxKebutuhanMaster::all();
-                    $arr_direktorat = [];
-                    $arr_divisi = [];
-                    $arr_status_kerja = [];
-                    $arr_area = [];
-                    foreach($all as $data){
-                        $pengaju_property = json_decode($data->pengaju_property);
-                        array_push($arr_direktorat, $pengaju_property->divisi);
-                        array_push($arr_divisi, $pengaju_property->dep);
-                        array_push($arr_status_kerja, App\Models\StatusKerja::find($data->id_status_kerja)->status_kerja);
-                        array_push($arr_area, App\Models\Propinsi::find($data->id_area)->propinsi);
-                    }
-                    $arr_select_tahun = [];
-                    $select_direktorat = array_values(array_unique($arr_direktorat));
-                    sort($select_direktorat);
-                    $arr_select_direktorat = [];
-                    $select_divisi = array_values(array_unique($arr_divisi));
-                    sort($select_divisi);
-                    $arr_select_divisi = [];
-                    $select_status_kerja = array_values(array_unique($arr_status_kerja));
-                    sort($select_status_kerja);
-                    $arr_select_status_kerja = [];
-                    $select_area = array_values(array_unique($arr_area));
-                    sort($select_area);
-                    @endphp
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" 
-                        href="{{ route('kebutuhan.dashboard', [
-                                    'id'=>0, 'filter'=>'true', 'tahun'=>[now()->year],
-                                    'type_direktorat'=>'bar', 'direktorat'=>$select_direktorat,
-                                    'type_divisi'=>'bar', 'divisi'=>$select_divisi,
-                                    'type_status_kerja'=>'bar', 'status_kerja'=>$select_status_kerja,
-                                    'type_area'=>'bar', 'area'=>$select_area,
-                                    ]) }}">
-                        <svg class="stroke-icon">
-                            <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-charts') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                            <use href="{{ asset('assets/svg/icon-sprite.svg#fill-charts') }}"> </use>
-                        </svg>
-                        <span>Dashboard</span></a></li> --}}
+                    
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{ route('recruitment.applicant_list', 0) }}">
                         <svg class="stroke-icon">
                             <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use>
@@ -491,7 +404,7 @@
                                 <li><a href="{{ route('findim_divisi.index') }}">FinDim Division</a></li>
                                 <li><a href="{{ route('findim_project.index') }}">FinDim Project</a></li>
                                 <li><a href="{{ route('findim_subdepartemen.index') }}">FinDim Sub Department</a></li>
-                                <li><a href="{{ route('hcouser.index') }}">{{ App\Models\MtrUtility::find(51)->informasi }} Team</a></li>
+                                <li><a href="{{ route('hcouser.index') }}">{{ \Illuminate\Support\Facades\Cache::remember('mtr_util_51_info', 86400, fn() => optional(App\Models\MtrUtility::find(51))->informasi ?? 'HCO') }} Team</a></li>
                                 <li><a href="{{ route('plafon.index') }}">Health Reimbursement<br />Limits</a></li>
                                 <li><a href="{{ route('iphoneuser.index') }}">iPhone Users</a></li>
                                 <li><a href="{{ route('pekerjaan_bidang.index') }}">Job Field</a></li>
@@ -1140,10 +1053,13 @@
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-support-tickets') }}"></use>
                             </svg><span>Support Ticket</span></a></li>
+                    -->
                 </ul>
-            </div> -->
-                    <p>&nbsp;</p>
-                    <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+            </div>
+            <div class="right-arrow d-none" id="right-arrow"><i data-feather="arrow-right"></i></div>
         </nav>
+    </div>
+    <div class="sidebar-footer">
+        <img src="{{ asset('matta-ui/img/logo-trust.png') }}" alt="TRUST - Truthful Resilient Unwavering Sound Teamwork" class="sidebar-footer-logo" width="176" height="53">
     </div>
 </div>

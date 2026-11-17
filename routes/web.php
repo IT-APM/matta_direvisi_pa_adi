@@ -311,8 +311,8 @@ Route::resource('working', WorkingDayController::class)->middleware('can:hc');
 Route::post('working/upload_jadwal/{id}', [WorkingDayController::class, 'upload_jadwal'])->name('working.upload_jadwal')->middleware('can:hc');
 Route::resource('wg', WorkingGroupController::class)->middleware('auth');
 // 
-Route::resource('cico_att', TrxCiCoAttendanceController::class)->middleware('can:iphone');
-Route::resource('cico_ot', TrxCiCoOvertimeController::class)->middleware('can:iphone');
+Route::resource('cico_att', TrxCiCoAttendanceController::class)->middleware('auth');
+Route::resource('cico_ot', TrxCiCoOvertimeController::class)->middleware('auth');
 // 
 Route::resource('mtrpenilaian1', MtrPenilaian1Controller::class)->middleware('auth');
 Route::resource('mtrpenilaian2', MtrPenilaian2Controller::class)->middleware('auth');
@@ -821,3 +821,25 @@ Route::get('/clear-cache', function () {
     Artisan::call('route:clear');
     return "Cache is cleared";
 })->name('clear.cache');
+
+// MATTA User Portal Routes (regular user UI)
+Route::prefix('user-portal')->middleware('auth')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\MattaUserController::class, 'dashboard'])->name('matta.dashboard');
+    Route::post('/clock', [\App\Http\Controllers\MattaUserController::class, 'clock'])->name('matta.clock');
+    Route::post('/clock-reset', [\App\Http\Controllers\MattaUserController::class, 'resetClock'])->name('matta.clock.reset');
+    Route::get('/feeds', [\App\Http\Controllers\MattaUserController::class, 'feeds'])->name('matta.feeds');
+    Route::get('/feed-detail', [\App\Http\Controllers\MattaUserController::class, 'feedDetail'])->name('matta.feed.detail');
+    Route::get('/health', [\App\Http\Controllers\MattaUserController::class, 'health'])->name('matta.health');
+    Route::post('/health', [\App\Http\Controllers\MattaUserController::class, 'submitHealth'])->name('matta.health.submit');
+    Route::get('/payroll-slip', [\App\Http\Controllers\MattaUserController::class, 'payroll'])->name('matta.payroll');
+    Route::get('/attendance-log', [\App\Http\Controllers\MattaUserController::class, 'attendanceLog'])->name('matta.attendance.log');
+    Route::get('/attendance-recap', [\App\Http\Controllers\MattaUserController::class, 'attendanceRecap'])->name('matta.attendance.recap');
+    Route::get('/propose', [\App\Http\Controllers\MattaUserController::class, 'propose'])->name('matta.propose');
+    Route::post('/propose', [\App\Http\Controllers\MattaUserController::class, 'submitPropose'])->name('matta.propose.submit');
+    Route::get('/profile', [\App\Http\Controllers\MattaUserController::class, 'profile'])->name('matta.profile');
+    Route::post('/profile', [\App\Http\Controllers\MattaUserController::class, 'updateProfile'])->name('matta.profile.update');
+    Route::post('/profile/child', [\App\Http\Controllers\MattaUserController::class, 'storeChild'])->name('matta.profile.child.store');
+    Route::post('/profile/child/delete', [\App\Http\Controllers\MattaUserController::class, 'deleteChild'])->name('matta.profile.child.delete');
+    Route::get('/forms/{module}', [\App\Http\Controllers\MattaUserController::class, 'formModule'])->name('matta.form');
+    Route::post('/forms-submit', [\App\Http\Controllers\MattaUserController::class, 'submitModule'])->name('matta.form.submit');
+});

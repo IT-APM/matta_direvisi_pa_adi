@@ -179,7 +179,7 @@ $('#_datatable_non_outsource').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "pageLength": 10, "lengthMenu": [[10], [10]]
 } );
 // 
 $('#_datatable_outsource').DataTable( {
@@ -190,7 +190,7 @@ $('#_datatable_outsource').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "pageLength": 10, "lengthMenu": [[10], [10]]
 } );
 // 
 // $(document).on('click', '#btn-delete', function(event) {

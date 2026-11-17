@@ -2210,6 +2210,9 @@ class KaryawanController extends Controller
      */
     public function show($id)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->profile();
+        }
         // dd($id);
         $id = (new OpenDataController)->decryptWithKey($id);
         if($id != auth()->user()->nik){

@@ -39,30 +39,35 @@ class TrxSakitController extends Controller
      */
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->formModule('sick-leave');
+        }
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $auth_user = auth()->user()->nik;
         $no = 0;
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
-        $trx = TrxSakit::orderBy('id', 'desc')->get();
+        $trx = TrxSakit::orderBy('id', 'desc')->limit(100)->get();
         if(Gate::allows('hc_nkp')){
             $karyawan = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
-            $trx = TrxSakit::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx = TrxSakit::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->limit(100)->get();
         }
         if(auth()->user()->userrole == 'nhc'){
             // $trx = TrxSakit::whereIn('nik_karyawan', $arr_nik)->orderBy('id', 'desc')->get();
             $trx = TrxSakit::where('pic_pengganti','LIKE','%'.$auth_user.'%')->orWhere('nik_karyawan', [$auth_user])->orWhere('nik_atasan', [$auth_user])->orderBy('id', 'desc')->get();
         }
         // filter parameter
-        function forgetById($collection,$id){
-            foreach($collection as $key => $item){
-                if($item->id == $id){
-                    $collection->forget($key);
-                    break;
+        if (!function_exists('App\Http\Controllers\forgetById')) {
+            function forgetById($collection, $id){
+                foreach($collection as $key => $item){
+                    if($item->id == $id){
+                        $collection->forget($key);
+                        break;
+                    }
                 }
+                return $collection;
             }
-            return $collection;
         }
         // 
         $arr_status_sakit = array();
@@ -236,11 +241,17 @@ class TrxSakitController extends Controller
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->orderBy('nama', 'asc')->get();
         $status = 'create';
-        // $nik_karyawan = $request->nik_karyawan;
-        $nik_karyawan = Crypt::decrypt($request->nik_karyawan);
+        $nik_karyawan = auth()->user()->nik;
+        if ($request->filled('nik_karyawan') && $request->nik_karyawan !== '0') {
+            try {
+                $nik_karyawan = Crypt::decrypt($request->nik_karyawan);
+            } catch (\Throwable $e) {
+                $nik_karyawan = $request->nik_karyawan;
+            }
+        }
         $where = ['nik' => $nik_karyawan];
         $pengaju = Karyawan::select('nik', 'nama')->where($where)->first();
-        $pengaju = $pengaju->nama.' - '.$pengaju->nik;
+        $pengaju = $pengaju ? ($pengaju->nama.' - '.$pengaju->nik) : (auth()->user()->name ?? 'Karyawan');
         return view('formulir.sakit.insert', compact('karyawan', 'status', 'nik_karyawan', 'pengaju'));
     }
 

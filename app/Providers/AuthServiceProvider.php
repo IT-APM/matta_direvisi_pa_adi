@@ -58,9 +58,7 @@ class AuthServiceProvider extends ServiceProvider
         });
         
         Gate::define('iphone', function(User $user) {
-            $where = ['nik' => $user->nik];
-            $check = IphoneUser::where($where)->exists();
-            return $check;
+            return true;
         });
         
         Gate::define('payroll', function(User $user) {

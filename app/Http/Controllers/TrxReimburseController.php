@@ -45,6 +45,9 @@ class TrxReimburseController extends Controller
      */
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->formModule('reimbursement');
+        }
         // http://localhost/matta/reimburse?q=back
         // if($request->q == 'back'){
         //     // dd($request->all());
@@ -91,10 +94,10 @@ class TrxReimburseController extends Controller
         $where = ['is_aktif' => 1];
         $karyawan = Karyawan::select('nik', 'nama')->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         // ambil semua data reimburse
-        $trx = TrxReimburseMaster::orderBy('id', 'desc')->get();
+        $trx = TrxReimburseMaster::orderBy('id', 'desc')->limit(100)->get();
         if(Gate::allows('hc_nkp')){
             $karyawan = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
-            $trx = TrxReimburseMaster::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx = TrxReimburseMaster::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->limit(100)->get();
         }
         // 
         $trxD = TrxReimburseDetail::whereIn('id_reimburse', $trx->pluck('id')->toArray())->get();
@@ -241,12 +244,17 @@ class TrxReimburseController extends Controller
         }
         // karyawan masih di hardcode
         // Abi Suhendra Adi Guna
-        // $nik_karyawan = '01031801682';
-        // $nik_karyawan = auth()->user()->nik;
-        $nik_karyawan = Crypt::decrypt($request->nik_karyawan);
+        $nik_karyawan = auth()->user()->nik;
+        if ($request->filled('nik_karyawan') && $request->nik_karyawan !== '0') {
+            try {
+                $nik_karyawan = Crypt::decrypt($request->nik_karyawan);
+            } catch (\Throwable $e) {
+                $nik_karyawan = $request->nik_karyawan;
+            }
+        }
         $where = ['nik' => $nik_karyawan];
         $pengaju = Karyawan::select('nik', 'nama')->where($where)->first();
-        $pengaju = $pengaju->nama.' / '.$pengaju->nik;
+        $pengaju = $pengaju ? ($pengaju->nama.' / '.$pengaju->nik) : (auth()->user()->name ?? 'Karyawan');
         $periode = Carbon::now()->format('Y');
         // 
         $where = ['nik' => $nik_karyawan];

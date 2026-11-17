@@ -41,6 +41,9 @@ class TrxRekomendasiController extends Controller
      */
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->formModule('confirmation');
+        }
         // start refer to cm 464
         if(auth()->user()->nik == '01032509884'){
             return redirect()->route('error-403');
@@ -52,10 +55,10 @@ class TrxRekomendasiController extends Controller
         $where = ['is_aktif' => 1];
         // role asm kode_level >= 4
         $layer1 = Karyawan::select('nik', 'nama')->where($where)->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
-        $trx = TrxRekomendasiMaster::orderBy('id', 'desc')->get();
+        $trx = TrxRekomendasiMaster::orderBy('id', 'desc')->limit(100)->get();
         if(Gate::allows('hc_nkp')){
             $layer1 = Karyawan::select('nik', 'nama')->whereIn('nik',$arr_nik_nkp)->where($where)->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
-            $trx = TrxRekomendasiMaster::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx = TrxRekomendasiMaster::whereIn('nik_karyawan',$arr_nik_nkp)->orderBy('id', 'desc')->limit(100)->get();
         }
         if(auth()->user()->userrole == 'nhc'){
             // $where = ['nik_atasan' => auth()->user()->nik];
@@ -174,10 +177,17 @@ class TrxRekomendasiController extends Controller
         if (!auth()->check()) {
             return redirect()->route('login-one');
         }
-        $nik_atasan = Crypt::decrypt($request->nik_atasan);
+        $nik_atasan = auth()->user()->nik;
+        if ($request->filled('nik_atasan') && $request->nik_atasan !== '0') {
+            try {
+                $nik_atasan = Crypt::decrypt($request->nik_atasan);
+            } catch (\Throwable $e) {
+                $nik_atasan = $request->nik_atasan;
+            }
+        }
         $where = ['nik' => $nik_atasan];
         $pengaju = Karyawan::select('nik', 'nama')->where($where)->first();
-        $pengaju = $pengaju->nama.' / '.$pengaju->nik;
+        $pengaju = $pengaju ? ($pengaju->nama.' / '.$pengaju->nik) : (auth()->user()->name ?? 'Karyawan');
         $arr_karyawan = [];
         // karyawan yang bisa direkomendasikan adalah bawahan langsung pengaju
         $where = ['layer1' => $nik_atasan, 'is_aktif' => 1];

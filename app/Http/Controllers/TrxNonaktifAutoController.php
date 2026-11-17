@@ -22,14 +22,16 @@ class TrxNonaktifAutoController extends Controller
     public function index(Request $request)
     {
         //
-        function forgetById($collection,$id){
-            foreach($collection as $key => $item){
-                if($item->id == $id){
-                    $collection->forget($key);
-                    break;
+        if (!function_exists('App\Http\Controllers\forgetById')) {
+            function forgetById($collection, $id){
+                foreach($collection as $key => $item){
+                    if($item->id == $id){
+                        $collection->forget($key);
+                        break;
+                    }
                 }
+                return $collection;
             }
-            return $collection;
         }
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();

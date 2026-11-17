@@ -44,7 +44,7 @@
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    @if (count($errors) > 0)
+                    @if (!empty($errors) && $errors->any())
                     <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
                         <h6>Upload File is ERROR</h6>
                         <ul>
@@ -142,7 +142,7 @@ $('#_datatable').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "pageLength": 10, "lengthMenu": [[10], [10]]
 });
 $(document).on('click', '#btn-delete', function(event) {
     var form = $(this).closest("form");

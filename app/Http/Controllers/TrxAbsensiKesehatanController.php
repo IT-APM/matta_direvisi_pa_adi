@@ -20,6 +20,9 @@ class TrxAbsensiKesehatanController extends Controller
      */
     public function index()
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->health();
+        }
         //
         $this->authorize('iphone');
         $id = auth()->user()->nik;

@@ -146,32 +146,56 @@
                             $kompensasi_kkwt = 0;
                             $total_biaya_gaji = 0;
                             $group_by = [];
+
+                            // Preload addsub and bpjs logs into memory to prevent thousands of N+1 database queries
+                            if (!empty($payroll) && count($payroll) > 0) {
+                                $p_niks = $payroll->pluck('nik')->unique()->toArray();
+                                $p_bulans = $payroll->pluck('bulan')->unique()->toArray();
+                                $p_tahuns = $payroll->pluck('tahun')->unique()->toArray();
+
+                                $all_addsub = App\Models\TrxPayrollAddsubLog::whereIn('nik', $p_niks)
+                                    ->whereIn('bulan', $p_bulans)
+                                    ->whereIn('tahun', $p_tahuns)
+                                    ->get()
+                                    ->groupBy(fn($i) => $i->nik . '_' . $i->bulan . '_' . $i->tahun);
+
+                                $all_bpjskes = App\Models\TrxPayrollBpjskesLog::whereIn('nik', $p_niks)
+                                    ->whereIn('bulan', $p_bulans)
+                                    ->whereIn('tahun', $p_tahuns)
+                                    ->get()
+                                    ->groupBy(fn($i) => $i->nik . '_' . $i->bulan . '_' . $i->tahun);
+
+                                $all_bpjstk = App\Models\TrxPayrollBpjstkLog::whereIn('nik', $p_niks)
+                                    ->whereIn('bulan', $p_bulans)
+                                    ->whereIn('tahun', $p_tahuns)
+                                    ->get()
+                                    ->groupBy(fn($i) => $i->nik . '_' . $i->bulan . '_' . $i->tahun);
+                            } else {
+                                $all_addsub = collect([]);
+                                $all_bpjskes = collect([]);
+                                $all_bpjstk = collect([]);
+                            }
                         @endphp
                         @foreach ($payroll as $data)
                         @php
-                            $where = ['nik'=>$data->nik, 'bulan'=>$data->bulan, 'tahun'=>$data->tahun];
+                            $k_key = $data->nik . '_' . $data->bulan . '_' . $data->tahun;
+                            $user_addsubs = $all_addsub->get($k_key) ?? collect([]);
+                            $user_bpjskes = $all_bpjskes->get($k_key) ?? collect([]);
+                            $user_bpjstk = $all_bpjstk->get($k_key) ?? collect([]);
+
                             // status = apm
-                            if($data->status == 'apm'){
+                            if($data->status == 'apm' || $data->status == 'Paid'){
                                 $biaya_gaji += round($data->gapok, 0);
                                 $_biaya_gaji = round($data->gapok, 0);
-                                // 1=Tunjangan Makan
-                                // 2=Tunjangan Transportasi
-                                // 3=Tunjangan Jabatan
-                                // 4=Tunjangan Telekomunikasi
-                                // 5=Tunjangan Lainnya
-                                // 6=Insentif
-                                // 7=Kekurangan Upah
-                                // 8=Sewa Laptop
-                                // 21=Tunjangan Hari Raya
+                                // 1=Tunjangan Makan, 2=Tunjangan Transportasi, 3=Tunjangan Jabatan, 4=Tunjangan Telekomunikasi, 5=Tunjangan Lainnya, 6=Insentif, 7=Kekurangan Upah, 8=Sewa Laptop, 21=Tunjangan Hari Raya
                                 $arr_id = [1,2,3,4,5,6,7,8,21];
-                                $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
-                                $biaya_gaji += round($add->sum('angka'), 0);
-                                $_biaya_gaji += round($add->sum('angka'), 0);
+                                $add_sum = $user_addsubs->whereIn('id_addsub', $arr_id)->sum('angka');
+                                $biaya_gaji += round($add_sum, 0);
+                                $_biaya_gaji += round($add_sum, 0);
                                 // 9=Kompensasi KKWT
-                                $arr_id = [9];
-                                $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
-                                $kompensasi_kkwt += round($add->sum('angka'), 0);
-                                $_biaya_gaji += round($add->sum('angka'), 0);
+                                $add_kkwt = $user_addsubs->where('id_addsub', 9)->sum('angka');
+                                $kompensasi_kkwt += round($add_kkwt, 0);
+                                $_biaya_gaji += round($add_kkwt, 0);
                                 // 
                                 $total_biaya_gaji = $biaya_gaji + $kompensasi_kkwt;
                             }
@@ -179,81 +203,55 @@
                             elseif($data->status == 'osc'){
                                 $biaya_gaji += round($data->gapok, 0);
                                 $_biaya_gaji = round($data->gapok, 0);
-                                // 5=Tunjangan Lainnya
-                                // 6=Insentif
-                                // 7=Kekurangan Upah
-                                // 8=Sewa Laptop
-                                // 22=Tunjangan Telekomunikasi Tambahan
+                                // 5=Tunjangan Lainnya, 6=Insentif, 7=Kekurangan Upah, 8=Sewa Laptop, 22=Tunjangan Telekomunikasi Tambahan
                                 $arr_id = [5,6,7,8,22];
-                                $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
-                                $biaya_gaji += round($add->sum('angka'), 0);
-                                $_biaya_gaji += round($add->sum('angka'), 0);
+                                $add_sum = $user_addsubs->whereIn('id_addsub', $arr_id)->sum('angka');
+                                $biaya_gaji += round($add_sum, 0);
+                                $_biaya_gaji += round($add_sum, 0);
                                 // 
                                 $biaya_gaji += round($data->overtime, 0) + round($data->pajak, 0);
                                 $_biaya_gaji += round($data->overtime, 0) + round($data->pajak, 0);
                                 // bpjskes
-                                $arr_id = [4];
-                                $bpjskes = App\Models\TrxPayrollBpjskesLog::where($where)->whereIn('id_bpjskes', $arr_id)->orderBy('id_bpjskes', 'asc')->get();
-                                $biaya_gaji += round($bpjskes->sum('angka'), 0);
-                                $_biaya_gaji += round($bpjskes->sum('angka'), 0);
+                                $bpjskes_sum = $user_bpjskes->where('id_bpjskes', 4)->sum('angka');
+                                $biaya_gaji += round($bpjskes_sum, 0);
+                                $_biaya_gaji += round($bpjskes_sum, 0);
                                 // bpjstk
-                                $arr_id = [7];
-                                $bpjstk = App\Models\TrxPayrollBpjstkLog::where($where)->whereIn('id_bpjstk', $arr_id)->orderBy('id_bpjstk', 'asc')->get();
-                                $biaya_gaji += round($bpjstk->sum('angka'), 0);
-                                $_biaya_gaji += round($bpjstk->sum('angka'), 0);
+                                $bpjstk_sum = $user_bpjstk->where('id_bpjstk', 7)->sum('angka');
+                                $biaya_gaji += round($bpjstk_sum, 0);
+                                $_biaya_gaji += round($bpjstk_sum, 0);
                                 // 
-                                $mgt_fee = $_biaya_gaji * $data->mgt_fee / 100;
+                                $mgt_fee = $_biaya_gaji * ($data->mgt_fee ?? 0) / 100;
                                 $biaya_gaji += round($mgt_fee, 0);
                                 $_biaya_gaji += round($mgt_fee, 0);
                                 // 9=Kompensasi KKWT
-                                $arr_id = [9];
-                                $add = App\Models\TrxPayrollAddsubLog::where($where)->whereIn('id_addsub', $arr_id)->orderBy('id_addsub', 'asc')->get();
-                                $angka_9 = $add->sum('angka');
-                                $angka_9 += $angka_9 * $data->mgt_fee_kkwt / 100;
+                                $angka_9 = $user_addsubs->where('id_addsub', 9)->sum('angka');
+                                $angka_9 += $angka_9 * ($data->mgt_fee_kkwt ?? 0) / 100;
                                 $kompensasi_kkwt += round($angka_9, 0);
                                 $_biaya_gaji += round($angka_9, 0);
                                 $total_biaya_gaji = $biaya_gaji + $kompensasi_kkwt;
                             }
                             // 
-                            array_push($group_by, ['bulan_tahun'=>$data->bulan.'-'.$data->tahun, 'tahun'=>$data->tahun, 'perusahaan'=>$data->perusahaan, 'divisi'=>$data->divisi, 'departemen'=>$data->departemen, 'subdepartemen'=>$data->subdepartemen, 'status_karyawan'=>$data->status_karyawan, 'total_biaya_gaji'=>$_biaya_gaji]);
+                            array_push($group_by, [
+                                'bulan' => (int)$data->bulan,
+                                'tahun' => (int)$data->tahun,
+                                'bulan_tahun' => $data->bulan.'-'.$data->tahun,
+                                'perusahaan' => $data->perusahaan,
+                                'divisi' => $data->divisi,
+                                'departemen' => $data->departemen,
+                                'subdepartemen' => $data->subdepartemen,
+                                'status_karyawan' => $data->status_karyawan,
+                                'total_biaya_gaji' => $_biaya_gaji
+                            ]);
                         @endphp
                         @endforeach
                         @php
                             $data = collect($group_by)->groupBy('bulan_tahun');
-                            // start yoy
-                            $tahun = collect($group_by)->groupBy('tahun');
-                            // $arr_tahun = [null,null,null];
-                            $arr_tahun = [0,0,0];
-                            $arr_bulan = [1,2,3,4,5,6,7,8,9,10,11,12];
-                            $x = 0;
-                            foreach($tahun as $key => $value){
-                                // array_push($arr_tahun, $key);
-                                $arr_tahun[$x] = $key;
-                                $x++;
-                            }
-                            $nominal_0 = [null,null,null,null,null,null,null,null,null,null,null,null];
-                            $nominal_1 = [null,null,null,null,null,null,null,null,null,null,null,null];
-                            $nominal_2 = [null,null,null,null,null,null,null,null,null,null,null,null];
-                            // $nominal_0 = [0,0,0,0,0,0,0,0,0,0,0,0];
-                            // $nominal_1 = [0,0,0,0,0,0,0,0,0,0,0,0];
-                            // $nominal_2 = [0,0,0,0,0,0,0,0,0,0,0,0];
-                            $jumlah_data_0 = [null,null,null,null,null,null,null,null,null,null,null,null];
-                            $jumlah_data_1 = [null,null,null,null,null,null,null,null,null,null,null,null];
-                            $jumlah_data_2 = [null,null,null,null,null,null,null,null,null,null,null,null];
-                            // $jumlah_data_0 = [0,0,0,0,0,0,0,0,0,0,0,0];
-                            // $jumlah_data_1 = [0,0,0,0,0,0,0,0,0,0,0,0];
-                            // $jumlah_data_2 = [0,0,0,0,0,0,0,0,0,0,0,0];
-                            // dd($arr_tahun);
-                            // end yoy
-                            $pembagi = count($data);
-                            if(count($data) == 0){
-                                $pembagi = 1;
-                            }
+                            $pembagi = count($data) > 0 ? count($data) : 1;
+                            
                             $waktu = [];
                             $jumlah_data = [];
                             $nominal = [];
                             foreach($data as $key => $value){
-                                // dd($value);
                                 array_push($waktu, $key);
                                 array_push($jumlah_data, $value->count());
                                 $_nominal = 0;
@@ -261,35 +259,78 @@
                                     $_nominal += $_value['total_biaya_gaji'];
                                 }
                                 array_push($nominal, $_nominal);
-                                if($arr_tahun[0] > 0 && $arr_tahun[1]){
-                                    // start yoy
-                                    // pisahkan bulan dan tahun
-                                    $_key = explode('-', $key);
-                                    for($x = 1; $x <= count($arr_bulan); $x++){
-                                        // jika bulan dan tahunnya sama
-                                        if($_key[0] == $x && $arr_tahun[0] == $_key[1]){
-                                            $nominal_0[$x-1] = $_nominal;
-                                            $jumlah_data_0[$x-1] = $value->count();
+                            }
+
+                            // Robust YoY Calculation
+                            $c_group = collect($group_by);
+                            $yoy_years = $c_group->pluck('tahun')->map(fn($y) => (int)$y)->unique()->sort()->values()->toArray();
+
+                            // If only 1 year in current filter, also fetch previous year for YoY comparison
+                            if (count($yoy_years) === 1) {
+                                $currYear = $yoy_years[0];
+                                $prevYear = $currYear - 1;
+                                $prevLogs = App\Models\TrxPayrollLog::where('tahun', $prevYear)->get();
+                                if ($prevLogs->count() > 0) {
+                                    $p_niks = $prevLogs->pluck('nik')->unique()->toArray();
+                                    $p_bulans = $prevLogs->pluck('bulan')->unique()->toArray();
+                                    $prev_addsubs = App\Models\TrxPayrollAddsubLog::whereIn('nik', $p_niks)->where('tahun', $prevYear)->whereIn('bulan', $p_bulans)->get()->groupBy(fn($i) => $i->nik . '_' . $i->bulan . '_' . $i->tahun);
+                                    $prev_bpjskes = App\Models\TrxPayrollBpjskesLog::whereIn('nik', $p_niks)->where('tahun', $prevYear)->whereIn('bulan', $p_bulans)->get()->groupBy(fn($i) => $i->nik . '_' . $i->bulan . '_' . $i->tahun);
+                                    $prev_bpjstk = App\Models\TrxPayrollBpjstkLog::whereIn('nik', $p_niks)->where('tahun', $prevYear)->whereIn('bulan', $p_bulans)->get()->groupBy(fn($i) => $i->nik . '_' . $i->bulan . '_' . $i->tahun);
+
+                                    foreach ($prevLogs as $_prev) {
+                                        $_k = $_prev->nik . '_' . $_prev->bulan . '_' . $_prev->tahun;
+                                        $_u_add = $prev_addsubs->get($_k) ?? collect([]);
+                                        $_u_ks = $prev_bpjskes->get($_k) ?? collect([]);
+                                        $_u_tk = $prev_bpjstk->get($_k) ?? collect([]);
+
+                                        $_bg = round($_prev->gapok, 0);
+                                        if($_prev->status == 'apm' || $_prev->status == 'Paid'){
+                                            $_bg += round($_u_add->whereIn('id_addsub', [1,2,3,4,5,6,7,8,21])->sum('angka'), 0);
+                                            $_bg += round($_u_add->where('id_addsub', 9)->sum('angka'), 0);
+                                        } elseif($_prev->status == 'osc'){
+                                            $_bg += round($_u_add->whereIn('id_addsub', [5,6,7,8,22])->sum('angka'), 0);
+                                            $_bg += round($_prev->overtime, 0) + round($_prev->pajak, 0);
+                                            $_bg += round($_u_ks->where('id_bpjskes', 4)->sum('angka'), 0);
+                                            $_bg += round($_u_tk->where('id_bpjstk', 7)->sum('angka'), 0);
+                                            $_bg += round($_bg * ($_prev->mgt_fee ?? 0) / 100, 0);
+                                            $a9 = $_u_add->where('id_addsub', 9)->sum('angka');
+                                            $_bg += round($a9 + ($a9 * ($_prev->mgt_fee_kkwt ?? 0) / 100), 0);
                                         }
-                                        // jika $arr_tahun > 1
-                                        if(count($arr_tahun) > 1){
-                                            if($_key[0] == $x && $arr_tahun[1] == $_key[1]){
-                                                $nominal_1[$x-1] = $_nominal;
-                                                $jumlah_data_1[$x-1] = $value->count();
-                                            }
-                                        }
-                                        // jika $arr_tahun > 2
-                                        if(count($arr_tahun) > 2){
-                                            if($_key[0] == $x && $arr_tahun[2] == $_key[1]){
-                                                $nominal_2[$x-1] = $_nominal;
-                                                $jumlah_data_2[$x-1] = $value->count();
-                                            }
-                                        }
+
+                                        $c_group->push([
+                                            'bulan' => $_prev->bulan,
+                                            'tahun' => $_prev->tahun,
+                                            'bulan_tahun' => $_prev->bulan . '-' . $_prev->tahun,
+                                            'total_biaya_gaji' => $_bg
+                                        ]);
                                     }
-                                    // end yoy
-                                }else{
-                                    $arr_tahun = [0,0,0];
+                                    $yoy_years = [$prevYear, $currYear];
                                 }
+                            }
+
+                            $yoy_biaya_series = [];
+                            $yoy_karyawan_series = [];
+                            foreach ($yoy_years as $yr) {
+                                $monthlyNominal = [];
+                                $monthlyCount = [];
+                                for ($m = 1; $m <= 12; $m++) {
+                                    $recs = $c_group->filter(fn($item) => (int)$item['tahun'] === (int)$yr && (int)$item['bulan'] === (int)$m);
+                                    if ($recs->count() > 0) {
+                                        $monthlyNominal[] = $recs->sum('total_biaya_gaji');
+                                        $monthlyCount[] = $recs->count();
+                                    } else {
+                                        $monthlyNominal[] = null;
+                                        $monthlyCount[] = null;
+                                    }
+                                }
+                                $yoy_biaya_series[] = [
+                                    'name' => (string)$yr,
+                                    'data' => $monthlyNominal
+                                ];
+                                $yoy_karyawan_series[] = [
+                                    'name' => (string)$yr,
+                                    'data' => $monthlyCount
+                                ];
                             }
                         @endphp
                         {{--  --}}
@@ -843,16 +884,23 @@ $(document).ready(function() {
         },
         yaxis: {
             title: {
-                text: 'Biaya Gaji',
+                text: 'Total Biaya Gaji (Rp)',
             },
             labels: {
                 formatter: function (value) {
-                    return value.toLocaleString();
+                    if (value >= 1000000000) return (value / 1000000000).toFixed(1) + ' M';
+                    if (value >= 1000000) return (value / 1000000).toFixed(0) + ' Jt';
+                    return value ? Number(value).toLocaleString('id-ID') : '0';
                 }
             },
-            // min: 0,
-            // max: 2000000000
         },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val !== null && val !== undefined ? 'Rp. ' + Number(val).toLocaleString('id-ID') : '-';
+                }
+            }
+        }
     };
     new ApexCharts(document.querySelector("#chart_total_biaya_gaji"), options).render();
     // Jumlah Karyawan
@@ -864,9 +912,13 @@ $(document).ready(function() {
         chart: {
             type: 'line',
             height: 350,
+            toolbar: {
+                show: true
+            }
         },
         stroke: {
-          curve: 'smooth'
+          curve: 'smooth',
+          width: 3
         },
         colors: ['#f57b20'],
         xaxis: {
@@ -874,156 +926,101 @@ $(document).ready(function() {
         },
         yaxis: {
             title: {
-                text: 'Jumlah',
+                text: 'Jumlah Karyawan',
             },
             labels: {
                 formatter: function (value) {
-                    return value.toLocaleString();
+                    return value ? Number(value).toLocaleString('id-ID') : '0';
                 }
             },
-            // min: 0,
-            // max: 2000000000
         },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val !== null && val !== undefined ? Number(val).toLocaleString('id-ID') + ' Orang' : '-';
+                }
+            }
+        }
     };
     new ApexCharts(document.querySelector("#chart_jumlah_karyawan"), options).render();
     // 
-    @if($arr_tahun[0] > 0 && $arr_tahun[1] > 0 && $arr_tahun[2] > 0)
     // YoY Total Biaya Gaji
     var options = {
-        series: [{
-            name: {{ \Illuminate\Support\Js::from($arr_tahun[0]) }},
-            data: {{ \Illuminate\Support\Js::from($nominal_0) }}
-        },{
-            name: {{ \Illuminate\Support\Js::from($arr_tahun[1]) }},
-            data: {{ \Illuminate\Support\Js::from($nominal_1) }}
-        },{
-            name: {{ \Illuminate\Support\Js::from($arr_tahun[2]) }},
-            data: {{ \Illuminate\Support\Js::from($nominal_2) }}
-        }],
+        series: {{ \Illuminate\Support\Js::from($yoy_biaya_series) }},
         chart: {
             type: 'line',
             height: 350,
+            toolbar: {
+                show: true
+            }
         },
         stroke: {
-          curve: 'smooth'
+            curve: 'smooth',
+            width: 3
         },
-        colors: ['#f57b20', '#4e71ff', '#6de1d2'],
+        colors: ['#4e71ff', '#f57b20', '#10b981', '#f59e0b', '#8b5cf6'],
         xaxis: {
-            categories: {{ \Illuminate\Support\Js::from($arr_bulan) }},
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
         },
         yaxis: {
             title: {
-                text: 'Biaya Gaji',
+                text: 'Total Biaya Gaji (Rp)',
             },
             labels: {
                 formatter: function (value) {
-                    return value.toLocaleString();
+                    if (value >= 1000000000) return (value / 1000000000).toFixed(1) + ' M';
+                    if (value >= 1000000) return (value / 1000000).toFixed(0) + ' Jt';
+                    return value ? Number(value).toLocaleString('id-ID') : '0';
                 }
             },
         },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val !== null && val !== undefined ? 'Rp. ' + Number(val).toLocaleString('id-ID') : '-';
+                }
+            }
+        }
     };
     new ApexCharts(document.querySelector("#chart_yoy_total_biaya_gaji"), options).render();
+
     // YoY Jumlah Karyawan
     var options = {
-        series: [{
-            name: {{ \Illuminate\Support\Js::from($arr_tahun[0]) }},
-            data: {{ \Illuminate\Support\Js::from($jumlah_data_0) }}
-        },{
-            name: {{ \Illuminate\Support\Js::from($arr_tahun[1]) }},
-            data: {{ \Illuminate\Support\Js::from($jumlah_data_1) }}
-        },{
-            name: {{ \Illuminate\Support\Js::from($arr_tahun[2]) }},
-            data: {{ \Illuminate\Support\Js::from($jumlah_data_2) }}
-        }],
+        series: {{ \Illuminate\Support\Js::from($yoy_karyawan_series) }},
         chart: {
             type: 'line',
             height: 350,
+            toolbar: {
+                show: true
+            }
         },
         stroke: {
-          curve: 'smooth'
+            curve: 'smooth',
+            width: 3
         },
-        colors: ['#f57b20', '#4e71ff', '#6de1d2'],
+        colors: ['#4e71ff', '#f57b20', '#10b981', '#f59e0b', '#8b5cf6'],
         xaxis: {
-            categories: {{ \Illuminate\Support\Js::from($arr_bulan) }},
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
         },
         yaxis: {
             title: {
-                text: 'Jumlah',
+                text: 'Jumlah Karyawan',
             },
             labels: {
                 formatter: function (value) {
-                    return value.toLocaleString();
+                    return value ? Number(value).toLocaleString('id-ID') : '0';
                 }
             },
         },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val !== null && val !== undefined ? Number(val).toLocaleString('id-ID') + ' Orang' : '-';
+                }
+            }
+        }
     };
     new ApexCharts(document.querySelector("#chart_yoy_jumlah_karyawan"), options).render();
-    @else
-    // YoY Total Biaya Gaji
-    var options = {
-        series: [{
-            name: {{ \Illuminate\Support\Js::from($arr_tahun[0]) }},
-            data: {{ \Illuminate\Support\Js::from($nominal_0) }}
-        },{
-            name: {{ \Illuminate\Support\Js::from($arr_tahun[1]) }},
-            data: {{ \Illuminate\Support\Js::from($nominal_1) }}
-        }],
-        chart: {
-            type: 'line',
-            height: 350,
-        },
-        stroke: {
-          curve: 'smooth'
-        },
-        colors: ['#f57b20', '#4e71ff'],
-        xaxis: {
-            categories: {{ \Illuminate\Support\Js::from($arr_bulan) }},
-        },
-        yaxis: {
-            title: {
-                text: 'Biaya Gaji',
-            },
-            labels: {
-                formatter: function (value) {
-                    return value.toLocaleString();
-                }
-            },
-        },
-    };
-    new ApexCharts(document.querySelector("#chart_yoy_total_biaya_gaji"), options).render();
-    // YoY Jumlah Karyawan
-    var options = {
-        series: [{
-            name: {{ \Illuminate\Support\Js::from($arr_tahun[0]) }},
-            data: {{ \Illuminate\Support\Js::from($jumlah_data_0) }}
-        },{
-            name: {{ \Illuminate\Support\Js::from($arr_tahun[1]) }},
-            data: {{ \Illuminate\Support\Js::from($jumlah_data_1) }}
-        }],
-        chart: {
-            type: 'line',
-            height: 350,
-        },
-        stroke: {
-          curve: 'smooth'
-        },
-        colors: ['#f57b20', '#4e71ff'],
-        xaxis: {
-            categories: {{ \Illuminate\Support\Js::from($arr_bulan) }},
-        },
-        yaxis: {
-            title: {
-                text: 'Jumlah',
-            },
-            labels: {
-                formatter: function (value) {
-                    return value.toLocaleString();
-                }
-            },
-        },
-    };
-    new ApexCharts(document.querySelector("#chart_yoy_jumlah_karyawan"), options).render();
-    @endif
 });
 </script>
 <script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script>

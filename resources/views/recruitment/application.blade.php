@@ -42,7 +42,7 @@
                     <div class="col-12 col-md-12"><img class="img-fluid rounded-start w-194 h-73 object-fit-cover" loading="lazy" src="{{ asset('assets/images/matta/alita.png') }}" alt="Alita"></div>
                 </div>
                 <hr class="mt-2 mb-2" />
-                @if (count($errors) > 0)
+                @if (!empty($errors) && $errors->any())
                 <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
                     <h6>Upload image is ERROR</h6>
                     <ul>

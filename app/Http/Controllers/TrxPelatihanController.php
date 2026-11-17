@@ -227,9 +227,9 @@ class TrxPelatihanController extends Controller
         $no = 0;
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
-        $trx = TrxPelatihan::orderBy('id', 'desc')->get();
+        $trx = TrxPelatihan::orderBy('id', 'desc')->limit(100)->get();
         if(Gate::allows('hc_nkp')){
-            $trx = TrxPelatihan::whereIn('pengaju',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx = TrxPelatihan::whereIn('pengaju',$arr_nik_nkp)->orderBy('id', 'desc')->limit(100)->get();
         }
         // foreach ($trx as $value) {
         //     $trxM = TrxPelatihan::find( $value->id );
@@ -352,7 +352,7 @@ class TrxPelatihanController extends Controller
     public function create()
     {
         // start
-        // $trx = TrxPelatihan::orderBy('id', 'desc')->get();
+        // $trx = TrxPelatihan::orderBy('id', 'desc')->limit(100)->get();
         // foreach($trx as $_trx){
         //     $id = $_trx->id;
         //     $check = TrxPelatihanPeserta::where(['id_trx'=>$id])->exists();

@@ -42,7 +42,7 @@ $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','Se
                         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    @if (count($errors) > 0)
+                    @if (!empty($errors) && $errors->any())
                     <div class="alert alert-danger dark alert-dismissible fade show" role="alert">
                         <h6>Upload File is ERROR</h6>
                         <ul>
@@ -1109,7 +1109,7 @@ $('#_datatable1').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    "pageLength": 10, "lengthMenu": [[10], [10]],
     footerCallback: function (row, data, start, end, display) {
         nfObject = new Intl.NumberFormat('en-US');
         let api = this.api();
@@ -1141,7 +1141,7 @@ $('#_datatable2').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    "pageLength": 10, "lengthMenu": [[10], [10]],
     footerCallback: function (row, data, start, end, display) {
         nfObject = new Intl.NumberFormat('en-US');
         let api = this.api();
@@ -1168,7 +1168,7 @@ $('#_datatable3').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    "pageLength": 10, "lengthMenu": [[10], [10]],
     footerCallback: function (row, data, start, end, display) {
         nfObject = new Intl.NumberFormat('en-US');
         let api = this.api();
@@ -1195,7 +1195,7 @@ $('#_datatable4').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    "pageLength": 10, "lengthMenu": [[10], [10]],
     footerCallback: function (row, data, start, end, display) {
         nfObject = new Intl.NumberFormat('en-US');
         let api = this.api();
@@ -1222,7 +1222,7 @@ $('#_datatable5').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    "pageLength": 10, "lengthMenu": [[10], [10]],
     footerCallback: function (row, data, start, end, display) {
         nfObject = new Intl.NumberFormat('en-US');
         let api = this.api();
@@ -1266,7 +1266,7 @@ $('#_datatable6').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500,  "All"]],
+    "pageLength": 10, "lengthMenu": [[10], [10]],
     footerCallback: function (row, data, start, end, display) {
         nfObject = new Intl.NumberFormat('en-US');
         let api = this.api();

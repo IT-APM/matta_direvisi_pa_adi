@@ -187,12 +187,12 @@ class TrxBpdController extends Controller
         $periode = Carbon::now()->format('Y');
         $pengaju = auth()->user()->nik;
         // jika admin input bpd untuk grup manajemen
-        if($request->mgt <> '0'){
+        if(!empty($request->mgt) && $request->mgt !== '0'){
             $pengaju = $request->mgt;
         }
         $pengaju_property = $this->getNikProperty($pengaju);
         $_pengaju_property = json_decode($pengaju_property, true);
-        $id_level = $_pengaju_property['id_level'];
+        $id_level = $_pengaju_property['id_level'] ?? 1;
         // 
         $kelompok = array();
         $where = ['is_project' => 1];
@@ -218,9 +218,11 @@ class TrxBpdController extends Controller
         // 2 = Member
         // 3 = Management
         $where = ['nik' => $pengaju, 'is_active' => 1];
-        $is_leader = BpdNikPeran::where($where)->first()->id_peran;
+        $peran = BpdNikPeran::where($where)->first();
+        $is_leader = $peran ? $peran->id_peran : 2;
         $where = ['nik' => $pengaju];
-        $atasan = Karyawan::where($where)->first()->layer1;
+        $karyawan_pengaju = Karyawan::where($where)->first();
+        $atasan = $karyawan_pengaju ? $karyawan_pengaju->layer1 : null;
         $atasan_property = $this->getNikProperty($atasan);
         $area = Propinsi::whereNotIn('id', [0, 1])->orderBy('id', 'asc')->get();
         $negara = Negara::orderBy('negara', 'asc')->get();
@@ -248,6 +250,21 @@ class TrxBpdController extends Controller
             ->leftJoin('mtr_tbl_level', 'mtr_tbl_level.id', '=', 'mtr_tbl_karyawan.kode_level')
             ->leftJoin('mtr_tbl_jabatan', 'mtr_tbl_jabatan.id', '=', 'mtr_tbl_karyawan.kode_jabatan')
             ->where($where)->first();
+        if (!$data) {
+            $data = [
+                'nik' => $nik ?? '-',
+                'nama' => '-',
+                'email' => '-',
+                'telepon1' => '-',
+                'perusahaan' => '-',
+                'divisi' => '-',
+                'dep' => '-',
+                'sub_dep' => '-',
+                'level' => '-',
+                'jabatan' => '-',
+                'id_level' => 1
+            ];
+        }
         return json_encode($data);
     }
 
@@ -304,7 +321,7 @@ class TrxBpdController extends Controller
             }
         }
         // jika admin input bpd untuk grup manajemen
-        if($request->mgt <> '0'){
+        if(!empty($request->mgt) && $request->mgt !== '0'){
             $pengaju = $request->mgt;
         }
         $where = ['pengaju' => $pengaju];
@@ -353,7 +370,8 @@ class TrxBpdController extends Controller
         // 2 = Member
         // 3 = Management
         $where = ['nik' => $pengaju, 'is_active' => 1];
-        $is_leader = BpdNikPeran::where($where)->first()->id_peran;
+        $peran = BpdNikPeran::where($where)->first();
+        $is_leader = $peran ? $peran->id_peran : 2;
         $trx->is_leader = $is_leader;
         // 2 = Pengajuan CA
         $status_id = 2;

@@ -224,7 +224,7 @@ function showDetail(el) {
                 "<'row'<'col-sm-12'rt>>" +
                 "<'row'<'col-sm-5'i><'col-sm-7'p>>",
             buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
-            lengthMenu: [[10, 50, 100, 200, 500, -1], [10, 50, 100, 200, 500, "All"]]
+            "pageLength": 10, "lengthMenu": [[10], [10]]
         });
     }, 100);
     const modal = new bootstrap.Modal(document.getElementById('detailModal'));
@@ -351,10 +351,7 @@ $(document).ready(function() {
                                     'pdf',
                                     'print'
                                 ],
-                                lengthMenu: [
-                                    [10, 50, 100, 200, 500, -1],
-                                    [10, 50, 100, 200, 500, "All"]
-                                ]
+                                "pageLength": 10, "lengthMenu": [[10], [10]]
                             });
                         }, 100);
                         // tampilkan modal
@@ -499,10 +496,7 @@ $(document).ready(function() {
                                     "<'row'<'col-sm-12'rt>>" +
                                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
                                 buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
-                                lengthMenu: [
-                                    [10, 50, 100, 200, 500, -1],
-                                    [10, 50, 100, 200, 500, "All"]
-                                ]
+                                "pageLength": 10, "lengthMenu": [[10], [10]]
                             });
                         }, 100);
 

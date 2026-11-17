@@ -309,6 +309,9 @@ class TrxKebutuhanController extends Controller
         // start filter
         $select_tahun = TrxKebutuhanMaster::select(DB::raw('YEAR(created_at) as tahun'))->distinct()->orderBy('tahun', 'asc')->pluck('tahun');
         $all = TrxKebutuhanMaster::all();
+        $statusMap = StatusKerja::pluck('status_kerja', 'id')->toArray();
+        $areaMap = Propinsi::pluck('propinsi', 'id')->toArray();
+        $pekerjaanMap = PekerjaanSub::pluck('pekerjaan', 'id')->toArray();
         $arr_direktorat = [];
         $arr_divisi = [];
         $arr_departemen = [];
@@ -316,11 +319,13 @@ class TrxKebutuhanController extends Controller
         $arr_area = [];
         foreach($all as $data){
             $pengaju_property = json_decode($data->pengaju_property);
-            array_push($arr_direktorat, $pengaju_property->divisi);
-            array_push($arr_divisi, $pengaju_property->dep);
-            array_push($arr_departemen, $pengaju_property->sub_dep);
-            array_push($arr_status_kerja, StatusKerja::find($data->id_status_kerja)->status_kerja);
-            array_push($arr_area, Propinsi::find($data->id_area)->propinsi);
+            if ($pengaju_property) {
+                if (!empty($pengaju_property->divisi)) $arr_direktorat[] = $pengaju_property->divisi;
+                if (!empty($pengaju_property->dep)) $arr_divisi[] = $pengaju_property->dep;
+                if (!empty($pengaju_property->sub_dep)) $arr_departemen[] = $pengaju_property->sub_dep;
+            }
+            if (isset($statusMap[$data->id_status_kerja])) $arr_status_kerja[] = $statusMap[$data->id_status_kerja];
+            if (isset($areaMap[$data->id_area])) $arr_area[] = $areaMap[$data->id_area];
         }
         $arr_select_tahun = [];
         $select_direktorat = array_values(array_unique($arr_direktorat));
@@ -338,6 +343,26 @@ class TrxKebutuhanController extends Controller
         $select_area = array_values(array_unique($arr_area));
         sort($select_area);
         $arr_select_area = [];
+
+        // Otomatis terapkan filter default jika belum ada filter dari request
+        if (!$request->boolean('filter')) {
+            $defaultTahun = $select_tahun->isNotEmpty() ? [$select_tahun->last()] : [now()->year];
+            $request->merge([
+                'filter' => true,
+                'tahun' => $defaultTahun,
+                'type_direktorat' => 'bar',
+                'direktorat' => $select_direktorat,
+                'type_divisi' => 'bar',
+                'divisi' => $select_divisi,
+                'type_departemen' => 'bar',
+                'departemen' => $select_departemen,
+                'type_status_kerja' => 'bar',
+                'status_kerja' => $select_status_kerja,
+                'type_area' => 'bar',
+                'area' => $select_area,
+            ]);
+        }
+
         if ($request->filter == true) {
             $tahun = $request->input('tahun', []);
             $_direktorat = $request->input('direktorat', []);
@@ -752,108 +777,41 @@ class TrxKebutuhanController extends Controller
      */
     public function index(Request $request)
     {
-        // // start default isi kolom kebutuhan_atribute pada tabel trx_tbl_recruitment_identitas
-        // $trx = TrxRecruitmentIdentitas::all();
-        // foreach($trx as $_trx){
-        //     $data = TrxKebutuhanMaster::find($_trx->id_kebutuhan);
-        //     $_data = json_encode([
-        //         'id_pekerjaan'=>$data->id_pekerjaan,
-        //         'id_level'=>$data->id_level,
-        //         'id_area'=>$data->id_area,
-        //         'id_kota'=>$data->id_kota,
-        //         'atasan'=>$data->atasan,
-        //         'atasan_property'=>$data->atasan_property,
-        //         'id_perusahaan_kandidat'=>Divisi::find($data->id_divisi_kandidat)->kode_perusahaan,
-        //         'id_divisi_kandidat'=>$data->id_divisi_kandidat,
-        //         'id_dep_kandidat'=>$data->id_dep_kandidat,
-        //         'id_sub_dep_kandidat'=>$data->id_sub_dep_kandidat,
-        //     ]);
-        //     if(in_array($_trx->id, [11460])){
-        //         TrxRecruitmentIdentitas::where('id', $_trx->id)->update(['kebutuhan_atribute' => $_data]);
-        //     }
-        // }
-        // // end
-        // // start sync jika status_pengajuan=10 maka insert trx_tbl_kebutuhan_log
-        // $trx_id = TrxKebutuhanMaster::where(['status_pengajuan'=>10])->get();
-        // $trx_dengan_status_10 = TrxKebutuhanLog::whereIn('id_trx', $trx_id->pluck('id')->toArray())
-        // ->where('id_status', 10)
-        // ->pluck('id_trx')
-        // ->toArray();
-        // $trx = TrxKebutuhanLog::whereIn('id_trx', $trx_id->pluck('id')->toArray())
-        // ->whereNotIn('id_trx', $trx_dengan_status_10)
-        // ->distinct()
-        // ->pluck('id_trx')
-        // ->toArray();
-        // foreach($trx as $value){
-        //     $updated_at = Carbon::createFromFormat('d-m-Y H:i:s', $trx_id->where('id', $value)->first()?->updated_at)->format('Y-m-d H:i:s');
-        //     DB::insert("INSERT INTO `trx_tbl_kebutuhan_log`(`id_trx`,`id_status`,`nik_pic`,`created_at`,`updated_at`) VALUES (?, ?, ?, ?, ?)", [
-        //         $value,
-        //         10,
-        //         '01031808735',
-        //         $updated_at,
-        //         $updated_at,
-        //     ]);
-        // }
-        // return response()->json(['trx' => $trx]);
-        // // end
         $no = 0;
         $karyawan = Karyawan::select('nik', 'nama')->where(['is_aktif' => 1])->where('kode_level', '>=', 4)->whereNotIn('nik', ['Hco.all','IT.BM','IT Infras'])->orderBy('nama', 'asc')->get();
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
-        $trx = TrxKebutuhanMaster::orderBy('id', 'desc')->get();
+        
+        $trxQuery = TrxKebutuhanMaster::with([
+            '_area', '_kota', '_pekerjaan', '_status_kerja', '_jenis_permintaan', '_kelamin', '_status_pengajuan'
+        ]);
+
         if(Gate::allows('hc_nkp')){
-            $trx = TrxKebutuhanMaster::whereIn('pengaju',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trxQuery->whereIn('pengaju', $arr_nik_nkp);
         }
-        // foreach ($trx as $value) {
-        //     $trxM = TrxKebutuhanMaster::find($value->id);
-        //     // $trxM->pengaju_property = $this->getNikProperty($value->pengaju);
-        //     // $trxM->layer1_property = $this->getNikProperty($value->layer1);
-        //     // $trxM->layer2_property = $this->getNikProperty($value->layer2);
-        //     $pengaju_property = json_decode($trxM->pengaju_property, true);
-        //     $id_sub_departemen = $pengaju_property['id_sub_departemen'];
-        //     $id_dep_kandidat = SubDepartemen::find($id_sub_departemen)->kode_departemen;
-        //     $id_divisi_kandidat = Departemen::find($id_dep_kandidat)->kode_divisi;
-        //     $trxM->id_sub_dep_kandidat = $id_sub_departemen;
-        //     $trxM->id_dep_kandidat = $id_dep_kandidat;
-        //     $trxM->id_divisi_kandidat = $id_divisi_kandidat;
-        //     // dd($id_sub_departemen);
-        //     $trxM->update();
-        // }
+
         if(auth()->user()->userrole == 'nhc'){
-            $where = ['pengaju' => auth()->user()->nik];
-            $trx = TrxKebutuhanMaster::where($where)->orderBy('id', 'desc')->get();
-            // 
-            $arr_id = [];
-            foreach($trx as $_trx){
-                array_push($arr_id, $_trx->id);
-            }
-            $where = ['nik_pic' => auth()->user()->nik];
-            $trx = TrxKebutuhanLog::where($where)->orderBy('id_trx', 'desc')->get();
-            foreach($trx as $_trx){
-                array_push($arr_id, $_trx->id_trx);
-            }
-            // 
-            $trx = TrxKebutuhanMaster::whereIn('id', $arr_id)->orderBy('id', 'desc')->get();
+            $userNik = auth()->user()->nik;
+            $picTrxIds = TrxKebutuhanLog::where('nik_pic', $userNik)->pluck('id_trx')->toArray();
+            $trxQuery->where(function($q) use ($userNik, $picTrxIds) {
+                $q->where('pengaju', $userNik);
+                if (!empty($picTrxIds)) {
+                    $q->orWhereIn('id', $picTrxIds);
+                }
+            });
         }
-        // filter parameter
+
+        $trxQuery->where('created_at', '>=', Carbon::now()->subDays(30));
+        $trx = $trxQuery->orderBy('id', 'desc')->limit(50)->get();
+
         $arr_status_pengajuan = array();
         $arr_id_area = array();
         $arr_id_jenis_permintaan = array();
-        foreach ($trx as $data){
-            array_push($arr_status_pengajuan, $data->status_pengajuan);
-            array_push($arr_id_area, $data->id_area);
-            array_push($arr_id_jenis_permintaan, $data->id_jenis_permintaan);
-        }
-        // start dibatasi 30 hari terakhir dari created_at
-        $trx = $trx->filter(function ($item) {
-            return Carbon::parse($item->created_at)->gte(Carbon::now()->subDays(30));
-        });
         $tanggal_mulai = '';
         $tanggal_akhir = '';
-        // end
-        $status_pengajuan = KebutuhanStatus::whereIn('id', $arr_status_pengajuan)->orderBy('id', 'asc')->get();
-        $id_area = Propinsi::whereIn('id', $arr_id_area)->orderBy('order_by', 'asc')->get();
-        $id_jenis_permintaan = JenisPermintaan::whereIn('id', $arr_id_jenis_permintaan)->orderBy('id', 'asc')->get();
+        $status_pengajuan = KebutuhanStatus::orderBy('id', 'asc')->get();
+        $id_area = Propinsi::orderBy('order_by', 'asc')->get();
+        $id_jenis_permintaan = JenisPermintaan::orderBy('id', 'asc')->get();
         // start filter
         if($request->filter == true){
             $tanggal_mulai = $request->tanggal_mulai;
@@ -917,7 +875,14 @@ class TrxKebutuhanController extends Controller
     public function create(Request $request)
     {
         //
-        $nik_pengaju = Crypt::decrypt($request->nik_pengaju);
+        $nik_pengaju = auth()->user()->nik;
+        if ($request->filled('nik_pengaju') && $request->nik_pengaju !== '0') {
+            try {
+                $nik_pengaju = Crypt::decrypt($request->nik_pengaju);
+            } catch (\Throwable $e) {
+                $nik_pengaju = $request->nik_pengaju;
+            }
+        }
         $pengaju = Karyawan::where(['nik' => $nik_pengaju])->first();
         // $pengaju = $pengaju->nama.' - '.$pengaju->nik;
         // 

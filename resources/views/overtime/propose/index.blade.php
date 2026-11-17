@@ -50,12 +50,11 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    {{-- isi form atau pesan di sini --}}
-                                    {{ App\Models\MtrUtility::find(52)->informasi }}
+                                    {{ optional(App\Models\MtrUtility::find(52))->informasi && optional(App\Models\MtrUtility::find(52))->informasi !== 'xxx52' ? App\Models\MtrUtility::find(52)->informasi : 'Pastikan anda telah melakukan absensi harian melalui Matta sebelum mengajukan lembur. Silahkan mengganti dengan hari lain jika anda terlewat melakukan absensi harian di Matta' }}
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times me-1"></i> Batal</button>
-                                    <button type="button" class="btn btn-primary" onclick="konfirmasiPilih()">
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" style="background: #f43f5e; border: none;"><i class="fa fa-times me-1"></i> Batal</button>
+                                    <button type="button" class="btn btn-primary" onclick="konfirmasiPilih()" style="background: #5b5bd6; border: none;">
                                         <i class="fa fa-check me-1"></i> Konfirmasi
                                     </button>
                                 </div>
@@ -180,8 +179,22 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/buttons.print.min.js') }}"></script>
 <script type="text/javascript">
 function PilihKaryawan() {
-    const modal = new bootstrap.Modal(document.getElementById('modalPilihKaryawan'));
-    modal.show();
+    try {
+        var el = document.getElementById('modalPilihKaryawan');
+        if (window.bootstrap && bootstrap.Modal) {
+            var modal = bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
+            modal.show();
+        } else if (window.$ && $.fn.modal) {
+            $('#modalPilihKaryawan').modal('show');
+        } else {
+            el.style.display = 'block';
+            el.classList.add('show');
+        }
+    } catch(err) {
+        if (window.$ && $.fn.modal) {
+            $('#modalPilihKaryawan').modal('show');
+        }
+    }
 }
 // 
 function konfirmasiPilih() {
@@ -207,7 +220,7 @@ $('#_datatable').DataTable( {
 	buttons: [
 		'copy', 'csv', 'excel', 'pdf', 'print'
 	],
-    "lengthMenu": [[50, 100, 200, 500, -1], [50, 100, 200, 500,  "All"]]
+    "pageLength": 10, "lengthMenu": [[10], [10]]
 } );
 </script>
 @endsection

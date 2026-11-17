@@ -23,12 +23,20 @@ class TrxBirthdayController extends Controller
         // $arr = [];
         foreach($trx as $_trx){
             $email = json_decode($_trx->email, true);
+            if (!is_array($email)) {
+                $email = [
+                    'subject' => 'Happy Birthday',
+                    'body' => $this->getBodyEmail($_trx->nik),
+                    'to' => $_trx->email,
+                    'cc' => MtrUtility::find(11)?->informasi ?? ''
+                ];
+            }
             // parameter yang dipassing ke sendemail
-            $mailData['title'] = $email['subject'];
-            $mailData['data'] = ['msg' => $email['body']];
+            $mailData['title'] = $email['subject'] ?? 'Happy Birthday';
+            $mailData['data'] = ['msg' => $email['body'] ?? 'Happy Birthday'];
             $mailData['filename'] = 'emails.birthday0';
-            $mailData['to'] = $email['to'];
-            $mailData['cc'] = $email['cc'];
+            $mailData['to'] = $email['to'] ?? $_trx->email;
+            $mailData['cc'] = $email['cc'] ?? '';
             // array_push($arr, $mailData);
             $this->sendEmail($mailData);
         }
@@ -111,13 +119,14 @@ class TrxBirthdayController extends Controller
      */
     public function index()
     {
-        $arr_nik_nkp = new Karyawan();
-        $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
-        $trx_current = TrxBirthday::orderBy('id', 'desc')->get();
-        $trx_history = TrxBirthdayLog::orderBy('id', 'desc')->get();
+        $arr_nik_nkp = (new Karyawan())->getNikNkp();
+        $limit = 100;
         if(Gate::allows('hc_nkp')){
-            $trx_current = TrxBirthday::whereIn('nik',$arr_nik_nkp)->orderBy('id', 'desc')->get();
-            $trx_history = TrxBirthdayLog::whereIn('nik',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx_current = TrxBirthday::with('_nik')->whereIn('nik',$arr_nik_nkp)->orderBy('id', 'desc')->limit($limit)->get();
+            $trx_history = TrxBirthdayLog::with('_nik')->whereIn('nik',$arr_nik_nkp)->orderBy('id', 'desc')->limit($limit)->get();
+        } else {
+            $trx_current = TrxBirthday::with('_nik')->orderBy('id', 'desc')->limit($limit)->get();
+            $trx_history = TrxBirthdayLog::with('_nik')->orderBy('id', 'desc')->limit($limit)->get();
         }
         // dd($trx_current, $trx_history);
         return view('birthday.index', compact('trx_current', 'trx_history'));
@@ -133,13 +142,22 @@ class TrxBirthdayController extends Controller
             }else{
                 foreach($id as $_id){
                     $_trx = TrxBirthday::find($_id);
+                    if (!$_trx) continue;
                     $email = json_decode($_trx->email, true);
+                    if (!is_array($email)) {
+                        $email = [
+                            'subject' => 'Happy Birthday',
+                            'body' => $this->getBodyEmail($_trx->nik),
+                            'to' => $_trx->email,
+                            'cc' => MtrUtility::find(11)?->informasi ?? ''
+                        ];
+                    }
                     // parameter yang dipassing ke sendemail
-                    $mailData['title'] = $email['subject'];
-                    $mailData['data'] = ['msg' => $email['body']];
+                    $mailData['title'] = $email['subject'] ?? 'Happy Birthday';
+                    $mailData['data'] = ['msg' => $email['body'] ?? 'Happy Birthday'];
                     $mailData['filename'] = 'emails.birthday0';
-                    $mailData['to'] = $email['to'];
-                    $mailData['cc'] = $email['cc'];
+                    $mailData['to'] = $email['to'] ?? $_trx->email;
+                    $mailData['cc'] = $email['cc'] ?? '';
                     $this->sendEmail($mailData);
                     // insert into trx_tbl_birthday_log
                     $trx = New TrxBirthdayLog;
@@ -149,7 +167,7 @@ class TrxBirthdayController extends Controller
                     $trx->birthday = $_trx->birthday;
                     $trx->save();
                     // delete
-                    TrxBirthday::find($_id)->delete();
+                    $_trx->delete();
                 }
                 return redirect( 'birthday' )->with( 'msg', 'Birthday Email is executed successfully.' );
             }

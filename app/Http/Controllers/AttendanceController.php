@@ -500,22 +500,40 @@ class AttendanceController extends Controller
 
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->attendanceLog();
+        }
+
+        // Endpoint AJAX DataTables untuk memuat data secara cepat & efisien
+        if ($request->ajax() || $request->has('draw')) {
+            if ($request->get('tab') === 'duration') {
+                return $this->getDurationDataJson($request);
+            }
+            return $this->getRawDataJson($request);
+        }
+
         $user  = auth()->user();
-        $limit = 25000;
     
-        // ---------- dropdown karyawan ----------
-        $att_nik_nama = DB::table('trx_tbl_attendance as a')->select('a.att_nik', 'b.nama')->distinct()
-            ->leftJoin('mtr_tbl_karyawan as b', 'a.att_nik', '=', 'b.nik')
-            ->when(Gate::allows('hc_nkp'), fn($q) => $q->whereIn('a.att_nik', (new Karyawan)->getNikNkp()))
-            ->when($user->userrole == 'nhc', fn($q) => $q->whereIn('a.att_nik', $this->nikTim($user)))
-            ->orderBy('b.nama')->get();
+        // ---------- dropdown karyawan (di-cache 24 jam, di-sort di PHP agar instan) ----------
+        $cacheKeyKaryawan = 'att_nik_nama_opts_' . $user->userrole . '_' . ($user->userrole == 'nhc' ? $user->nik : 'hc');
+        $att_nik_nama = Cache::remember($cacheKeyKaryawan, 86400, function() use ($user) {
+            return DB::table('mtr_tbl_karyawan')
+                ->select('nik as att_nik', 'nama')
+                ->whereNotNull('nik')
+                ->where('nik', '!=', '')
+                ->when(Gate::allows('hc_nkp'), fn($q) => $q->whereIn('nik', (new Karyawan)->getNikNkp()))
+                ->when($user->userrole == 'nhc', fn($q) => $q->whereIn('nik', $this->nikTim($user)))
+                ->get()
+                ->sortBy('nama')
+                ->values();
+        });
     
-        // ---------- opsi filter (distinct di tabel besar = full scan, jadi di-cache 1 jam) ----------
-        $att_type     = Cache::remember('att_type_opts', 3600, fn() => Attendance::distinct()->orderBy('att_type')->pluck('att_type')->all());
-        $att_status   = Cache::remember('att_status_opts', 3600, fn() => Attendance::distinct()->orderBy('att_status')->pluck('att_status')->all());
-        $att_data_src = Cache::remember('att_data_src_opts', 3600, fn() => Attendance::distinct()->orderBy('att_data_src')->pluck('att_data_src')->all());
-        $perusahaan   = Perusahaan::whereNotIn('id', [0, 3])->orderBy('nama')->get(); // 0=NA, 3=SMS Project
-        $wg_id        = WorkingGroup::orderBy('id')->get();
+        // ---------- opsi filter (static array instan, tidak perlu full table scan distinct) ----------
+        $att_type     = ['Clock-in', 'Clock-out', 'Check-in'];
+        $att_status   = ['Book-in', 'Book-out', 'Late-in', 'Early-out', 'Normal', 'Leave'];
+        $att_data_src = ['Regular', 'Overtime'];
+        $perusahaan   = Cache::remember('perusahaan_opts', 86400, fn() => Perusahaan::whereNotIn('id', [0, 3])->orderBy('nama')->get());
+        $wg_id        = Cache::remember('wg_id_opts', 86400, fn() => WorkingGroup::orderBy('id')->get());
     
         // ---------- state form filter ----------
         $isFilter         = $request->boolean('filter');
@@ -528,53 +546,283 @@ class AttendanceController extends Controller
         $arr_perusahaan   = $isFilter ? $request->input('perusahaan', []) : [];
         $arr_wg_id        = $isFilter ? $request->input('wg_id', []) : [];
     
-        // ---------- data ----------
-        $att = collect();
-        $duration = [];
-        $wdClockin = collect();
-        $selisihEO = collect();
-    
-        if ($isFilter || $user->userrole == 'nhc') {
-            // 1 query + 2 query eager load (pengganti Karyawan::where()->first() & relasi lazy per baris di Blade)
-            $att = $this->filteredQuery($request)
-                ->with(['_att_nik', '_fp_trx'])
-                ->orderByDesc('att_timestamp')->limit($limit)->get();
-    
-            [$wdClockin, $selisihEO] = $this->delayLookup($att);
-            $duration = $this->hitungDurasi($request, $limit);
-        }
-    
         return view('attendance.index', compact(
-            'str_att_nik_nama', 'att_nik_nama', 'att', 'duration', 'att_type', 'att_status', 'att_data_src',
+            'str_att_nik_nama', 'att_nik_nama', 'att_type', 'att_status', 'att_data_src',
             'perusahaan', 'wg_id', 'arr_att_type', 'arr_att_status', 'arr_att_data_src', 'date_from', 'date_to',
-            'arr_perusahaan', 'arr_wg_id', 'wdClockin', 'selisihEO'
+            'arr_perusahaan', 'arr_wg_id', 'isFilter'
         ));
     }
+
+    public function getRawDataJson(Request $request)
+    {
+        $query = $this->filteredQuery($request);
+
+        $recordsTotal = Attendance::count();
+
+        // Search DataTables
+        $searchValue = $request->input('search.value', '');
+        if (!empty($searchValue)) {
+            $query->where(function($q) use ($searchValue) {
+                $q->where('att_nik', 'like', "%{$searchValue}%")
+                  ->orWhere('att_address', 'like', "%{$searchValue}%")
+                  ->orWhere('att_status', 'like', "%{$searchValue}%")
+                  ->orWhere('att_type', 'like', "%{$searchValue}%")
+                  ->orWhere('att_property', 'like', "%{$searchValue}%")
+                  ->orWhere('att_date', 'like', "%{$searchValue}%")
+                  ->orWhere('att_timestamp', 'like', "%{$searchValue}%");
+            });
+        }
+
+        $recordsFiltered = ($request->boolean('filter') || !empty($searchValue))
+            ? (clone $query)->count()
+            : $recordsTotal;
+
+        $startRow = (int) $request->input('start', 0);
+        $length   = (int) $request->input('length', 25);
+        if ($length < 1) $length = 25;
+
+        $columns = [
+            0 => 'id',
+            1 => 'att_date',
+            2 => 'att_timestamp',
+            3 => 'att_nik',
+            4 => 'att_nik',
+            5 => 'id_fp_trx',
+            6 => 'id',
+            7 => 'id',
+            8 => 'id',
+            9 => 'id',
+            10 => 'id',
+            11 => 'wg_id',
+            12 => 'att_type',
+            13 => 'att_long',
+            14 => 'att_lat',
+            15 => 'att_address',
+            16 => 'id',
+            17 => 'att_status',
+            18 => 'id',
+            19 => 'att_data_src',
+            20 => 'id'
+        ];
+
+        $orderColIdx = (int) $request->input('order.0.column', 0);
+        $orderDir    = $request->input('order.0.dir', 'desc');
+        $orderColumn = $columns[$orderColIdx] ?? 'id';
+
+        $rows = $query->with(['_att_nik', '_fp_trx'])
+            ->orderBy($orderColumn, $orderDir)
+            ->offset($startRow)
+            ->limit($length)
+            ->get();
+
+        // Delay lookup khusus untuk baris yang sedang ditampilkan
+        $nonRegWdIds = $rows->where('wg_id', '>', 1)->pluck('att_wd_ot_id')->filter()->unique()->values();
+        $wdClockin   = $nonRegWdIds->isEmpty() ? collect() : WorkingDay::whereIn('id', $nonRegWdIds)->pluck('clockin', 'id');
+
+        $eo = $rows->filter(fn($r) => $r->att_type == 'Clock-out' && $r->att_status == 'Early-out' && $r->att_data_src == 'Regular' && $r->wg_id == 1);
+        $selisihEO = $eo->isEmpty() ? collect() : Attendance::selectRaw("att_nik, att_date, TIMEDIFF('09:00:00', TIMEDIFF(
+                    MAX(CASE WHEN att_type = 'Clock-out' THEN att_timestamp END),
+                    MAX(CASE WHEN att_type = 'Clock-in'  THEN att_timestamp END))) as selisih_waktu")
+            ->whereIn('att_nik', $eo->pluck('att_nik')->unique()->values())
+            ->whereIn('att_date', $eo->pluck('att_date')->unique()->values())
+            ->whereIn('att_type', ['Clock-in', 'Clock-out'])
+            ->groupBy('att_nik', 'att_date')->get()
+            ->mapWithKeys(fn($x) => ["{$x->att_nik}|{$x->att_date}" => $x->selisih_waktu]);
+
+        $data = [];
+        $idx = $startRow;
+        foreach ($rows as $dataRow) {
+            $idx++;
+            $att_prop = json_decode($dataRow->att_property, true) ?? [];
+            $karyawan = $dataRow->_att_nik;
+
+            $delay = '';
+            if ($dataRow->att_type == 'Clock-in' && $dataRow->att_status == 'Late-in' && $dataRow->att_data_src == 'Regular') {
+                $clockin = $dataRow->wg_id == 1 ? '09:00:00' : ($dataRow->wg_id > 1 ? ($wdClockin[$dataRow->att_wd_ot_id] ?? null) : null);
+                if ($clockin) {
+                    $timePart = substr($dataRow->att_timestamp, 11, 8);
+                    $totalDetik = (int) abs(strtotime($timePart) - strtotime($clockin));
+                    $delay = gmdate('H:i:s', $totalDetik);
+                }
+            } elseif ($dataRow->att_type == 'Clock-out' && $dataRow->att_status == 'Early-out' && $dataRow->att_data_src == 'Regular' && $dataRow->wg_id == 1) {
+                $delay = $selisihEO[$dataRow->att_nik.'|'.$dataRow->att_date] ?? '';
+            }
+
+            $fmtDate = substr($dataRow->att_date, 8, 2) . '-' . substr($dataRow->att_date, 5, 2) . '-' . substr($dataRow->att_date, 0, 4);
+            $fmtTs   = substr($dataRow->att_timestamp, 8, 2) . '-' . substr($dataRow->att_timestamp, 5, 2) . '-' . substr($dataRow->att_timestamp, 0, 4) . ' ' . substr($dataRow->att_timestamp, 11, 8);
+
+            $actionBadge = $dataRow->att_type == 'Clock-in'
+                ? '<span class="badge rounded-pill badge-light-primary">' . e($dataRow->att_type) . '</span>'
+                : ($dataRow->att_type == 'Clock-out'
+                    ? '<span class="badge rounded-pill badge-light-success">' . e($dataRow->att_type) . '</span>'
+                    : '<span class="badge rounded-pill badge-light-warning">' . e($dataRow->att_type) . '</span>');
+
+            $statusBadge = ($dataRow->att_status == 'Book-in' || $dataRow->att_status == 'Book-out')
+                ? '<span class="badge badge-success">' . e($dataRow->att_status) . '</span>'
+                : ($dataRow->att_status == 'Leave'
+                    ? '<span class="badge badge-warning">' . e($dataRow->att_status) . '</span>'
+                    : '<span class="badge badge-danger">' . e($dataRow->att_status) . '</span>');
+
+            $mapLink = (!empty($dataRow->att_long) && !empty($dataRow->att_lat))
+                ? '<a href="https://www.google.com/maps/place/' . $dataRow->att_lat . ',' . $dataRow->att_long . '" target="_blank"><i class="fa fa-map-marker map-marker-icon"></i></a>'
+                : '';
+
+            $typeBadge = ($dataRow->att_data_src == 'Regular')
+                ? '<span class="badge badge-success">' . e($dataRow->att_data_src) . '</span>'
+                : ($dataRow->att_data_src == 'Overtime'
+                    ? '<span class="badge badge-primary">' . e($dataRow->att_data_src) . '</span>'
+                    : '<span class="badge badge-warning">' . e($dataRow->att_data_src) . '</span>');
+
+            $sourceBadge = (!empty($dataRow->id_fp_trx) && $dataRow->_fp_trx)
+                ? '<span class="badge ' . ($dataRow->_fp_trx->id_mesin == 1 ? 'badge-primary' : 'badge-info') . '">FINGER-' . $dataRow->_fp_trx->id_mesin . '</span>'
+                : '<span class="badge badge-warning">MATTA</span>';
+
+            $data[] = [
+                $idx,
+                $fmtDate,
+                $fmtTs,
+                e($karyawan?->nama ?? ($att_prop['nama'] ?? $dataRow->att_nik)),
+                e($dataRow->att_nik),
+                !empty($dataRow->id_fp_trx) ? e($karyawan?->id_fp ?? '') : '',
+                e($att_prop['perusahaan'] ?? ''),
+                e($att_prop['divisi'] ?? ''),
+                e($att_prop['dep'] ?? ''),
+                e($att_prop['sub_dep'] ?? ''),
+                e($karyawan?->alamat_kantor ?? ''),
+                e($att_prop['wg_name'] ?? ''),
+                $actionBadge,
+                e($dataRow->att_long ?? ''),
+                e($dataRow->att_lat ?? ''),
+                e($dataRow->att_address ?? ''),
+                $mapLink,
+                $statusBadge,
+                $delay,
+                $typeBadge,
+                $sourceBadge
+            ];
+        }
+
+        return response()->json([
+            'draw' => (int) $request->input('draw', 1),
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $data
+        ]);
+    }
+
+    public function getDurationDataJson(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(300);
+
+        $query = $this->filteredQuery($request);
+        $searchValue = $request->input('search.value', '');
+
+        $att = $query->with(['_att_nik'])->orderByDesc('id')->get();
+        $duration = $this->hitungDurasiFromAtt($att);
+
+        $recordsTotal = count($duration);
+
+        if (!empty($searchValue)) {
+            $duration = array_values(array_filter($duration, function($item) use ($searchValue) {
+                return stripos($item['nama'], $searchValue) !== false 
+                    || stripos($item['att_nik'], $searchValue) !== false
+                    || stripos($item['att_date'], $searchValue) !== false
+                    || stripos($item['att_data_src'], $searchValue) !== false;
+            }));
+        }
+
+        $recordsFiltered = count($duration);
+
+        $startRow = (int) $request->input('start', 0);
+        $length   = (int) $request->input('length', 25);
+        if ($length < 1) $length = 25;
+
+        $paged = array_slice($duration, $startRow, $length);
+
+        $data = [];
+        $idx = $startRow;
+        foreach ($paged as $row) {
+            $idx++;
+            $att_prop = json_decode($row['att_property'], true) ?? [];
+            $typeBadge = ($row['att_data_src'] == 'Regular')
+                ? '<span class="badge badge-success">' . e($row['att_data_src']) . '</span>'
+                : ($row['att_data_src'] == 'Overtime'
+                    ? '<span class="badge badge-primary">' . e($row['att_data_src']) . '</span>'
+                    : '<span class="badge badge-warning">' . e($row['att_data_src']) . '</span>');
+
+            $durDate = substr($row['att_date'], 8, 2) . '-' . substr($row['att_date'], 5, 2) . '-' . substr($row['att_date'], 0, 4);
+            $durIn   = substr($row['Clock-in'], 8, 2) . '-' . substr($row['Clock-in'], 5, 2) . '-' . substr($row['Clock-in'], 0, 4) . ' ' . substr($row['Clock-in'], 11, 8);
+            $durOut  = substr($row['Clock-out'], 8, 2) . '-' . substr($row['Clock-out'], 5, 2) . '-' . substr($row['Clock-out'], 0, 4) . ' ' . substr($row['Clock-out'], 11, 8);
+
+            $data[] = [
+                $idx,
+                $durDate,
+                $durIn,
+                $durOut,
+                e($row['durasi']),
+                e($row['nama']),
+                e($row['att_nik']),
+                e($att_prop['perusahaan'] ?? ''),
+                e($att_prop['divisi'] ?? ''),
+                e($att_prop['dep'] ?? ''),
+                e($att_prop['sub_dep'] ?? ''),
+                e($row['alamat_kantor'] ?? ''),
+                e($att_prop['wg_name'] ?? ''),
+                $typeBadge
+            ];
+        }
+
+        return response()->json([
+            'draw' => (int) $request->input('draw', 1),
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $data
+        ]);
+    }
     
-    // Semua logika filter + role dalam satu tempat (pengganti if/else yang berulang)
+    // Semua logika filter + role dalam satu tempat
     private function filteredQuery(Request $request)
     {
         $user = auth()->user();
         $q = Attendance::query();
     
-        // tanpa filter: nhc lihat bulan berjalan milik sendiri + bawahan, HC kosong (sama dengan kode lama)
+        // tanpa filter: default data terbaru
         if (!$request->boolean('filter')) {
-            if ($user->userrole !== 'nhc') return $q->whereRaw('1 = 0');
-            return $q->whereIn('att_nik', $this->nikTim($user))
-                    ->whereBetween('att_timestamp', [now()->startOfMonth(), now()->endOfMonth()]);
+            if ($user->userrole !== 'nhc') {
+                if (Gate::allows('hc_nkp')) {
+                    $q->whereIn('att_nik', (new Karyawan)->getNikNkp());
+                }
+                return $q;
+            }
+            return $q->whereIn('att_nik', $this->nikTim($user));
         }
     
-        $q->whereIn('att_type', $request->input('att_type', []))
-        ->whereIn('att_status', $request->input('att_status', []))
-        ->whereIn('att_data_src', $request->input('att_data_src', []))
-        ->whereIn('att_nik', Karyawan::select('nik')->whereIn('wg_id', $request->input('wg_id', []))) // subquery
-        ->whereBetween('att_date', [$request->date_from, $request->date_to]);
+        if ($request->filled('att_type')) {
+            $q->whereIn('att_type', (array) $request->input('att_type'));
+        }
+        if ($request->filled('att_status')) {
+            $q->whereIn('att_status', (array) $request->input('att_status'));
+        }
+        if ($request->filled('att_data_src')) {
+            $q->whereIn('att_data_src', (array) $request->input('att_data_src'));
+        }
+        if ($request->filled('wg_id')) {
+            $q->whereIn('att_nik', Karyawan::whereIn('wg_id', (array) $request->input('wg_id'))->pluck('nik'));
+        }
+        if ($request->filled('date_from') && $request->filled('date_to')) {
+            $q->whereBetween('att_timestamp', ["{$request->date_from} 00:00:00", "{$request->date_to} 23:59:59"]);
+        }
     
         if ($user->userrole == 'nhc') {
             $q->whereIn('att_nik', $this->nikTim($user));
         } else {
-            $q->whereIn('att_nik', Karyawan::select('nik')->whereIn('kode_perusahaan', $request->input('perusahaan', [])));
-            if (Gate::allows('hc_nkp')) $q->whereIn('att_nik', (new Karyawan)->getNikNkp());
+            if ($request->filled('perusahaan')) {
+                $q->whereIn('att_nik', Karyawan::whereIn('kode_perusahaan', (array) $request->input('perusahaan'))->pluck('nik'));
+            }
+            if (Gate::allows('hc_nkp')) {
+                $q->whereIn('att_nik', (new Karyawan)->getNikNkp());
+            }
         }
     
         return $q->when($request->filled('str_att_nik_nama'), fn($w) => $w->where('att_nik', $request->str_att_nik_nama));
@@ -585,11 +833,11 @@ class AttendanceController extends Controller
         return Karyawan::where('layer1', $user->nik)->pluck('nik')->push($user->nik)->all();
     }
     
-    // Pengganti WorkingDay::find() dan query TIMEDIFF Early-out per baris di Blade (2 query total)
+    // Pengganti WorkingDay::find() dan query TIMEDIFF Early-out per baris di Blade
     private function delayLookup($att): array
     {
-        $wdClockin = WorkingDay::whereIn('id', $att->where('wg_id', '>', 1)->pluck('att_wd_ot_id')->filter()->unique()->values())
-            ->pluck('clockin', 'id');
+        $nonRegWdIds = $att->where('wg_id', '>', 1)->pluck('att_wd_ot_id')->filter()->unique()->values();
+        $wdClockin = $nonRegWdIds->isEmpty() ? collect() : WorkingDay::whereIn('id', $nonRegWdIds)->pluck('clockin', 'id');
     
         $eo = $att->filter(fn($r) => $r->att_type == 'Clock-out' && $r->att_status == 'Early-out' && $r->att_data_src == 'Regular' && $r->wg_id == 1);
     
@@ -605,57 +853,54 @@ class AttendanceController extends Controller
         return [$wdClockin, $selisihEO];
     }
     
-    // Pengganti 2 loop foreach (Regular & Overtime) yang menjalankan 2-3 query per baris: sekarang 3 query total
-    private function hitungDurasi(Request $request, int $limit): array
+    // Hitung pasangan durasi Clock-in & Clock-out langsung dari koleksi attendance in-memory secara cepat
+    private function hitungDurasiFromAtt($att): array
     {
-        $ins = $this->filteredQuery($request)
-            ->where('att_type', 'Clock-in')->whereIn('att_data_src', ['Regular', 'Overtime'])
-            ->orderByDesc('att_data_src')->orderBy('id') // Regular dulu, lalu Overtime (urutan sama dengan kode lama)
-            ->limit($limit)
-            ->get(['id', 'att_nik', 'att_date', 'att_wd_ot_id', 'att_data_src', 'att_property', 'att_timestamp']);
-    
-        if ($ins->isEmpty()) return [];
-    
-        $niks = $ins->pluck('att_nik')->unique()->values();
-    
-        // query 2: karyawan (pengganti Karyawan::where(['nik'=>..., 'wg_id'=>1])->exists() per baris + lookup nama di Blade)
-        $kary = Karyawan::whereIn('nik', $niks)->get(['nik', 'nama', 'alamat_kantor', 'wg_id'])->keyBy('nik');
-    
-        // query 3: semua Clock-out yang mungkin jadi pasangan (pengganti ->first() per baris)
-        $outs = Attendance::where('att_type', 'Clock-out')->whereIn('att_data_src', ['Regular', 'Overtime'])
-            ->whereIn('att_nik', $niks)
-            ->where(fn($w) => $w->whereBetween('att_date', [$ins->min('att_date'), $ins->max('att_date')])
-                                ->orWhereIn('att_wd_ot_id', $ins->pluck('att_wd_ot_id')->filter()->unique()->values()))
-            ->orderBy('id') // keyBy menyimpan yang terakhir = id terbesar (sama dengan orderBy id desc ->first())
-            ->get(['att_nik', 'att_date', 'att_wd_ot_id', 'att_data_src', 'att_timestamp']);
-    
-        $byDate = $outs->keyBy(fn($o) => "{$o->att_data_src}|{$o->att_nik}|{$o->att_date}");
-        $byWd   = $outs->whereNotNull('att_wd_ot_id')->keyBy(fn($o) => "{$o->att_data_src}|{$o->att_nik}|{$o->att_wd_ot_id}");
-    
-        $duration = [];
-        foreach ($ins as $in) {
-            $k = $kary->get($in->att_nik);
-    
-            // reguler (wg_id = 1): pasangan berdasarkan tanggal; non reguler: berdasarkan att_wd_ot_id
-            $out = ($k?->wg_id == 1)
-                ? $byDate->get("{$in->att_data_src}|{$in->att_nik}|{$in->att_date}")
-                : ($in->att_wd_ot_id ? $byWd->get("{$in->att_data_src}|{$in->att_nik}|{$in->att_wd_ot_id}") : null);
-    
-            if ($out) {
-                $duration[] = [
-                    'att_property'  => $in->att_property,
-                    'att_date'      => $in->att_date,
-                    'att_nik'       => $in->att_nik,
-                    'att_data_src'  => $in->att_data_src,
-                    'Clock-in'      => $in->att_timestamp,
-                    'Clock-out'     => $out->att_timestamp,
-                    'durasi'        => gmdate('H:i:s', abs(strtotime($out->att_timestamp) - strtotime($in->att_timestamp))),
-                    'nama'          => $k?->nama,
-                    'alamat_kantor' => $k?->alamat_kantor,
-                ];
+        $byDate = [];
+        $byWd   = [];
+
+        foreach ($att as $r) {
+            if ($r->att_type === 'Clock-out' && ($r->att_data_src === 'Regular' || $r->att_data_src === 'Overtime')) {
+                $kDate = "{$r->att_data_src}|{$r->att_nik}|{$r->att_date}";
+                if (!isset($byDate[$kDate])) {
+                    $byDate[$kDate] = $r;
+                }
+                if ($r->att_wd_ot_id) {
+                    $kWd = "{$r->att_data_src}|{$r->att_nik}|{$r->att_wd_ot_id}";
+                    if (!isset($byWd[$kWd])) {
+                        $byWd[$kWd] = $r;
+                    }
+                }
             }
         }
-    
+
+        $duration = [];
+        foreach ($att as $in) {
+            if ($in->att_type === 'Clock-in' && ($in->att_data_src === 'Regular' || $in->att_data_src === 'Overtime')) {
+                $k = $in->_att_nik;
+
+                // reguler (wg_id = 1): pasangan berdasarkan tanggal; non reguler: berdasarkan att_wd_ot_id
+                $out = ($in->wg_id == 1 || ($k && $k->wg_id == 1))
+                    ? ($byDate["{$in->att_data_src}|{$in->att_nik}|{$in->att_date}"] ?? null)
+                    : ($in->att_wd_ot_id ? ($byWd["{$in->att_data_src}|{$in->att_nik}|{$in->att_wd_ot_id}"] ?? null) : null);
+
+                if ($out) {
+                    $inTs  = strtotime($in->att_timestamp);
+                    $outTs = strtotime($out->att_timestamp);
+                    $duration[] = [
+                        'att_property'  => $in->att_property,
+                        'att_date'      => $in->att_date,
+                        'att_nik'       => $in->att_nik,
+                        'att_data_src'  => $in->att_data_src,
+                        'Clock-in'      => $in->att_timestamp,
+                        'Clock-out'     => $out->att_timestamp,
+                        'durasi'        => gmdate('H:i:s', abs($outTs - $inTs)),
+                        'nama'          => $k?->nama ?? $in->att_nik,
+                        'alamat_kantor' => $k?->alamat_kantor ?? '',
+                    ];
+                }
+            }
+        }
         return $duration;
     }
 

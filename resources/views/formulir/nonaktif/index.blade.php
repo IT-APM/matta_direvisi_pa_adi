@@ -237,37 +237,37 @@
                                         <td width="2%">&nbsp;</td>
                                         <td width="20%">Nama</td>
                                         <td width="1%">:</td>
-                                        <td width="78%">{{ $pengaju->nama }}</td>
+                                        <td width="78%">{{ $pengaju?->nama ?? auth()->user()->name ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td>&nbsp;</td>
                                         <td>Jabatan</td>
                                         <td>:</td>
-                                        <td>{{ $pengaju->_jabatan->jabatan }}</td>
+                                        <td>{{ $pengaju?->_jabatan?->jabatan ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td>&nbsp;</td>
                                         <td>NIP</td>
                                         <td>:</td>
-                                        <td>{{ $pengaju->nik }}</td>
+                                        <td>{{ $pengaju?->nik ?? auth()->user()->nik ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td>&nbsp;</td>
                                         <td>Direktorat</td>
                                         <td>:</td>
-                                        <td>{{ $pengaju->_divisi->nama }}</td>
+                                        <td>{{ $pengaju?->_divisi?->nama ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td>&nbsp;</td>
                                         <td>Divisi</td>
                                         <td>:</td>
-                                        <td>{{ $pengaju->_departemen->nama }}</td>
+                                        <td>{{ $pengaju?->_departemen?->nama ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td>&nbsp;</td>
                                         <td>Departemen</td>
                                         <td>:</td>
-                                        <td>{{ $pengaju->_subdepartemen->nama }}</td>
+                                        <td>{{ $pengaju?->_subdepartemen?->nama ?? '-' }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -391,10 +391,7 @@
             buttons: [
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
-            "lengthMenu": [
-                [50, 100, 200, 500, -1],
-                [50, 100, 200, 500, "All"]
-            ]
+            "pageLength": 10, "lengthMenu": [[10], [10]]
         });
         // 
         $(document).on('click', '#btn-delete', function(event) {

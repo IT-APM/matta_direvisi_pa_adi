@@ -45,22 +45,27 @@ class TrxNonaktifController extends Controller
      */
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->userrole === 'nhc') {
+            return app(\App\Http\Controllers\MattaUserController::class)->formModule('exit-clearance');
+        }
         //
-        function forgetById($collection,$id){
-            foreach($collection as $key => $item){
-                if($item->id == $id){
-                    $collection->forget($key);
-                    break;
+        if (!function_exists('App\Http\Controllers\forgetById')) {
+            function forgetById($collection, $id){
+                foreach($collection as $key => $item){
+                    if($item->id == $id){
+                        $collection->forget($key);
+                        break;
+                    }
                 }
+                return $collection;
             }
-            return $collection;
         }
         $arr_nik_nkp = new Karyawan();
         $arr_nik_nkp = $arr_nik_nkp->getNikNkp();
         $no = 0;
-        $trx = TrxNonaktifMaster::orderBy('id', 'desc')->get();
+        $trx = TrxNonaktifMaster::orderBy('id', 'desc')->limit(100)->get();
         if(Gate::allows('hc_nkp')){
-            $trx = TrxNonaktifMaster::whereIn('pengaju',$arr_nik_nkp)->orderBy('id', 'desc')->get();
+            $trx = TrxNonaktifMaster::whereIn('pengaju',$arr_nik_nkp)->orderBy('id', 'desc')->limit(100)->get();
         }
         // foreach ($trx as $value) {
         //     $trxM = TrxNonaktifMaster::find( $value->id );

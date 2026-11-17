@@ -146,11 +146,22 @@ class OpenDataController extends Controller
         dd($arr_trx);
     }
 
+    private static $cachedKey = null;
+
+    private function getEncryptionKey()
+    {
+        if (self::$cachedKey === null) {
+            $util = MtrUtility::find(34);
+            self::$cachedKey = $util ? $util->informasi : 'matta_default_key';
+        }
+        return self::$cachedKey;
+    }
+
     public function encryptWithKey($data)
     {
         try {
             // $key = env('LINK_KEY');
-            $key = MtrUtility::find(34)->informasi;
+            $key = $this->getEncryptionKey();
             $method = 'AES-256-CBC';
             // Generate an IV (Initialization Vector) that matches the block size for AES
             $iv = Str::random(16); // AES-256-CBC uses a 16-byte IV
@@ -179,7 +190,7 @@ class OpenDataController extends Controller
     {
         try {
             // $key = env('LINK_KEY');
-            $key = MtrUtility::find(34)->informasi;
+            $key = $this->getEncryptionKey();
             $method = 'AES-256-CBC';
             // Decode the base64 encoded data
             $decodedData = base64_decode($encodedData);
